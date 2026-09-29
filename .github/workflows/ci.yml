@@ -4,16 +4,36 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: CompeyDev/setup-rokit@v0.1.2
-      - run: rokit install
-      - run: stylua --check src tests scripts
-      - run: selene src tests scripts
-      - run: lune run scripts/run-tests
-      - run: lune run scripts/release-readiness
-      - run: rojo build default.project.json --output build.rbxlx
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Rokit
+        uses: paradoxum-games/setup-rokit@v3
+        with:
+          version: 1.2.0
+          cache: true
+
+      - name: Check formatting
+        run: stylua --check src tests scripts
+
+      - name: Lint
+        run: selene src tests scripts
+
+      - name: Build Rojo project
+        run: rojo build default.project.json --output build.rbxlx
+
+      - name: Run pure Luau tests
+        run: lune run scripts/run-tests
+
+      - name: Report release readiness
+        run: lune run scripts/release-readiness
