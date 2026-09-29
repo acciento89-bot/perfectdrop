@@ -1,0 +1,23 @@
+{
+  "name": "PerfectDrop",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PerfectDrop": {
+        "$path": "src/shared"
+      }
+    },
+    "ServerScriptService": {
+      "PerfectDropServer": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "PerfectDropClient": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}
