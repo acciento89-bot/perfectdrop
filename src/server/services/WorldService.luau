@@ -10,7 +10,14 @@ local worldFolder: Folder? = nil
 local laneByPlayer: { [Player]: number } = {}
 local nextLane = 0
 
-local function part(name: string, size: Vector3, cframe: CFrame, material: Enum.Material, color: Color3, parent: Instance): Part
+local function part(
+	name: string,
+	size: Vector3,
+	cframe: CFrame,
+	material: Enum.Material,
+	color: Color3,
+	parent: Instance
+): Part
 	local item = Instance.new("Part")
 	item.Name = name
 	item.Size = size
