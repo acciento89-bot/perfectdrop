@@ -181,7 +181,13 @@ local function startRun(player: Player)
 	emit(session)
 end
 
-local function createOverhang(session: Session, original: Part, overlapCenter: number, overlapSize: number, offset: number)
+local function createOverhang(
+	session: Session,
+	original: Part,
+	overlapCenter: number,
+	overlapSize: number,
+	offset: number
+)
 	local axis = session.axis
 	local _, movingSize = blockAxisValues(original, axis)
 	local lost = movingSize - overlapSize
@@ -194,14 +200,8 @@ local function createOverhang(session: Session, original: Part, overlapCenter: n
 	local overhangPosition = setAxis(original.Position, axis, overhangCenter)
 	local overhangSize = resizeAxis(original.Size, axis, lost)
 
-	local falling = makeBlock(
-		"Overhang",
-		overhangSize,
-		overhangPosition,
-		Color3.fromRGB(112, 123, 143),
-		session.folder,
-		false
-	)
+	local falling =
+		makeBlock("Overhang", overhangSize, overhangPosition, Color3.fromRGB(112, 123, 143), session.folder, false)
 	falling.AssemblyLinearVelocity =
 		Vector3.new(if axis == "X" then offset * 0.65 else 0, -3, if axis == "Z" then offset * 0.65 else 0)
 	falling.AssemblyAngularVelocity = Vector3.new(0.3, 0.15, -0.25)
