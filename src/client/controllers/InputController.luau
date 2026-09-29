@@ -49,18 +49,12 @@ function InputController.Start(remotes: Folder, hud)
 		end)
 	end
 
-	ContextActionService:BindAction(
-		"PerfectDrop_Drop",
-		function(_, inputState)
-			if inputState == Enum.UserInputState.Begin then
-				requestDrop()
-			end
-			return Enum.ContextActionResult.Sink
-		end,
-		false,
-		Enum.KeyCode.Space,
-		Enum.KeyCode.ButtonA
-	)
+	ContextActionService:BindAction("PerfectDrop_Drop", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			requestDrop()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.KeyCode.Space, Enum.KeyCode.ButtonA)
 
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed then
