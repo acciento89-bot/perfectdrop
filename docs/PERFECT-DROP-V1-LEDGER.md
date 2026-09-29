@@ -1,120 +1,168 @@
-# Perfect Drop V1 Ledger
+# Perfect Drop V1 Quality Ledger
 
-Status: `[ ]` open · `[~]` implemented/partially verified · `[x]` verified complete · `[!]` externally/runtime blocked
+**Portfolio order:** 1 / 4 — build this first because it has the smallest mechanic surface, not because it has a lower quality bar.
 
-## P00 Product Definition
-- [ ] P00-T01 Lock game identity, terminology and score vocabulary
-- [ ] P00-T02 Lock core gameplay constants and difficulty boundaries
-- [ ] P00-T03 Lock monetization boundaries and no-pay-to-win rules
+Status: `[ ]` open · `[~]` implemented but not fully runtime-verified · `[x]` verified complete · `[!]` blocked by an external/paid action
 
-## P01 Technical Foundation
-- [ ] P01-T01 Rojo project/source layout
-- [ ] P01-T02 Shared config/remotes/state modules
-- [ ] P01-T03 Formatting/lint/test toolchain
-- [ ] P01-T04 CI and release-readiness checks
-- [ ] P01-T05 Dev/prod place configuration documentation
+## Release quality contract
 
-## P02 Core Character Loop
-- [ ] P02-T01 Character spawn and safe arena
-- [ ] P02-T02 Camera keeps avatar and next objective readable
-- [ ] P02-T03 Touch/mouse/controller input abstraction
-- [ ] P02-T04 Round state machine and instant restart
-- [ ] P02-T05 Runtime core-loop verification
+Perfect Drop is a **small-scope production game**, not a prototype. A phase is not complete because code compiles or CI is green. Completion requires the relevant behavior to be verified in a running Roblox session.
 
-## P03 Primary Mechanic
-- [ ] P03-T01 Mechanic rules/model
-- [ ] P03-T02 Server-authoritative round validation
-- [ ] P03-T03 Player-facing mechanic implementation
-- [ ] P03-T04 Failure/recovery edge cases
-- [ ] P03-T05 Representative runtime acceptance
+Mandatory V1 rules:
+- The Roblox avatar is always visible and readable during the active round.
+- New players understand “time the drop” in under 10 seconds without developer text.
+- Camera follows correctly through spawn, play, failure, retry and respawn.
+- One input works consistently on touch, mouse/keyboard and controller.
+- Retry is immediate; no dead screens or unnecessary waits.
+- Moving blocks, overlap cuts and Perfect detection are deterministic and visually obvious.
+- No placeholder/baseplate presentation, default-looking UI or debug artifacts.
+- UI must remain usable on compact phone, tablet and desktop.
+- Score, coins, unlocks and purchases are server-authoritative.
+- Persistence must survive a genuine new-session rejoin.
+- Monetization may revive/accelerate/cosmetically customize but must not directly buy leaderboard score.
+- Public release requires a real end-to-end player journey in the published private place.
+- QA captures go to `/tmp/perfectdrop-qa`; only curated evidence may enter `docs/evidence/`.
 
-## P04 Scoring & Combo
-- [ ] P04-T01 Score and landing/action grades
-- [ ] P04-T02 Combo/multiplier rules
-- [ ] P04-T03 Personal best persistence
-- [ ] P04-T04 Anti-replay/anti-score-spoof validation
-- [ ] P04-T05 Feedback hierarchy runtime check
+## P00 Product lock
+- [ ] P00-T01 Lock game name, “Perfect / Good / Miss” vocabulary and score presentation
+- [ ] P00-T02 Lock block dimensions, travel axis, initial speed, speed curve and minimum survivable footprint
+- [ ] P00-T03 Lock Perfect tolerance and combo growth so Perfects feel demanding but learnable
+- [ ] P00-T04 Lock fail condition, revive rules and retry timing
+- [ ] P00-T05 Lock ethical monetization boundaries and cosmetic categories
+- [ ] P00-T06 Write measurable V1 acceptance criteria and release blockers
 
-## P05 Procedural Challenge Generation
-- [ ] P05-T01 Deterministic generator
-- [ ] P05-T02 Difficulty curve
-- [ ] P05-T03 Safe reachability/bounds rules
-- [ ] P05-T04 Variety guardrails
-- [ ] P05-T05 Long-run generation test
+## P01 Technical foundation
+- [ ] P01-T01 Rojo project with strict client/server/shared ownership
+- [ ] P01-T02 Shared config for difficulty, scoring, economy and monetization
+- [ ] P01-T03 Remote definitions with schema/rate-limit expectations
+- [ ] P01-T04 Selene/StyLua/Luau tests and deterministic build command
+- [ ] P01-T05 GitHub CI for lint, tests, build and release-readiness rules
+- [ ] P01-T06 Development/production place documentation and one canonical build artifact
 
-## P06 Progression
-- [ ] P06-T01 Currency model
-- [ ] P06-T02 Cosmetic unlock catalog
-- [ ] P06-T03 Server purchase/equip rules
-- [ ] P06-T04 Profile persistence/migration
-- [ ] P06-T05 Progression balance smoke test
+## P02 Spawn, character, camera and input
+- [ ] P02-T01 Safe spawn beside/on the tower with no invisible fall on join
+- [ ] P02-T02 Third-person camera keeps avatar, active block and landing footprint visible
+- [ ] P02-T03 Camera follows horizontal/vertical growth without detaching or clipping into the tower
+- [ ] P02-T04 Unified drop input for touch, mouse/keyboard and controller
+- [ ] P02-T05 Input debounce prevents duplicate drops and stale input after retry
+- [ ] P02-T06 Runtime test: spawn → move camera state → drop → fail → retry → respawn
 
-## P07 Retention
-- [ ] P07-T01 Daily login reward
-- [ ] P07-T02 Daily challenge
-- [ ] P07-T03 Achievement hooks
-- [ ] P07-T04 Best-score celebration/return loop
+## P03 Core drop mechanic
+- [ ] P03-T01 Deterministic moving-block state and server-authoritative drop timestamp/action
+- [ ] P03-T02 Correct overlap calculation on both travel directions
+- [ ] P03-T03 Overhang is visibly cut away and discarded with clean collision
+- [ ] P03-T04 New top surface exactly matches accepted overlap
+- [ ] P03-T05 Perfect drop snaps cleanly without cumulative floating-point drift
+- [ ] P03-T06 Complete miss triggers failure once, never duplicate rewards/failures
+- [ ] P03-T07 Minimum-footprint and extreme-overlap edge cases covered by tests
+- [ ] P03-T08 Runtime acceptance: at least 30 consecutive mixed drops with no state corruption
+
+## P04 Score, combo and game feel
+- [ ] P04-T01 Height/score model with server authority
+- [ ] P04-T02 Perfect combo multiplier with defined cap/decay
+- [ ] P04-T03 Immediate Perfect / Good / Miss feedback readable without color alone
+- [ ] P04-T04 Personal best update is atomic and replay-safe
+- [ ] P04-T05 Score animation never blocks input or retry
+- [ ] P04-T06 Runtime verification of combo build, combo break, PB and failure result
+
+## P05 Difficulty and run generation
+- [ ] P05-T01 Speed progression curve by tower height
+- [ ] P05-T02 Travel distance/axis variation without impossible states
+- [ ] P05-T03 Optional visual/environment variation never changes collision truth
+- [ ] P05-T04 Deterministic seed support for QA
+- [ ] P05-T05 500+ simulated/generated drops remain within configured bounds
+- [ ] P05-T06 Long-run tower stability: no precision drift, unreachable camera or runaway part count
+
+## P06 Progression and persistence
+- [ ] P06-T01 Coin earning tied to legitimate run performance
+- [ ] P06-T02 Cosmetic block/theme/drop-effect catalog
+- [ ] P06-T03 Server-side purchase/equip validation
+- [ ] P06-T04 Versioned profile schema and migration path
+- [ ] P06-T05 Autosave/leave save and lock/recovery rules
+- [ ] P06-T06 Real rejoin test preserves PB, coins, ownership and equipped cosmetics
+
+## P07 First-session UX and retention
+- [ ] P07-T01 First-time tutorial teaches one action in under 10 seconds
+- [ ] P07-T02 Tutorial disappears after understanding and does not obstruct play
+- [ ] P07-T03 Daily reward with duplicate-safe claim
+- [ ] P07-T04 Daily challenge based on legitimate drop/combo goals
+- [ ] P07-T05 Achievement hooks for first Perfect, combo milestones and height milestones
+- [ ] P07-T06 New-PB celebration encourages retry without delaying it
 
 ## P08 Monetization
-- [ ] P08-T01 Product/pass catalog and pricing config
-- [ ] P08-T02 Revive/boost rules
-- [ ] P08-T03 Receipt idempotency
-- [ ] P08-T04 Entitlement UI
-- [ ] P08-T05 Pure purchase tests
-- [!] P08-T06 Real Marketplace receipt/rejoin verification
+- [ ] P08-T01 Final product/pass catalog and price configuration
+- [ ] P08-T02 Revive restores a valid tower state, not an exploitably larger footprint
+- [ ] P08-T03 Perfect shield/boost has explicit limits and no leaderboard score purchase
+- [ ] P08-T04 Receipt processing is allowlisted, atomic and idempotent
+- [ ] P08-T05 Purchase prompts are explicit user actions only
+- [ ] P08-T06 Shop shows ownership/price/state clearly
+- [ ] P08-T07 Pure duplicate/retry/aborted-purchase tests
+- [!] P08-T08 Successful real Developer Product receipt + rejoin verification
 
-## P09 UI/UX
-- [ ] P09-T01 Production HUD
-- [ ] P09-T02 Retry/result flow
-- [ ] P09-T03 Shop/cosmetic presentation
-- [ ] P09-T04 Compact-phone layout
-- [ ] P09-T05 Tablet/desktop layout
-- [ ] P09-T06 Controller navigation/accessibility
+## P09 Production UI/UX
+- [ ] P09-T01 Minimal production HUD: score, combo, height, coins and PB only when useful
+- [ ] P09-T02 Result/retry flow requires at most one obvious action
+- [ ] P09-T03 Shop/cosmetic preview is visually production-ready
+- [ ] P09-T04 Compact phone safe-area and touch-target pass
+- [ ] P09-T05 Tablet/desktop scaling pass
+- [ ] P09-T06 Controller focus/navigation pass
+- [ ] P09-T07 Accessibility: contrast, non-color state cues, reduced-motion option
 
-## P10 Production Art
-- [ ] P10-T01 Environment/arena art kit
-- [ ] P10-T02 Gameplay-object production art
-- [ ] P10-T03 Character/avatar readability pass
-- [ ] P10-T04 Lighting/material pass
-- [ ] P10-T05 Screenshot-quality acceptance
+## P10 Production art and environment
+- [ ] P10-T01 Build a distinct arena/tower base with clear silhouette at normal camera distance
+- [ ] P10-T02 Blocks have intentional material, edge treatment and Perfect-state readability
+- [ ] P10-T03 Background/horizon supports height sensation without visual noise
+- [ ] P10-T04 Lighting, atmosphere and materials remain readable on mobile
+- [ ] P10-T05 Cosmetic themes visibly change presentation without changing hitboxes
+- [ ] P10-T06 Screenshot gate: mechanic is understandable from a normal gameplay screenshot
 
-## P11 Audio & VFX
-- [ ] P11-T01 Input/action feedback
-- [ ] P11-T02 Perfect/combo escalation
-- [ ] P11-T03 Failure/retry feedback
-- [ ] P11-T04 Reward/unlock feedback
-- [ ] P11-T05 Reduced-motion/audio runtime QA
+## P11 Audio and VFX
+- [ ] P11-T01 Short drop/impact cue
+- [ ] P11-T02 Distinct escalating Perfect-chain cue
+- [ ] P11-T03 Clean cut/fall feedback for overhang
+- [ ] P11-T04 Fast failure and PB/reward cues
+- [ ] P11-T05 Verified owned/Roblox-safe assets only
+- [ ] P11-T06 Reduced-motion/audio settings verified at runtime
 
-## P12 Security & Persistence
-- [ ] P12-T01 Remote/rate-limit audit
-- [ ] P12-T02 Score/currency authority audit
-- [ ] P12-T03 DataStore migration/recovery
-- [ ] P12-T04 Receipt/purchase abuse audit
-- [ ] P12-T05 Structured diagnostics
+## P12 Security and persistence hardening
+- [ ] P12-T01 Remote inventory and rate-limit audit
+- [ ] P12-T02 Server recomputes valid drop outcome; client cannot submit score/overlap
+- [ ] P12-T03 NaN/infinite/extreme-value guards
+- [ ] P12-T04 Currency/cosmetic mutation serialization
+- [ ] P12-T05 DataStore migration, stale-lock and recovery test
+- [ ] P12-T06 Structured diagnostic logging without noisy production spam
 
-## P13 Runtime QA
-- [ ] P13-T01 Full first-session journey
-- [ ] P13-T02 Repeated retry/long-session stability
-- [ ] P13-T03 Collision/reachability/edge cases
-- [ ] P13-T04 Performance baseline
-- [ ] P13-T05 Reconnect/persistence
+## P13 Mandatory full runtime journey
+- [ ] P13-T01 Fresh player: spawn → tutorial → first drop → Perfect → miss → retry
+- [ ] P13-T02 Complete a representative run and receive legitimate rewards
+- [ ] P13-T03 Buy/equip a cosmetic and confirm presentation
+- [ ] P13-T04 Fail/revive/retry paths
+- [ ] P13-T05 Respawn camera/input recovery
+- [ ] P13-T06 New-session rejoin verifies persisted PB/currency/ownership/equipment
+- [ ] P13-T07 20-minute repeated-run stability test
+- [ ] P13-T08 Runtime logs contain no gameplay-breaking errors
 
-## P14 Device & Input QA
-- [ ] P14-T01 Compact phone
-- [ ] P14-T02 Tablet
-- [ ] P14-T03 Desktop
-- [ ] P14-T04 Touch
-- [ ] P14-T05 Keyboard/mouse
-- [ ] P14-T06 Controller
+## P14 Device, performance and control QA
+- [ ] P14-T01 Compact phone touch
+- [ ] P14-T02 Tablet touch
+- [ ] P14-T03 Desktop keyboard/mouse
+- [ ] P14-T04 Controller
+- [ ] P14-T05 Character/block readability at each viewport
+- [ ] P14-T06 Stable performance and bounded tower cleanup/part count
 
 ## P15 Release
-- [ ] P15-T01 Store icon/thumbnails/metadata
+- [ ] P15-T01 Store icon, thumbnails and metadata match actual production art
 - [ ] P15-T02 Content questionnaire/privacy declarations
-- [ ] P15-T03 Private Roblox publish
-- [ ] P15-T04 Rollback/release candidate record
-- [!] P15-T05 Controlled public launch after paid receipt gate
+- [ ] P15-T03 Publish canonical build to private development place
+- [ ] P15-T04 Repeat full P13 journey in the published private place
+- [ ] P15-T05 Record build hash, place/version and rollback candidate
+- [!] P15-T06 Public release only after paid receipt/rejoin gate and zero known P0/P1 defects
 
-## P16 Live Operations
+## P16 Post-launch
 - [!] P16-T01 First telemetry review requires real players
-- [!] P16-T02 Evidence-based balance patch requires live evidence
-- [ ] P16-T03 Cosmetic/content cadence
+- [!] P16-T02 Balance changes require player evidence
+- [ ] P16-T03 Cosmetic/theme cadence
+
+## Definition of Done
+
+Perfect Drop V1 is done only when the **actual published game** is playable start-to-finish, visually production-ready, understandable without explanation, stable across supported devices, persistent across rejoin and free of known P0/P1 gameplay defects. CI alone can never close the release gate.
