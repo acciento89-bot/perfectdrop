@@ -2,7 +2,12 @@
 
 local DifficultyRules = {}
 
-function DifficultyRules.speedForHeight(height: number, initialSpeed: number, speedPerDrop: number, maxSpeed: number): number
+function DifficultyRules.speedForHeight(
+	height: number,
+	initialSpeed: number,
+	speedPerDrop: number,
+	maxSpeed: number
+): number
 	assert(height >= 0, "height must be non-negative")
 	return math.min(maxSpeed, initialSpeed + height * speedPerDrop)
 end
