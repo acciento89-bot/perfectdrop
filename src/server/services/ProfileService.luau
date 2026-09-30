@@ -10,6 +10,7 @@ local EconomyConfig = require(ReplicatedStorage.PerfectDrop.config.EconomyConfig
 local RetentionConfig = require(ReplicatedStorage.PerfectDrop.config.RetentionConfig)
 local ProfileRules = require(ReplicatedStorage.PerfectDrop.game.ProfileRules)
 local RetentionRules = require(ReplicatedStorage.PerfectDrop.game.RetentionRules)
+local RateLimiter = require(ReplicatedStorage.PerfectDrop.security.RateLimiter)
 
 local ProfileService = {}
 
@@ -30,6 +31,10 @@ end
 local profiles: { [Player]: any } = {}
 local dirty: { [Player]: boolean } = {}
 local metaChanged: RemoteEvent?
+
+local purchaseLimiter = RateLimiter.new(0.25)
+local equipLimiter = RateLimiter.new(0.15)
+local dailyLimiter = RateLimiter.new(0.75)
 
 local function keyFor(player: Player): string
 	return ("player_%d"):format(player.UserId)
@@ -430,9 +435,24 @@ function ProfileService.Start(remotes: Folder)
 		end
 		return { ok = true, meta = snapshot(profile) }
 	end
-	purchaseCosmetic.OnServerInvoke = ProfileService.PurchaseCosmetic
-	equipCosmetic.OnServerInvoke = ProfileService.EquipCosmetic
-	claimDaily.OnServerInvoke = ProfileService.ClaimDaily
+	purchaseCosmetic.OnServerInvoke = function(player, category, cosmeticId)
+		if not purchaseLimiter:Allow(player) then
+			return { ok = false, reason = "rate_limited", meta = ProfileService.GetSnapshot(player) }
+		end
+		return ProfileService.PurchaseCosmetic(player, category, cosmeticId)
+	end
+	equipCosmetic.OnServerInvoke = function(player, category, cosmeticId)
+		if not equipLimiter:Allow(player) then
+			return { ok = false, reason = "rate_limited", meta = ProfileService.GetSnapshot(player) }
+		end
+		return ProfileService.EquipCosmetic(player, category, cosmeticId)
+	end
+	claimDaily.OnServerInvoke = function(player)
+		if not dailyLimiter:Allow(player) then
+			return { ok = false, reason = "rate_limited", meta = ProfileService.GetSnapshot(player) }
+		end
+		return ProfileService.ClaimDaily(player)
+	end
 
 	Players.PlayerAdded:Connect(loadPlayer)
 	for _, player in Players:GetPlayers() do
@@ -441,6 +461,9 @@ function ProfileService.Start(remotes: Folder)
 
 	Players.PlayerRemoving:Connect(function(player)
 		savePlayer(player)
+		purchaseLimiter:Forget(player)
+		equipLimiter:Forget(player)
+		dailyLimiter:Forget(player)
 		profiles[player] = nil
 		dirty[player] = nil
 	end)

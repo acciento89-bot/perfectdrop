@@ -73,9 +73,9 @@ local function waitForOffset(player: Player, targetKind: string)
 			local topCenter, topSize = axisValues(top, axis)
 			local offset = math.abs(movingCenter - topCenter)
 
-			if targetKind == "CENTER" and offset <= 0.45 then
+			if targetKind == "PERFECT" and offset <= 0.30 then
 				return
-			elseif targetKind == "GOOD" and offset >= 1.0 and offset <= 1.7 then
+			elseif targetKind == "GOOD" and offset >= 1.20 and offset <= 1.60 then
 				return
 			elseif targetKind == "MISS" and offset >= topSize + 0.8 then
 				return
@@ -97,7 +97,13 @@ local function execute()
 	local remotes = ReplicatedStorage:WaitForChild("PerfectDropRemotes")
 	local dropRequest = remotes:WaitForChild("DropRequest") :: RemoteFunction
 	local retryRun = remotes:WaitForChild("RetryRun") :: RemoteFunction
+	local useRevive = remotes:WaitForChild("UseRevive") :: RemoteFunction
 	local requestState = remotes:WaitForChild("RequestState") :: RemoteFunction
+	local requestMeta = remotes:WaitForChild("RequestMetaState") :: RemoteFunction
+	local claimDaily = remotes:WaitForChild("ClaimDaily") :: RemoteFunction
+	local purchaseCosmetic = remotes:WaitForChild("PurchaseCosmetic") :: RemoteFunction
+	local equipCosmetic = remotes:WaitForChild("EquipCosmetic") :: RemoteFunction
+	local studioQA = remotes:WaitForChild("StudioQA") :: RemoteFunction
 
 	waitFor(function()
 		return player.Character ~= nil
@@ -119,14 +125,14 @@ local function execute()
 	local perfectCount = 0
 	local goodCount = 0
 	for index = 1, 30 do
-		local target = if index % 3 == 0 then "GOOD" else "CENTER"
+		local target = if index <= 6 then "GOOD" else "PERFECT"
 		waitForOffset(player, target)
 		local result = dropRequest:InvokeServer()
 		assert(result and result.ok, ("drop %d rejected"):format(index))
-		assert(result.grade ~= "MISS", ("drop %d unexpectedly missed"):format(index))
+		assert(result.grade ~= "MISS", ("drop %d unexpectedly missed while targeting %s"):format(index, target))
 		if result.grade == "PERFECT" then
 			perfectCount += 1
-		elseif result.grade == "GOOD" then
+		else
 			goodCount += 1
 		end
 		assert(result.state.height == index, ("drop %d height mismatch"):format(index))
@@ -175,7 +181,118 @@ local function execute()
 	end, 5, "moving block after retry")
 	pass("moving block restored after retry")
 
-	print("[Perfect Drop E2E] COMPLETE core journey passed")
+	local hud = player:WaitForChild("PlayerGui"):WaitForChild("PerfectDropHUD", 5)
+	assert(hud and hud:IsA("ScreenGui"), "PerfectDropHUD missing")
+	assert(hud:FindFirstChild("ShopButton", true) ~= nil, "Shop button missing")
+	assert(hud:FindFirstChild("DropButton", true) ~= nil, "Drop button missing")
+	assert(hud:FindFirstChild("RetryButton", true) ~= nil, "Retry button missing")
+	pass("production HUD actions mounted")
+
+	local metaBeforeDaily = requestMeta:InvokeServer()
+	assert(metaBeforeDaily and metaBeforeDaily.ok, "RequestMetaState failed")
+	assert(metaBeforeDaily.meta.dailyClaimable == true, "fresh daily reward should be claimable")
+	local coinsBeforeDaily = metaBeforeDaily.meta.coins
+
+	local daily = claimDaily:InvokeServer()
+	assert(daily and daily.ok, "daily reward claim failed")
+	assert(daily.meta.coins > coinsBeforeDaily, "daily reward did not add coins")
+	local duplicateDaily = claimDaily:InvokeServer()
+	assert(
+		duplicateDaily and duplicateDaily.ok == false and duplicateDaily.reason == "already_claimed",
+		"daily reward was not duplicate-safe"
+	)
+	pass("daily reward is granted once and duplicate-safe")
+
+	local meta = requestMeta:InvokeServer()
+	assert(meta and meta.ok, "meta unavailable after daily")
+	local earnSafety = 0
+	while meta.meta.coins < 250 do
+		earnSafety += 1
+		assert(earnSafety <= 20, "could not earn enough coins for cosmetic QA")
+		waitForOffset(player, "PERFECT")
+		local result = dropRequest:InvokeServer()
+		assert(result and result.ok and result.grade ~= "MISS", "coin-earning QA drop failed")
+		task.wait(0.12)
+		meta = requestMeta:InvokeServer()
+	end
+	pass(("legitimate economy earned %d coins"):format(meta.meta.coins))
+
+	local purchase = purchaseCosmetic:InvokeServer("block", "sunset")
+	assert(purchase and purchase.ok, "sunset cosmetic purchase failed")
+	assert(purchase.meta.ownedBlockThemes.sunset == true, "sunset ownership missing after purchase")
+	local coinsAfterPurchase = purchase.meta.coins
+	assert(coinsAfterPurchase == meta.meta.coins - 250, "sunset purchase price mismatch")
+
+	local equipped = equipCosmetic:InvokeServer("block", "sunset")
+	assert(equipped and equipped.ok, "sunset cosmetic equip failed")
+	assert(equipped.meta.equippedBlockTheme == "sunset", "sunset did not equip")
+	assert(player:GetAttribute("PDBlockTheme") == "sunset", "equipped block theme attribute did not sync")
+	pass("cosmetic purchase and equip are server-authoritative")
+
+	waitForOffset(player, "PERFECT")
+	local themedDrop = dropRequest:InvokeServer()
+	assert(themedDrop and themedDrop.ok and themedDrop.grade ~= "MISS", "themed drop failed")
+	task.wait(0.2)
+	local themedRun = getRun(player)
+	local movingAfterTheme = themedRun:FindFirstChild("MovingBlock")
+	assert(movingAfterTheme and movingAfterTheme:IsA("BasePart"), "moving block missing after cosmetic equip")
+	local expectedTheme = Color3.fromRGB(228, 114, 77)
+	local actualTheme = movingAfterTheme.Color
+	local colorDelta = math.abs(actualTheme.R - expectedTheme.R)
+		+ math.abs(actualTheme.G - expectedTheme.G)
+		+ math.abs(actualTheme.B - expectedTheme.B)
+	assert(colorDelta < 0.02, "equipped Sunset theme is not visible on moving block")
+	pass("equipped cosmetic changes live gameplay presentation")
+
+	local receipt = studioQA:InvokeServer("receipt_idempotency")
+	assert(receipt and receipt.ok, "Studio receipt idempotency probe failed")
+	assert(receipt.afterRevives == receipt.beforeRevives + 1, "duplicate receipt granted more or less than one revive")
+	pass("duplicate Developer Product receipt grants exactly once")
+
+	waitForOffset(player, "MISS")
+	local missForRevive = dropRequest:InvokeServer()
+	assert(missForRevive and missForRevive.ok and missForRevive.grade == "MISS", "revive setup miss failed")
+	local revive = useRevive:InvokeServer()
+	assert(revive and revive.ok, "revive consumption failed")
+	assert(
+		revive.state.state == "ACTIVE" and revive.state.assisted == true,
+		"revive did not resume assisted ACTIVE state"
+	)
+	assert(revive.state.revives == receipt.beforeRevives, "revive inventory did not decrement exactly once")
+	pass("revive restores last valid stack without competitive run state")
+
+	local oldCharacter = player.Character
+	local respawn = studioQA:InvokeServer("respawn")
+	assert(respawn and respawn.ok, "Studio respawn request failed")
+	waitFor(function()
+		return player.Character ~= nil and player.Character ~= oldCharacter
+	end, 8, "character respawn")
+	local newCharacter = player.Character
+	assert(newCharacter ~= nil, "new character missing")
+	local newRoot = newCharacter:WaitForChild("HumanoidRootPart", 5)
+	assert(newRoot and newRoot:IsA("BasePart"), "respawn root missing")
+	waitFor(function()
+		return camera.CameraType == Enum.CameraType.Scriptable
+			and (camera.CFrame.Position - newRoot.Position).Magnitude < 80
+	end, 5, "camera recovery after respawn")
+	pass("respawn restores character and follow camera")
+
+	local finalMeta = requestMeta:InvokeServer()
+	assert(finalMeta and finalMeta.ok, "final meta unavailable")
+	assert(finalMeta.meta.bestScore >= afterThirty.state.score, "best score did not update authoritatively")
+	assert(finalMeta.meta.bestHeight >= 30, "best height did not update authoritatively")
+	assert(finalMeta.meta.dailyChallengeRewarded == true, "daily Perfect challenge did not reward")
+	assert(finalMeta.meta.achievements.first_perfect == true, "first Perfect achievement missing")
+	assert(finalMeta.meta.achievements.height_25 == true, "height 25 achievement missing")
+	pass(
+		("progression meta valid: best=%d height=%d coins=%d"):format(
+			finalMeta.meta.bestScore,
+			finalMeta.meta.bestHeight,
+			finalMeta.meta.coins
+		)
+	)
+
+	print("[Perfect Drop E2E] COMPLETE full player journey passed")
 end
 
 function StudioJourneyProbe.Start()

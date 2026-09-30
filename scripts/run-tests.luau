@@ -2,6 +2,7 @@ local tests = {
 	require("../tests/difficulty-rules.spec"),
 	require("../tests/drop-rules.spec"),
 	require("../tests/profile-rules.spec"),
+	require("../tests/rate-limiter.spec"),
 	require("../tests/receipt-rules.spec"),
 	require("../tests/retention-rules.spec"),
 	require("../tests/round-state-rules.spec"),
