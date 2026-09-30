@@ -1,5 +1,7 @@
 --!strict
 
+local HttpService = game:GetService("HttpService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -38,7 +40,7 @@ if RunService:IsStudio() then
 		if action == "receipt_idempotency" then
 			local before = ProfileService.GetSnapshot(player)
 			assert(before ~= nil, "profile unavailable")
-			local purchaseId = ("studio-receipt-%d"):format(player.UserId)
+			local purchaseId = ("studio-receipt-%d-%s"):format(player.UserId, HttpService:GenerateGUID(false))
 			assert(ProfileService.ProcessReceipt(player, purchaseId, "Revive"), "first Studio receipt failed")
 			assert(ProfileService.ProcessReceipt(player, purchaseId, "Revive"), "duplicate Studio receipt failed")
 			local after = ProfileService.GetSnapshot(player)

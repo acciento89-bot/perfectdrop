@@ -60,7 +60,7 @@ local function bindCharacter(character: Model)
 			focus = focus:Lerp(tower + Vector3.new(0, 1.5, 0), weight)
 		end
 
-		local compact = camera.ViewportSize.X <= 760
+		local compact = math.min(camera.ViewportSize.X, camera.ViewportSize.Y) <= 500
 		camera.FieldOfView = 68
 		local distance = (if compact then 14 else 17) + math.min(if compact then 6.5 else 8, towerHeight * 0.22)
 		local height = (if compact then 8 else 9.5) + math.min(if compact then 8.5 else 10, towerHeight * 0.30)

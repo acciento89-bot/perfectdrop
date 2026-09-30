@@ -404,7 +404,7 @@ function HudController.Start(remotes: Folder)
 	shopButton.Name = "ShopButton"
 	shopButton.AnchorPoint = Vector2.new(1, 0)
 	shopButton.Position = UDim2.new(1, -18, 0, 94)
-	shopButton.Size = UDim2.fromOffset(104, 42)
+	shopButton.Size = UDim2.fromOffset(108, 48)
 	shopButton.BackgroundColor3 = SURFACE
 	shopButton.BorderSizePixel = 0
 	shopButton.Font = Enum.Font.GothamBold
@@ -525,7 +525,7 @@ function HudController.Start(remotes: Folder)
 	local close = Instance.new("TextButton")
 	close.AnchorPoint = Vector2.new(1, 0)
 	close.Position = UDim2.new(1, -14, 0, 14)
-	close.Size = UDim2.fromOffset(36, 36)
+	close.Size = UDim2.fromOffset(44, 44)
 	close.BackgroundColor3 = Color3.fromRGB(48, 55, 67)
 	close.BorderSizePixel = 0
 	close.Font = Enum.Font.GothamBold

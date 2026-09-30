@@ -3,6 +3,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local StudioJourneyProbe = {}
@@ -121,6 +122,13 @@ local function execute()
 	assert(initial and initial.ok and initial.state.state == "ACTIVE", "initial round not ACTIVE")
 	assert(initial.state.height == 0 and initial.state.score == 0, "initial round not clean")
 	pass("fresh round state")
+
+	local feedbackSound = SoundService:WaitForChild("PerfectDropPing", 5)
+	assert(feedbackSound and feedbackSound:IsA("Sound"), "feedback sound missing")
+	waitFor(function()
+		return feedbackSound.IsLoaded and feedbackSound.TimeLength > 0
+	end, 8, "Roblox-owned feedback audio load")
+	pass("Roblox-owned feedback audio loaded")
 
 	local world = Workspace:FindFirstChild("PerfectDropWorld")
 	assert(world and world:IsA("Folder"), "production world missing")
@@ -243,7 +251,25 @@ local function execute()
 	assert(hud:FindFirstChild("DropButton", true) ~= nil, "Drop button missing")
 	assert(hud:FindFirstChild("RetryButton", true) ~= nil, "Retry button missing")
 	assert(hud:FindFirstChild("AudioButton", true) ~= nil, "Audio setting button missing")
-	pass("production HUD actions mounted")
+
+	local dropUi = hud:FindFirstChild("DropButton", true)
+	local shopUi = hud:FindFirstChild("ShopButton", true)
+	local retryUi = hud:FindFirstChild("RetryButton", true)
+	local audioUi = hud:FindFirstChild("AudioButton", true)
+	assert(
+		dropUi and dropUi:IsA("GuiButton") and dropUi.AbsoluteSize.X >= 64 and dropUi.AbsoluteSize.Y >= 48,
+		"Drop touch target too small"
+	)
+	assert(
+		shopUi and shopUi:IsA("GuiButton") and shopUi.AbsoluteSize.X >= 64 and shopUi.AbsoluteSize.Y >= 44,
+		"Shop touch target too small"
+	)
+	assert(retryUi and retryUi:IsA("GuiButton") and retryUi.AbsoluteSize.Y >= 48, "Retry touch target too small")
+	assert(
+		audioUi and audioUi:IsA("GuiButton") and audioUi.AbsoluteSize.Y >= 44,
+		"Audio setting touch target too small"
+	)
+	pass(("production HUD actions mounted; viewport=%dx%d"):format(camera.ViewportSize.X, camera.ViewportSize.Y))
 
 	local metaBeforeDaily = requestMeta:InvokeServer()
 	assert(metaBeforeDaily and metaBeforeDaily.ok, "RequestMetaState failed")
@@ -360,12 +386,23 @@ function StudioJourneyProbe.Start()
 	if not RunService:IsStudio() then
 		return
 	end
-	task.defer(function()
-		local ok, err = pcall(execute)
-		if not ok then
-			warn("[Perfect Drop E2E] FAIL " .. tostring(err))
+
+	local started = false
+	local function tryStart()
+		if started or Workspace:GetAttribute("PerfectDropE2E") ~= true then
+			return
 		end
-	end)
+		started = true
+		task.defer(function()
+			local ok, err = pcall(execute)
+			if not ok then
+				warn("[Perfect Drop E2E] FAIL " .. tostring(err))
+			end
+		end)
+	end
+
+	Workspace:GetAttributeChangedSignal("PerfectDropE2E"):Connect(tryStart)
+	tryStart()
 end
 
 return StudioJourneyProbe
