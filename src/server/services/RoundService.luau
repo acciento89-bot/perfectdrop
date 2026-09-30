@@ -5,11 +5,15 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local CosmeticConfig = require(ReplicatedStorage.PerfectDrop.config.CosmeticConfig)
 local GameConfig = require(ReplicatedStorage.PerfectDrop.config.GameConfig)
 local DifficultyRules = require(ReplicatedStorage.PerfectDrop.game.DifficultyRules)
 local DropRules = require(ReplicatedStorage.PerfectDrop.game.DropRules)
 local RoundStateRules = require(ReplicatedStorage.PerfectDrop.game.RoundStateRules)
 local ScoreRules = require(ReplicatedStorage.PerfectDrop.game.ScoreRules)
+local RateLimiter = require(ReplicatedStorage.PerfectDrop.security.RateLimiter)
+
+local ProfileService = require(script.Parent.ProfileService)
 local WorldService = require(script.Parent.WorldService)
 
 type Session = {
@@ -21,10 +25,10 @@ type Session = {
 	score: number,
 	combo: number,
 	revivesUsed: number,
+	assisted: boolean,
 	topBlock: Part,
 	movingBlock: Part?,
 	moveStartedAt: number,
-	lastDropAt: number,
 	axis: "X" | "Z",
 }
 
@@ -32,22 +36,40 @@ local RoundService = {}
 local sessions: { [Player]: Session } = {}
 local stateChanged: RemoteEvent
 
+local dropLimiter = RateLimiter.new(0.10)
+local retryLimiter = RateLimiter.new(0.35)
+local reviveLimiter = RateLimiter.new(0.35)
+
+local function rgb(values): Color3
+	return Color3.fromRGB(values[1], values[2], values[3])
+end
+
+local function themeFor(player: Player)
+	local profile = ProfileService.Get(player)
+	local themeId = if profile then profile.EquippedBlockTheme else CosmeticConfig.DefaultBlockTheme
+	return CosmeticConfig.BlockThemes[themeId] or CosmeticConfig.BlockThemes[CosmeticConfig.DefaultBlockTheme]
+end
+
 local function colorForGrade(grade: string): Color3
 	if grade == "PERFECT" then
 		return Color3.fromRGB(255, 194, 66)
 	elseif grade == "GOOD" then
 		return Color3.fromRGB(69, 206, 159)
+	elseif grade == "SHIELD" then
+		return Color3.fromRGB(137, 121, 255)
 	end
 	return Color3.fromRGB(241, 86, 91)
 end
 
 local function snapshot(session: Session)
+	local meta = ProfileService.GetSnapshot(session.player)
 	return {
 		state = session.state,
 		height = session.height,
 		score = session.score,
 		combo = session.combo,
 		revivesUsed = session.revivesUsed,
+		assisted = session.assisted,
 		axis = session.axis,
 		speed = DifficultyRules.speedForHeight(
 			session.height,
@@ -55,6 +77,11 @@ local function snapshot(session: Session)
 			GameConfig.Block.SpeedPerDrop,
 			GameConfig.Block.MaxSpeed
 		),
+		coins = if meta then meta.coins else 0,
+		bestScore = if meta then meta.bestScore else 0,
+		bestHeight = if meta then meta.bestHeight else 0,
+		revives = if meta then meta.revives else 0,
+		perfectShields = if meta then meta.perfectShields else 0,
 	}
 end
 
@@ -132,25 +159,33 @@ local function createMoving(session: Session)
 		else top.Position.Z - GameConfig.Block.TravelHalfDistance
 	position = setAxis(position, axis, start)
 
-	local moving = makeBlock("MovingBlock", top.Size, position, Color3.fromRGB(83, 99, 122), top.Parent, true)
+	local theme = themeFor(session.player)
+	local moving = makeBlock("MovingBlock", top.Size, position, rgb(theme.MovingRGB), top.Parent, true)
 	moving:SetAttribute("Active", true)
 	session.movingBlock = moving
 	session.moveStartedAt = os.clock()
 end
 
 local function startRun(player: Player)
+	local profile = ProfileService.WaitForProfile(player)
+	if not profile or not player.Parent then
+		return
+	end
+
 	local area, origin = WorldService.EnsurePlayerArea(player)
+	WorldService.ApplyArenaTheme(player)
 	cleanRun(area)
 
 	local run = Instance.new("Folder")
 	run.Name = "Run"
 	run.Parent = area
 
+	local theme = themeFor(player)
 	local base = makeBlock(
 		"Stack_0",
 		Vector3.new(GameConfig.Block.BaseSize, GameConfig.Block.Height, GameConfig.Block.BaseSize),
 		origin + Vector3.new(0, 1.2 + GameConfig.Block.Height / 2, 0),
-		Color3.fromRGB(56, 66, 81),
+		rgb(theme.BaseRGB),
 		run,
 		true
 	)
@@ -164,10 +199,10 @@ local function startRun(player: Player)
 		score = 0,
 		combo = 0,
 		revivesUsed = 0,
+		assisted = false,
 		topBlock = base,
 		movingBlock = nil,
 		moveStartedAt = 0,
-		lastDropAt = -math.huge,
 		axis = "X",
 	}
 	sessions[player] = session
@@ -176,6 +211,7 @@ local function startRun(player: Player)
 	player:SetAttribute("PDHeight", 0)
 	player:SetAttribute("PDScore", 0)
 	player:SetAttribute("PDCombo", 0)
+	player:SetAttribute("PDAssisted", false)
 
 	createMoving(session)
 	emit(session)
@@ -214,6 +250,7 @@ local function updatePlayerAttributes(session: Session)
 	player:SetAttribute("PDHeight", session.height)
 	player:SetAttribute("PDScore", session.score)
 	player:SetAttribute("PDCombo", session.combo)
+	player:SetAttribute("PDAssisted", session.assisted)
 end
 
 local function handleDrop(player: Player)
@@ -221,12 +258,9 @@ local function handleDrop(player: Player)
 	if not session or not RoundStateRules.canDrop(session.state) then
 		return { ok = false, reason = "invalid_state" }
 	end
-
-	local now = os.clock()
-	if now - session.lastDropAt < 0.12 then
+	if not dropLimiter:Allow(player) then
 		return { ok = false, reason = "rate_limited" }
 	end
-	session.lastDropAt = now
 
 	local moving = session.movingBlock
 	if not moving or not moving.Parent then
@@ -247,6 +281,19 @@ local function handleDrop(player: Player)
 	moving:SetAttribute("Active", false)
 	session.movingBlock = nil
 
+	local shielded = false
+	if result.grade == "MISS" and ProfileService.ConsumePerfectShield(player) then
+		shielded = true
+		session.assisted = true
+		result = {
+			grade = "GOOD",
+			offset = 0,
+			overlapSize = previousSize,
+			overlapCenter = previousCenter,
+			lostSize = 0,
+		}
+	end
+
 	if result.grade == "MISS" then
 		session.state = "FAILED"
 		session.combo = 0
@@ -260,13 +307,15 @@ local function handleDrop(player: Player)
 		return { ok = true, grade = "MISS", state = snapshot(session) }
 	end
 
-	createOverhang(session, moving, result.overlapCenter, result.overlapSize, result.offset)
+	if not shielded then
+		createOverhang(session, moving, result.overlapCenter, result.overlapSize, result.offset)
+	end
 
-	local acceptedCenter = if result.grade == "PERFECT" then previousCenter else result.overlapCenter
+	local acceptedCenter = if result.grade == "PERFECT" or shielded then previousCenter else result.overlapCenter
 	moving.Position = setAxis(moving.Position, session.axis, acceptedCenter)
 	moving.Size = resizeAxis(moving.Size, session.axis, result.overlapSize)
 	moving.Name = ("Stack_%d"):format(session.height + 1)
-	moving.Color = colorForGrade(result.grade)
+	moving.Color = colorForGrade(if shielded then "SHIELD" else result.grade)
 	moving.Anchored = true
 
 	local points, nextCombo = ScoreRules.pointsForDrop(
@@ -282,8 +331,16 @@ local function handleDrop(player: Player)
 	session.score += points
 	session.combo = nextCombo
 	session.topBlock = moving
+	local rewardCoins = ProfileService.RecordDrop(
+		player,
+		result.grade,
+		session.score,
+		session.height,
+		session.combo,
+		not session.assisted
+	)
 	updatePlayerAttributes(session)
-	emit(session, result.grade)
+	emit(session, if shielded then "SHIELD" else result.grade)
 
 	task.delay(0.1, function()
 		if sessions[player] == session and session.state == "ACTIVE" then
@@ -292,7 +349,36 @@ local function handleDrop(player: Player)
 		end
 	end)
 
-	return { ok = true, grade = result.grade, points = points, state = snapshot(session) }
+	return {
+		ok = true,
+		grade = if shielded then "SHIELD" else result.grade,
+		points = points,
+		rewardCoins = rewardCoins,
+		state = snapshot(session),
+	}
+end
+
+local function handleRevive(player: Player)
+	local session = sessions[player]
+	if
+		not session or not RoundStateRules.canRevive(session.state, session.revivesUsed, GameConfig.Round.MaxRevives)
+	then
+		return { ok = false, reason = "invalid_state" }
+	end
+	if not reviveLimiter:Allow(player) then
+		return { ok = false, reason = "rate_limited" }
+	end
+	if not ProfileService.ConsumeRevive(player) then
+		return { ok = false, reason = "no_revive" }
+	end
+
+	session.revivesUsed += 1
+	session.assisted = true
+	session.state = "ACTIVE"
+	updatePlayerAttributes(session)
+	createMoving(session)
+	emit(session, "REVIVE")
+	return { ok = true, state = snapshot(session) }
 end
 
 local function updateMoving(session: Session)
@@ -321,6 +407,7 @@ function RoundService.Start(remotes: Folder)
 	stateChanged = remotes:WaitForChild("RoundStateChanged") :: RemoteEvent
 	local dropRequest = remotes:WaitForChild("DropRequest") :: RemoteFunction
 	local retryRun = remotes:WaitForChild("RetryRun") :: RemoteFunction
+	local useRevive = remotes:WaitForChild("UseRevive") :: RemoteFunction
 	local requestState = remotes:WaitForChild("RequestState") :: RemoteFunction
 
 	dropRequest.OnServerInvoke = handleDrop
@@ -329,14 +416,25 @@ function RoundService.Start(remotes: Folder)
 		if session and not RoundStateRules.canRetry(session.state) then
 			return { ok = false, reason = "invalid_state" }
 		end
+		if not retryLimiter:Allow(player) then
+			return { ok = false, reason = "rate_limited" }
+		end
 		startRun(player)
-		return { ok = true, state = snapshot(sessions[player]) }
+		local fresh = sessions[player]
+		if not fresh then
+			return { ok = false, reason = "profile_unavailable" }
+		end
+		return { ok = true, state = snapshot(fresh) }
 	end
+	useRevive.OnServerInvoke = handleRevive
 	requestState.OnServerInvoke = function(player)
 		local session = sessions[player]
 		if not session then
 			startRun(player)
 			session = sessions[player]
+		end
+		if not session then
+			return { ok = false, reason = "profile_unavailable" }
 		end
 		return { ok = true, state = snapshot(session) }
 	end
@@ -357,6 +455,9 @@ end
 
 function RoundService.RemovePlayer(player: Player)
 	sessions[player] = nil
+	dropLimiter:Forget(player)
+	retryLimiter:Forget(player)
+	reviveLimiter:Forget(player)
 end
 
 return RoundService
