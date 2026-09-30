@@ -121,7 +121,9 @@ local function execute()
 	local initial = requestState:InvokeServer()
 	assert(initial and initial.ok and initial.state.state == "ACTIVE", "initial round not ACTIVE")
 	assert(initial.state.height == 0 and initial.state.score == 0, "initial round not clean")
-	pass("fresh round state")
+	local startingPlayerLevel = initial.state.playerLevel or 1
+	local startingTowersCompleted = initial.state.towersCompleted or 0
+	pass(("fresh round state; starting level=%d towers=%d"):format(startingPlayerLevel, startingTowersCompleted))
 
 	local feedbackSound = SoundService:WaitForChild("PerfectDropPing", 5)
 	assert(feedbackSound and feedbackSound:IsA("Sound"), "feedback sound missing")
@@ -146,6 +148,10 @@ local function execute()
 	assert(artMoving:FindFirstChild("TopFinish") ~= nil, "block top treatment missing")
 	assert(artRun:FindFirstChild("LandingGuide") ~= nil, "Perfect landing guide missing")
 	pass("production art landmarks, active-block treatment and landing guide mounted")
+	if Workspace:GetAttribute("PerfectDropCapture") == true then
+		print("[Perfect Drop Capture] GAMEPLAY")
+		task.wait(4)
+	end
 
 	local perfectCount = 0
 	local goodCount = 0
@@ -169,8 +175,14 @@ local function execute()
 	local afterThirty = requestState:InvokeServer()
 	assert(afterThirty.ok and afterThirty.state.height == 30, "30-stage tower height mismatch")
 	assert(afterThirty.state.state == "COMPLETED", "stage 30 did not complete the tower")
-	assert(afterThirty.state.playerLevel == 2, "player level did not increase after tower completion")
-	assert(afterThirty.state.towersCompleted == 1, "completed tower count did not increase")
+	assert(
+		afterThirty.state.playerLevel == startingPlayerLevel + 1,
+		"player level did not increase exactly once after tower completion"
+	)
+	assert(
+		afterThirty.state.towersCompleted == startingTowersCompleted + 1,
+		"completed tower count did not increase exactly once"
+	)
 	pass(
 		("30-stage tower complete; PERFECT=%d GOOD=%d score=%d playerLevel=%d"):format(
 			perfectCount,
@@ -206,6 +218,10 @@ local function execute()
 			and fill.Size.X.Scale >= 0.999
 	end, 3, "30/30 completion HUD")
 	pass("30/30 HUD shows full progress and NEXT TOWER completion state")
+	if Workspace:GetAttribute("PerfectDropCapture") == true then
+		print("[Perfect Drop Capture] COMPLETE")
+		task.wait(4)
+	end
 
 	assert(
 		(camera.CFrame.Position - player.Character.HumanoidRootPart.Position).Magnitude < 60,
@@ -217,10 +233,22 @@ local function execute()
 	assert(blockedAfterComplete and blockedAfterComplete.ok == false, "drop accepted after COMPLETED")
 	pass("stage 30 blocks further drops")
 
+	local completedRun = run
+	local completedDescendantCount = #completedRun:GetDescendants()
+	assert(
+		completedDescendantCount < 260,
+		("completed tower leaked too many descendants: %d"):format(completedDescendantCount)
+	)
+
 	local nextTower = retryRun:InvokeServer()
 	assert(nextTower and nextTower.ok, "NEXT TOWER request rejected")
 	assert(nextTower.state.state == "ACTIVE" and nextTower.state.height == 0, "next tower did not reset to stage 0")
-	pass("NEXT TOWER starts clean while keeping player level")
+	waitFor(function()
+		return completedRun.Parent == nil
+	end, 3, "completed run cleanup")
+	local freshRun = getRun(player)
+	assert(#freshRun:GetDescendants() < 50, "fresh tower contains leaked prior-run geometry")
+	pass("NEXT TOWER cleans prior tower and starts bounded fresh state while keeping player level")
 
 	waitForOffset(player, "MISS")
 	local miss = dropRequest:InvokeServer()
@@ -270,42 +298,63 @@ local function execute()
 		"Audio setting touch target too small"
 	)
 	pass(("production HUD actions mounted; viewport=%dx%d"):format(camera.ViewportSize.X, camera.ViewportSize.Y))
+	if Workspace:GetAttribute("PerfectDropCapture") == true then
+		local shopPanel = hud:FindFirstChild("ShopPanel", true)
+		assert(shopPanel and shopPanel:IsA("Frame"), "ShopPanel missing for capture")
+		shopPanel.Visible = true
+		print("[Perfect Drop Capture] SHOP")
+		task.wait(4)
+		shopPanel.Visible = false
+	end
 
 	local metaBeforeDaily = requestMeta:InvokeServer()
 	assert(metaBeforeDaily and metaBeforeDaily.ok, "RequestMetaState failed")
-	assert(metaBeforeDaily.meta.dailyClaimable == true, "fresh daily reward should be claimable")
-	local coinsBeforeDaily = metaBeforeDaily.meta.coins
-
-	local daily = claimDaily:InvokeServer()
-	assert(daily and daily.ok, "daily reward claim failed")
-	assert(daily.meta.coins > coinsBeforeDaily, "daily reward did not add coins")
-	task.wait(0.8)
-	local duplicateDaily = claimDaily:InvokeServer()
-	assert(
-		duplicateDaily and duplicateDaily.ok == false and duplicateDaily.reason == "already_claimed",
-		"daily reward was not duplicate-safe"
-	)
-	pass("daily reward is granted once and duplicate-safe")
+	if metaBeforeDaily.meta.dailyClaimable == true then
+		local coinsBeforeDaily = metaBeforeDaily.meta.coins
+		local daily = claimDaily:InvokeServer()
+		assert(daily and daily.ok, "daily reward claim failed")
+		assert(daily.meta.coins > coinsBeforeDaily, "daily reward did not add coins")
+		task.wait(0.8)
+		local duplicateDaily = claimDaily:InvokeServer()
+		assert(
+			duplicateDaily and duplicateDaily.ok == false and duplicateDaily.reason == "already_claimed",
+			"daily reward was not duplicate-safe"
+		)
+		pass("daily reward granted once and duplicate-safe")
+	else
+		local duplicateDaily = claimDaily:InvokeServer()
+		assert(
+			duplicateDaily and duplicateDaily.ok == false and duplicateDaily.reason == "already_claimed",
+			"persisted claimed daily unexpectedly became claimable"
+		)
+		pass("persisted daily-claim state remains duplicate-safe")
+	end
 
 	local meta = requestMeta:InvokeServer()
 	assert(meta and meta.ok, "meta unavailable after daily")
-	local earnSafety = 0
-	while meta.meta.coins < 250 do
-		earnSafety += 1
-		assert(earnSafety <= 20, "could not earn enough coins for cosmetic QA")
-		waitForOffset(player, "PERFECT")
-		local result = dropRequest:InvokeServer()
-		assert(result and result.ok and result.grade ~= "MISS", "coin-earning QA drop failed")
-		task.wait(0.12)
-		meta = requestMeta:InvokeServer()
-	end
-	pass(("legitimate economy earned %d coins"):format(meta.meta.coins))
+	local ownsSunset = meta.meta.ownedBlockThemes.sunset == true
+	if not ownsSunset then
+		local earnSafety = 0
+		while meta.meta.coins < 250 do
+			earnSafety += 1
+			assert(earnSafety <= 20, "could not earn enough coins for cosmetic QA")
+			waitForOffset(player, "PERFECT")
+			local result = dropRequest:InvokeServer()
+			assert(result and result.ok and result.grade ~= "MISS", "coin-earning QA drop failed")
+			task.wait(0.12)
+			meta = requestMeta:InvokeServer()
+		end
+		pass(("legitimate economy earned %d coins"):format(meta.meta.coins))
 
-	local purchase = purchaseCosmetic:InvokeServer("block", "sunset")
-	assert(purchase and purchase.ok, "sunset cosmetic purchase failed")
-	assert(purchase.meta.ownedBlockThemes.sunset == true, "sunset ownership missing after purchase")
-	local coinsAfterPurchase = purchase.meta.coins
-	assert(coinsAfterPurchase == meta.meta.coins - 250, "sunset purchase price mismatch")
+		local coinsBeforePurchase = meta.meta.coins
+		local purchase = purchaseCosmetic:InvokeServer("block", "sunset")
+		assert(purchase and purchase.ok, "sunset cosmetic purchase failed")
+		assert(purchase.meta.ownedBlockThemes.sunset == true, "sunset ownership missing after purchase")
+		assert(purchase.meta.coins == coinsBeforePurchase - 250, "sunset purchase price mismatch")
+		pass("cosmetic purchase is server-authoritative")
+	else
+		pass("persisted Sunset cosmetic ownership restored")
+	end
 
 	local equipped = equipCosmetic:InvokeServer("block", "sunset")
 	assert(equipped and equipped.ok, "sunset cosmetic equip failed")

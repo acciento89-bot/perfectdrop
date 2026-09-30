@@ -82,6 +82,7 @@ local function makeActionButton(parent: Instance, text: string, color: Color3?):
 	button.TextColor3 = TEXT
 	button.Text = text
 	button.AutoButtonColor = true
+	button.Selectable = true
 	button.Parent = parent
 	round(button, 12)
 	stroke(button, Color3.fromRGB(78, 88, 104), 0.35)
@@ -333,7 +334,7 @@ function HudController.Start(remotes: Folder)
 	textConstraint(status, 10, 17)
 	local statusSize = Instance.new("UISizeConstraint")
 	statusSize.MaxSize = Vector2.new(720, 62)
-	statusSize.MinSize = Vector2.new(300, 58)
+	statusSize.MinSize = Vector2.new(258, 56)
 	statusSize.Parent = status
 
 	local progressTrack = Instance.new("Frame")
@@ -372,7 +373,7 @@ function HudController.Start(remotes: Folder)
 	textConstraint(tutorial, 12, 16)
 	local tutorialSize = Instance.new("UISizeConstraint")
 	tutorialSize.MaxSize = Vector2.new(560, 54)
-	tutorialSize.MinSize = Vector2.new(280, 50)
+	tutorialSize.MinSize = Vector2.new(244, 48)
 	tutorialSize.Parent = tutorial
 
 	feedback = Instance.new("TextLabel")
@@ -397,6 +398,7 @@ function HudController.Start(remotes: Folder)
 	dropButton.TextSize = 20
 	dropButton.TextColor3 = Color3.fromRGB(24, 28, 34)
 	dropButton.Text = "DROP"
+	dropButton.Selectable = true
 	dropButton.Parent = gui
 	round(dropButton, 16)
 
@@ -411,6 +413,7 @@ function HudController.Start(remotes: Folder)
 	shopButton.TextSize = 14
 	shopButton.TextColor3 = TEXT
 	shopButton.Text = "SHOP"
+	shopButton.Selectable = true
 	shopButton.Parent = gui
 	round(shopButton, 12)
 	stroke(shopButton, Color3.fromRGB(82, 93, 110), 0.25)
@@ -429,7 +432,7 @@ function HudController.Start(remotes: Folder)
 	stroke(resultPanel, Color3.fromRGB(241, 86, 91), 0.12)
 	local resultSize = Instance.new("UISizeConstraint")
 	resultSize.MaxSize = Vector2.new(520, 244)
-	resultSize.MinSize = Vector2.new(310, 230)
+	resultSize.MinSize = Vector2.new(266, 220)
 	resultSize.Parent = resultPanel
 
 	resultTitle = Instance.new("TextLabel")
@@ -463,6 +466,7 @@ function HudController.Start(remotes: Folder)
 	retryButton.TextSize = 18
 	retryButton.TextColor3 = Color3.fromRGB(24, 28, 34)
 	retryButton.Text = "RETRY"
+	retryButton.Selectable = true
 	retryButton.Parent = resultPanel
 	round(retryButton, 14)
 
@@ -477,6 +481,7 @@ function HudController.Start(remotes: Folder)
 	reviveButton.TextSize = 15
 	reviveButton.TextColor3 = TEXT
 	reviveButton.Text = "USE REVIVE"
+	reviveButton.Selectable = true
 	reviveButton.Visible = false
 	reviveButton.Parent = resultPanel
 	round(reviveButton, 14)
@@ -496,7 +501,7 @@ function HudController.Start(remotes: Folder)
 	stroke(shopPanel, ACCENT, 0.12)
 	local shopSize = Instance.new("UISizeConstraint")
 	shopSize.MaxSize = Vector2.new(620, 610)
-	shopSize.MinSize = Vector2.new(300, 300)
+	shopSize.MinSize = Vector2.new(266, 290)
 	shopSize.Parent = shopPanel
 
 	local shopTitle = Instance.new("TextLabel")
@@ -532,6 +537,7 @@ function HudController.Start(remotes: Folder)
 	close.TextSize = 18
 	close.TextColor3 = TEXT
 	close.Text = "×"
+	close.Selectable = true
 	close.Parent = shopPanel
 	round(close, 10)
 

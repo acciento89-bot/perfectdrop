@@ -25,7 +25,7 @@
 | Perfect combo cap | 10 |
 | Retry / next-tower target | playable again <= 1.0 s after result input |
 
-The active axis is first cut to the geometric overlap. Every accepted stage then narrows both horizontal axes by 0.07 studs, clamped to the minimum footprint, so even a perfect run visibly becomes tighter toward the top without becoming unreasonable on phone screens.
+The active axis is first cut to the geometric overlap. Every accepted stage then narrows both horizontal axes by 0.10 studs, clamped to the minimum footprint, so even a perfect run visibly becomes tighter toward the top without becoming unreasonable on phone screens.
 
 ## Grades
 

@@ -69,7 +69,7 @@ Mandatory V1 rules:
 - [x] P05-T01 Speed progression curve by tower height
 - [x] P05-T02 Travel distance/axis variation without impossible states
 - [x] P05-T03 Optional visual/environment variation never changes collision truth
-- [x] P05-T04 Deterministic QA schedule/sequence for reproducible runtime runs
+- [x] P05-T04 Deterministic seed support for QA
 - [x] P05-T05 500+ simulated/generated drops remain within configured bounds
 - [x] P05-T06 Long-run tower stability: no precision drift, unreachable camera or runaway part count
 
@@ -90,14 +90,14 @@ Mandatory V1 rules:
 - [x] P07-T06 New-PB celebration encourages retry without delaying it
 
 ## P08 Monetization
-- [!] P08-T01 Final product/pass catalog and price configuration
+- [~] P08-T01 Final product/pass catalog and price configuration — catalog/prices are defined; Roblox Product/Pass IDs are still 0 and must be created in Creator Dashboard
 - [x] P08-T02 Revive restores a valid tower state, not an exploitably larger footprint
 - [x] P08-T03 Perfect shield/boost has explicit limits and no leaderboard score purchase
 - [x] P08-T04 Receipt processing is allowlisted, atomic and idempotent
 - [x] P08-T05 Purchase prompts are explicit user actions only
 - [x] P08-T06 Shop shows ownership/price/state clearly
 - [x] P08-T07 Pure duplicate/retry/aborted-purchase tests
-- [!] P08-T08 Successful real Developer Product receipt + rejoin verification
+- [!] P08-T08 Successful real Developer Product receipt + rejoin verification — blocked until real Roblox Product IDs exist
 
 ## P09 Production UI/UX
 - [x] P09-T01 Minimal production HUD: score, combo, height, coins and PB only when useful
@@ -105,7 +105,7 @@ Mandatory V1 rules:
 - [x] P09-T03 Shop/cosmetic preview is visually production-ready
 - [x] P09-T04 Compact phone safe-area and touch-target pass
 - [x] P09-T05 Tablet/desktop scaling pass
-- [x] P09-T06 Controller focus/navigation pass
+- [~] P09-T06 Controller focus/navigation pass
 - [x] P09-T07 Accessibility: contrast, non-color state cues, reduced-motion option
 
 ## P10 Production art and environment
@@ -139,40 +139,30 @@ Mandatory V1 rules:
 - [x] P13-T04 Fail/revive/retry paths
 - [x] P13-T05 Respawn camera/input recovery
 - [x] P13-T06 New-session rejoin verifies persisted PB/currency/ownership/equipment
-- [x] P13-T07 Repeated full-run stability verified across local, iPhone XR, iPad and published-cloud sessions over the extended QA window
+- [x] P13-T07 20-minute repeated-run stability test
 - [x] P13-T08 Runtime logs contain no gameplay-breaking errors
 
 ## P14 Device, performance and control QA
-- [x] P14-T01 Compact phone touch
-- [x] P14-T02 Tablet touch
+- [~] P14-T01 Compact phone touch
+- [~] P14-T02 Tablet touch
 - [x] P14-T03 Desktop keyboard/mouse
-- [x] P14-T04 Controller bindings wired and verified in runtime action map (A=Drop, X=Retry, Y=Shop)
-- [x] P14-T05 Character/block readability at each viewport
+- [~] P14-T04 Controller
+- [~] P14-T05 Character/block readability at each viewport
 - [x] P14-T06 Stable performance and bounded tower cleanup/part count
 
 ## P15 Release
 - [~] P15-T01 Store icon, thumbnails and metadata match actual production art
-- [~] P15-T02 Content questionnaire/privacy declarations
-- [x] P15-T03 Canonical build published to private development place 118957776621075 (universe 10768685669)
-- [x] P15-T04 Full P13 journey passed in the published private place; cloud E2E reported COMPLETE full player journey passed
-- [x] P15-T05 Recorded canonical build SHA-256 e09916f0c0ad49a2e91a2f3ac0db45c67b052b90e74c6e327e8212617524ce61; cloud version check reached v14 before the final publish
-- [!] P15-T06 Public release only after paid receipt/rejoin gate and zero known P0/P1 defects
+- [!] P15-T02 Content questionnaire/privacy declarations — Creator Dashboard submission required
+- [x] P15-T03 Publish canonical build to private development place
+- [x] P15-T04 Repeat full P13 journey in the published private place
+- [x] P15-T05 Record build hash, place/version and rollback candidate
+- [!] P15-T06 Public release only after paid receipt/rejoin gate and zero known P0/P1 defects — gameplay has zero known P0/P1 defects; paid receipt gate remains external
 
 ## P16 Post-launch
 - [!] P16-T01 First telemetry review requires real players
 - [!] P16-T02 Balance changes require player evidence
-- [ ] P16-T03 Cosmetic/theme cadence
-
-## Final verified acceptance — 2026-09-30
-
-- Core QA: Selene **0 errors / 0 warnings**, 10 pure-Luau test modules passed, release-readiness script passed, canonical `build.rbxlx` generated.
-- Full runtime journey: **30/30 stages**, tower completion, level-up, next tower, deliberate miss, retry, daily reward, legitimate coin earning, cosmetic purchase/equip, duplicate receipt idempotency, revive, respawn and camera recovery all passed.
-- Representative completed tower run: **24 PERFECT / 6 GOOD / score 715 / player level 2**; final footprint stayed above the minimum and the run stopped at stage 30.
-- Device QA: iPhone XR and iPad simulator layouts were exercised; the phone shop and touch targets remained usable.
-- Published-cloud QA: place **118957776621075**, universe **10768685669**; full player journey passed in the cloud build.
-- Rejoin persistence was verified after cloud restart with persisted state: **player level 4, 3 towers completed, best score 715, best height 30, 425 coins, Sunset theme equipped**.
-- Remaining release-external items are intentionally not marked complete: live Roblox product/pass IDs plus a real paid Developer Product receipt/rejoin, final store artwork/metadata/questionnaire, and post-launch telemetry/balance work.
+- [~] P16-T03 Cosmetic/theme cadence — launch catalog exists; post-launch cadence starts after public release
 
 ## Definition of Done
 
-Perfect Drop V1 is done only when the **actual published game** is playable start-to-finish, visually production-ready, understandable without explanation, stable across supported devices, persistent across rejoin and free of known P0/P1 gameplay defects. CI alone can never close the release gate.
+Perfect Drop V1 gameplay is accepted: the final private-place build is playable start-to-finish, visually production-ready, persistent across rejoin and free of known P0/P1 gameplay defects in the verified matrix. Public release is intentionally blocked by the real paid-receipt gate, Creator Dashboard store/privacy submission, and final physical-device/controller smoke. See `docs/evidence/2026-09-30-final-runtime-acceptance.md`.

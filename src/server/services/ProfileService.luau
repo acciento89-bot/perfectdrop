@@ -402,6 +402,14 @@ function ProfileService.ProcessReceipt(player: Player, purchaseId: string, produ
 
 	local nowUnix = os.time()
 
+	-- Flush unsaved progression before the atomic receipt transaction.
+	-- Otherwise the receipt UpdateAsync could reload an older stored profile
+	-- and overwrite fresh tower/level/currency progress in memory.
+	if dataStore and dirty[player] and not savePlayer(player) then
+		warn(("[Perfect Drop] receipt pre-save failed for %d"):format(player.UserId))
+		return false
+	end
+
 	if not dataStore then
 		if not RunService:IsStudio() then
 			return false
