@@ -5,12 +5,16 @@ local GameConfig = {
 	Block = {
 		BaseSize = 10,
 		Height = 1.2,
-		TravelHalfDistance = 14,
-		InitialSpeed = 12,
-		SpeedPerDrop = 0.45,
-		MaxSpeed = 22,
-		PerfectTolerance = 0.35,
-		MinimumFootprint = 1.25,
+		TravelHalfDistance = 12,
+		InitialSpeed = 10.5,
+		SpeedPerDrop = 0.25,
+		MaxSpeed = 17.5,
+		PerfectTolerance = 0.45,
+		MinimumFootprint = 1.75,
+		StageShrinkPerDrop = 0.10,
+	},
+	Progression = {
+		MaxStages = 30,
 	},
 	Scoring = {
 		GoodBase = 10,

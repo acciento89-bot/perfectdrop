@@ -54,13 +54,18 @@ local function bindCharacter(character: Model)
 		local towerHeight = math.max(0, Players.LocalPlayer:GetAttribute("PDHeight") or 0)
 		local focus = root.Position + Vector3.new(0, 2.5, 0)
 		if tower then
-			local weight = math.clamp(0.35 + towerHeight * 0.012, 0.35, 0.62)
+			-- Keep avatar and active landing area in one close composition.
+			-- The capped blend prevents the camera from drifting too far away on stage 30.
+			local weight = math.clamp(0.28 + towerHeight * 0.009, 0.28, 0.55)
 			focus = focus:Lerp(tower + Vector3.new(0, 1.5, 0), weight)
 		end
 
-		local distance = 28 + math.min(16, towerHeight * 0.55)
-		local height = 15 + math.min(18, towerHeight * 0.5)
-		local desired = CFrame.lookAt(focus + Vector3.new(22, height, distance), focus, Vector3.yAxis)
+		local compact = camera.ViewportSize.X <= 760
+		camera.FieldOfView = 68
+		local distance = (if compact then 14 else 17) + math.min(if compact then 6.5 else 8, towerHeight * 0.22)
+		local height = (if compact then 8 else 9.5) + math.min(if compact then 8.5 else 10, towerHeight * 0.30)
+		local side = if compact then 9.5 else 13
+		local desired = CFrame.lookAt(focus + Vector3.new(side, height, distance), focus, Vector3.yAxis)
 		local alpha = math.clamp(1 - math.exp(-8 * dt), 0, 1)
 		camera.CFrame = camera.CFrame:Lerp(desired, alpha)
 		camera.Focus = CFrame.new(focus)

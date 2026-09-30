@@ -11,6 +11,7 @@ local DifficultyRules = require(ReplicatedStorage.PerfectDrop.game.DifficultyRul
 local DropRules = require(ReplicatedStorage.PerfectDrop.game.DropRules)
 local RoundStateRules = require(ReplicatedStorage.PerfectDrop.game.RoundStateRules)
 local ScoreRules = require(ReplicatedStorage.PerfectDrop.game.ScoreRules)
+local StageRules = require(ReplicatedStorage.PerfectDrop.game.StageRules)
 local RateLimiter = require(ReplicatedStorage.PerfectDrop.security.RateLimiter)
 
 local ProfileService = require(script.Parent.ProfileService)
@@ -80,6 +81,9 @@ local function snapshot(session: Session)
 		coins = if meta then meta.coins else 0,
 		bestScore = if meta then meta.bestScore else 0,
 		bestHeight = if meta then meta.bestHeight else 0,
+		playerLevel = if meta then meta.playerLevel else 1,
+		towersCompleted = if meta then meta.towersCompleted else 0,
+		maxStages = GameConfig.Progression.MaxStages,
 		revives = if meta then meta.revives else 0,
 		perfectShields = if meta then meta.perfectShields else 0,
 	}
@@ -107,7 +111,49 @@ local function makeBlock(
 	block.TopSurface = Enum.SurfaceType.Smooth
 	block.BottomSurface = Enum.SurfaceType.Smooth
 	block.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.35, 0.1)
+	block.CastShadow = true
 	block.Parent = parent
+
+	if name ~= "Overhang" then
+		local surface = Instance.new("SurfaceGui")
+		surface.Name = "TopFinish"
+		surface.Face = Enum.NormalId.Top
+		surface.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+		surface.CanvasSize = Vector2.new(320, 320)
+		surface.LightInfluence = 0.45
+		surface.Parent = block
+
+		local inset = Instance.new("Frame")
+		inset.Position = UDim2.fromOffset(10, 10)
+		inset.Size = UDim2.new(1, -20, 1, -20)
+		inset.BackgroundColor3 = color:Lerp(Color3.new(1, 1, 1), 0.08)
+		inset.BackgroundTransparency = 0.55
+		inset.BorderSizePixel = 0
+		inset.Parent = surface
+
+		local insetCorner = Instance.new("UICorner")
+		insetCorner.CornerRadius = UDim.new(0, 18)
+		insetCorner.Parent = inset
+
+		local insetStroke = Instance.new("UIStroke")
+		insetStroke.Color = Color3.fromRGB(235, 240, 248)
+		insetStroke.Thickness = 3
+		insetStroke.Transparency = 0.58
+		insetStroke.Parent = inset
+
+		local axisLineX = Instance.new("Frame")
+		axisLineX.AnchorPoint = Vector2.new(0.5, 0.5)
+		axisLineX.Position = UDim2.fromScale(0.5, 0.5)
+		axisLineX.Size = UDim2.new(0, 2, 1, -56)
+		axisLineX.BackgroundColor3 = Color3.fromRGB(239, 243, 249)
+		axisLineX.BackgroundTransparency = 0.86
+		axisLineX.BorderSizePixel = 0
+		axisLineX.Parent = surface
+
+		local axisLineZ = axisLineX:Clone()
+		axisLineZ.Size = UDim2.new(1, -56, 0, 2)
+		axisLineZ.Parent = surface
+	end
 
 	local edge = Instance.new("SelectionBox")
 	edge.Name = "Edge"
@@ -147,9 +193,51 @@ local function resizeAxis(size: Vector3, axis: "X" | "Z", value: number): Vector
 	return Vector3.new(size.X, size.Y, value)
 end
 
+local function clearLandingGuide(session: Session)
+	local guide = session.folder:FindFirstChild("LandingGuide")
+	if guide then
+		guide:Destroy()
+	end
+end
+
+local function createLandingGuide(session: Session, axis: "X" | "Z")
+	clearLandingGuide(session)
+	local top = session.topBlock
+	local size
+	if axis == "X" then
+		size = Vector3.new(GameConfig.Block.PerfectTolerance * 2, 0.06, math.max(0.6, top.Size.Z - 0.36))
+	else
+		size = Vector3.new(math.max(0.6, top.Size.X - 0.36), 0.06, GameConfig.Block.PerfectTolerance * 2)
+	end
+
+	local guide = Instance.new("Part")
+	guide.Name = "LandingGuide"
+	guide.Size = size
+	guide.CFrame = top.CFrame + Vector3.new(0, top.Size.Y / 2 + 0.07, 0)
+	guide.Anchored = true
+	guide.CanCollide = false
+	guide.CanTouch = false
+	guide.CanQuery = false
+	guide.Material = Enum.Material.Neon
+	guide.Color = Color3.fromRGB(255, 194, 66)
+	guide.Transparency = 0.30
+	guide.CastShadow = false
+	guide.Parent = session.folder
+
+	local light = Instance.new("SurfaceLight")
+	light.Face = Enum.NormalId.Top
+	light.Color = guide.Color
+	light.Brightness = 0.45
+	light.Range = 4
+	light.Angle = 90
+	light.Shadows = false
+	light.Parent = guide
+end
+
 local function createMoving(session: Session)
 	local axis = DifficultyRules.axisForHeight(session.height)
 	session.axis = axis
+	createLandingGuide(session, axis)
 
 	local top = session.topBlock
 	local y = top.Position.Y + GameConfig.Block.Height
@@ -162,6 +250,16 @@ local function createMoving(session: Session)
 	local theme = themeFor(session.player)
 	local moving = makeBlock("MovingBlock", top.Size, position, rgb(theme.MovingRGB), top.Parent, true)
 	moving:SetAttribute("Active", true)
+
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "ActiveGlow"
+	highlight.Adornee = moving
+	highlight.FillTransparency = 0.92
+	highlight.OutlineColor = Color3.fromRGB(255, 194, 66)
+	highlight.OutlineTransparency = 0.2
+	highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+	highlight.Parent = moving
+
 	session.movingBlock = moving
 	session.moveStartedAt = os.clock()
 end
@@ -253,6 +351,31 @@ local function updatePlayerAttributes(session: Session)
 	player:SetAttribute("PDAssisted", session.assisted)
 end
 
+local function motionCenterAt(session: Session, sampleTime: number): number
+	local speed = DifficultyRules.speedForHeight(
+		session.height,
+		GameConfig.Block.InitialSpeed,
+		GameConfig.Block.SpeedPerDrop,
+		GameConfig.Block.MaxSpeed
+	)
+	local half = GameConfig.Block.TravelHalfDistance
+	local elapsed = math.max(0, sampleTime - session.moveStartedAt)
+	local cyclePosition = (elapsed * speed / (2 * half)) % 2
+	local alpha = if cyclePosition <= 1 then cyclePosition else 2 - cyclePosition
+	local delta = -half + alpha * (2 * half)
+	local topCenter = if session.axis == "X" then session.topBlock.Position.X else session.topBlock.Position.Z
+	return topCenter + delta
+end
+
+local function gradeRank(grade: string): number
+	if grade == "PERFECT" then
+		return 3
+	elseif grade == "GOOD" then
+		return 2
+	end
+	return 1
+end
+
 local function handleDrop(player: Player)
 	local session = sessions[player]
 	if not session or not RoundStateRules.canDrop(session.state) then
@@ -268,18 +391,48 @@ local function handleDrop(player: Player)
 	end
 
 	local previousCenter, previousSize = blockAxisValues(session.topBlock, session.axis)
-	local movingCenter, movingSize = blockAxisValues(moving, session.axis)
-	local result = DropRules.evaluate(
+	local _, movingSize = blockAxisValues(moving, session.axis)
+	local now = os.clock()
+	local currentCenter = motionCenterAt(session, now)
+	local networkGrace = math.clamp(0.035 + player:GetNetworkPing() * 0.5, 0.035, 0.13)
+	local rewindCenter = motionCenterAt(session, now - networkGrace)
+
+	local currentResult = DropRules.evaluate(
 		previousCenter,
 		previousSize,
-		movingCenter,
+		currentCenter,
+		movingSize,
+		GameConfig.Block.PerfectTolerance,
+		GameConfig.Block.MinimumFootprint
+	)
+	local rewindResult = DropRules.evaluate(
+		previousCenter,
+		previousSize,
+		rewindCenter,
 		movingSize,
 		GameConfig.Block.PerfectTolerance,
 		GameConfig.Block.MinimumFootprint
 	)
 
+	local result = currentResult
+	local evaluatedCenter = currentCenter
+	if
+		gradeRank(rewindResult.grade) > gradeRank(currentResult.grade)
+		or (
+			gradeRank(rewindResult.grade) == gradeRank(currentResult.grade)
+			and math.abs(rewindResult.offset) < math.abs(currentResult.offset)
+		)
+	then
+		result = rewindResult
+		evaluatedCenter = rewindCenter
+	end
+
+	-- Use the server-selected compensated position for all cut geometry. The client
+	-- still never submits overlap, grade or score.
+	moving.Position = setAxis(moving.Position, session.axis, evaluatedCenter)
 	moving:SetAttribute("Active", false)
 	session.movingBlock = nil
+	clearLandingGuide(session)
 
 	local shielded = false
 	if result.grade == "MISS" and ProfileService.ConsumePerfectShield(player) then
@@ -314,9 +467,34 @@ local function handleDrop(player: Player)
 	local acceptedCenter = if result.grade == "PERFECT" or shielded then previousCenter else result.overlapCenter
 	moving.Position = setAxis(moving.Position, session.axis, acceptedCenter)
 	moving.Size = resizeAxis(moving.Size, session.axis, result.overlapSize)
-	moving.Name = ("Stack_%d"):format(session.height + 1)
-	moving.Color = colorForGrade(if shielded then "SHIELD" else result.grade)
+	moving.Size =
+		StageRules.shrinkFootprint(moving.Size, GameConfig.Block.StageShrinkPerDrop, GameConfig.Block.MinimumFootprint)
+	local acceptedStage = session.height + 1
+	moving.Name = ("Stack_%d"):format(acceptedStage)
+	local theme = themeFor(player)
+	local baseColor = rgb(theme.BaseRGB)
+	local movingColor = rgb(theme.MovingRGB)
+	local towerAlpha = math.clamp(0.18 + acceptedStage / GameConfig.Progression.MaxStages * 0.52, 0.18, 0.70)
+	moving.Color = baseColor:Lerp(movingColor, towerAlpha)
 	moving.Anchored = true
+
+	local activeGlow = moving:FindFirstChild("ActiveGlow")
+	if activeGlow then
+		activeGlow:Destroy()
+	end
+	local topFinish = moving:FindFirstChild("TopFinish")
+	if topFinish and topFinish:IsA("SurfaceGui") then
+		local inset = topFinish:FindFirstChildOfClass("Frame")
+		if inset then
+			inset.BackgroundColor3 = moving.Color:Lerp(Color3.new(1, 1, 1), 0.08)
+		end
+	end
+
+	local gradeEdge = moving:FindFirstChild("Edge")
+	if gradeEdge and gradeEdge:IsA("SelectionBox") then
+		gradeEdge.Color3 = colorForGrade(if shielded then "SHIELD" else result.grade)
+		gradeEdge.LineThickness = if result.grade == "PERFECT" then 0.06 else 0.04
+	end
 
 	local points, nextCombo = ScoreRules.pointsForDrop(
 		result.grade,
@@ -339,21 +517,33 @@ local function handleDrop(player: Player)
 		session.combo,
 		not session.assisted
 	)
-	updatePlayerAttributes(session)
-	emit(session, if shielded then "SHIELD" else result.grade)
 
-	task.delay(0.1, function()
-		if sessions[player] == session and session.state == "ACTIVE" then
-			createMoving(session)
-			emit(session)
-		end
-	end)
+	local completed = StageRules.isTowerComplete(session.height, GameConfig.Progression.MaxStages)
+	local completionCoins = 0
+	if completed then
+		session.state = "COMPLETED"
+		completionCoins = ProfileService.CompleteTower(player, not session.assisted)
+	end
+
+	updatePlayerAttributes(session)
+	emit(session, if completed then "TOWER COMPLETE" elseif shielded then "SHIELD" else result.grade)
+
+	if not completed then
+		task.delay(0.1, function()
+			if sessions[player] == session and session.state == "ACTIVE" then
+				createMoving(session)
+				emit(session)
+			end
+		end)
+	end
 
 	return {
 		ok = true,
 		grade = if shielded then "SHIELD" else result.grade,
+		completed = completed,
 		points = points,
 		rewardCoins = rewardCoins,
+		completionCoins = completionCoins,
 		state = snapshot(session),
 	}
 end
@@ -387,20 +577,8 @@ local function updateMoving(session: Session)
 		return
 	end
 
-	local top = session.topBlock
-	local speed = DifficultyRules.speedForHeight(
-		session.height,
-		GameConfig.Block.InitialSpeed,
-		GameConfig.Block.SpeedPerDrop,
-		GameConfig.Block.MaxSpeed
-	)
-	local half = GameConfig.Block.TravelHalfDistance
-	local elapsed = os.clock() - session.moveStartedAt
-	local cyclePosition = (elapsed * speed / (2 * half)) % 2
-	local alpha = if cyclePosition <= 1 then cyclePosition else 2 - cyclePosition
-	local delta = -half + alpha * (2 * half)
-	local baseCenter = if session.axis == "X" then top.Position.X else top.Position.Z
-	moving.Position = setAxis(moving.Position, session.axis, baseCenter + delta)
+	local center = motionCenterAt(session, os.clock())
+	moving.Position = setAxis(moving.Position, session.axis, center)
 end
 
 function RoundService.Start(remotes: Folder)

@@ -1,13 +1,18 @@
 --!strict
 
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
+local GameConfig = require(ReplicatedStorage.PerfectDrop.config.GameConfig)
+local UserInputService = game:GetService("UserInputService")
 
 local HudController = {}
 
 local player = Players.LocalPlayer
 local gui: ScreenGui
 local status: TextLabel
+local stageProgressFill: Frame
 local tutorial: TextLabel
 local feedback: TextLabel
 local dropButton: TextButton
@@ -22,6 +27,7 @@ local shopCoins: TextLabel
 local dailyButton: TextButton
 local challengeLabel: TextLabel
 local reducedMotionButton: TextButton
+local audioButton: TextButton
 local currentState = "ACTIVE"
 local currentMeta = nil
 local themeButtons: { [TextButton]: { category: string, id: string } } = {}
@@ -93,17 +99,22 @@ local function updateTopStatus()
 	local score = player:GetAttribute("PDScore") or 0
 	local height = player:GetAttribute("PDHeight") or 0
 	local combo = player:GetAttribute("PDCombo") or 0
+	local level = metaValue("playerLevel", player:GetAttribute("PDPlayerLevel") or 1)
 	local coins = metaValue("coins", player:GetAttribute("PDCoins") or 0)
-	local best = metaValue("bestScore", player:GetAttribute("PDBestScore") or 0)
 	local assisted = player:GetAttribute("PDAssisted") == true
-	status.Text = ("SCORE  %d    HEIGHT  %d    PERFECT x%d    BEST  %d    ◈ %d%s"):format(
-		score,
+	status.Text = ("LV %d       STAGE %d/%d       ◈ %d\nSCORE %d       PERFECT x%d%s"):format(
+		level,
 		height,
-		combo,
-		best,
+		GameConfig.Progression.MaxStages,
 		coins,
-		if assisted then "    ASSISTED" else ""
+		score,
+		combo,
+		if assisted then "       ASSISTED" else ""
 	)
+	if stageProgressFill then
+		local progress = math.clamp(height / GameConfig.Progression.MaxStages, 0, 1)
+		stageProgressFill.Size = UDim2.fromScale(progress, 1)
+	end
 end
 
 local function showGrade(grade: string?)
@@ -114,7 +125,7 @@ local function showGrade(grade: string?)
 	feedback.TextTransparency = 0
 	feedback.Size = UDim2.fromOffset(300, 72)
 	feedback.Visible = true
-	if grade == "PERFECT" then
+	if grade == "PERFECT" or grade == "TOWER COMPLETE" then
 		feedback.TextColor3 = Color3.fromRGB(255, 194, 66)
 	elseif grade == "GOOD" then
 		feedback.TextColor3 = Color3.fromRGB(69, 206, 159)
@@ -143,21 +154,39 @@ end
 
 local function updateResult(state)
 	local failed = state.state == "FAILED"
-	resultPanel.Visible = failed
-	if not failed then
+	local completed = state.state == "COMPLETED"
+	resultPanel.Visible = failed or completed
+	if not failed and not completed then
 		return
 	end
+
 	local best = metaValue("bestScore", state.bestScore or 0)
-	resultTitle.Text = "RUN OVER"
-	resultSummary.Text = ("Score %d   •   Height %d   •   Best %d%s"):format(
-		state.score or 0,
-		state.height or 0,
-		best,
-		if state.assisted then "\nAssisted run — PB protected" else ""
-	)
-	local revives = metaValue("revives", state.revives or 0)
-	reviveButton.Visible = (state.revivesUsed or 0) < 1 and revives > 0
-	reviveButton.Text = ("USE REVIVE  (%d)"):format(revives)
+	if completed then
+		local level = metaValue("playerLevel", state.playerLevel or 1)
+		resultTitle.Text = "TOWER COMPLETE!"
+		resultTitle.TextColor3 = Color3.fromRGB(255, 194, 66)
+		resultSummary.Text = ("30/30 stages cleared  •  Score %d  •  Player Level %d\n+75 ◈ tower bonus%s"):format(
+			state.score or 0,
+			level,
+			if state.assisted then "  •  Assisted run" else ""
+		)
+		retryButton.Text = "NEXT TOWER"
+		reviveButton.Visible = false
+	else
+		resultTitle.Text = "RUN OVER"
+		resultTitle.TextColor3 = Color3.fromRGB(241, 86, 91)
+		resultSummary.Text = ("Score %d   •   Stage %d/%d   •   Best %d%s"):format(
+			state.score or 0,
+			state.height or 0,
+			GameConfig.Progression.MaxStages,
+			best,
+			if state.assisted then "\nAssisted run — PB protected" else ""
+		)
+		retryButton.Text = "RETRY"
+		local revives = metaValue("revives", state.revives or 0)
+		reviveButton.Visible = (state.revivesUsed or 0) < 1 and revives > 0
+		reviveButton.Text = ("USE REVIVE  (%d)"):format(revives)
+	end
 end
 
 local function ownedFor(category: string, id: string): boolean
@@ -231,6 +260,7 @@ local function refreshShop()
 	reducedMotionButton.Text = if player:GetAttribute("PDReducedMotion") == true
 		then "REDUCED MOTION  ON"
 		else "REDUCED MOTION  OFF"
+	audioButton.Text = if player:GetAttribute("PDAudioMuted") == true then "AUDIO  OFF" else "AUDIO  ON"
 end
 
 local function setShopVisible(visible: boolean)
@@ -260,11 +290,11 @@ function HudController.ApplyState(state, grade: string?)
 	showGrade(grade)
 	updateResult(state)
 
-	local failed = currentState == "FAILED"
-	dropButton.Visible = not failed and not shopPanel.Visible
+	local blocked = currentState == "FAILED" or currentState == "COMPLETED"
+	dropButton.Visible = not blocked and not shopPanel.Visible
 
 	local bestHeight = metaValue("bestHeight", player:GetAttribute("PDBestHeight") or 0)
-	tutorial.Visible = not failed and bestHeight == 0 and (state.height or 0) < 2 and not shopPanel.Visible
+	tutorial.Visible = not blocked and bestHeight == 0 and (state.height or 0) < 2 and not shopPanel.Visible
 	if state.assisted then
 		status.TextColor3 = Color3.fromRGB(219, 211, 255)
 	else
@@ -288,26 +318,46 @@ function HudController.Start(remotes: Folder)
 
 	status = Instance.new("TextLabel")
 	status.AnchorPoint = Vector2.new(0.5, 0)
-	status.Position = UDim2.new(0.5, 0, 0, 18)
-	status.Size = UDim2.new(1, -36, 0, 48)
+	status.Position = UDim2.new(0.5, 0, 0, 16)
+	status.Size = UDim2.new(1, -36, 0, 62)
 	status.BackgroundColor3 = SURFACE
-	status.BackgroundTransparency = 0.05
+	status.BackgroundTransparency = 0.04
 	status.BorderSizePixel = 0
 	status.Font = Enum.Font.GothamBold
 	status.TextScaled = true
 	status.TextColor3 = TEXT
+	status.TextWrapped = true
 	status.Parent = gui
 	round(status, 14)
 	stroke(status, ACCENT)
-	textConstraint(status, 12, 18)
+	textConstraint(status, 10, 17)
 	local statusSize = Instance.new("UISizeConstraint")
-	statusSize.MaxSize = Vector2.new(720, 48)
-	statusSize.MinSize = Vector2.new(300, 44)
+	statusSize.MaxSize = Vector2.new(720, 62)
+	statusSize.MinSize = Vector2.new(300, 58)
 	statusSize.Parent = status
+
+	local progressTrack = Instance.new("Frame")
+	progressTrack.Name = "StageProgress"
+	progressTrack.AnchorPoint = Vector2.new(0.5, 1)
+	progressTrack.Position = UDim2.new(0.5, 0, 1, -5)
+	progressTrack.Size = UDim2.new(1, -24, 0, 4)
+	progressTrack.BackgroundColor3 = Color3.fromRGB(67, 76, 90)
+	progressTrack.BorderSizePixel = 0
+	progressTrack.ClipsDescendants = true
+	progressTrack.Parent = status
+	round(progressTrack, 3)
+
+	stageProgressFill = Instance.new("Frame")
+	stageProgressFill.Name = "Fill"
+	stageProgressFill.Size = UDim2.fromScale(0, 1)
+	stageProgressFill.BackgroundColor3 = ACCENT
+	stageProgressFill.BorderSizePixel = 0
+	stageProgressFill.Parent = progressTrack
+	round(stageProgressFill, 3)
 
 	tutorial = Instance.new("TextLabel")
 	tutorial.AnchorPoint = Vector2.new(0.5, 0)
-	tutorial.Position = UDim2.new(0.5, 0, 0, 78)
+	tutorial.Position = UDim2.new(0.5, 0, 0, 90)
 	tutorial.Size = UDim2.new(1, -54, 0, 54)
 	tutorial.BackgroundColor3 = Color3.fromRGB(29, 35, 44)
 	tutorial.BackgroundTransparency = 0.06
@@ -316,7 +366,7 @@ function HudController.Start(remotes: Folder)
 	tutorial.TextScaled = true
 	tutorial.TextWrapped = true
 	tutorial.TextColor3 = Color3.fromRGB(231, 236, 244)
-	tutorial.Text = "DROP when the moving block lines up. Perfect timing keeps the full platform."
+	tutorial.Text = "DROP when the block lines up. Clear 30 stages to level up — every stage gets a little narrower."
 	tutorial.Parent = gui
 	round(tutorial, 12)
 	textConstraint(tutorial, 12, 16)
@@ -353,7 +403,7 @@ function HudController.Start(remotes: Folder)
 	shopButton = Instance.new("TextButton")
 	shopButton.Name = "ShopButton"
 	shopButton.AnchorPoint = Vector2.new(1, 0)
-	shopButton.Position = UDim2.new(1, -18, 0, 82)
+	shopButton.Position = UDim2.new(1, -18, 0, 94)
 	shopButton.Size = UDim2.fromOffset(104, 42)
 	shopButton.BackgroundColor3 = SURFACE
 	shopButton.BorderSizePixel = 0
@@ -434,8 +484,10 @@ function HudController.Start(remotes: Folder)
 	shopPanel = Instance.new("Frame")
 	shopPanel.Name = "ShopPanel"
 	shopPanel.AnchorPoint = Vector2.new(0.5, 0.5)
-	shopPanel.Position = UDim2.fromScale(0.5, 0.52)
-	shopPanel.Size = UDim2.fromScale(0.92, 0.78)
+	shopPanel.Position = if UserInputService.TouchEnabled
+		then UDim2.fromScale(0.5, 0.57)
+		else UDim2.fromScale(0.5, 0.52)
+	shopPanel.Size = if UserInputService.TouchEnabled then UDim2.fromScale(0.88, 0.68) else UDim2.fromScale(0.92, 0.78)
 	shopPanel.BackgroundColor3 = SURFACE
 	shopPanel.BorderSizePixel = 0
 	shopPanel.Visible = false
@@ -444,7 +496,7 @@ function HudController.Start(remotes: Folder)
 	stroke(shopPanel, ACCENT, 0.12)
 	local shopSize = Instance.new("UISizeConstraint")
 	shopSize.MaxSize = Vector2.new(620, 610)
-	shopSize.MinSize = Vector2.new(320, 430)
+	shopSize.MinSize = Vector2.new(300, 300)
 	shopSize.Parent = shopPanel
 
 	local shopTitle = Instance.new("TextLabel")
@@ -452,7 +504,7 @@ function HudController.Start(remotes: Folder)
 	shopTitle.Size = UDim2.new(1, -130, 0, 38)
 	shopTitle.BackgroundTransparency = 1
 	shopTitle.Font = Enum.Font.GothamBlack
-	shopTitle.TextSize = 24
+	shopTitle.TextSize = if UserInputService.TouchEnabled then 20 else 24
 	shopTitle.TextXAlignment = Enum.TextXAlignment.Left
 	shopTitle.TextColor3 = TEXT
 	shopTitle.Text = "PERFECT DROP"
@@ -524,7 +576,11 @@ function HudController.Start(remotes: Folder)
 	end
 
 	reducedMotionButton = makeActionButton(scroll, "REDUCED MOTION  OFF")
+	reducedMotionButton.Name = "ReducedMotionButton"
 	reducedMotionButton.LayoutOrder = 50
+	audioButton = makeActionButton(scroll, "AUDIO  ON")
+	audioButton.Name = "AudioButton"
+	audioButton.LayoutOrder = 51
 
 	local requestState = remotes:WaitForChild("RequestState") :: RemoteFunction
 	local requestMeta = remotes:WaitForChild("RequestMetaState") :: RemoteFunction
@@ -578,6 +634,10 @@ function HudController.Start(remotes: Folder)
 
 	reducedMotionButton.Activated:Connect(function()
 		player:SetAttribute("PDReducedMotion", not (player:GetAttribute("PDReducedMotion") == true))
+		refreshShop()
+	end)
+	audioButton.Activated:Connect(function()
+		player:SetAttribute("PDAudioMuted", not (player:GetAttribute("PDAudioMuted") == true))
 		refreshShop()
 	end)
 

@@ -8,6 +8,7 @@ local tests = {
 	require("../tests/round-state-rules.spec"),
 	require("../tests/score-rules.spec"),
 	require("../tests/simulation-rules.spec"),
+	require("../tests/stage-rules.spec"),
 }
 
 for index, result in tests do

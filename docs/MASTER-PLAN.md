@@ -22,7 +22,7 @@ Score, best score, Perfect/Good/Miss grades, combo rules, anti-exploit validatio
 Deterministic challenge/platform generation, difficulty curve, safe bounds and replay variety.
 
 ## P06 Progression
-Coins, lightweight unlock curve, cosmetic ownership and persistent player profile.
+Coins, cosmetics and a persistent player profile. Every tower is exactly 30 stages; clearing stage 30 increments persistent Player Level by one, grants the completion reward and unlocks the NEXT TOWER loop.
 
 ## P07 Retention
 Daily reward, simple daily challenge, achievement hooks and personal best celebration.

@@ -37,7 +37,8 @@ function InputController.Start(remotes: Folder, hud)
 	end
 
 	local function requestRetry()
-		if hud.GetState() ~= "FAILED" or not throttle(0.2) then
+		local state = hud.GetState()
+		if (state ~= "FAILED" and state ~= "COMPLETED") or not throttle(0.2) then
 			return
 		end
 		busy = true

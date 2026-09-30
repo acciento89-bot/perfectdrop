@@ -89,7 +89,7 @@ end
 
 local function execute()
 	assert(RunService:IsStudio(), "StudioJourneyProbe is Studio-only")
-	if Workspace:GetAttribute("PerfectDropE2E") == false then
+	if Workspace:GetAttribute("PerfectDropE2E") ~= true then
 		return
 	end
 
@@ -122,6 +122,23 @@ local function execute()
 	assert(initial.state.height == 0 and initial.state.score == 0, "initial round not clean")
 	pass("fresh round state")
 
+	local world = Workspace:FindFirstChild("PerfectDropWorld")
+	assert(world and world:IsA("Folder"), "production world missing")
+	assert(world:FindFirstChild("SunDisc") ~= nil, "sunset focal light missing")
+	local area = world:FindFirstChild(tostring(player.UserId))
+	assert(area and area:IsA("Folder"), "player production area missing")
+	assert(area:FindFirstChild("StageMilestone_10") ~= nil, "stage 10 world marker missing")
+	assert(area:FindFirstChild("StageMilestone_20") ~= nil, "stage 20 world marker missing")
+	assert(area:FindFirstChild("StageMilestone_30") ~= nil, "stage 30 world marker missing")
+	assert(area:FindFirstChild("FinishCrown") ~= nil, "finish crown missing")
+	local artRun = getRun(player)
+	local artMoving = artRun:FindFirstChild("MovingBlock")
+	assert(artMoving and artMoving:IsA("BasePart"), "moving block missing for art gate")
+	assert(artMoving:FindFirstChild("ActiveGlow") ~= nil, "active block highlight missing")
+	assert(artMoving:FindFirstChild("TopFinish") ~= nil, "block top treatment missing")
+	assert(artRun:FindFirstChild("LandingGuide") ~= nil, "Perfect landing guide missing")
+	pass("production art landmarks, active-block treatment and landing guide mounted")
+
 	local perfectCount = 0
 	local goodCount = 0
 	for index = 1, 30 do
@@ -142,22 +159,60 @@ local function execute()
 	assert(perfectCount >= 5, ("too few Perfect runtime hits: %d"):format(perfectCount))
 	assert(goodCount >= 5, ("too few Good runtime hits: %d"):format(goodCount))
 	local afterThirty = requestState:InvokeServer()
-	assert(afterThirty.ok and afterThirty.state.height == 30, "30-drop run height mismatch")
-	assert(afterThirty.state.state == "ACTIVE", "30-drop run left ACTIVE state")
+	assert(afterThirty.ok and afterThirty.state.height == 30, "30-stage tower height mismatch")
+	assert(afterThirty.state.state == "COMPLETED", "stage 30 did not complete the tower")
+	assert(afterThirty.state.playerLevel == 2, "player level did not increase after tower completion")
+	assert(afterThirty.state.towersCompleted == 1, "completed tower count did not increase")
 	pass(
-		("30 consecutive mixed drops; PERFECT=%d GOOD=%d score=%d combo=%d"):format(
+		("30-stage tower complete; PERFECT=%d GOOD=%d score=%d playerLevel=%d"):format(
 			perfectCount,
 			goodCount,
 			afterThirty.state.score,
-			afterThirty.state.combo
+			afterThirty.state.playerLevel
 		)
 	)
 
 	local run = getRun(player)
 	local top = getTop(run)
-	assert(top ~= nil, "top block missing after 30 drops")
-	assert(top.Size.X >= 1.25 and top.Size.Z >= 1.25, "footprint fell below configured minimum")
-	pass(("tower footprint valid %.2fx%.2f"):format(top.Size.X, top.Size.Z))
+	assert(top ~= nil, "top block missing after stage 30")
+	assert(top.Size.X >= 1.75 and top.Size.Z >= 1.75, "footprint fell below configured minimum")
+	assert(top.Size.X < 10 and top.Size.Z < 10, "tower did not become narrower over 30 stages")
+	assert(run:FindFirstChild("MovingBlock") == nil, "moving block continued after stage 30")
+	pass(("tower narrows safely to %.2fx%.2f and stops at 30/30"):format(top.Size.X, top.Size.Z))
+
+	local completionHud = player:WaitForChild("PlayerGui"):WaitForChild("PerfectDropHUD", 5)
+	assert(completionHud and completionHud:IsA("ScreenGui"), "PerfectDropHUD missing at completion")
+	waitFor(function()
+		local panel = completionHud:FindFirstChild("ResultPanel", true)
+		local retryButton = completionHud:FindFirstChild("RetryButton", true)
+		local progress = completionHud:FindFirstChild("StageProgress", true)
+		local fill = progress and progress:FindFirstChild("Fill")
+		return panel ~= nil
+			and panel:IsA("Frame")
+			and panel.Visible
+			and retryButton ~= nil
+			and retryButton:IsA("TextButton")
+			and retryButton.Text == "NEXT TOWER"
+			and fill ~= nil
+			and fill:IsA("Frame")
+			and fill.Size.X.Scale >= 0.999
+	end, 3, "30/30 completion HUD")
+	pass("30/30 HUD shows full progress and NEXT TOWER completion state")
+
+	assert(
+		(camera.CFrame.Position - player.Character.HumanoidRootPart.Position).Magnitude < 60,
+		"camera drifted too far away at stage 30"
+	)
+	pass("stage-30 camera remains close enough for mobile readability")
+
+	local blockedAfterComplete = dropRequest:InvokeServer()
+	assert(blockedAfterComplete and blockedAfterComplete.ok == false, "drop accepted after COMPLETED")
+	pass("stage 30 blocks further drops")
+
+	local nextTower = retryRun:InvokeServer()
+	assert(nextTower and nextTower.ok, "NEXT TOWER request rejected")
+	assert(nextTower.state.state == "ACTIVE" and nextTower.state.height == 0, "next tower did not reset to stage 0")
+	pass("NEXT TOWER starts clean while keeping player level")
 
 	waitForOffset(player, "MISS")
 	local miss = dropRequest:InvokeServer()
@@ -169,6 +224,7 @@ local function execute()
 	assert(duplicate and duplicate.ok == false, "drop accepted after FAILED")
 	pass("post-failure drop rejected")
 
+	task.wait(0.4)
 	local retry = retryRun:InvokeServer()
 	assert(retry and retry.ok, "RetryRun rejected")
 	assert(retry.state.state == "ACTIVE", "retry did not restore ACTIVE")
@@ -186,6 +242,7 @@ local function execute()
 	assert(hud:FindFirstChild("ShopButton", true) ~= nil, "Shop button missing")
 	assert(hud:FindFirstChild("DropButton", true) ~= nil, "Drop button missing")
 	assert(hud:FindFirstChild("RetryButton", true) ~= nil, "Retry button missing")
+	assert(hud:FindFirstChild("AudioButton", true) ~= nil, "Audio setting button missing")
 	pass("production HUD actions mounted")
 
 	local metaBeforeDaily = requestMeta:InvokeServer()
@@ -196,6 +253,7 @@ local function execute()
 	local daily = claimDaily:InvokeServer()
 	assert(daily and daily.ok, "daily reward claim failed")
 	assert(daily.meta.coins > coinsBeforeDaily, "daily reward did not add coins")
+	task.wait(0.8)
 	local duplicateDaily = claimDaily:InvokeServer()
 	assert(
 		duplicateDaily and duplicateDaily.ok == false and duplicateDaily.reason == "already_claimed",
@@ -280,7 +338,10 @@ local function execute()
 	local finalMeta = requestMeta:InvokeServer()
 	assert(finalMeta and finalMeta.ok, "final meta unavailable")
 	assert(finalMeta.meta.bestScore >= afterThirty.state.score, "best score did not update authoritatively")
-	assert(finalMeta.meta.bestHeight >= 30, "best height did not update authoritatively")
+	assert(finalMeta.meta.bestHeight >= 30, "best stage did not update authoritatively")
+	assert(finalMeta.meta.playerLevel >= 2, "persistent player level did not retain tower completion")
+	assert(finalMeta.meta.towersCompleted >= 1, "persistent completed tower count missing")
+	assert(finalMeta.meta.achievements.first_tower == true, "tower completion achievement missing")
 	assert(finalMeta.meta.dailyChallengeRewarded == true, "daily Perfect challenge did not reward")
 	assert(finalMeta.meta.achievements.first_perfect == true, "first Perfect achievement missing")
 	assert(finalMeta.meta.achievements.height_25 == true, "height 25 achievement missing")

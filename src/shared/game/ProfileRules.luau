@@ -8,6 +8,8 @@ export type Profile = {
 	Coins: number,
 	BestScore: number,
 	BestHeight: number,
+	PlayerLevel: number,
+	TowersCompleted: number,
 	OwnedBlockThemes: { [string]: boolean },
 	OwnedArenaThemes: { [string]: boolean },
 	EquippedBlockTheme: string,
@@ -37,6 +39,8 @@ function ProfileRules.defaultProfile(): Profile
 		Coins = 0,
 		BestScore = 0,
 		BestHeight = 0,
+		PlayerLevel = 1,
+		TowersCompleted = 0,
 		OwnedBlockThemes = { [CosmeticConfig.DefaultBlockTheme] = true },
 		OwnedArenaThemes = { [CosmeticConfig.DefaultArenaTheme] = true },
 		EquippedBlockTheme = CosmeticConfig.DefaultBlockTheme,
@@ -73,6 +77,8 @@ function ProfileRules.normalize(value): Profile
 	profile.Coins = math.max(0, math.floor(tonumber(value.Coins) or 0))
 	profile.BestScore = math.max(0, math.floor(tonumber(value.BestScore) or 0))
 	profile.BestHeight = math.max(0, math.floor(tonumber(value.BestHeight) or 0))
+	profile.PlayerLevel = math.max(1, math.floor(tonumber(value.PlayerLevel) or 1))
+	profile.TowersCompleted = math.max(0, math.floor(tonumber(value.TowersCompleted) or 0))
 	profile.DailyLastClaimDay = math.floor(tonumber(value.DailyLastClaimDay) or -1)
 	profile.DailyChallengeDay = math.floor(tonumber(value.DailyChallengeDay) or -1)
 	profile.DailyChallengePerfects = math.max(0, math.floor(tonumber(value.DailyChallengePerfects) or 0))

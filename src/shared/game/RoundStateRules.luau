@@ -7,7 +7,7 @@ function RoundStateRules.canDrop(state: string): boolean
 end
 
 function RoundStateRules.canRetry(state: string): boolean
-	return state == "FAILED"
+	return state == "FAILED" or state == "COMPLETED"
 end
 
 function RoundStateRules.canRevive(state: string, revivesUsed: number, maxRevives: number): boolean

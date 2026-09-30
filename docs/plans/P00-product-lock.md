@@ -4,7 +4,7 @@
 
 - Product name: **Perfect Drop**
 - Core promise: one-button precision stacking with the visible Roblox avatar as the visual anchor.
-- Primary run metrics: **Score**, **Height**, **Perfect Combo**, **Best**.
+- Primary run metrics: **Score**, **Stage 0/30**, **Perfect Combo**, **Player Level**, **Best**.
 - Landing grades: **PERFECT**, **GOOD**, **MISS**.
 
 ## Locked V1 gameplay constants
@@ -13,23 +13,25 @@
 | --- | ---: |
 | Base block footprint | 10 x 10 studs |
 | Block height | 1.2 studs |
-| Initial travel half-distance | 14 studs |
-| Initial block speed | 12 studs/s |
-| Speed increase / successful drop | 0.45 studs/s |
-| Maximum block speed | 22 studs/s |
+| Travel half-distance | 12 studs |
+| Initial block speed | 10.5 studs/s |
+| Speed increase / successful drop | 0.25 studs/s |
+| Maximum block speed | 17.5 studs/s |
 | Travel axis | Alternates X / Z each successful drop |
-| Perfect tolerance | <= 0.35 studs center offset on active axis |
-| Minimum accepted footprint | 1.25 studs on active axis |
+| Perfect tolerance | <= 0.45 studs center offset on active axis |
+| Minimum accepted footprint | 1.75 studs |
+| Intentional stage shrink | 0.07 studs from X and Z per accepted stage |
+| Tower length | exactly 30 accepted stages |
 | Perfect combo cap | 10 |
-| Retry target | playable again <= 1.0 s after result input |
+| Retry / next-tower target | playable again <= 1.0 s after result input |
 
-The inactive axis keeps the previous top block's footprint exactly. The active axis is cut to the geometric overlap.
+The active axis is first cut to the geometric overlap. Every accepted stage then narrows both horizontal axes by 0.07 studs, clamped to the minimum footprint, so even a perfect run visibly becomes tighter toward the top without becoming unreasonable on phone screens.
 
 ## Grades
 
-- **PERFECT**: center offset <= 0.35 studs. The moving block snaps to the previous block on the active axis; no footprint is lost.
-- **GOOD**: positive overlap remains and accepted overlap is >= 1.25 studs.
-- **MISS**: there is no overlap or accepted overlap would be below 1.25 studs.
+- **PERFECT**: center offset <= 0.45 studs. The moving block snaps to the previous block on the active axis before the deliberate per-stage shrink is applied.
+- **GOOD**: positive overlap remains and the post-cut footprint stays above the configured 1.75-stud minimum.
+- **MISS**: there is no safe overlap remaining after server-side latency-compensated evaluation.
 
 The server computes the grade from authoritative moving-block state. The client never submits score, overlap or grade.
 
@@ -40,8 +42,10 @@ The server computes the grade from authoritative moving-block state. The client 
 - Perfect combo increments only on PERFECT and resets on GOOD.
 - Multiplier = 1 + min(combo, 10) * 0.10.
 - Final drop points are rounded to nearest integer after multiplier.
-- Height is the count of accepted drops.
-- Personal best is highest authoritative Score; height is stored separately for analytics/achievements.
+- Stage is the count of accepted drops in the current tower and is capped at 30.
+- Stage 30 changes the round state to **COMPLETED**, stops further drops, grants the tower-completion reward and increments persistent **Player Level** by exactly 1.
+- **NEXT TOWER** starts a clean 0/30 tower while preserving Player Level, completed-tower count, currency, cosmetics and best records.
+- Personal best is the highest authoritative Score; best stage is stored separately for progression/achievements.
 
 ## Failure, retry and revive
 

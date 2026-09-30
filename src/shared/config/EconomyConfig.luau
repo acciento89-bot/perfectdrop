@@ -5,7 +5,9 @@ local EconomyConfig = {
 	CoinsPerPerfect = 2,
 	HeightBonusEvery = 10,
 	HeightBonusCoins = 5,
-	ProfileVersion = 1,
+	TowerCompletionCoins = 75,
+	ProfileVersion = 2,
+	DataStoreVersion = 1,
 	DataStoreBaseName = "PerfectDropPlayerData",
 }
 

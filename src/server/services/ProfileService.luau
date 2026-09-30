@@ -18,7 +18,7 @@ local dataStore = nil
 if game.GameId ~= 0 then
 	local ok, storeOrError = pcall(function()
 		return DataStoreService:GetDataStore(
-			("%s_v%d"):format(EconomyConfig.DataStoreBaseName, EconomyConfig.ProfileVersion)
+			("%s_v%d"):format(EconomyConfig.DataStoreBaseName, EconomyConfig.DataStoreVersion)
 		)
 	end)
 	if ok then
@@ -61,6 +61,8 @@ local function syncAttributes(player: Player, profile)
 	player:SetAttribute("PDCoins", profile.Coins)
 	player:SetAttribute("PDBestScore", profile.BestScore)
 	player:SetAttribute("PDBestHeight", profile.BestHeight)
+	player:SetAttribute("PDPlayerLevel", profile.PlayerLevel)
+	player:SetAttribute("PDTowersCompleted", profile.TowersCompleted)
 	player:SetAttribute("PDBlockTheme", profile.EquippedBlockTheme)
 	player:SetAttribute("PDArenaTheme", profile.EquippedArenaTheme)
 	player:SetAttribute("PDRevives", profile.Consumables.Revive)
@@ -75,6 +77,8 @@ local function snapshot(profile)
 		coins = profile.Coins,
 		bestScore = profile.BestScore,
 		bestHeight = profile.BestHeight,
+		playerLevel = profile.PlayerLevel,
+		towersCompleted = profile.TowersCompleted,
 		ownedBlockThemes = profile.OwnedBlockThemes,
 		ownedArenaThemes = profile.OwnedArenaThemes,
 		equippedBlockTheme = profile.EquippedBlockTheme,
@@ -259,6 +263,25 @@ function ProfileService.RecordDrop(
 
 	markDirty(player)
 	return reward
+end
+
+function ProfileService.CompleteTower(player: Player, competitive: boolean): number
+	local profile = profiles[player]
+	if not profile then
+		return 0
+	end
+
+	profile.TowersCompleted += 1
+	profile.PlayerLevel += 1
+	profile.Coins += EconomyConfig.TowerCompletionCoins
+	if competitive then
+		awardAchievement(profile, "first_tower")
+		if profile.PlayerLevel >= 5 then
+			awardAchievement(profile, "level_5")
+		end
+	end
+	markDirty(player)
+	return EconomyConfig.TowerCompletionCoins
 end
 
 function ProfileService.ClaimDaily(player: Player)

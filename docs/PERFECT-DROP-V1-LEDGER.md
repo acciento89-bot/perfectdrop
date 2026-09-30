@@ -24,45 +24,45 @@ Mandatory V1 rules:
 - QA captures go to `/tmp/perfectdrop-qa`; only curated evidence may enter `docs/evidence/`.
 
 ## P00 Product lock
-- [x] P00-T01 Lock game name, “Perfect / Good / Miss” vocabulary and score presentation — locked in docs/plans/P00-product-lock.md
-- [x] P00-T02 Lock block dimensions, travel axis, initial speed, speed curve and minimum survivable footprint — 10x10 base, 1.2 height, alternating X/Z, 12→22 studs/s, 1.25 minimum footprint
-- [x] P00-T03 Lock Perfect tolerance and combo growth so Perfects feel demanding but learnable — 0.35 stud tolerance, combo cap 10, +0.10 multiplier step
-- [x] P00-T04 Lock fail condition, revive rules and retry timing — sub-1.25/no-overlap MISS, one revive/run, <=1.0s retry target
-- [x] P00-T05 Lock ethical monetization boundaries and cosmetic categories — no score/height purchase; revive, shield, coin boost and cosmetics only
-- [x] P00-T06 Write measurable V1 acceptance criteria and release blockers — explicit 10-blocker release contract recorded
+- [ ] P00-T01 Lock game name, “Perfect / Good / Miss” vocabulary and score presentation
+- [ ] P00-T02 Lock block dimensions, travel axis, initial speed, speed curve and minimum survivable footprint
+- [ ] P00-T03 Lock Perfect tolerance and combo growth so Perfects feel demanding but learnable
+- [ ] P00-T04 Lock fail condition, revive rules and retry timing
+- [ ] P00-T05 Lock ethical monetization boundaries and cosmetic categories
+- [ ] P00-T06 Write measurable V1 acceptance criteria and release blockers
 
 ## P01 Technical foundation
-- [x] P01-T01 Rojo project with strict client/server/shared ownership
-- [x] P01-T02 Shared config for difficulty, scoring, economy and monetization
-- [x] P01-T03 Remote definitions with schema/rate-limit expectations — DropRequest/RetryRun/RequestState/RoundStateChanged with server authority contract
-- [x] P01-T04 Selene/StyLua/Luau tests and deterministic build command — local verification: 0 errors, 0 warnings, 4 pure test modules, release-readiness pass, Rojo build pass
-- [x] P01-T05 GitHub CI for lint, tests, build and release-readiness rules
+- [ ] P01-T01 Rojo project with strict client/server/shared ownership
+- [ ] P01-T02 Shared config for difficulty, scoring, economy and monetization
+- [ ] P01-T03 Remote definitions with schema/rate-limit expectations
+- [ ] P01-T04 Selene/StyLua/Luau tests and deterministic build command
+- [ ] P01-T05 GitHub CI for lint, tests, build and release-readiness rules
 - [ ] P01-T06 Development/production place documentation and one canonical build artifact
 
 ## P02 Spawn, character, camera and input
-- [~] P02-T01 Safe spawn beside/on the tower with no invisible fall on join — dedicated operator pad/SpawnLocation and character placement implemented; Studio runtime acceptance pending
-- [~] P02-T02 Third-person camera keeps avatar, active block and landing footprint visible — adaptive avatar+tower Scriptable camera implemented; runtime acceptance pending
-- [~] P02-T03 Camera follows horizontal/vertical growth without detaching or clipping into the tower — height-aware follow logic implemented; runtime acceptance pending
-- [~] P02-T04 Unified drop input for touch, mouse/keyboard and controller — HUD button, mouse, Space and ButtonA wired; device/runtime QA pending
-- [~] P02-T05 Input debounce prevents duplicate drops and stale input after retry — client 0.16s debounce + busy guard and server 0.12s rate guard implemented; runtime abuse test pending
+- [ ] P02-T01 Safe spawn beside/on the tower with no invisible fall on join
+- [ ] P02-T02 Third-person camera keeps avatar, active block and landing footprint visible
+- [ ] P02-T03 Camera follows horizontal/vertical growth without detaching or clipping into the tower
+- [ ] P02-T04 Unified drop input for touch, mouse/keyboard and controller
+- [ ] P02-T05 Input debounce prevents duplicate drops and stale input after retry
 - [ ] P02-T06 Runtime test: spawn → move camera state → drop → fail → retry → respawn
 
 ## P03 Core drop mechanic
-- [~] P03-T01 Deterministic moving-block state and server-authoritative drop timestamp/action — server Heartbeat owns motion and evaluates DropRequest; runtime acceptance pending
-- [~] P03-T02 Correct overlap calculation on both travel directions — pure left/right overlap tests pass
-- [~] P03-T03 Overhang is visibly cut away and discarded with clean collision — falling overhang geometry implemented; visual runtime acceptance pending
-- [~] P03-T04 New top surface exactly matches accepted overlap — accepted block resize/recenter implemented from authoritative overlap result; runtime acceptance pending
-- [~] P03-T05 Perfect drop snaps cleanly without cumulative floating-point drift — pure rule preserves previous center/footprint; long-run runtime drift test pending
-- [~] P03-T06 Complete miss triggers failure once, never duplicate rewards/failures — state transition and request guards implemented; runtime replay test pending
-- [~] P03-T07 Minimum-footprint and extreme-overlap edge cases covered by tests — minimum footprint, left/right, miss and NaN cases covered; broader fuzz/boundary suite still planned
+- [ ] P03-T01 Deterministic moving-block state and server-authoritative drop timestamp/action
+- [ ] P03-T02 Correct overlap calculation on both travel directions
+- [ ] P03-T03 Overhang is visibly cut away and discarded with clean collision
+- [ ] P03-T04 New top surface exactly matches accepted overlap
+- [ ] P03-T05 Perfect drop snaps cleanly without cumulative floating-point drift
+- [ ] P03-T06 Complete miss triggers failure once, never duplicate rewards/failures
+- [ ] P03-T07 Minimum-footprint and extreme-overlap edge cases covered by tests
 - [ ] P03-T08 Runtime acceptance: at least 30 consecutive mixed drops with no state corruption
 
 ## P04 Score, combo and game feel
-- [~] P04-T01 Height/score model with server authority — score/height mutated only by RoundService; persistence/abuse acceptance still open
-- [~] P04-T02 Perfect combo multiplier with defined cap/decay — cap 10; Perfect increments, Good resets; pure tests pass
-- [~] P04-T03 Immediate Perfect / Good / Miss feedback readable without color alone — textual grade feedback implemented; visual runtime QA pending
+- [ ] P04-T01 Height/score model with server authority
+- [ ] P04-T02 Perfect combo multiplier with defined cap/decay
+- [ ] P04-T03 Immediate Perfect / Good / Miss feedback readable without color alone
 - [ ] P04-T04 Personal best update is atomic and replay-safe
-- [~] P04-T05 Score animation never blocks input or retry — presentation tween is non-blocking; runtime retry timing still pending
+- [ ] P04-T05 Score animation never blocks input or retry
 - [ ] P04-T06 Runtime verification of combo build, combo break, PB and failure result
 
 ## P05 Difficulty and run generation
@@ -100,7 +100,7 @@ Mandatory V1 rules:
 - [!] P08-T08 Successful real Developer Product receipt + rejoin verification
 
 ## P09 Production UI/UX
-- [~] P09-T01 Minimal production HUD: score, combo and height implemented with first-session instruction; coins/PB and responsive acceptance remain open
+- [ ] P09-T01 Minimal production HUD: score, combo, height, coins and PB only when useful
 - [ ] P09-T02 Result/retry flow requires at most one obvious action
 - [ ] P09-T03 Shop/cosmetic preview is visually production-ready
 - [ ] P09-T04 Compact phone safe-area and touch-target pass
@@ -109,10 +109,10 @@ Mandatory V1 rules:
 - [ ] P09-T07 Accessibility: contrast, non-color state cues, reduced-motion option
 
 ## P10 Production art and environment
-- [~] P10-T01 Build a distinct rooftop arena/tower/operator-pad first pass; screenshot-quality art acceptance remains open
+- [ ] P10-T01 Build a distinct arena/tower base with clear silhouette at normal camera distance
 - [ ] P10-T02 Blocks have intentional material, edge treatment and Perfect-state readability
 - [ ] P10-T03 Background/horizon supports height sensation without visual noise
-- [~] P10-T04 Lighting/atmosphere/material first pass implemented; mobile runtime readability acceptance remains open
+- [ ] P10-T04 Lighting, atmosphere and materials remain readable on mobile
 - [ ] P10-T05 Cosmetic themes visibly change presentation without changing hitboxes
 - [ ] P10-T06 Screenshot gate: mechanic is understandable from a normal gameplay screenshot
 
