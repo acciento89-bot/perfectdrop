@@ -2,12 +2,12 @@
 
 local MonetizationConfig = {
 	Products = {
-		Revive = { ProductId = 0, FallbackRobux = 29 },
-		PerfectShield = { ProductId = 0, FallbackRobux = 19 },
-		CoinBoost15m = { ProductId = 0, FallbackRobux = 39 },
+		Revive = { ProductId = 3715864717, FallbackRobux = 29 },
+		PerfectShield = { ProductId = 3715864864, FallbackRobux = 19 },
+		CoinBoost15m = { ProductId = 3715865030, FallbackRobux = 39 },
 	},
 	Passes = {
-		PremiumThemes = { PassId = 0, FallbackRobux = 79 },
+		PremiumThemes = { PassId = 2002172961, FallbackRobux = 79 },
 	},
 	CompetitiveScorePurchasable = false,
 }
