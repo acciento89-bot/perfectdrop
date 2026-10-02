@@ -151,7 +151,7 @@ Mandatory V1 rules:
 - [x] P14-T06 Stable performance and bounded tower cleanup/part count
 
 ## P15 Release
-- [~] P15-T01 Store icon, thumbnails and metadata match actual production art
+- [~] P15-T01 Store icon, thumbnails and metadata match actual production art — custom production icon uploaded; three runtime-derived thumbnails submitted to Creator Dashboard moderation; metadata/genre set
 - [!] P15-T02 Content questionnaire/privacy declarations — Creator Dashboard submission is pending; dashboard is currently blocked by Roblox's updated Terms/Privacy agreement modal, which requires the account owner to accept
 - [x] P15-T03 Publish canonical build to private development place
 - [x] P15-T04 Repeat full P13 journey in the published private place
@@ -166,3 +166,17 @@ Mandatory V1 rules:
 ## Definition of Done
 
 Perfect Drop V1 gameplay is accepted: the final private-place build is playable start-to-finish, visually production-ready, persistent across rejoin and free of known P0/P1 gameplay defects in the verified matrix. On 2026-10-02 the owner changed the release policy: completed Roblox projects should be published directly; the real paid-receipt/rejoin and remaining physical-device smoke stay documented as post-launch verification rather than blocking public exposure. Creator Dashboard store/privacy submission and the account-level Roblox updated-agreement modal still require completion before the public toggle can be saved. See `docs/evidence/2026-09-30-final-runtime-acceptance.md`.
+
+
+## Public release note — 2026-10-02
+
+- Existing Universe: `10768685669`
+- Existing production Place: `118957776621075`
+- Creator Dashboard access: **Public** (verified on Overview after save)
+- Content questionnaire: **Minimal**, no content labels, no regional non-conformance, no age restriction
+- Genre: **Party & Casual** / **Minigame**
+- Description set in Creator Dashboard
+- Custom 512x512 icon uploaded
+- Three 1920x1080 runtime-derived thumbnails submitted; moderation/processing may continue asynchronously
+- Roblox currently reports effective audience reach as **16+ and trusted friends** despite Public access; this is a Roblox platform reach state, not a project privacy state
+- GitHub CI repaired by removing the duplicate interactive Rokit trust gate; `main` CI is green
