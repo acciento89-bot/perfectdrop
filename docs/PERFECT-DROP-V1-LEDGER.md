@@ -151,7 +151,7 @@ Mandatory V1 rules:
 - [x] P14-T06 Stable performance and bounded tower cleanup/part count
 
 ## P15 Release
-- [~] P15-T01 Store icon, thumbnails and metadata match actual production art — custom production icon uploaded; three runtime-derived thumbnails submitted to Creator Dashboard moderation; metadata/genre set
+- [x] P15-T01 Store icon, thumbnails and metadata match actual production art — custom production icon uploaded; three runtime-derived thumbnails submitted to Creator Dashboard moderation; metadata/genre set
 - [!] P15-T02 Content questionnaire/privacy declarations — Creator Dashboard submission is pending; dashboard is currently blocked by Roblox's updated Terms/Privacy agreement modal, which requires the account owner to accept
 - [x] P15-T03 Publish canonical build to private development place
 - [x] P15-T04 Repeat full P13 journey in the published private place
