@@ -90,14 +90,14 @@ Mandatory V1 rules:
 - [x] P07-T06 New-PB celebration encourages retry without delaying it
 
 ## P08 Monetization
-- [~] P08-T01 Final product/pass catalog and price configuration — catalog/prices are defined; Roblox Product/Pass IDs are still 0 and must be created in Creator Dashboard
+- [x] P08-T01 Final product/pass catalog and price configuration — live IDs configured: Revive `3715864717`, Perfect Shield `3715864864`, Coin Boost 15m `3715865030`, Premium Themes pass `2002172961`
 - [x] P08-T02 Revive restores a valid tower state, not an exploitably larger footprint
 - [x] P08-T03 Perfect shield/boost has explicit limits and no leaderboard score purchase
 - [x] P08-T04 Receipt processing is allowlisted, atomic and idempotent
 - [x] P08-T05 Purchase prompts are explicit user actions only
 - [x] P08-T06 Shop shows ownership/price/state clearly
 - [x] P08-T07 Pure duplicate/retry/aborted-purchase tests
-- [!] P08-T08 Successful real Developer Product receipt + rejoin verification — blocked until real Roblox Product IDs exist
+- [!] P08-T08 Successful real Developer Product receipt + rejoin verification — live IDs exist; a real owner-funded Robux transaction/rejoin remains a post-launch verification item
 
 ## P09 Production UI/UX
 - [x] P09-T01 Minimal production HUD: score, combo, height, coins and PB only when useful
@@ -152,11 +152,11 @@ Mandatory V1 rules:
 
 ## P15 Release
 - [~] P15-T01 Store icon, thumbnails and metadata match actual production art
-- [!] P15-T02 Content questionnaire/privacy declarations — Creator Dashboard submission required
+- [!] P15-T02 Content questionnaire/privacy declarations — Creator Dashboard submission is pending; dashboard is currently blocked by Roblox's updated Terms/Privacy agreement modal, which requires the account owner to accept
 - [x] P15-T03 Publish canonical build to private development place
 - [x] P15-T04 Repeat full P13 journey in the published private place
 - [x] P15-T05 Record build hash, place/version and rollback candidate
-- [!] P15-T06 Public release only after paid receipt/rejoin gate and zero known P0/P1 defects — gameplay has zero known P0/P1 defects; paid receipt gate remains external
+- [!] P15-T06 Public release — owner explicitly authorized direct public release for completed Roblox projects on 2026-10-02. Zero known P0/P1 gameplay defects; paid receipt/rejoin is retained as post-launch verification. Final public toggle is currently blocked only by the account-level Roblox agreement modal and remaining dashboard submission.
 
 ## P16 Post-launch
 - [!] P16-T01 First telemetry review requires real players
@@ -165,4 +165,4 @@ Mandatory V1 rules:
 
 ## Definition of Done
 
-Perfect Drop V1 gameplay is accepted: the final private-place build is playable start-to-finish, visually production-ready, persistent across rejoin and free of known P0/P1 gameplay defects in the verified matrix. Public release is intentionally blocked by the real paid-receipt gate, Creator Dashboard store/privacy submission, and final physical-device/controller smoke. See `docs/evidence/2026-09-30-final-runtime-acceptance.md`.
+Perfect Drop V1 gameplay is accepted: the final private-place build is playable start-to-finish, visually production-ready, persistent across rejoin and free of known P0/P1 gameplay defects in the verified matrix. On 2026-10-02 the owner changed the release policy: completed Roblox projects should be published directly; the real paid-receipt/rejoin and remaining physical-device smoke stay documented as post-launch verification rather than blocking public exposure. Creator Dashboard store/privacy submission and the account-level Roblox updated-agreement modal still require completion before the public toggle can be saved. See `docs/evidence/2026-09-30-final-runtime-acceptance.md`.
