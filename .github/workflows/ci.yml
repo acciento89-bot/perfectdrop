@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: CompeyDev/setup-rokit@v0.1.2
-      - run: rokit install
+      - run: rokit install --no-trust-check
       - run: stylua --check src tests scripts
       - run: selene src tests scripts
       - run: lune run scripts/run-tests
