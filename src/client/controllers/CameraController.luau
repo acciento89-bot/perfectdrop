@@ -11,26 +11,31 @@ local descendantAddedConnection: RBXScriptConnection?
 local descendantRemovingConnection: RBXScriptConnection?
 local visibleParts: { BasePart } = {}
 
-local function getTowerTop(player: Player): Vector3?
+local function getRunTargets(player: Player): (Vector3?, Vector3?)
 	local world = Workspace:FindFirstChild("PerfectDropWorld")
 	if not world then
-		return nil
+		return nil, nil
 	end
 	local area = world:FindFirstChild(tostring(player.UserId))
 	local run = area and area:FindFirstChild("Run")
 	if not run then
-		return nil
+		return nil, nil
 	end
 
 	local topY = -math.huge
 	local topPosition: Vector3? = nil
+	local movingPosition: Vector3? = nil
 	for _, child in run:GetChildren() do
-		if child:IsA("BasePart") and child.Name ~= "Overhang" and child.Position.Y > topY then
-			topY = child.Position.Y
-			topPosition = child.Position
+		if child:IsA("BasePart") then
+			if child.Name == "MovingBlock" then
+				movingPosition = child.Position
+			elseif child.Name ~= "Overhang" and child.Position.Y > topY then
+				topY = child.Position.Y
+				topPosition = child.Position
+			end
 		end
 	end
-	return topPosition
+	return topPosition, movingPosition
 end
 
 local function trackVisiblePart(instance: Instance)
@@ -88,21 +93,23 @@ local function bindCharacter(character: Model)
 			end
 		end
 
-		local tower = getTowerTop(Players.LocalPlayer)
-		local towerHeight = math.max(0, Players.LocalPlayer:GetAttribute("PDHeight") or 0)
-		local focus = root.Position + Vector3.new(0, 2.5, 0)
-		if tower then
-			-- Keep avatar and active landing area in one close composition.
-			-- The capped blend prevents the camera from drifting too far away on stage 30.
-			local weight = math.clamp(0.28 + towerHeight * 0.009, 0.28, 0.55)
-			focus = focus:Lerp(tower + Vector3.new(0, 1.5, 0), weight)
-		end
+		local tower, moving = getRunTargets(Players.LocalPlayer)
+		local lowTarget = root.Position + Vector3.new(0, 2.4, 0)
+		local highTarget = moving or tower or lowTarget
+		local focus = (lowTarget + highTarget) * 0.5
+		local verticalSpan = math.abs(highTarget.Y - lowTarget.Y)
+		local horizontalSpan = (Vector3.new(highTarget.X, 0, highTarget.Z) - Vector3.new(lowTarget.X, 0, lowTarget.Z)).Magnitude
 
-		local compact = math.min(camera.ViewportSize.X, camera.ViewportSize.Y) <= 500
-		camera.FieldOfView = 68
-		local distance = (if compact then 14 else 17) + math.min(if compact then 6.5 else 8, towerHeight * 0.22)
-		local height = (if compact then 8 else 9.5) + math.min(if compact then 8.5 else 10, towerHeight * 0.30)
-		local side = if compact then 9.5 else 13
+		-- Frame the avatar and the active moving block together. This scales with
+		-- the actual run geometry instead of stage count, so late-stage blocks do
+		-- not disappear above/behind the mobile HUD.
+		local compact = math.min(camera.ViewportSize.X, camera.ViewportSize.Y) <= 600
+		camera.FieldOfView = if compact then 74 else 70
+		local distance = (if compact then 15 else 17)
+			+ verticalSpan * (if compact then 0.58 else 0.52)
+			+ math.min(7, horizontalSpan * 0.28)
+		local height = (if compact then 7 else 8.5) + verticalSpan * 0.20
+		local side = if compact then 9.5 else 12.5
 		local desired = CFrame.lookAt(focus + Vector3.new(side, height, distance), focus, Vector3.yAxis)
 		local alpha = math.clamp(1 - math.exp(-8 * dt), 0, 1)
 		camera.CFrame = camera.CFrame:Lerp(desired, alpha)

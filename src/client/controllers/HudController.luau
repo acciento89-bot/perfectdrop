@@ -3,6 +3,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 
 local GameConfig = require(ReplicatedStorage.PerfectDrop.config.GameConfig)
 local UserInputService = game:GetService("UserInputService")
@@ -367,7 +368,7 @@ function HudController.Start(remotes: Folder)
 	statusStroke = stroke(status, ACCENT)
 	local statusSize = Instance.new("UISizeConstraint")
 	statusSize.MaxSize = Vector2.new(760, 72)
-	statusSize.MinSize = Vector2.new(300, 68)
+	statusSize.MinSize = Vector2.new(300, 56)
 	statusSize.Parent = status
 
 	local metricRow = Instance.new("Frame")
@@ -646,6 +647,99 @@ function HudController.Start(remotes: Folder)
 	audioButton = makeActionButton(scroll, "AUDIO  ON")
 	audioButton.Name = "AudioButton"
 	audioButton.LayoutOrder = 51
+
+	local function applyResponsiveLayout()
+		local camera = Workspace.CurrentCamera
+		if not camera then
+			return
+		end
+
+		local viewport = camera.ViewportSize
+		local compact = UserInputService.TouchEnabled and math.min(viewport.X, viewport.Y) < 600
+		local levelCard = metricRow:FindFirstChild("LevelMetric")
+		local stageCard = metricRow:FindFirstChild("StageMetric")
+		local scoreCard = metricRow:FindFirstChild("ScoreMetric")
+		local comboCard = metricRow:FindFirstChild("ComboMetric")
+		local coinsCard = metricRow:FindFirstChild("CoinsMetric")
+
+		if compact then
+			status.Size = UDim2.fromOffset(math.min(560, math.max(420, viewport.X - 190)), 56)
+			status.Position = UDim2.new(0.5, 0, 0, 10)
+			metricRow.Position = UDim2.fromOffset(7, 6)
+			metricRow.Size = UDim2.new(1, -14, 1, -15)
+			metricGrid.FillDirectionMaxCells = 3
+			metricGrid.CellPadding = UDim2.fromOffset(4, 0)
+			metricGrid.CellSize = UDim2.new(1 / 3, -3, 1, 0)
+			if levelCard then
+				levelCard.Visible = false
+			end
+			if coinsCard then
+				coinsCard.Visible = false
+			end
+			if stageCard then
+				stageCard.Visible = true
+			end
+			if scoreCard then
+				scoreCard.Visible = true
+			end
+			if comboCard then
+				comboCard.Visible = true
+			end
+			tutorial.Position = UDim2.new(0.5, 0, 0, 72)
+			tutorial.Size = UDim2.fromOffset(math.min(380, viewport.X - 210), 42)
+			shopButton.Position = UDim2.new(1, -14, 0, 74)
+			shopButton.Size = UDim2.fromOffset(92, 44)
+			dropButton.Position = UDim2.new(1, -18, 1, -20)
+			dropButton.Size = UDim2.fromOffset(154, 58)
+			shopPanel.Position = UDim2.fromScale(0.5, 0.54)
+			shopPanel.Size = UDim2.fromScale(0.82, 0.82)
+			resultPanel.Size = UDim2.new(0.78, 0, 0, 214)
+		else
+			status.Size = UDim2.new(1, -36, 0, 72)
+			status.Position = UDim2.new(0.5, 0, 0, 16)
+			metricRow.Position = UDim2.fromOffset(8, 7)
+			metricRow.Size = UDim2.new(1, -16, 1, -18)
+			metricGrid.FillDirectionMaxCells = 5
+			metricGrid.CellPadding = UDim2.fromOffset(5, 0)
+			metricGrid.CellSize = UDim2.new(0.2, -4, 1, 0)
+			if levelCard then
+				levelCard.Visible = true
+			end
+			if coinsCard then
+				coinsCard.Visible = true
+			end
+			if stageCard then
+				stageCard.Visible = true
+			end
+			if scoreCard then
+				scoreCard.Visible = true
+			end
+			if comboCard then
+				comboCard.Visible = true
+			end
+			tutorial.Position = UDim2.new(0.5, 0, 0, 90)
+			shopButton.Position = UDim2.new(1, -18, 0, 94)
+			shopButton.Size = UDim2.fromOffset(108, 48)
+			dropButton.Position = UDim2.new(1, -24, 1, -24)
+			dropButton.Size = UDim2.fromOffset(172, 64)
+			shopPanel.Position = if UserInputService.TouchEnabled
+				then UDim2.fromScale(0.5, 0.57)
+				else UDim2.fromScale(0.5, 0.52)
+			shopPanel.Size = if UserInputService.TouchEnabled
+				then UDim2.fromScale(0.88, 0.68)
+				else UDim2.fromScale(0.92, 0.78)
+			resultPanel.Size = UDim2.new(0.86, 0, 0, 244)
+		end
+	end
+
+	applyResponsiveLayout()
+	local camera = Workspace.CurrentCamera
+	if camera then
+		camera:GetPropertyChangedSignal("ViewportSize"):Connect(applyResponsiveLayout)
+	end
+	Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+		task.defer(applyResponsiveLayout)
+	end)
 
 	local requestState = remotes:WaitForChild("RequestState") :: RemoteFunction
 	local requestMeta = remotes:WaitForChild("RequestMetaState") :: RemoteFunction

@@ -180,3 +180,7 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 - Three 1920x1080 runtime-derived thumbnails submitted; moderation/processing may continue asynchronously
 - Roblox currently reports effective audience reach as **16+ and trusted friends** despite Public access; this is a Roblox platform reach state, not a project privacy state
 - GitHub CI repaired by removing the duplicate interactive Rokit trust gate; `main` CI is green
+
+## 2026-10-03 Mobile camera/HUD corrective pass
+
+- [x] Real-phone camera/HUD regression repaired and revalidated: avatar + active block remain framed through stage 30, compact gameplay HUD is reduced, touch targets pass the production gate, and the second full Studio E2E completed successfully. Evidence: `docs/evidence/2026-10-03-mobile-regression-revalidation.md`.
