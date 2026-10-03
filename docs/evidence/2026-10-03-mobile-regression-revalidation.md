@@ -9,7 +9,7 @@ Corrective pass based on real phone play: the active block/tower could leave the
 - Camera framing now tracks both the avatar and active MovingBlock/top of tower.
 - Camera distance is derived from the actual vertical and horizontal gameplay span instead of stage count alone.
 - Compact-phone HUD now prioritises Stage, Score and Perfect status; secondary Level/Coin data is removed from the gameplay strip.
-- Tutorial, Shop, Drop and result layouts were resized/repositioned for compact touch viewports.
+- Tutorial, Shop, Drop and result layouts were resized/repositioned for compact touch viewports; the final compact Shop overlay is limited to 76% viewport width × 72% height and remains scrollable.
 - The first E2E rerun correctly failed the Shop touch-target gate; the compact Shop button was then raised to 92x44 and the entire E2E was rerun.
 
 ## Verification

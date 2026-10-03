@@ -692,7 +692,7 @@ function HudController.Start(remotes: Folder)
 			dropButton.Position = UDim2.new(1, -18, 1, -20)
 			dropButton.Size = UDim2.fromOffset(154, 58)
 			shopPanel.Position = UDim2.fromScale(0.5, 0.54)
-			shopPanel.Size = UDim2.fromScale(0.82, 0.82)
+			shopPanel.Size = UDim2.fromScale(0.76, 0.72)
 			resultPanel.Size = UDim2.new(0.78, 0, 0, 214)
 		else
 			status.Size = UDim2.new(1, -36, 0, 72)
