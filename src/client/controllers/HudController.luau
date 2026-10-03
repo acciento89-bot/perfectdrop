@@ -13,6 +13,7 @@ local HudController = {}
 local player = Players.LocalPlayer
 local gui: ScreenGui
 local status: Frame
+local mobileSummary: TextLabel
 local stageProgressFill: Frame
 local levelStatus: TextLabel
 local stageStatus: TextLabel
@@ -154,6 +155,15 @@ local function updateTopStatus()
 	comboStatus.Text = if assisted then ("x%d  •  A"):format(combo) else ("x%d"):format(combo)
 	comboStatus.TextColor3 = if assisted then Color3.fromRGB(219, 211, 255) else Color3.fromRGB(255, 194, 66)
 	coinsStatus.Text = ("◈ %d"):format(coins)
+	if mobileSummary then
+		mobileSummary.Text = ("STAGE %d/%d   SCORE %d   PERF x%d%s"):format(
+			height,
+			GameConfig.Progression.MaxStages,
+			score,
+			combo,
+			if assisted then " A" else ""
+		)
+	end
 	statusStroke.Color = if assisted then Color3.fromRGB(137, 121, 255) else ACCENT
 	if stageProgressFill then
 		local progress = math.clamp(height / GameConfig.Progression.MaxStages, 0, 1)
@@ -416,6 +426,24 @@ function HudController.Start(remotes: Folder)
 	stageProgressFill.Parent = progressTrack
 	round(stageProgressFill, 3)
 
+	mobileSummary = Instance.new("TextLabel")
+	mobileSummary.Name = "MobileSummary"
+	mobileSummary.AnchorPoint = Vector2.new(1, 0)
+	mobileSummary.Position = UDim2.new(1, -14, 0, 56)
+	mobileSummary.Size = UDim2.fromOffset(232, 34)
+	mobileSummary.BackgroundColor3 = SURFACE
+	mobileSummary.BackgroundTransparency = 0.08
+	mobileSummary.BorderSizePixel = 0
+	mobileSummary.Font = Enum.Font.GothamBold
+	mobileSummary.TextSize = 11
+	mobileSummary.TextColor3 = TEXT
+	mobileSummary.TextXAlignment = Enum.TextXAlignment.Center
+	mobileSummary.Text = "STAGE 0/30   SCORE 0   PERF x0"
+	mobileSummary.Visible = false
+	mobileSummary.Parent = gui
+	round(mobileSummary, 10)
+	stroke(mobileSummary, ACCENT, 0.42)
+
 	tutorial = Instance.new("TextLabel")
 	tutorial.AnchorPoint = Vector2.new(0.5, 0)
 	tutorial.Position = UDim2.new(0.5, 0, 0, 90)
@@ -663,8 +691,9 @@ function HudController.Start(remotes: Folder)
 		local coinsCard = metricRow:FindFirstChild("CoinsMetric")
 
 		if compact then
-			-- Mobile must leave the playfield open. Core Roblox controls already occupy
-			-- the upper-left, so keep only three small gameplay chips at upper-right.
+			-- Mobile gets one tiny summary pill instead of a desktop-style status bar.
+			status.Visible = false
+			mobileSummary.Visible = true
 			status.AnchorPoint = Vector2.new(1, 0)
 			statusSize.MinSize = Vector2.new(0, 0)
 			statusSize.MaxSize = Vector2.new(294, 44)
@@ -703,6 +732,8 @@ function HudController.Start(remotes: Folder)
 			shopPanel.Size = UDim2.fromScale(0.72, 0.68)
 			resultPanel.Size = UDim2.new(0.72, 0, 0, 208)
 		else
+			status.Visible = true
+			mobileSummary.Visible = false
 			status.AnchorPoint = Vector2.new(0.5, 0)
 			statusSize.MinSize = Vector2.new(300, 56)
 			statusSize.MaxSize = Vector2.new(760, 72)

@@ -24,3 +24,10 @@ Corrective pass based on real phone play: the active block/tower could leave the
 - 30/30 HUD, NEXT TOWER cleanup, deliberate miss, retry, touch-target sizing, Daily reward, cosmetic ownership/equip, duplicate Developer Product receipt handling, Revive, respawn/follow camera and progression persistence all passed.
 
 No external release gate is reclassified by this corrective pass.
+
+## Final compact HUD correction
+
+- Real-device follow-up showed that even the reduced three-card strip still read as a large top menu.
+- Compact touch mode now hides the desktop status container entirely and uses one 232×34 summary pill at upper-right: Stage / Score / Perfect only.
+- The iPhone XR Studio viewport was rerun after the change; the tower, active block and avatar remain unobstructed and the compact HUD no longer spans the playfield.
+- Final static gate after this correction: StyLua, Selene 0/0, Rojo build, 10 pure-Luau test files and release-readiness all passed.
