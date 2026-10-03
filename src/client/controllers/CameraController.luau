@@ -7,6 +7,9 @@ local Workspace = game:GetService("Workspace")
 local CameraController = {}
 
 local followConnection: RBXScriptConnection?
+local descendantAddedConnection: RBXScriptConnection?
+local descendantRemovingConnection: RBXScriptConnection?
+local visibleParts: { BasePart } = {}
 
 local function getTowerTop(player: Player): Vector3?
 	local world = Workspace:FindFirstChild("PerfectDropWorld")
@@ -30,6 +33,23 @@ local function getTowerTop(player: Player): Vector3?
 	return topPosition
 end
 
+local function trackVisiblePart(instance: Instance)
+	if instance:IsA("BasePart") then
+		instance.LocalTransparencyModifier = 0
+		table.insert(visibleParts, instance)
+	end
+end
+
+local function untrackVisiblePart(instance: Instance)
+	if not instance:IsA("BasePart") then
+		return
+	end
+	local index = table.find(visibleParts, instance)
+	if index then
+		table.remove(visibleParts, index)
+	end
+end
+
 local function bindCharacter(character: Model)
 	local root = character:WaitForChild("HumanoidRootPart", 8)
 	local humanoid = character:WaitForChild("Humanoid", 8)
@@ -40,6 +60,19 @@ local function bindCharacter(character: Model)
 	if followConnection then
 		followConnection:Disconnect()
 	end
+	if descendantAddedConnection then
+		descendantAddedConnection:Disconnect()
+	end
+	if descendantRemovingConnection then
+		descendantRemovingConnection:Disconnect()
+	end
+
+	table.clear(visibleParts)
+	for _, descendant in character:GetDescendants() do
+		trackVisiblePart(descendant)
+	end
+	descendantAddedConnection = character.DescendantAdded:Connect(trackVisiblePart)
+	descendantRemovingConnection = character.DescendantRemoving:Connect(untrackVisiblePart)
 
 	followConnection = RunService.RenderStepped:Connect(function(dt)
 		local camera = Workspace.CurrentCamera
@@ -49,6 +82,11 @@ local function bindCharacter(character: Model)
 
 		camera.CameraType = Enum.CameraType.Scriptable
 		camera.CameraSubject = humanoid
+		for _, bodyPart in visibleParts do
+			if bodyPart.Parent and bodyPart.LocalTransparencyModifier ~= 0 then
+				bodyPart.LocalTransparencyModifier = 0
+			end
+		end
 
 		local tower = getTowerTop(Players.LocalPlayer)
 		local towerHeight = math.max(0, Players.LocalPlayer:GetAttribute("PDHeight") or 0)
