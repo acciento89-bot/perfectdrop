@@ -3,17 +3,20 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
+      "$ignoreUnknownInstances": false,
       "PerfectDrop": {
         "$path": "src/shared"
       }
     },
     "ServerScriptService": {
+      "$ignoreUnknownInstances": false,
       "PerfectDropServer": {
         "$path": "src/server"
       }
     },
     "StarterPlayer": {
       "StarterPlayerScripts": {
+        "$ignoreUnknownInstances": false,
         "PerfectDropClient": {
           "$path": "src/client"
         }
