@@ -11,8 +11,14 @@ local HudController = {}
 
 local player = Players.LocalPlayer
 local gui: ScreenGui
-local status: TextLabel
+local status: Frame
 local stageProgressFill: Frame
+local levelStatus: TextLabel
+local stageStatus: TextLabel
+local scoreStatus: TextLabel
+local comboStatus: TextLabel
+local coinsStatus: TextLabel
+local statusStroke: UIStroke
 local tutorial: TextLabel
 local feedback: TextLabel
 local dropButton: TextButton
@@ -44,12 +50,13 @@ local function round(object: GuiObject, radius: number)
 	corner.Parent = object
 end
 
-local function stroke(object: GuiObject, color: Color3, transparency: number?)
+local function stroke(object: GuiObject, color: Color3, transparency: number?): UIStroke
 	local line = Instance.new("UIStroke")
 	line.Color = color
 	line.Thickness = 1.4
 	line.Transparency = transparency or 0.2
 	line.Parent = object
+	return line
 end
 
 local function textConstraint(object: TextLabel | TextButton, minSize: number, maxSize: number)
@@ -96,6 +103,43 @@ local function metaValue(key: string, fallback)
 	return fallback
 end
 
+local function makeStatusMetric(parent: Instance, name: string, titleText: string): TextLabel
+	local card = Instance.new("Frame")
+	card.Name = name
+	card.BackgroundColor3 = SURFACE_RAISED
+	card.BackgroundTransparency = 0.05
+	card.BorderSizePixel = 0
+	card.Parent = parent
+	round(card, 9)
+	stroke(card, Color3.fromRGB(72, 82, 98), 0.48)
+
+	local title = Instance.new("TextLabel")
+	title.Name = "Title"
+	title.Position = UDim2.fromOffset(8, 4)
+	title.Size = UDim2.new(1, -16, 0, 12)
+	title.BackgroundTransparency = 1
+	title.Font = Enum.Font.GothamBold
+	title.TextSize = 9
+	title.TextColor3 = MUTED
+	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.Text = titleText
+	title.Parent = card
+
+	local value = Instance.new("TextLabel")
+	value.Name = "Value"
+	value.Position = UDim2.fromOffset(8, 16)
+	value.Size = UDim2.new(1, -16, 1, -19)
+	value.BackgroundTransparency = 1
+	value.Font = Enum.Font.GothamBlack
+	value.TextScaled = true
+	value.TextColor3 = TEXT
+	value.TextXAlignment = Enum.TextXAlignment.Left
+	value.Text = "—"
+	value.Parent = card
+	textConstraint(value, 10, 16)
+	return value
+end
+
 local function updateTopStatus()
 	local score = player:GetAttribute("PDScore") or 0
 	local height = player:GetAttribute("PDHeight") or 0
@@ -103,15 +147,13 @@ local function updateTopStatus()
 	local level = metaValue("playerLevel", player:GetAttribute("PDPlayerLevel") or 1)
 	local coins = metaValue("coins", player:GetAttribute("PDCoins") or 0)
 	local assisted = player:GetAttribute("PDAssisted") == true
-	status.Text = ("LV %d       STAGE %d/%d       ◈ %d\nSCORE %d       PERFECT x%d%s"):format(
-		level,
-		height,
-		GameConfig.Progression.MaxStages,
-		coins,
-		score,
-		combo,
-		if assisted then "       ASSISTED" else ""
-	)
+	levelStatus.Text = ("LV %d"):format(level)
+	stageStatus.Text = ("%d / %d"):format(height, GameConfig.Progression.MaxStages)
+	scoreStatus.Text = tostring(score)
+	comboStatus.Text = if assisted then ("x%d  •  A"):format(combo) else ("x%d"):format(combo)
+	comboStatus.TextColor3 = if assisted then Color3.fromRGB(219, 211, 255) else Color3.fromRGB(255, 194, 66)
+	coinsStatus.Text = ("◈ %d"):format(coins)
+	statusStroke.Color = if assisted then Color3.fromRGB(137, 121, 255) else ACCENT
 	if stageProgressFill then
 		local progress = math.clamp(height / GameConfig.Progression.MaxStages, 0, 1)
 		stageProgressFill.Size = UDim2.fromScale(progress, 1)
@@ -296,11 +338,7 @@ function HudController.ApplyState(state, grade: string?)
 
 	local bestHeight = metaValue("bestHeight", player:GetAttribute("PDBestHeight") or 0)
 	tutorial.Visible = not blocked and bestHeight == 0 and (state.height or 0) < 2 and not shopPanel.Visible
-	if state.assisted then
-		status.TextColor3 = Color3.fromRGB(219, 211, 255)
-	else
-		status.TextColor3 = TEXT
-	end
+	comboStatus.TextColor3 = if state.assisted then Color3.fromRGB(219, 211, 255) else Color3.fromRGB(255, 194, 66)
 end
 
 function HudController.GetState(): string
@@ -317,31 +355,52 @@ function HudController.Start(remotes: Folder)
 	gui.DisplayOrder = 20
 	gui.Parent = playerGui
 
-	status = Instance.new("TextLabel")
+	status = Instance.new("Frame")
 	status.AnchorPoint = Vector2.new(0.5, 0)
 	status.Position = UDim2.new(0.5, 0, 0, 16)
-	status.Size = UDim2.new(1, -36, 0, 62)
+	status.Size = UDim2.new(1, -36, 0, 72)
 	status.BackgroundColor3 = SURFACE
 	status.BackgroundTransparency = 0.04
 	status.BorderSizePixel = 0
-	status.Font = Enum.Font.GothamBold
-	status.TextScaled = true
-	status.TextColor3 = TEXT
-	status.TextWrapped = true
 	status.Parent = gui
 	round(status, 14)
-	stroke(status, ACCENT)
-	textConstraint(status, 10, 17)
+	statusStroke = stroke(status, ACCENT)
 	local statusSize = Instance.new("UISizeConstraint")
-	statusSize.MaxSize = Vector2.new(720, 62)
-	statusSize.MinSize = Vector2.new(258, 56)
+	statusSize.MaxSize = Vector2.new(760, 72)
+	statusSize.MinSize = Vector2.new(300, 68)
 	statusSize.Parent = status
+
+	local metricRow = Instance.new("Frame")
+	metricRow.Name = "Metrics"
+	metricRow.Position = UDim2.fromOffset(8, 7)
+	metricRow.Size = UDim2.new(1, -16, 1, -18)
+	metricRow.BackgroundTransparency = 1
+	metricRow.Parent = status
+
+	local metricGrid = Instance.new("UIGridLayout")
+	metricGrid.FillDirection = Enum.FillDirection.Horizontal
+	metricGrid.FillDirectionMaxCells = 5
+	metricGrid.SortOrder = Enum.SortOrder.LayoutOrder
+	metricGrid.CellPadding = UDim2.fromOffset(5, 0)
+	metricGrid.CellSize = UDim2.new(0.2, -4, 1, 0)
+	metricGrid.Parent = metricRow
+
+	levelStatus = makeStatusMetric(metricRow, "LevelMetric", "LEVEL")
+	stageStatus = makeStatusMetric(metricRow, "StageMetric", "STAGE")
+	scoreStatus = makeStatusMetric(metricRow, "ScoreMetric", "SCORE")
+	comboStatus = makeStatusMetric(metricRow, "ComboMetric", "PERFECT")
+	coinsStatus = makeStatusMetric(metricRow, "CoinsMetric", "COINS")
+	metricRow.LevelMetric.LayoutOrder = 1
+	metricRow.StageMetric.LayoutOrder = 2
+	metricRow.ScoreMetric.LayoutOrder = 3
+	metricRow.ComboMetric.LayoutOrder = 4
+	metricRow.CoinsMetric.LayoutOrder = 5
 
 	local progressTrack = Instance.new("Frame")
 	progressTrack.Name = "StageProgress"
 	progressTrack.AnchorPoint = Vector2.new(0.5, 1)
-	progressTrack.Position = UDim2.new(0.5, 0, 1, -5)
-	progressTrack.Size = UDim2.new(1, -24, 0, 4)
+	progressTrack.Position = UDim2.new(0.5, 0, 1, -4)
+	progressTrack.Size = UDim2.new(1, -20, 0, 3)
 	progressTrack.BackgroundColor3 = Color3.fromRGB(67, 76, 90)
 	progressTrack.BorderSizePixel = 0
 	progressTrack.ClipsDescendants = true
