@@ -663,13 +663,21 @@ function HudController.Start(remotes: Folder)
 		local coinsCard = metricRow:FindFirstChild("CoinsMetric")
 
 		if compact then
-			status.Size = UDim2.fromOffset(math.min(560, math.max(420, viewport.X - 190)), 56)
-			status.Position = UDim2.new(0.5, 0, 0, 10)
-			metricRow.Position = UDim2.fromOffset(7, 6)
-			metricRow.Size = UDim2.new(1, -14, 1, -15)
+			-- Mobile must leave the playfield open. Core Roblox controls already occupy
+			-- the upper-left, so keep only three small gameplay chips at upper-right.
+			status.AnchorPoint = Vector2.new(1, 0)
+			statusSize.MinSize = Vector2.new(0, 0)
+			statusSize.MaxSize = Vector2.new(294, 44)
+			status.Position = UDim2.new(1, -14, 0, 58)
+			status.Size = UDim2.fromOffset(math.min(294, math.max(252, viewport.X * 0.34)), 44)
+			status.BackgroundTransparency = 1
+			statusStroke.Transparency = 1
+			metricRow.Position = UDim2.fromOffset(0, 0)
+			metricRow.Size = UDim2.fromScale(1, 1)
 			metricGrid.FillDirectionMaxCells = 3
-			metricGrid.CellPadding = UDim2.fromOffset(4, 0)
-			metricGrid.CellSize = UDim2.new(1 / 3, -3, 1, 0)
+			metricGrid.CellPadding = UDim2.fromOffset(5, 0)
+			metricGrid.CellSize = UDim2.new(1 / 3, -4, 1, 0)
+			progressTrack.Visible = false
 			if levelCard then
 				levelCard.Visible = false
 			end
@@ -685,18 +693,24 @@ function HudController.Start(remotes: Folder)
 			if comboCard then
 				comboCard.Visible = true
 			end
-			tutorial.Position = UDim2.new(0.5, 0, 0, 72)
-			tutorial.Size = UDim2.fromOffset(math.min(380, viewport.X - 210), 42)
-			shopButton.Position = UDim2.new(1, -14, 0, 74)
-			shopButton.Size = UDim2.fromOffset(92, 44)
-			dropButton.Position = UDim2.new(1, -18, 1, -20)
-			dropButton.Size = UDim2.fromOffset(154, 58)
-			shopPanel.Position = UDim2.fromScale(0.5, 0.54)
-			shopPanel.Size = UDim2.fromScale(0.76, 0.72)
-			resultPanel.Size = UDim2.new(0.78, 0, 0, 214)
+			tutorial.Position = UDim2.new(0.5, 0, 0, 108)
+			tutorial.Size = UDim2.fromOffset(math.min(320, viewport.X - 250), 38)
+			shopButton.Position = UDim2.new(1, -14, 0, 108)
+			shopButton.Size = UDim2.fromOffset(78, 36)
+			dropButton.Position = UDim2.new(1, -18, 1, -18)
+			dropButton.Size = UDim2.fromOffset(148, 54)
+			shopPanel.Position = UDim2.fromScale(0.5, 0.55)
+			shopPanel.Size = UDim2.fromScale(0.72, 0.68)
+			resultPanel.Size = UDim2.new(0.72, 0, 0, 208)
 		else
+			status.AnchorPoint = Vector2.new(0.5, 0)
+			statusSize.MinSize = Vector2.new(300, 56)
+			statusSize.MaxSize = Vector2.new(760, 72)
 			status.Size = UDim2.new(1, -36, 0, 72)
 			status.Position = UDim2.new(0.5, 0, 0, 16)
+			status.BackgroundTransparency = 0.04
+			statusStroke.Transparency = 0.2
+			progressTrack.Visible = true
 			metricRow.Position = UDim2.fromOffset(8, 7)
 			metricRow.Size = UDim2.new(1, -16, 1, -18)
 			metricGrid.FillDirectionMaxCells = 5
