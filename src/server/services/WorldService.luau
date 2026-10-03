@@ -77,6 +77,45 @@ local function makeDecorative(item: BasePart)
 	item.CanQuery = false
 end
 
+local function padTrim(
+	parent: Instance,
+	prefix: string,
+	center: Vector3,
+	width: number,
+	depth: number,
+	y: number,
+	accent: Color3
+)
+	local thickness = 0.18
+	local inset = 0.30
+	for _, zSign in { -1, 1 } do
+		local edge = part(
+			prefix .. "Trim",
+			Vector3.new(width - inset * 2, 0.12, thickness),
+			CFrame.new(center + Vector3.new(0, y, zSign * (depth / 2 - inset))),
+			Enum.Material.Neon,
+			accent,
+			parent
+		)
+		edge.Transparency = 0.06
+		edge:SetAttribute("ArenaAccent", true)
+		makeDecorative(edge)
+	end
+	for _, xSign in { -1, 1 } do
+		local edge = part(
+			prefix .. "Trim",
+			Vector3.new(thickness, 0.12, depth - inset * 2),
+			CFrame.new(center + Vector3.new(xSign * (width / 2 - inset), y, 0)),
+			Enum.Material.Neon,
+			accent,
+			parent
+		)
+		edge.Transparency = 0.06
+		edge:SetAttribute("ArenaAccent", true)
+		makeDecorative(edge)
+	end
+end
+
 local function rooftopLight(position: Vector3, accent: Color3, parent: Instance)
 	local base = part(
 		"RoofLightBase",
@@ -534,7 +573,7 @@ function WorldService.EnsurePlayerArea(player: Player): (Folder, Vector3)
 	folder:SetAttribute("Lane", lane)
 	folder.Parent = worldFolder
 
-	local operatorPad = part(
+	part(
 		"OperatorPad",
 		Vector3.new(12, 1, 12),
 		CFrame.new(offset + Vector3.new(15, 0.5, 10)),
@@ -543,13 +582,17 @@ function WorldService.EnsurePlayerArea(player: Player): (Folder, Vector3)
 		folder
 	)
 
-	local operatorAccent = Instance.new("SelectionBox")
-	operatorAccent.Name = "OperatorPadAccent"
-	operatorAccent.Adornee = operatorPad
-	operatorAccent.Color3 = Color3.fromRGB(255, 153, 51)
-	operatorAccent.LineThickness = 0.055
-	operatorAccent.SurfaceTransparency = 1
-	operatorAccent.Parent = operatorPad
+	padTrim(folder, "OperatorPad", offset + Vector3.new(15, 0, 10), 12, 12, 1.04, Color3.fromRGB(255, 153, 51))
+
+	local operatorInset = part(
+		"OperatorInset",
+		Vector3.new(10.4, 0.10, 10.4),
+		CFrame.new(offset + Vector3.new(15, 1.05, 10)),
+		Enum.Material.Slate,
+		Color3.fromRGB(37, 45, 57),
+		folder
+	)
+	makeDecorative(operatorInset)
 
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "PlayerSpawn"
@@ -562,7 +605,7 @@ function WorldService.EnsurePlayerArea(player: Player): (Folder, Vector3)
 	spawn.Duration = 0
 	spawn.Parent = folder
 
-	local towerPad = part(
+	part(
 		"TowerPad",
 		Vector3.new(18, 1.2, 18),
 		CFrame.new(offset + Vector3.new(0, 0.6, 0)),
@@ -571,13 +614,7 @@ function WorldService.EnsurePlayerArea(player: Player): (Folder, Vector3)
 		folder
 	)
 
-	local ring = Instance.new("SelectionBox")
-	ring.Name = "TowerPadAccent"
-	ring.Adornee = towerPad
-	ring.Color3 = Color3.fromRGB(255, 153, 51)
-	ring.LineThickness = 0.065
-	ring.SurfaceTransparency = 1
-	ring.Parent = towerPad
+	padTrim(folder, "TowerPad", offset, 18, 18, 1.22, Color3.fromRGB(255, 153, 51))
 
 	local inset = part(
 		"TowerInset",
@@ -664,18 +701,13 @@ function WorldService.ApplyArenaTheme(player: Player)
 	end
 	local theme = CosmeticConfig.ArenaThemes[themeId] or CosmeticConfig.ArenaThemes[CosmeticConfig.DefaultArenaTheme]
 	local operatorPad = area:FindFirstChild("OperatorPad")
-	local towerPad = area:FindFirstChild("TowerPad")
 	if operatorPad and operatorPad:IsA("BasePart") then
 		operatorPad.Color = rgb(theme.PadRGB)
-		local operatorAccent = operatorPad:FindFirstChild("OperatorPadAccent")
-		if operatorAccent and operatorAccent:IsA("SelectionBox") then
-			operatorAccent.Color3 = rgb(theme.AccentRGB)
-		end
 	end
-	if towerPad and towerPad:IsA("BasePart") then
-		local accent = towerPad:FindFirstChild("TowerPadAccent")
-		if accent and accent:IsA("SelectionBox") then
-			accent.Color3 = rgb(theme.AccentRGB)
+	local accent = rgb(theme.AccentRGB)
+	for _, descendant in area:GetDescendants() do
+		if descendant:IsA("BasePart") and descendant:GetAttribute("ArenaAccent") == true then
+			descendant.Color = accent
 		end
 	end
 end
