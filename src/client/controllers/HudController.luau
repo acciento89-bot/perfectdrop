@@ -366,9 +366,52 @@ function HudController.Start(remotes: Folder)
 	gui.DisplayOrder = 20
 	gui.Parent = playerGui
 
+	local logo = Instance.new("Frame")
+	logo.Name = "PerfectDropLogo"
+	logo.Position = UDim2.fromOffset(18, 14)
+	logo.Size = UDim2.fromOffset(178, 70)
+	logo.BackgroundTransparency = 1
+	logo.Parent = gui
+
+	local logoTop = Instance.new("TextLabel")
+	logoTop.BackgroundTransparency = 1
+	logoTop.Size = UDim2.fromOffset(150, 34)
+	logoTop.Font = Enum.Font.GothamBlack
+	logoTop.Text = "PERFECT"
+	logoTop.TextSize = 26
+	logoTop.TextXAlignment = Enum.TextXAlignment.Left
+	logoTop.TextColor3 = Color3.fromRGB(88, 223, 255)
+	logoTop.TextStrokeColor3 = Color3.fromRGB(37, 34, 67)
+	logoTop.TextStrokeTransparency = 0.38
+	logoTop.Parent = logo
+
+	local logoBottom = Instance.new("TextLabel")
+	logoBottom.BackgroundTransparency = 1
+	logoBottom.Position = UDim2.fromOffset(16, 26)
+	logoBottom.Size = UDim2.fromOffset(140, 34)
+	logoBottom.Font = Enum.Font.GothamBlack
+	logoBottom.Text = "DROP"
+	logoBottom.TextSize = 30
+	logoBottom.TextXAlignment = Enum.TextXAlignment.Left
+	logoBottom.TextColor3 = Color3.fromRGB(255, 185, 83)
+	logoBottom.TextStrokeColor3 = Color3.fromRGB(37, 34, 67)
+	logoBottom.TextStrokeTransparency = 0.34
+	logoBottom.Parent = logo
+
+	local logoTag = Instance.new("TextLabel")
+	logoTag.BackgroundTransparency = 1
+	logoTag.Position = UDim2.fromOffset(1, 58)
+	logoTag.Size = UDim2.fromOffset(176, 12)
+	logoTag.Font = Enum.Font.GothamBold
+	logoTag.Text = "30 STAGES • REACH THE CROWN"
+	logoTag.TextSize = 8
+	logoTag.TextXAlignment = Enum.TextXAlignment.Left
+	logoTag.TextColor3 = MUTED
+	logoTag.Parent = logo
+
 	status = Instance.new("Frame")
 	status.AnchorPoint = Vector2.new(0.5, 0)
-	status.Position = UDim2.new(0.5, 0, 0, 16)
+	status.Position = UDim2.new(0.56, 0, 0, 16)
 	status.Size = UDim2.new(1, -36, 0, 72)
 	status.BackgroundColor3 = SURFACE
 	status.BackgroundTransparency = 0.04
@@ -377,7 +420,7 @@ function HudController.Start(remotes: Folder)
 	round(status, 14)
 	statusStroke = stroke(status, ACCENT)
 	local statusSize = Instance.new("UISizeConstraint")
-	statusSize.MaxSize = Vector2.new(760, 72)
+	statusSize.MaxSize = Vector2.new(610, 72)
 	statusSize.MinSize = Vector2.new(300, 56)
 	statusSize.Parent = status
 
@@ -505,6 +548,26 @@ function HudController.Start(remotes: Folder)
 	shopButton.Parent = gui
 	round(shopButton, 12)
 	stroke(shopButton, Color3.fromRGB(82, 93, 110), 0.25)
+
+	local quickRail = Instance.new("Frame")
+	quickRail.Name = "ConceptQuickRail"
+	quickRail.AnchorPoint = Vector2.new(1, 0)
+	quickRail.Position = UDim2.new(1, -18, 0, 94)
+	quickRail.Size = UDim2.fromOffset(94, 98)
+	quickRail.BackgroundTransparency = 1
+	quickRail.Parent = gui
+
+	local quickShopButton = makeActionButton(quickRail, "SHOP", Color3.fromRGB(173, 114, 255))
+	quickShopButton.Name = "ConceptShopButton"
+	quickShopButton.Size = UDim2.fromOffset(94, 42)
+	quickShopButton.Position = UDim2.fromOffset(0, 0)
+	quickShopButton.TextColor3 = TEXT
+
+	local dailyQuickButton = makeActionButton(quickRail, "DAILY", Color3.fromRGB(255, 178, 82))
+	dailyQuickButton.Name = "ConceptDailyButton"
+	dailyQuickButton.Size = UDim2.fromOffset(94, 42)
+	dailyQuickButton.Position = UDim2.fromOffset(0, 50)
+	dailyQuickButton.TextColor3 = Color3.fromRGB(24, 28, 34)
 
 	resultPanel = Instance.new("Frame")
 	resultPanel.Name = "ResultPanel"
@@ -691,6 +754,9 @@ function HudController.Start(remotes: Folder)
 		local coinsCard = metricRow:FindFirstChild("CoinsMetric")
 
 		if compact then
+			logo.Visible = false
+			quickRail.Visible = false
+			shopButton.Visible = true
 			-- Mobile gets one tiny summary pill instead of a desktop-style status bar.
 			status.Visible = false
 			mobileSummary.Visible = true
@@ -732,13 +798,16 @@ function HudController.Start(remotes: Folder)
 			shopPanel.Size = UDim2.fromScale(0.72, 0.68)
 			resultPanel.Size = UDim2.new(0.72, 0, 0, 208)
 		else
+			logo.Visible = true
+			quickRail.Visible = true
+			shopButton.Visible = false
 			status.Visible = true
 			mobileSummary.Visible = false
 			status.AnchorPoint = Vector2.new(0.5, 0)
 			statusSize.MinSize = Vector2.new(300, 56)
-			statusSize.MaxSize = Vector2.new(760, 72)
+			statusSize.MaxSize = Vector2.new(610, 72)
 			status.Size = UDim2.new(1, -36, 0, 72)
-			status.Position = UDim2.new(0.5, 0, 0, 16)
+			status.Position = UDim2.new(0.56, 0, 0, 16)
 			status.BackgroundTransparency = 0.04
 			statusStroke.Transparency = 0.2
 			progressTrack.Visible = true
@@ -802,6 +871,18 @@ function HudController.Start(remotes: Folder)
 		setShopVisible(not shopPanel.Visible)
 		dropButton.Visible = currentState == "ACTIVE" and not shopPanel.Visible
 		tutorial.Visible = tutorial.Visible and not shopPanel.Visible
+	end)
+
+	quickShopButton.Activated:Connect(function()
+		setShopVisible(not shopPanel.Visible)
+		dropButton.Visible = currentState == "ACTIVE" and not shopPanel.Visible
+	end)
+	dailyQuickButton.Activated:Connect(function()
+		setShopVisible(true)
+		dropButton.Visible = false
+		task.defer(function()
+			scroll.CanvasPosition = Vector2.new(0, 0)
+		end)
 	end)
 
 	dailyButton.Activated:Connect(function()

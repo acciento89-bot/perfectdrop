@@ -190,3 +190,9 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 - [x] Native Roblox concept-quality presentation pass implemented for this game; no static concept screenshot is used in gameplay.
 - [x] Lighting/VFX and native ScreenGui styling are test-guarded and pass local static verification plus Studio PlaySolo runtime QA.
 - [x] Evidence: `docs/evidence/2026-10-04-concept-visual-polish.md`.
+
+## 2026-10-04 concept-fidelity pass 2
+
+- [x] Rooftop/city presentation moved closer to the approved production concept with readable sunset lighting and stronger skyline depth.
+- [x] Branded logo plus compact concept quick rail added without regressing the approved compact-phone status-pill direction.
+- [x] Final PlaySolo runtime: server/client initialized, 0 CreatorErrors; static verification green with 12 pure-Luau test files.

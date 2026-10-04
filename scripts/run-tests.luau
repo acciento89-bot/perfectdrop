@@ -1,4 +1,5 @@
 local tests = {
+	require("../tests/concept-fidelity.spec"),
 	require("../tests/visual-polish.spec"),
 	require("../tests/difficulty-rules.spec"),
 	require("../tests/drop-rules.spec"),

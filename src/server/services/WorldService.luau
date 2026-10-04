@@ -423,8 +423,32 @@ local function ensureWorld()
 		)
 	end
 
+	local heroLeft = Instance.new("Folder")
+	heroLeft.Name = "HeroSkylineLeft"
+	heroLeft.Parent = folder
+	for index, height in { 34, 48, 27, 56 } do
+		cityBuilding(
+			Vector3.new(-78 + index * 12, -5, -72 - index * 4),
+			Vector3.new(10 + index, height, 12 + (index % 2) * 3),
+			45 + index * 2,
+			heroLeft
+		)
+	end
+
+	local heroRight = Instance.new("Folder")
+	heroRight.Name = "HeroSkylineRight"
+	heroRight.Parent = folder
+	for index, height in { 42, 30, 52, 37 } do
+		cityBuilding(
+			Vector3.new(34 + index * 14, -6, -78 - (index % 2) * 5),
+			Vector3.new(11 + (index % 3) * 2, height, 13 + index),
+			42 + index * 2,
+			heroRight
+		)
+	end
+
 	local sun = part(
-		"SunDisc",
+		"SkySunDisc",
 		Vector3.new(19, 19, 19),
 		CFrame.new(56, 50, -145),
 		Enum.Material.Neon,
