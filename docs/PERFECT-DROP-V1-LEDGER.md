@@ -184,3 +184,9 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 ## 2026-10-03 Mobile camera/HUD corrective pass
 
 - [x] Real-phone camera/HUD regression repaired and revalidated: avatar + active block remain framed through stage 30, compact gameplay HUD is reduced, touch targets pass the production gate, and the second full Studio E2E completed successfully. Evidence: `docs/evidence/2026-10-03-mobile-regression-revalidation.md`.
+
+## 2026-10-04 concept visual-polish pass
+
+- [x] Native Roblox concept-quality presentation pass implemented for this game; no static concept screenshot is used in gameplay.
+- [x] Lighting/VFX and native ScreenGui styling are test-guarded and pass local static verification plus Studio PlaySolo runtime QA.
+- [x] Evidence: `docs/evidence/2026-10-04-concept-visual-polish.md`.

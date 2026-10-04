@@ -1,0 +1,53 @@
+--!strict
+
+return {
+	Id = "perfect-drop",
+	Title = "Perfect Drop",
+	Colors = {
+		Foundation = "#101725",
+		Panel = "#17273A",
+		Panel2 = "#243B53",
+		Accent = "#58DFFF",
+		Accent2 = "#AD72FF",
+		Accent3 = "#6EF0A2",
+		Text = "#F5FBFF",
+		Muted = "#A8B9CB",
+	},
+	Lighting = {
+		Brightness = 2.25,
+		ClockTime = 19.5,
+		ExposureCompensation = 0.08,
+		EnvironmentDiffuseScale = 0.32,
+		EnvironmentSpecularScale = 0.86,
+		FogStart = 420,
+		FogEnd = 1300,
+		Ambient = "#40516D",
+		OutdoorAmbient = "#6B709B",
+		FogColor = "#6E6DA5",
+	},
+	Atmosphere = {
+		Density = 0.22,
+		Offset = 0.05,
+		Color = "#9FD9FF",
+		Decay = "#7C5CA8",
+		Glare = 0.1,
+		Haze = 1.3,
+	},
+	Effects = {
+		BloomIntensity = 0.52,
+		BloomSize = 34,
+		BloomThreshold = 1.15,
+		Saturation = 0.08,
+		Contrast = 0.1,
+		TintColor = "#DBE8FF",
+		SunRaysIntensity = 0.03,
+		SunRaysSpread = 0.65,
+	},
+	Clouds = {
+		Cover = 0.2,
+		Density = 0.28,
+		Color = "#C9D6FF",
+	},
+	TargetGuis = { "PerfectDropHUD" },
+	TargetPrefixes = { "PerfectDrop" },
+}
