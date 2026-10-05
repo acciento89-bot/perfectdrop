@@ -12,8 +12,8 @@ assert(
 	"visual showcase must use native ViewportFrame"
 )
 assert(
-	string.find(hud, "conceptShowcase.Visible = not compact", 1, true),
-	"showcase must be hidden only on compact touch layouts"
+	string.find(hud, "conceptShowcase.Visible = false", 1, true),
+	"concept montage must remain hidden during normal gameplay"
 )
 assert(
 	string.find(hud, "tutorial.Position = UDim2.new(0.5, 0, 1, -72)", 1, true),
