@@ -1,5 +1,8 @@
 # Perfect Drop Art Direction
 
+## Concept interpretation
+The approved concept image is a **feature montage**, not a simultaneous gameplay HUD. Shop, Daily Rewards and Result/Revive are contextual overlays: they remain hidden until the player opens them or the matching gameplay state triggers them. Normal play keeps the avatar, moving block and tower route unobstructed.
+
 ## Target
 A polished, readable Roblox experience that looks intentional from a normal gameplay screenshot. Stylized, clean and modern; never like an empty baseplate or developer prototype.
 
