@@ -30,3 +30,10 @@ The visual contract was introduced with a failing test before production impleme
 - Added branded Perfect Drop wordmark, retained the 30-stage progress hierarchy and added compact Shop/Daily concept quick actions for non-compact layouts while preserving the approved compact mobile HUD.
 - Added left/right hero skyline clusters and promoted the sunset disc to a deliberate sky focal point.
 - Final Studio PlaySolo initialized server/client with 0 CreatorErrors; 12 pure-Luau test files, Selene 0/0, StyLua, Rojo build and git diff check pass.
+
+## Concept-fidelity pass 3
+
+- Added the live concept composition for non-compact play: Drop Shop featured themes, Clear Progress, five-day Daily Rewards, native ViewportFrame rooftop preview and compact Shop/Daily rail.
+- Featured cards use the real Sunset/Ocean/Night Shift cosmetics and open the production shop rather than presenting fake store content.
+- The new composition keeps the avatar/drop lane central and moves onboarding copy to the bottom-center on non-compact layouts.
+- Final PlaySolo recheck initialized server/client with `0 CreatorErrors`; 13 pure-Luau tests, Selene 0/0, StyLua, Rojo build and git diff check pass.

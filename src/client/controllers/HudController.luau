@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
+local CosmeticConfig = require(ReplicatedStorage.PerfectDrop.config.CosmeticConfig)
 local GameConfig = require(ReplicatedStorage.PerfectDrop.config.GameConfig)
 local UserInputService = game:GetService("UserInputService")
 
@@ -39,6 +40,12 @@ local audioButton: TextButton
 local currentState = "ACTIVE"
 local currentMeta = nil
 local themeButtons: { [TextButton]: { category: string, id: string } } = {}
+local conceptShowcase: Frame? = nil
+local conceptProgressText: TextLabel? = nil
+local conceptProgressFill: Frame? = nil
+local conceptCoins: TextLabel? = nil
+local conceptDailyCaption: TextLabel? = nil
+local conceptDailyTiles: { Frame } = {}
 
 local ACCENT = Color3.fromRGB(255, 153, 51)
 local SURFACE = Color3.fromRGB(22, 27, 34)
@@ -165,9 +172,18 @@ local function updateTopStatus()
 		)
 	end
 	statusStroke.Color = if assisted then Color3.fromRGB(137, 121, 255) else ACCENT
+	local progress = math.clamp(height / GameConfig.Progression.MaxStages, 0, 1)
 	if stageProgressFill then
-		local progress = math.clamp(height / GameConfig.Progression.MaxStages, 0, 1)
 		stageProgressFill.Size = UDim2.fromScale(progress, 1)
+	end
+	if conceptProgressText then
+		conceptProgressText.Text = ("STAGE %d / %d"):format(height, GameConfig.Progression.MaxStages)
+	end
+	if conceptProgressFill then
+		conceptProgressFill.Size = UDim2.fromScale(progress, 1)
+	end
+	if conceptCoins then
+		conceptCoins.Text = ("◈ %d"):format(coins)
 	end
 end
 
@@ -287,6 +303,18 @@ local function refreshShop()
 	dailyButton.AutoButtonColor = dailyClaimable
 	dailyButton.BackgroundColor3 = if dailyClaimable then ACCENT else Color3.fromRGB(52, 60, 72)
 	dailyButton.TextColor3 = if dailyClaimable then Color3.fromRGB(24, 28, 34) else MUTED
+	if conceptDailyCaption then
+		conceptDailyCaption.Text = if dailyClaimable then "READY TO CLAIM" else "CLAIMED TODAY"
+	end
+	for index, tile in conceptDailyTiles do
+		if index == 1 and not dailyClaimable then
+			tile.BackgroundColor3 = Color3.fromRGB(49, 104, 86)
+		elseif index == 1 and dailyClaimable then
+			tile.BackgroundColor3 = Color3.fromRGB(112, 78, 156)
+		else
+			tile.BackgroundColor3 = Color3.fromRGB(48, 55, 75)
+		end
+	end
 
 	local perfects = metaValue("dailyPerfects", 0)
 	local required = metaValue("dailyRequired", 3)
@@ -569,6 +597,397 @@ function HudController.Start(remotes: Folder)
 	dailyQuickButton.Position = UDim2.fromOffset(0, 50)
 	dailyQuickButton.TextColor3 = Color3.fromRGB(24, 28, 34)
 
+	conceptShowcase = Instance.new("Frame")
+	conceptShowcase.Name = "ConceptShowcase"
+	conceptShowcase.Size = UDim2.fromScale(1, 1)
+	conceptShowcase.BackgroundTransparency = 1
+	conceptShowcase.Visible = false
+	conceptShowcase.Parent = gui
+
+	local function addPanelGradient(panel: GuiObject, first: Color3, second: Color3)
+		local gradient = Instance.new("UIGradient")
+		gradient.Rotation = 110
+		gradient.Color = ColorSequence.new(first, second)
+		gradient.Parent = panel
+	end
+
+	local function configColor(values): Color3
+		return Color3.fromRGB(values[1], values[2], values[3])
+	end
+
+	local shopShowcase = Instance.new("Frame")
+	shopShowcase.Name = "DropShopShowcase"
+	shopShowcase.AnchorPoint = Vector2.new(0, 1)
+	shopShowcase.Position = UDim2.new(0, 18, 1, -18)
+	shopShowcase.Size = UDim2.fromOffset(308, 208)
+	shopShowcase.BackgroundColor3 = Color3.fromRGB(26, 31, 45)
+	shopShowcase.BackgroundTransparency = 0.02
+	shopShowcase.BorderSizePixel = 0
+	shopShowcase.Parent = conceptShowcase
+	round(shopShowcase, 20)
+	stroke(shopShowcase, Color3.fromRGB(126, 214, 255), 0.34)
+	addPanelGradient(shopShowcase, Color3.fromRGB(48, 45, 85), Color3.fromRGB(22, 27, 38))
+
+	local showcaseTitle = Instance.new("TextLabel")
+	showcaseTitle.BackgroundTransparency = 1
+	showcaseTitle.Position = UDim2.fromOffset(15, 8)
+	showcaseTitle.Size = UDim2.fromOffset(180, 28)
+	showcaseTitle.Font = Enum.Font.GothamBlack
+	showcaseTitle.TextSize = 17
+	showcaseTitle.TextXAlignment = Enum.TextXAlignment.Left
+	showcaseTitle.TextColor3 = TEXT
+	showcaseTitle.Text = "DROP SHOP"
+	showcaseTitle.Parent = shopShowcase
+
+	local featured = Instance.new("TextLabel")
+	featured.BackgroundTransparency = 1
+	featured.Position = UDim2.fromOffset(202, 11)
+	featured.Size = UDim2.fromOffset(88, 20)
+	featured.Font = Enum.Font.GothamBold
+	featured.TextSize = 9
+	featured.TextXAlignment = Enum.TextXAlignment.Right
+	featured.TextColor3 = Color3.fromRGB(151, 213, 255)
+	featured.Text = "FEATURED"
+	featured.Parent = shopShowcase
+
+	local conceptShopButtons: { TextButton } = {}
+	local featuredThemes = {
+		{
+			Category = "block",
+			Id = "sunset",
+			Name = CosmeticConfig.BlockThemes.sunset.DisplayName,
+			Price = CosmeticConfig.BlockThemes.sunset.PriceCoins,
+			Color = configColor(CosmeticConfig.BlockThemes.sunset.MovingRGB),
+		},
+		{
+			Category = "block",
+			Id = "ocean",
+			Name = CosmeticConfig.BlockThemes.ocean.DisplayName,
+			Price = CosmeticConfig.BlockThemes.ocean.PriceCoins,
+			Color = configColor(CosmeticConfig.BlockThemes.ocean.MovingRGB),
+		},
+		{
+			Category = "arena",
+			Id = "night",
+			Name = CosmeticConfig.ArenaThemes.night.DisplayName,
+			Price = CosmeticConfig.ArenaThemes.night.PriceCoins,
+			Color = configColor(CosmeticConfig.ArenaThemes.night.AccentRGB),
+		},
+	}
+	for index, item in featuredThemes do
+		local card = Instance.new("Frame")
+		card.Name = ("Featured%02d"):format(index)
+		card.Position = UDim2.fromOffset(14 + (index - 1) * 98, 43)
+		card.Size = UDim2.fromOffset(88, 151)
+		card.BackgroundColor3 = Color3.fromRGB(39, 45, 61)
+		card.BackgroundTransparency = 0.02
+		card.BorderSizePixel = 0
+		card.Parent = shopShowcase
+		round(card, 14)
+		stroke(card, item.Color, 0.42)
+		addPanelGradient(card, item.Color:Lerp(Color3.fromRGB(45, 39, 72), 0.72), Color3.fromRGB(30, 35, 49))
+
+		local art = Instance.new("Frame")
+		art.Name = "Preview"
+		art.Position = UDim2.fromOffset(8, 8)
+		art.Size = UDim2.fromOffset(72, 58)
+		art.BackgroundColor3 = Color3.fromRGB(18, 23, 32)
+		art.BorderSizePixel = 0
+		art.Parent = card
+		round(art, 11)
+		stroke(art, item.Color, 0.18)
+
+		local moving = Instance.new("Frame")
+		moving.Name = "MovingBlock"
+		moving.AnchorPoint = Vector2.new(0.5, 0.5)
+		moving.Position = UDim2.fromScale(0.54, 0.42)
+		moving.Size = UDim2.fromOffset(44, 16)
+		moving.Rotation = -8
+		moving.BackgroundColor3 = item.Color
+		moving.BorderSizePixel = 0
+		moving.Parent = art
+		round(moving, 5)
+		local base = Instance.new("Frame")
+		base.Name = "BaseBlock"
+		base.AnchorPoint = Vector2.new(0.5, 0.5)
+		base.Position = UDim2.fromScale(0.44, 0.68)
+		base.Size = UDim2.fromOffset(48, 13)
+		base.Rotation = 5
+		base.BackgroundColor3 = item.Color:Lerp(Color3.fromRGB(232, 236, 246), 0.32)
+		base.BorderSizePixel = 0
+		base.Parent = art
+		round(base, 5)
+
+		local name = Instance.new("TextLabel")
+		name.BackgroundTransparency = 1
+		name.Position = UDim2.fromOffset(5, 69)
+		name.Size = UDim2.fromOffset(78, 34)
+		name.Font = Enum.Font.GothamBold
+		name.TextSize = 10
+		name.TextWrapped = true
+		name.TextColor3 = TEXT
+		name.Text = item.Name
+		name.Parent = card
+
+		local price = Instance.new("TextLabel")
+		price.BackgroundTransparency = 1
+		price.Position = UDim2.fromOffset(5, 103)
+		price.Size = UDim2.fromOffset(78, 16)
+		price.Font = Enum.Font.GothamBold
+		price.TextSize = 9
+		price.TextColor3 = Color3.fromRGB(255, 194, 66)
+		price.Text = ("◈ %d"):format(item.Price)
+		price.Parent = card
+
+		local open = makeActionButton(card, "OPEN", item.Color)
+		open.Name = "OpenShop"
+		open.Position = UDim2.fromOffset(9, 122)
+		open.Size = UDim2.fromOffset(70, 24)
+		open.TextSize = 9
+		open.TextColor3 = Color3.fromRGB(22, 27, 34)
+		table.insert(conceptShopButtons, open)
+	end
+
+	local rightColumn = Instance.new("Frame")
+	rightColumn.Name = "ConceptRightColumn"
+	rightColumn.AnchorPoint = Vector2.new(1, 0)
+	rightColumn.Position = UDim2.new(1, -18, 0, 98)
+	rightColumn.Size = UDim2.fromOffset(232, 366)
+	rightColumn.BackgroundTransparency = 1
+	rightColumn.Parent = conceptShowcase
+
+	local conceptProgressCard = Instance.new("Frame")
+	conceptProgressCard.Name = "ConceptProgressCard"
+	conceptProgressCard.Size = UDim2.fromOffset(232, 86)
+	conceptProgressCard.BackgroundColor3 = Color3.fromRGB(26, 31, 45)
+	conceptProgressCard.BorderSizePixel = 0
+	conceptProgressCard.Parent = rightColumn
+	round(conceptProgressCard, 17)
+	stroke(conceptProgressCard, Color3.fromRGB(89, 218, 255), 0.35)
+	addPanelGradient(conceptProgressCard, Color3.fromRGB(43, 48, 78), Color3.fromRGB(23, 28, 40))
+
+	local progressTitle = Instance.new("TextLabel")
+	progressTitle.BackgroundTransparency = 1
+	progressTitle.Position = UDim2.fromOffset(13, 7)
+	progressTitle.Size = UDim2.fromOffset(204, 20)
+	progressTitle.Font = Enum.Font.GothamBlack
+	progressTitle.TextSize = 13
+	progressTitle.TextColor3 = TEXT
+	progressTitle.Text = "CLEAR PROGRESS"
+	progressTitle.Parent = conceptProgressCard
+
+	conceptProgressText = Instance.new("TextLabel")
+	conceptProgressText.BackgroundTransparency = 1
+	conceptProgressText.Position = UDim2.fromOffset(13, 28)
+	conceptProgressText.Size = UDim2.fromOffset(204, 18)
+	conceptProgressText.Font = Enum.Font.GothamBold
+	conceptProgressText.TextSize = 9
+	conceptProgressText.TextColor3 = MUTED
+	conceptProgressText.Text = "STAGE 0 / 30"
+	conceptProgressText.Parent = conceptProgressCard
+
+	local conceptTrack = Instance.new("Frame")
+	conceptTrack.Position = UDim2.fromOffset(13, 55)
+	conceptTrack.Size = UDim2.fromOffset(206, 14)
+	conceptTrack.BackgroundColor3 = Color3.fromRGB(14, 19, 29)
+	conceptTrack.BorderSizePixel = 0
+	conceptTrack.ClipsDescendants = true
+	conceptTrack.Parent = conceptProgressCard
+	round(conceptTrack, 99)
+	conceptProgressFill = Instance.new("Frame")
+	conceptProgressFill.Size = UDim2.fromScale(0, 1)
+	conceptProgressFill.BackgroundColor3 = Color3.fromRGB(91, 220, 239)
+	conceptProgressFill.BorderSizePixel = 0
+	conceptProgressFill.Parent = conceptTrack
+	round(conceptProgressFill, 99)
+
+	local conceptDailyRewards = Instance.new("Frame")
+	conceptDailyRewards.Name = "ConceptDailyRewards"
+	conceptDailyRewards.Position = UDim2.fromOffset(0, 96)
+	conceptDailyRewards.Size = UDim2.fromOffset(232, 128)
+	conceptDailyRewards.BackgroundColor3 = Color3.fromRGB(26, 31, 45)
+	conceptDailyRewards.BorderSizePixel = 0
+	conceptDailyRewards.Parent = rightColumn
+	round(conceptDailyRewards, 17)
+	stroke(conceptDailyRewards, Color3.fromRGB(173, 114, 255), 0.40)
+	addPanelGradient(conceptDailyRewards, Color3.fromRGB(49, 43, 80), Color3.fromRGB(23, 28, 40))
+
+	local dailyTitle = Instance.new("TextLabel")
+	dailyTitle.BackgroundTransparency = 1
+	dailyTitle.Position = UDim2.fromOffset(13, 6)
+	dailyTitle.Size = UDim2.fromOffset(204, 20)
+	dailyTitle.Font = Enum.Font.GothamBlack
+	dailyTitle.TextSize = 13
+	dailyTitle.TextColor3 = TEXT
+	dailyTitle.Text = "DAILY REWARDS"
+	dailyTitle.Parent = conceptDailyRewards
+
+	conceptDailyCaption = Instance.new("TextLabel")
+	conceptDailyCaption.BackgroundTransparency = 1
+	conceptDailyCaption.Position = UDim2.fromOffset(13, 27)
+	conceptDailyCaption.Size = UDim2.fromOffset(204, 16)
+	conceptDailyCaption.Font = Enum.Font.GothamBold
+	conceptDailyCaption.TextSize = 8
+	conceptDailyCaption.TextColor3 = MUTED
+	conceptDailyCaption.Text = "READY TO CLAIM"
+	conceptDailyCaption.Parent = conceptDailyRewards
+
+	conceptDailyTiles = {}
+	for index = 1, 5 do
+		local tile = Instance.new("Frame")
+		tile.Name = ("Day%02d"):format(index)
+		tile.Position = UDim2.fromOffset(9 + (index - 1) * 44, 48)
+		tile.Size = UDim2.fromOffset(39, 67)
+		tile.BackgroundColor3 = Color3.fromRGB(48, 55, 75)
+		tile.BorderSizePixel = 0
+		tile.Parent = conceptDailyRewards
+		round(tile, 9)
+		stroke(tile, Color3.fromRGB(129, 147, 180), 0.55)
+
+		local day = Instance.new("TextLabel")
+		day.BackgroundTransparency = 1
+		day.Position = UDim2.fromOffset(2, 4)
+		day.Size = UDim2.fromOffset(35, 14)
+		day.Font = Enum.Font.GothamBold
+		day.TextSize = 8
+		day.TextColor3 = MUTED
+		day.Text = ("D%d"):format(index)
+		day.Parent = tile
+
+		local reward = Instance.new("TextLabel")
+		reward.BackgroundTransparency = 1
+		reward.Position = UDim2.fromOffset(2, 22)
+		reward.Size = UDim2.fromOffset(35, 31)
+		reward.Font = Enum.Font.GothamBlack
+		reward.TextSize = 15
+		reward.TextColor3 = if index == 1 then Color3.fromRGB(69, 206, 159) else Color3.fromRGB(255, 194, 66)
+		reward.Text = if index == 1
+			then "✓"
+			elseif index == 2 then "◈"
+			elseif index == 3 then "✦"
+			elseif index == 4 then "◆"
+			else "★"
+		reward.Parent = tile
+		table.insert(conceptDailyTiles, tile)
+	end
+
+	local conceptVistaCard = Instance.new("Frame")
+	conceptVistaCard.Name = "ConceptVistaCard"
+	conceptVistaCard.Position = UDim2.fromOffset(0, 234)
+	conceptVistaCard.Size = UDim2.fromOffset(232, 132)
+	conceptVistaCard.BackgroundColor3 = Color3.fromRGB(26, 31, 45)
+	conceptVistaCard.BorderSizePixel = 0
+	conceptVistaCard.Parent = rightColumn
+	round(conceptVistaCard, 17)
+	stroke(conceptVistaCard, Color3.fromRGB(255, 169, 82), 0.38)
+	addPanelGradient(conceptVistaCard, Color3.fromRGB(55, 48, 75), Color3.fromRGB(23, 28, 40))
+
+	local vistaTitle = Instance.new("TextLabel")
+	vistaTitle.BackgroundTransparency = 1
+	vistaTitle.Position = UDim2.fromOffset(13, 6)
+	vistaTitle.Size = UDim2.fromOffset(204, 20)
+	vistaTitle.Font = Enum.Font.GothamBlack
+	vistaTitle.TextSize = 13
+	vistaTitle.TextColor3 = TEXT
+	vistaTitle.Text = "BETTER VISUALS"
+	vistaTitle.Parent = conceptVistaCard
+
+	local conceptViewport = Instance.new("ViewportFrame")
+	conceptViewport.Name = "RooftopPreview"
+	conceptViewport.Position = UDim2.fromOffset(12, 31)
+	conceptViewport.Size = UDim2.fromOffset(208, 89)
+	conceptViewport.BackgroundColor3 = Color3.fromRGB(233, 145, 103)
+	conceptViewport.BorderSizePixel = 0
+	conceptViewport.Ambient = Color3.fromRGB(155, 162, 190)
+	conceptViewport.LightColor = Color3.fromRGB(255, 212, 173)
+	conceptViewport.LightDirection = Vector3.new(-1, -1, -0.5)
+	conceptViewport.Parent = conceptVistaCard
+	round(conceptViewport, 12)
+
+	local previewWorld = Instance.new("WorldModel")
+	previewWorld.Parent = conceptViewport
+	local previewCamera = Instance.new("Camera")
+	previewCamera.CFrame = CFrame.lookAt(Vector3.new(11, 8, 14), Vector3.new(0, 1.2, 0))
+	previewCamera.FieldOfView = 40
+	previewCamera.Parent = conceptViewport
+	conceptViewport.CurrentCamera = previewCamera
+
+	local function previewPart(
+		name: string,
+		size: Vector3,
+		position: Vector3,
+		color: Color3,
+		material: Enum.Material
+	): Part
+		local part = Instance.new("Part")
+		part.Name = name
+		part.Size = size
+		part.Position = position
+		part.Anchored = true
+		part.CanCollide = false
+		part.Color = color
+		part.Material = material
+		part.Parent = previewWorld
+		return part
+	end
+	previewPart(
+		"Roof",
+		Vector3.new(10, 0.7, 8),
+		Vector3.new(0, -0.3, 0),
+		Color3.fromRGB(48, 56, 71),
+		Enum.Material.Concrete
+	)
+	previewPart(
+		"Pad",
+		Vector3.new(5.2, 0.35, 4.4),
+		Vector3.new(0, 0.25, 0),
+		Color3.fromRGB(39, 45, 58),
+		Enum.Material.Metal
+	)
+	previewPart(
+		"MovingBlock",
+		Vector3.new(4.0, 0.8, 3.3),
+		Vector3.new(0.6, 1.2, 0),
+		Color3.fromRGB(226, 112, 77),
+		Enum.Material.Metal
+	)
+	previewPart(
+		"TowerA",
+		Vector3.new(2.1, 7, 2.1),
+		Vector3.new(-4.0, 3, -4.0),
+		Color3.fromRGB(36, 43, 58),
+		Enum.Material.Concrete
+	)
+	previewPart(
+		"TowerB",
+		Vector3.new(2.5, 9, 2.4),
+		Vector3.new(3.7, 4, -4.8),
+		Color3.fromRGB(46, 50, 70),
+		Enum.Material.Concrete
+	)
+	previewPart(
+		"GoalGlow",
+		Vector3.new(5.5, 0.12, 0.18),
+		Vector3.new(0, 0.7, -2.2),
+		Color3.fromRGB(255, 194, 66),
+		Enum.Material.Neon
+	)
+	conceptCoins = Instance.new("TextLabel")
+	conceptCoins.Name = "ConceptCoins"
+	conceptCoins.AnchorPoint = Vector2.new(1, 0)
+	conceptCoins.Position = UDim2.new(1, -260, 0, 20)
+	conceptCoins.Size = UDim2.fromOffset(96, 42)
+	conceptCoins.BackgroundColor3 = SURFACE
+	conceptCoins.BackgroundTransparency = 0.03
+	conceptCoins.BorderSizePixel = 0
+	conceptCoins.Font = Enum.Font.GothamBold
+	conceptCoins.TextSize = 14
+	conceptCoins.TextColor3 = Color3.fromRGB(255, 194, 66)
+	conceptCoins.Text = "◈ 0"
+	conceptCoins.Parent = conceptShowcase
+	round(conceptCoins, 13)
+	stroke(conceptCoins, Color3.fromRGB(255, 194, 66), 0.42)
+
 	resultPanel = Instance.new("Frame")
 	resultPanel.Name = "ResultPanel"
 	resultPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -747,6 +1166,9 @@ function HudController.Start(remotes: Folder)
 
 		local viewport = camera.ViewportSize
 		local compact = UserInputService.TouchEnabled and math.min(viewport.X, viewport.Y) < 600
+		if conceptShowcase then
+			conceptShowcase.Visible = not compact
+		end
 		local levelCard = metricRow:FindFirstChild("LevelMetric")
 		local stageCard = metricRow:FindFirstChild("StageMetric")
 		local scoreCard = metricRow:FindFirstChild("ScoreMetric")
@@ -756,6 +1178,7 @@ function HudController.Start(remotes: Folder)
 		if compact then
 			logo.Visible = false
 			quickRail.Visible = false
+			quickRail.Position = UDim2.new(1, -18, 0, 94)
 			shopButton.Visible = true
 			-- Mobile gets one tiny summary pill instead of a desktop-style status bar.
 			status.Visible = false
@@ -831,7 +1254,9 @@ function HudController.Start(remotes: Folder)
 			if comboCard then
 				comboCard.Visible = true
 			end
-			tutorial.Position = UDim2.new(0.5, 0, 0, 90)
+			tutorial.Position = UDim2.new(0.5, 0, 1, -72)
+			tutorial.Size = UDim2.fromOffset(360, 48)
+			quickRail.Position = UDim2.new(1, -266, 0, 106)
 			shopButton.Position = UDim2.new(1, -18, 0, 94)
 			shopButton.Size = UDim2.fromOffset(108, 48)
 			dropButton.Position = UDim2.new(1, -24, 1, -24)
@@ -872,6 +1297,13 @@ function HudController.Start(remotes: Folder)
 		dropButton.Visible = currentState == "ACTIVE" and not shopPanel.Visible
 		tutorial.Visible = tutorial.Visible and not shopPanel.Visible
 	end)
+
+	for _, conceptButton in conceptShopButtons do
+		conceptButton.Activated:Connect(function()
+			setShopVisible(true)
+			dropButton.Visible = false
+		end)
+	end
 
 	quickShopButton.Activated:Connect(function()
 		setShopVisible(not shopPanel.Visible)

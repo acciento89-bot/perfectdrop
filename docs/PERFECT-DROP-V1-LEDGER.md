@@ -201,3 +201,4 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 
 - [x] Concept-fidelity source published to existing production Place `118957776621075` as `v34`.
 - [x] Immediate post-publish Studio smoke initialized the server without a gameplay-script startup failure.
+- [x] Concept-fidelity pass 3: live Drop Shop + progress/daily/visual cards and bottom-center onboarding now match the approved concept-style presentation without changing compact-phone gameplay.
