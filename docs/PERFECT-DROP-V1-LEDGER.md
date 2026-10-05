@@ -196,3 +196,8 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 - [x] Rooftop/city presentation moved closer to the approved production concept with readable sunset lighting and stronger skyline depth.
 - [x] Branded logo plus compact concept quick rail added without regressing the approved compact-phone status-pill direction.
 - [x] Final PlaySolo runtime: server/client initialized, 0 CreatorErrors; static verification green with 12 pure-Luau test files.
+
+## 2026-10-05 concept production publish
+
+- [x] Concept-fidelity source published to existing production Place `118957776621075` as `v34`.
+- [x] Immediate post-publish Studio smoke initialized the server without a gameplay-script startup failure.
