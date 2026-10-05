@@ -208,5 +208,5 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 - [x] Source-side concept graphic fidelity implemented: Layered rooftop-city depth, glass/needle skyline silhouettes, sunset halo, rooftop foreground dressing and landing halo.
 - [x] Contextual-menu rule preserved: full Shop/Daily/Style/Revive/Result surfaces are not permanently visible during normal gameplay.
 - [x] CI verification green on run `37270201233`; merged source commit `75ae73b`.
-- [ ] Fresh Roblox Studio PlaySolo visual acceptance after this pass.
-- [ ] Publish/republish this exact graphic-fidelity source to the existing canonical Place after Studio acceptance.
+- [x] Fresh Roblox Studio PlaySolo visual acceptance passed: rooftop/city depth, avatar/drop readability and contextual Shop/Daily behavior verified with clean local runtime startup.
+- [x] Graphic-fidelity source published to existing canonical Place `118957776621075` as `v37`; no new Place/Experience created. Evidence: `docs/evidence/2026-10-05-graphic-fidelity-runtime-publish.md`.
