@@ -202,3 +202,11 @@ Perfect Drop V1 gameplay is accepted: the final private-place build is playable 
 - [x] Concept-fidelity source published to existing production Place `118957776621075` as `v34`.
 - [x] Immediate post-publish Studio smoke initialized the server without a gameplay-script startup failure.
 - [x] Concept-fidelity pass 3: live Drop Shop + progress/daily/visual cards and bottom-center onboarding now match the approved concept-style presentation without changing compact-phone gameplay.
+
+## 2026-10-05 graphic-fidelity pass 4
+
+- [x] Source-side concept graphic fidelity implemented: Layered rooftop-city depth, glass/needle skyline silhouettes, sunset halo, rooftop foreground dressing and landing halo.
+- [x] Contextual-menu rule preserved: full Shop/Daily/Style/Revive/Result surfaces are not permanently visible during normal gameplay.
+- [x] CI verification green on run `37270201233`; merged source commit `75ae73b`.
+- [ ] Fresh Roblox Studio PlaySolo visual acceptance after this pass.
+- [ ] Publish/republish this exact graphic-fidelity source to the existing canonical Place after Studio acceptance.
