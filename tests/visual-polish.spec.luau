@@ -21,6 +21,10 @@ local function run()
 		"visual controller must configure color correction"
 	)
 	assert(string.find(controller, "UIGradient", 1, true), "visual controller must polish native Roblox GUI")
+	assert(
+		string.find(controller, 'Terrain:FindFirstChildOfClass("Clouds")', 1, true),
+		"visual controller must reuse the existing terrain Clouds instance"
+	)
 
 	local initSource = fs.readFile("src/client/init.client.luau")
 	assert(

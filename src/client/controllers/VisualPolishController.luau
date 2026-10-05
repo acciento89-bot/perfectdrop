@@ -74,11 +74,8 @@ local function configureLighting()
 	rays.Intensity = VisualTheme.Effects.SunRaysIntensity
 	rays.Spread = VisualTheme.Effects.SunRaysSpread
 
-	local clouds = Terrain:FindFirstChild("KNVisualClouds")
-	if not clouds or not clouds:IsA("Clouds") then
-		if clouds then
-			clouds:Destroy()
-		end
+	local clouds = Terrain:FindFirstChildOfClass("Clouds")
+	if not clouds then
 		clouds = Instance.new("Clouds")
 		clouds.Name = "KNVisualClouds"
 		clouds.Parent = Terrain
