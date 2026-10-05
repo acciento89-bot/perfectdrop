@@ -75,15 +75,12 @@ local function configureLighting()
 	rays.Spread = VisualTheme.Effects.SunRaysSpread
 
 	local clouds = Terrain:FindFirstChildOfClass("Clouds")
-	if not clouds then
-		clouds = Instance.new("Clouds")
-		clouds.Name = "KNVisualClouds"
-		clouds.Parent = Terrain
+	if clouds then
+		local typedClouds = clouds :: Clouds
+		typedClouds.Cover = VisualTheme.Clouds.Cover
+		typedClouds.Density = VisualTheme.Clouds.Density
+		typedClouds.Color = hex(VisualTheme.Clouds.Color)
 	end
-	local typedClouds = clouds :: Clouds
-	typedClouds.Cover = VisualTheme.Clouds.Cover
-	typedClouds.Density = VisualTheme.Clouds.Density
-	typedClouds.Color = hex(VisualTheme.Clouds.Color)
 end
 
 local function hasGuiName(screen: ScreenGui): boolean
