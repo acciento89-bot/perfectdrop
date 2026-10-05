@@ -6,6 +6,12 @@ The approved concept image is a **feature montage**, not a simultaneous gameplay
 ## Target
 A polished, readable Roblox experience that looks intentional from a normal gameplay screenshot. Stylized, clean and modern; never like an empty baseplate or developer prototype.
 
+## Graphic fidelity
+- The rooftop city uses a **parallax skyline**: foreground rooftop dressing, hero mid-distance towers and a softer far skyline create depth around the vertical drop lane.
+- Glass towers, skyline needles and warm sunset silhouettes frame the playfield without competing with the avatar or active block.
+- The tower base uses a restrained cyan landing halo; foreground planters/HVAC/pipework make the rooftop feel authored rather than empty.
+- The sun is a layered focal point with a soft halo, not a flat single primitive.
+
 ## Visual language
 - Strong silhouette readability at mobile camera distance.
 - One dominant dark/neutral foundation plus one warm accent and one gameplay-state accent.

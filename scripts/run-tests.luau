@@ -1,4 +1,5 @@
 local tests = {
+	require("../tests/graphic-fidelity.spec"),
 	require("../tests/menu-visibility-contract.spec"),
 	require("../tests/concept-showcase-ui.spec"),
 	require("../tests/concept-fidelity.spec"),

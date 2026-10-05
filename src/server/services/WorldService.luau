@@ -194,6 +194,100 @@ local function cityBuilding(position: Vector3, size: Vector3, shade: number, par
 	end
 end
 
+local function glassTower(position: Vector3, size: Vector3, accent: Color3, parent: Instance)
+	local body = part(
+		"GlassTower",
+		size,
+		CFrame.new(position + Vector3.new(0, size.Y / 2, 0)),
+		Enum.Material.Glass,
+		Color3.fromRGB(62, 78, 103),
+		parent
+	)
+	body.Transparency = 0.18
+	makeDecorative(body)
+
+	local crown = part(
+		"GlassTowerCrown",
+		Vector3.new(size.X + 0.8, 0.45, size.Z + 0.8),
+		CFrame.new(position + Vector3.new(0, size.Y + 0.24, 0)),
+		Enum.Material.Metal,
+		Color3.fromRGB(46, 54, 69),
+		parent
+	)
+	makeDecorative(crown)
+
+	for row = 1, math.clamp(math.floor(size.Y / 8), 3, 7) do
+		local band = part(
+			"GlassLightBand",
+			Vector3.new(math.max(3.5, size.X - 1.2), 0.16, 0.10),
+			CFrame.new(position + Vector3.new(0, row * (size.Y / 8), -size.Z / 2 - 0.06)),
+			Enum.Material.Neon,
+			accent,
+			parent
+		)
+		band.Transparency = 0.42
+		makeDecorative(band)
+	end
+end
+
+local function skylineNeedle(position: Vector3, height: number, parent: Instance)
+	local mast = part(
+		"SkylineNeedle",
+		Vector3.new(1.4, height, 1.4),
+		CFrame.new(position + Vector3.new(0, height / 2, 0)),
+		Enum.Material.Metal,
+		Color3.fromRGB(52, 58, 72),
+		parent
+	)
+	makeDecorative(mast)
+
+	local tip = part(
+		"SkylineNeedleTip",
+		Vector3.new(0.38, 9, 0.38),
+		CFrame.new(position + Vector3.new(0, height + 4.5, 0)),
+		Enum.Material.Neon,
+		Color3.fromRGB(255, 177, 88),
+		parent
+	)
+	tip.Transparency = 0.18
+	makeDecorative(tip)
+end
+
+local function roofGardenPlanter(position: Vector3, parent: Instance)
+	local base = part(
+		"RoofGardenPlanter",
+		Vector3.new(8, 1.1, 3.2),
+		CFrame.new(position + Vector3.new(0, 0.55, 0)),
+		Enum.Material.Concrete,
+		Color3.fromRGB(72, 67, 68),
+		parent
+	)
+	makeDecorative(base)
+
+	local soil = part(
+		"PlanterGrass",
+		Vector3.new(7.2, 0.32, 2.5),
+		CFrame.new(position + Vector3.new(0, 1.22, 0)),
+		Enum.Material.Grass,
+		Color3.fromRGB(82, 117, 78),
+		parent
+	)
+	makeDecorative(soil)
+
+	for offset = -2.4, 2.4, 2.4 do
+		local shrub = part(
+			"PlanterShrub",
+			Vector3.new(1.35, 1.35, 1.35),
+			CFrame.new(position + Vector3.new(offset, 1.95, 0)),
+			Enum.Material.Grass,
+			Color3.fromRGB(74, 123, 83),
+			parent
+		)
+		shrub.Shape = Enum.PartType.Ball
+		makeDecorative(shrub)
+	end
+end
+
 local function milestoneMarker(offset: Vector3, stage: number, parent: Instance)
 	local y = 1.8 + stage * GameConfig.Block.Height
 	local bar = part(
@@ -447,6 +541,30 @@ local function ensureWorld()
 		)
 	end
 
+	local farSkyline = Instance.new("Folder")
+	farSkyline.Name = "ParallaxSkylineFar"
+	farSkyline.Parent = folder
+	for index, height in { 29, 41, 35, 54, 32, 46, 38, 58, 30 } do
+		local x = -112 + (index - 1) * 28
+		if index % 3 == 0 then
+			glassTower(
+				Vector3.new(x, -14, -176 - (index % 2) * 9),
+				Vector3.new(13 + (index % 2) * 3, height, 13),
+				if index % 2 == 0 then Color3.fromRGB(113, 184, 224) else Color3.fromRGB(255, 174, 101),
+				farSkyline
+			)
+		else
+			cityBuilding(
+				Vector3.new(x, -14, -176 - (index % 2) * 9),
+				Vector3.new(14 + (index % 3), height, 14 + (index % 2) * 2),
+				49 + index,
+				farSkyline
+			)
+		end
+	end
+	skylineNeedle(Vector3.new(-55, -10, -150), 54, farSkyline)
+	skylineNeedle(Vector3.new(86, -12, -166), 66, farSkyline)
+
 	local sun = part(
 		"SkySunDisc",
 		Vector3.new(19, 19, 19),
@@ -458,6 +576,18 @@ local function ensureWorld()
 	sun.Shape = Enum.PartType.Ball
 	sun.Transparency = 0.08
 	makeDecorative(sun)
+
+	local sunHalo = part(
+		"SunHalo",
+		Vector3.new(42, 42, 42),
+		CFrame.new(56, 50, -146.5),
+		Enum.Material.Neon,
+		Color3.fromRGB(255, 204, 146),
+		folder
+	)
+	sunHalo.Shape = Enum.PartType.Ball
+	sunHalo.Transparency = 0.90
+	makeDecorative(sunHalo)
 
 	local sunGlow = part(
 		"SunGlow",
@@ -490,6 +620,10 @@ local function ensureWorld()
 			folder
 		)
 	end
+
+	roofGardenPlanter(Vector3.new(-82, 0, 46), folder)
+	roofGardenPlanter(Vector3.new(82, 0, 42), folder)
+	roofGardenPlanter(Vector3.new(-71, 0, -48), folder)
 
 	decorativeHvac(Vector3.new(-88, 0, 88), folder)
 	decorativeHvac(Vector3.new(88, 0, 86), folder)
@@ -639,6 +773,26 @@ function WorldService.EnsurePlayerArea(player: Player): (Folder, Vector3)
 	)
 
 	padTrim(folder, "TowerPad", offset, 18, 18, 1.22, Color3.fromRGB(255, 153, 51))
+
+	for _, definition in
+		{
+			{ Vector3.new(13.2, 0.10, 0.18), Vector3.new(0, 1.29, -6.6) },
+			{ Vector3.new(13.2, 0.10, 0.18), Vector3.new(0, 1.29, 6.6) },
+			{ Vector3.new(0.18, 0.10, 13.2), Vector3.new(-6.6, 1.29, 0) },
+			{ Vector3.new(0.18, 0.10, 13.2), Vector3.new(6.6, 1.29, 0) },
+		}
+	do
+		local haloPart = part(
+			"LandingHalo",
+			definition[1],
+			CFrame.new(offset + definition[2]),
+			Enum.Material.Neon,
+			Color3.fromRGB(91, 220, 239),
+			folder
+		)
+		haloPart.Transparency = 0.16
+		makeDecorative(haloPart)
+	end
 
 	local inset = part(
 		"TowerInset",
