@@ -34,6 +34,10 @@ local reviveButton: TextButton
 local shopPanel: Frame
 local shopCoins: TextLabel
 local dailyButton: TextButton
+local dailyBackdrop: Frame
+local dailyPanel: Frame
+local dailyStatus: TextLabel
+local dailyClaimButton: TextButton
 local challengeLabel: TextLabel
 local reducedMotionButton: TextButton
 local audioButton: TextButton
@@ -303,6 +307,12 @@ local function refreshShop()
 	dailyButton.AutoButtonColor = dailyClaimable
 	dailyButton.BackgroundColor3 = if dailyClaimable then ACCENT else Color3.fromRGB(52, 60, 72)
 	dailyButton.TextColor3 = if dailyClaimable then Color3.fromRGB(24, 28, 34) else MUTED
+	dailyClaimButton.Text = if dailyClaimable then "CLAIM DAILY +25 ◈" else "DAILY REWARD CLAIMED"
+	dailyClaimButton.Active = dailyClaimable
+	dailyClaimButton.AutoButtonColor = dailyClaimable
+	dailyClaimButton.BackgroundColor3 = if dailyClaimable then ACCENT else Color3.fromRGB(52, 60, 72)
+	dailyClaimButton.TextColor3 = if dailyClaimable then Color3.fromRGB(24, 28, 34) else MUTED
+	dailyStatus.Text = if dailyClaimable then "TODAY'S REWARD IS READY" else "CLAIMED • COME BACK TOMORROW"
 	if conceptDailyCaption then
 		conceptDailyCaption.Text = if dailyClaimable then "READY TO CLAIM" else "CLAIMED TODAY"
 	end
@@ -348,16 +358,28 @@ end
 local function setShopVisible(visible: boolean)
 	shopPanel.Visible = visible
 	if visible then
+		dailyPanel.Visible = false
+		dailyBackdrop.Visible = false
+		refreshShop()
+	end
+end
+
+local function setDailyVisible(visible: boolean)
+	dailyPanel.Visible = visible
+	dailyBackdrop.Visible = visible
+	if visible then
+		shopPanel.Visible = false
 		refreshShop()
 	end
 end
 
 function HudController.ToggleShop()
+	setDailyVisible(false)
 	setShopVisible(not shopPanel.Visible)
 end
 
 function HudController.IsOverlayOpen(): boolean
-	return shopPanel.Visible
+	return shopPanel.Visible or dailyPanel.Visible
 end
 
 function HudController.ApplyMeta(meta)
@@ -373,10 +395,15 @@ function HudController.ApplyState(state, grade: string?)
 	updateResult(state)
 
 	local blocked = currentState == "FAILED" or currentState == "COMPLETED"
-	dropButton.Visible = not blocked and not shopPanel.Visible
+	if blocked then
+		setShopVisible(false)
+		setDailyVisible(false)
+	end
+	local overlayOpen = HudController.IsOverlayOpen()
+	dropButton.Visible = not blocked and not overlayOpen
 
 	local bestHeight = metaValue("bestHeight", player:GetAttribute("PDBestHeight") or 0)
-	tutorial.Visible = not blocked and bestHeight == 0 and (state.height or 0) < 2 and not shopPanel.Visible
+	tutorial.Visible = not blocked and bestHeight == 0 and (state.height or 0) < 2 and not overlayOpen
 	comboStatus.TextColor3 = if state.assisted then Color3.fromRGB(219, 211, 255) else Color3.fromRGB(255, 194, 66)
 end
 
@@ -1056,6 +1083,150 @@ function HudController.Start(remotes: Folder)
 	reviveButton.Parent = resultPanel
 	round(reviveButton, 14)
 
+	dailyBackdrop = Instance.new("Frame")
+	dailyBackdrop.Name = "DailyBackdrop"
+	dailyBackdrop.Size = UDim2.fromScale(1, 1)
+	dailyBackdrop.BackgroundColor3 = Color3.fromRGB(8, 12, 20)
+	dailyBackdrop.BackgroundTransparency = 0.42
+	dailyBackdrop.BorderSizePixel = 0
+	dailyBackdrop.Visible = false
+	dailyBackdrop.ZIndex = 44
+	dailyBackdrop.Parent = gui
+
+	dailyPanel = Instance.new("Frame")
+	dailyPanel.Name = "DailyRewardsPanel"
+	dailyPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+	dailyPanel.Position = UDim2.fromScale(0.5, 0.52)
+	dailyPanel.Size = UDim2.fromOffset(438, 292)
+	dailyPanel.BackgroundColor3 = Color3.fromRGB(26, 31, 45)
+	dailyPanel.BackgroundTransparency = 0.02
+	dailyPanel.BorderSizePixel = 0
+	dailyPanel.Visible = false
+	dailyPanel.ZIndex = 45
+	dailyPanel.Parent = gui
+	round(dailyPanel, 20)
+	stroke(dailyPanel, Color3.fromRGB(173, 114, 255), 0.30)
+	local dailyGradient = Instance.new("UIGradient")
+	dailyGradient.Rotation = 115
+	dailyGradient.Color = ColorSequence.new(Color3.fromRGB(57, 48, 91), Color3.fromRGB(22, 27, 40))
+	dailyGradient.Parent = dailyPanel
+
+	local dailyTitle = Instance.new("TextLabel")
+	dailyTitle.Name = "Title"
+	dailyTitle.Position = UDim2.fromOffset(22, 14)
+	dailyTitle.Size = UDim2.new(1, -88, 0, 34)
+	dailyTitle.BackgroundTransparency = 1
+	dailyTitle.Font = Enum.Font.GothamBlack
+	dailyTitle.TextSize = 22
+	dailyTitle.TextColor3 = TEXT
+	dailyTitle.TextXAlignment = Enum.TextXAlignment.Left
+	dailyTitle.Text = "DAILY REWARDS"
+	dailyTitle.ZIndex = 46
+	dailyTitle.Parent = dailyPanel
+
+	local dailyClose = Instance.new("TextButton")
+	dailyClose.Name = "Close"
+	dailyClose.AnchorPoint = Vector2.new(1, 0)
+	dailyClose.Position = UDim2.new(1, -14, 0, 12)
+	dailyClose.Size = UDim2.fromOffset(44, 44)
+	dailyClose.BackgroundColor3 = Color3.fromRGB(55, 63, 82)
+	dailyClose.BorderSizePixel = 0
+	dailyClose.Font = Enum.Font.GothamBold
+	dailyClose.TextSize = 22
+	dailyClose.TextColor3 = TEXT
+	dailyClose.Text = "×"
+	dailyClose.ZIndex = 46
+	dailyClose.Parent = dailyPanel
+	round(dailyClose, 12)
+
+	dailyStatus = Instance.new("TextLabel")
+	dailyStatus.Name = "Status"
+	dailyStatus.Position = UDim2.fromOffset(22, 52)
+	dailyStatus.Size = UDim2.new(1, -44, 0, 22)
+	dailyStatus.BackgroundTransparency = 1
+	dailyStatus.Font = Enum.Font.GothamBold
+	dailyStatus.TextSize = 11
+	dailyStatus.TextColor3 = MUTED
+	dailyStatus.TextXAlignment = Enum.TextXAlignment.Center
+	dailyStatus.Text = "DROP IN DAILY FOR A NEW REWARD"
+	dailyStatus.ZIndex = 46
+	dailyStatus.Parent = dailyPanel
+
+	local dailyIcons = { "✓", "◈", "✦", "♢", "★" }
+	local dailyRewards = { "TODAY", "+25", "BOOST", "THEME", "RARE" }
+	for index = 1, 5 do
+		local card = Instance.new("Frame")
+		card.Name = ("Day%02d"):format(index)
+		card.Position = UDim2.fromOffset(18 + (index - 1) * 81, 88)
+		card.Size = UDim2.fromOffset(73, 112)
+		card.BackgroundColor3 = Color3.fromRGB(43, 50, 68)
+		card.BorderSizePixel = 0
+		card.ZIndex = 46
+		card.Parent = dailyPanel
+		round(card, 13)
+		stroke(card, Color3.fromRGB(124, 142, 176), 0.50)
+
+		local day = Instance.new("TextLabel")
+		day.Size = UDim2.new(1, 0, 0, 18)
+		day.Position = UDim2.fromOffset(0, 7)
+		day.BackgroundTransparency = 1
+		day.Font = Enum.Font.GothamBold
+		day.TextSize = 9
+		day.TextColor3 = MUTED
+		day.Text = ("DAY %d"):format(index)
+		day.ZIndex = 47
+		day.Parent = card
+
+		local icon = Instance.new("TextLabel")
+		icon.Size = UDim2.new(1, 0, 0, 42)
+		icon.Position = UDim2.fromOffset(0, 30)
+		icon.BackgroundTransparency = 1
+		icon.Font = Enum.Font.GothamBlack
+		icon.TextSize = 24
+		icon.TextColor3 = if index == 1 then Color3.fromRGB(69, 206, 159) else Color3.fromRGB(255, 194, 66)
+		icon.Text = dailyIcons[index]
+		icon.ZIndex = 47
+		icon.Parent = card
+
+		local reward = Instance.new("TextLabel")
+		reward.Size = UDim2.new(1, 0, 0, 20)
+		reward.Position = UDim2.fromOffset(0, 83)
+		reward.BackgroundTransparency = 1
+		reward.Font = Enum.Font.GothamBold
+		reward.TextSize = 9
+		reward.TextColor3 = TEXT
+		reward.Text = dailyRewards[index]
+		reward.ZIndex = 47
+		reward.Parent = card
+	end
+
+	dailyClaimButton = Instance.new("TextButton")
+	dailyClaimButton.Name = "ClaimButton"
+	dailyClaimButton.AnchorPoint = Vector2.new(0.5, 1)
+	dailyClaimButton.Position = UDim2.new(0.5, 0, 1, -18)
+	dailyClaimButton.Size = UDim2.fromOffset(182, 48)
+	dailyClaimButton.BackgroundColor3 = ACCENT
+	dailyClaimButton.BorderSizePixel = 0
+	dailyClaimButton.Font = Enum.Font.GothamBold
+	dailyClaimButton.TextSize = 14
+	dailyClaimButton.TextColor3 = Color3.fromRGB(24, 28, 34)
+	dailyClaimButton.Text = "CLAIM DAILY +25 ◈"
+	dailyClaimButton.ZIndex = 46
+	dailyClaimButton.Parent = dailyPanel
+	round(dailyClaimButton, 13)
+	stroke(dailyClaimButton, Color3.fromRGB(255, 213, 153), 0.40)
+
+	dailyClose.Activated:Connect(function()
+		setDailyVisible(false)
+		dropButton.Visible = currentState == "ACTIVE"
+	end)
+	dailyBackdrop.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			setDailyVisible(false)
+			dropButton.Visible = currentState == "ACTIVE"
+		end
+	end)
+
 	shopPanel = Instance.new("Frame")
 	shopPanel.Name = "ShopPanel"
 	shopPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -1167,7 +1338,7 @@ function HudController.Start(remotes: Folder)
 		local viewport = camera.ViewportSize
 		local compact = UserInputService.TouchEnabled and math.min(viewport.X, viewport.Y) < 600
 		if conceptShowcase then
-			conceptShowcase.Visible = not compact
+			conceptShowcase.Visible = false
 		end
 		local levelCard = metricRow:FindFirstChild("LevelMetric")
 		local stageCard = metricRow:FindFirstChild("StageMetric")
@@ -1293,6 +1464,7 @@ function HudController.Start(remotes: Folder)
 		dropButton.Visible = currentState == "ACTIVE"
 	end)
 	shopButton.Activated:Connect(function()
+		setDailyVisible(false)
 		setShopVisible(not shopPanel.Visible)
 		dropButton.Visible = currentState == "ACTIVE" and not shopPanel.Visible
 		tutorial.Visible = tutorial.Visible and not shopPanel.Visible
@@ -1306,18 +1478,17 @@ function HudController.Start(remotes: Folder)
 	end
 
 	quickShopButton.Activated:Connect(function()
+		setDailyVisible(false)
 		setShopVisible(not shopPanel.Visible)
 		dropButton.Visible = currentState == "ACTIVE" and not shopPanel.Visible
 	end)
 	dailyQuickButton.Activated:Connect(function()
-		setShopVisible(true)
+		setShopVisible(false)
+		setDailyVisible(true)
 		dropButton.Visible = false
-		task.defer(function()
-			scroll.CanvasPosition = Vector2.new(0, 0)
-		end)
 	end)
 
-	dailyButton.Activated:Connect(function()
+	local function claimDailyReward()
 		if not metaValue("dailyClaimable", false) then
 			return
 		end
@@ -1325,7 +1496,10 @@ function HudController.Start(remotes: Folder)
 		if result and result.meta then
 			HudController.ApplyMeta(result.meta)
 		end
-	end)
+	end
+
+	dailyButton.Activated:Connect(claimDailyReward)
+	dailyClaimButton.Activated:Connect(claimDailyReward)
 
 	for button, info in themeButtons do
 		button.Activated:Connect(function()
