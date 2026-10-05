@@ -1111,18 +1111,18 @@ function HudController.Start(remotes: Folder)
 	dailyGradient.Color = ColorSequence.new(Color3.fromRGB(57, 48, 91), Color3.fromRGB(22, 27, 40))
 	dailyGradient.Parent = dailyPanel
 
-	local dailyTitle = Instance.new("TextLabel")
-	dailyTitle.Name = "Title"
-	dailyTitle.Position = UDim2.fromOffset(22, 14)
-	dailyTitle.Size = UDim2.new(1, -88, 0, 34)
-	dailyTitle.BackgroundTransparency = 1
-	dailyTitle.Font = Enum.Font.GothamBlack
-	dailyTitle.TextSize = 22
-	dailyTitle.TextColor3 = TEXT
-	dailyTitle.TextXAlignment = Enum.TextXAlignment.Left
-	dailyTitle.Text = "DAILY REWARDS"
-	dailyTitle.ZIndex = 46
-	dailyTitle.Parent = dailyPanel
+	local dailyModalTitle = Instance.new("TextLabel")
+	dailyModalTitle.Name = "Title"
+	dailyModalTitle.Position = UDim2.fromOffset(22, 14)
+	dailyModalTitle.Size = UDim2.new(1, -88, 0, 34)
+	dailyModalTitle.BackgroundTransparency = 1
+	dailyModalTitle.Font = Enum.Font.GothamBlack
+	dailyModalTitle.TextSize = 22
+	dailyModalTitle.TextColor3 = TEXT
+	dailyModalTitle.TextXAlignment = Enum.TextXAlignment.Left
+	dailyModalTitle.Text = "DAILY REWARDS"
+	dailyModalTitle.ZIndex = 46
+	dailyModalTitle.Parent = dailyPanel
 
 	local dailyClose = Instance.new("TextButton")
 	dailyClose.Name = "Close"
