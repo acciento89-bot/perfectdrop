@@ -466,7 +466,7 @@ function HudController.Start(remotes: Folder)
 
 	status = Instance.new("Frame")
 	status.AnchorPoint = Vector2.new(0.5, 0)
-	status.Position = UDim2.new(0.56, 0, 0, 16)
+	status.Position = UDim2.new(0.5, 0, 0, 16)
 	status.Size = UDim2.new(1, -36, 0, 72)
 	status.BackgroundColor3 = SURFACE
 	status.BackgroundTransparency = 0.04
@@ -607,7 +607,7 @@ function HudController.Start(remotes: Folder)
 	local quickRail = Instance.new("Frame")
 	quickRail.Name = "ConceptQuickRail"
 	quickRail.AnchorPoint = Vector2.new(1, 0)
-	quickRail.Position = UDim2.new(1, -18, 0, 94)
+	quickRail.Position = UDim2.new(1, -18, 0, 18)
 	quickRail.Size = UDim2.fromOffset(94, 98)
 	quickRail.BackgroundTransparency = 1
 	quickRail.Parent = gui
@@ -1349,15 +1349,18 @@ function HudController.Start(remotes: Folder)
 		if compact then
 			logo.Visible = false
 			quickRail.Visible = false
-			quickRail.Position = UDim2.new(1, -18, 0, 94)
+			quickRail.Position = UDim2.new(1, -14, 0, 10)
 			shopButton.Visible = true
 			-- Mobile gets one tiny summary pill instead of a desktop-style status bar.
 			status.Visible = false
 			mobileSummary.Visible = true
+			mobileSummary.AnchorPoint = Vector2.new(0, 0)
+			mobileSummary.Position = UDim2.fromOffset(12, 10)
+			mobileSummary.Size = UDim2.new(1, -120, 0, 40)
 			status.AnchorPoint = Vector2.new(1, 0)
 			statusSize.MinSize = Vector2.new(0, 0)
 			statusSize.MaxSize = Vector2.new(294, 44)
-			status.Position = UDim2.new(1, -14, 0, 58)
+			status.Position = UDim2.new(1, -14, 0, 10)
 			status.Size = UDim2.fromOffset(math.min(294, math.max(252, viewport.X * 0.34)), 44)
 			status.BackgroundTransparency = 1
 			statusStroke.Transparency = 1
@@ -1382,26 +1385,29 @@ function HudController.Start(remotes: Folder)
 			if comboCard then
 				comboCard.Visible = true
 			end
-			tutorial.Position = UDim2.new(0.5, 0, 0, 108)
-			tutorial.Size = UDim2.fromOffset(math.min(320, viewport.X - 250), 38)
-			shopButton.Position = UDim2.new(1, -14, 0, 108)
-			shopButton.Size = UDim2.fromOffset(78, 36)
-			dropButton.Position = UDim2.new(1, -18, 1, -18)
-			dropButton.Size = UDim2.fromOffset(148, 54)
-			shopPanel.Position = UDim2.fromScale(0.5, 0.55)
-			shopPanel.Size = UDim2.fromScale(0.72, 0.68)
-			resultPanel.Size = UDim2.new(0.72, 0, 0, 208)
+			tutorial.Position = UDim2.new(0.5, 0, 1, -76)
+			tutorial.Size = UDim2.fromOffset(math.max(220, math.min(320, viewport.X - 24)), 42)
+			shopButton.Position = UDim2.new(1, -12, 0, 10)
+			shopButton.Size = UDim2.fromOffset(84, 40)
+			dropButton.Position = UDim2.new(1, -14, 1, -14)
+			dropButton.Size = UDim2.fromOffset(150, 56)
+			shopPanel.Position = UDim2.fromScale(0.5, 0.52)
+			shopPanel.Size = UDim2.fromScale(0.94, 0.80)
+			resultPanel.Size = UDim2.new(0.92, 0, 0, 220)
 		else
 			logo.Visible = true
 			quickRail.Visible = true
 			shopButton.Visible = false
 			status.Visible = true
 			mobileSummary.Visible = false
+			mobileSummary.AnchorPoint = Vector2.new(1, 0)
+			mobileSummary.Position = UDim2.new(1, -14, 0, 56)
+			mobileSummary.Size = UDim2.fromOffset(232, 34)
 			status.AnchorPoint = Vector2.new(0.5, 0)
 			statusSize.MinSize = Vector2.new(300, 56)
 			statusSize.MaxSize = Vector2.new(610, 72)
 			status.Size = UDim2.new(1, -36, 0, 72)
-			status.Position = UDim2.new(0.56, 0, 0, 16)
+			status.Position = UDim2.new(0.5, 0, 0, 16)
 			status.BackgroundTransparency = 0.04
 			statusStroke.Transparency = 0.2
 			progressTrack.Visible = true
@@ -1427,7 +1433,7 @@ function HudController.Start(remotes: Folder)
 			end
 			tutorial.Position = UDim2.new(0.5, 0, 1, -72)
 			tutorial.Size = UDim2.fromOffset(360, 48)
-			quickRail.Position = UDim2.new(1, -266, 0, 106)
+			quickRail.Position = UDim2.new(1, -18, 0, 18)
 			shopButton.Position = UDim2.new(1, -18, 0, 94)
 			shopButton.Size = UDim2.fromOffset(108, 48)
 			dropButton.Position = UDim2.new(1, -24, 1, -24)
