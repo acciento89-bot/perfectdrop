@@ -15,8 +15,13 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [x] P01-T04 portrait + 60 FPS target
 - [x] P01-T05 safe-area Canvas
 - [x] P01-T06 first Unity editor compile
-- [ ] P01-T07 first iOS dev build
-- [ ] P01-T08 first Android dev build
+- [x] P01-T07 first iOS dev build
+- [x] P01-T08 first Android dev build
+- [x] P01-T09 adaptive safe-area resize handling
+- [x] P01-T10 wide portrait / 4:3 layout profile
+- [x] P01-T11 fold-safe landscape fallback layout
+- [~] P01-T12 iPhone Duo runtime preparation
+- [!] P01-T13 Xcode 27.1 + iPhone Duo Device Hub validation
 
 ## P02 Controls and camera
 - [x] P02-T01 touch joystick
@@ -92,7 +97,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P09-T09 staged release
 
 ## Next open task
-P01-T06: open with Unity, compile/import and capture first runtime evidence.
+P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Duo Device Hub validation once Xcode 27.1 is installed.
 
 
 ## Unity 6.6 bootstrap verification - 2026-10-06
@@ -109,3 +114,19 @@ P01-T06: open with Unity, compile/import and capture first runtime evidence.
 - [x] Code signature verified: identifier `com.kamilunavo.perfectdrop`, Apple Team `TKG684N5GL`.
 - [ ] Store-ready 1024x1024 app icon and final release/archive validation remain release tasks.
 - [ ] Local iOS Simulator QA is blocked by the currently installed CoreSimulator runtime mismatch; device builds are not blocked.
+
+
+### iPhone Duo readiness note
+- [x] Safe area is recalculated when the OS window or display dimensions change.
+- [x] HUD reflows between compact portrait, wide portrait and landscape/resizable layouts without rebuilding gameplay.
+- [x] Landscape fallback reserves a center gutter for the fold/division region.
+- [x] Minimum iOS deployment target is pinned to iOS 15 for the April 2027 submission baseline.
+- [x] Apple team ID and automatic signing are persisted in Unity PlayerSettings.
+- [!] Current local Xcode is 27.0; Apple requires Xcode 27.1/iOS 27.1 tooling for full iPhone Duo simulation and edge-to-edge validation.
+
+### Adaptive display verification - 2026-10-07
+- [x] Unity editor compile is warning/error clean after the adaptive layout changes.
+- [x] Automated layout matrix passed for 9:16 portrait, 3:4 wide portrait, 4:3 landscape and a wider resizable landscape window.
+- [x] Android IL2CPP development build revalidated after the adaptive changes.
+- [x] iOS Xcode export + signed generic-device build revalidated after the adaptive changes.
+- [x] Exported iOS project confirms deployment target 15.0, Team TKG684N5GL and bundle ID `com.kamilunavo.perfectdrop`.

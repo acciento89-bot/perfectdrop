@@ -16,7 +16,6 @@ namespace Kamilunavo.PerfectDrop
 
         private void Start()
         {
-            Screen.orientation = ScreenOrientation.Portrait;
             Application.targetFrameRate = 60;
             QualitySettings.vSyncCount = 0;
             RenderSettings.fog = true;
@@ -30,11 +29,13 @@ namespace Kamilunavo.PerfectDrop
             safe.gameObject.AddComponent<SafeAreaFitter>();
 
             var stats = new Text[4];
+            var statRects = new RectTransform[4];
             var labels = new[] { "FLOOR\n1", "BEST\n1", "STREAK\nx0", "COINS\n0" };
             for (var i = 0; i < 4; i++)
             {
                 var minX = 0.03f + i * 0.242f;
                 var panel = UiFactory.Panel(safe, $"Stat_{i}", Panel, new Vector2(minX, 0.90f), new Vector2(minX + 0.215f, 0.975f));
+                statRects[i] = panel;
                 stats[i] = UiFactory.Label(panel, "Text", labels[i], 34, new Vector2(0.08f, 0.08f), new Vector2(0.92f, 0.92f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
             }
 
@@ -64,7 +65,17 @@ namespace Kamilunavo.PerfectDrop
             motor.CameraTransform = camera.transform;
             motor.Course = course;
 
-            UiFactory.Button(safe, "Boosts", "BOOSTS", Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.34f, 0.045f), new Vector2(0.68f, 0.125f), () => motor.ApplyBoost(1.22f, 5f));
+            var boosts = UiFactory.Button(safe, "Boosts", "BOOSTS", Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.34f, 0.045f), new Vector2(0.68f, 0.125f), () => motor.ApplyBoost(1.22f, 5f));
+
+            var responsive = safe.gameObject.AddComponent<ResponsiveHud>();
+            responsive.Bind(
+                statRects,
+                objective,
+                feedback.rectTransform,
+                joystick.GetComponent<RectTransform>(),
+                boosts.GetComponent<RectTransform>(),
+                jump.GetComponent<RectTransform>());
+
             course.Build();
         }
 
