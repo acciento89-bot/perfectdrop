@@ -12,9 +12,9 @@ namespace Kamilunavo.PerfectDrop.Editor
     {
         private const string ScenePath = "Assets/Scenes/Main.unity";
 
-        static ProjectBootstrap() => EditorApplication.delayCall += EnsureProject;
+        static ProjectBootstrap() => EditorApplication.delayCall += InitializeProject;
 
-        private static void EnsureProject()
+        public static void InitializeProject()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             PlayerSettings.companyName = "Kamilunavo";
@@ -35,3 +35,5 @@ namespace Kamilunavo.PerfectDrop.Editor
         }
     }
 }
+
+#endif
