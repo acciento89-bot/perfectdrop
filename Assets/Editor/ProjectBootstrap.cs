@@ -20,6 +20,9 @@ namespace Kamilunavo.PerfectDrop.Editor
             PlayerSettings.companyName = "Kamilunavo";
             PlayerSettings.productName = "Perfect Drop";
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+            PlayerSettings.bundleVersion = "1.0";
+            PlayerSettings.iOS.buildNumber = "1";
+            PlayerSettings.Android.bundleVersionCode = 1;
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.kamilunavo.perfectdrop");
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.kamilunavo.perfectdrop");
 
