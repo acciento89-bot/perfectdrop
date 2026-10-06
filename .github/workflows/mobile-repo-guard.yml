@@ -1,0 +1,27 @@
+name: mobile-repo-guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify native mobile project structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f Packages/manifest.json
+          test -f ProjectSettings/ProjectVersion.txt
+          test -f "docs/PERFECT-DROP-V1-LEDGER.md"
+          test -d Assets/Scripts
+          if find . -type f \( -name '*.lua' -o -name '*.luau' -o -name '*.rbxl' -o -name '*.rbxlx' -o -name 'default.project.json' -o -name 'rokit.toml' -o -name 'selene.toml' -o -name 'stylua.toml' \) | grep -q .; then
+            echo "Legacy runtime artifact detected."
+            find . -type f \( -name '*.lua' -o -name '*.luau' -o -name '*.rbxl' -o -name '*.rbxlx' -o -name 'default.project.json' -o -name 'rokit.toml' -o -name 'selene.toml' -o -name 'stylua.toml' \)
+            exit 1
+          fi
+          grep -q "com.kamilunavo" Assets/Editor/ProjectBootstrap.cs
+          echo "Native mobile repository guard passed."
