@@ -1,28 +1,21 @@
 # AGENTS.md
 
 ## Product
-Perfect Drop is a deliberately small but production-quality Roblox game.
+Perfect Drop is a native mobile game for iOS and Android built with Unity and C#.
 
-## Execution rules
+## Execution
 - Read README -> MASTER-PLAN -> ART-DIRECTION -> V1 LEDGER before implementation.
-- Work only the next open ledger task plus required dependencies.
-- Use strict Luau.
-- Prefer server authority for score, currency, progression, entitlement and purchase grants.
-- Add deterministic pure-Luau tests for rules/state transitions where practical.
-- Run formatting, lint, Rojo build and test suite before marking a task complete.
-- Commit/push after coherent verified tasks.
-- Mark `[x]` only after acceptance criteria are actually verified.
-- Runtime/device-dependent items stay `[~]` or `[!]` until verified.
+- The ledger is the canonical implementation state.
+- Mobile first: portrait, touch, safe areas, 60 FPS target.
+- iOS and Android share gameplay and visual structure.
+- Do not add legacy platform files, Lua/Luau, Rojo or place files.
+- No placeholder/debug UI in release paths.
+- Keep progression, purchases and migrations deterministic and testable.
+- Commit coherent verified work to main.
 
-## UX rules
-- Avatar remains visible in core play.
-- Restart is one obvious action and should return to gameplay rapidly.
-- No raw IDs, developer terminology, placeholder text or default-looking production UI.
-- Touch targets and HUD must remain readable on a compact phone.
-- Controller selection/focus must be deliberate.
-
-## Artifact hygiene
-- NEVER write QA screenshots, videos, builds or temporary folders to the user's Desktop.
-- Temporary QA: `/tmp/perfectdrop-qa`.
-- Delete temporary QA after use.
-- Persist only curated release evidence under `docs/evidence/`.
+## Quality
+- Compact-phone readability is mandatory.
+- Retry/respawn is immediate.
+- Touch targets >= 48 logical points.
+- Menus must not block core play.
+- Accessibility includes contrast, non-color feedback and reduced motion.
