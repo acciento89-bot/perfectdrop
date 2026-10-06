@@ -99,3 +99,13 @@ P01-T06: open with Unity, compile/import and capture first runtime evidence.
 - [x] Project imported and compiled successfully with Unity 6000.6.4f1.
 - [x] Canonical Assets/Scenes/Main.unity generated and registered in Build Settings.
 - [x] iOS and Android application identifiers are configured in PlayerSettings.
+
+
+## Mobile platform build verification - 2026-10-07
+- [x] Android IL2CPP development APK builds successfully with Unity 6000.6.4f1.
+- [x] Android manifest verified: application ID `com.kamilunavo.perfectdrop`, versionName `1.0`, versionCode `1`.
+- [x] Unity iOS Xcode export builds successfully.
+- [x] Generic iOS device Debug build succeeds in Xcode 27.0 with automatic signing.
+- [x] Code signature verified: identifier `com.kamilunavo.perfectdrop`, Apple Team `TKG684N5GL`.
+- [ ] Store-ready 1024x1024 app icon and final release/archive validation remain release tasks.
+- [ ] Local iOS Simulator QA is blocked by the currently installed CoreSimulator runtime mismatch; device builds are not blocked.

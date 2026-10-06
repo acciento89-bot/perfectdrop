@@ -16,3 +16,6 @@ Recordings/
 *.user
 *.pdb
 *.mdb
+
+# Unity CLI transient build data
+.utmp/
