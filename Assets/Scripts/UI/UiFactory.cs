@@ -94,6 +94,28 @@ namespace Kamilunavo.PerfectDrop.UI
             return button;
         }
 
+        public static HudIconGraphic Icon(Transform parent, string name, HudIconType type, Color color, Vector2 min, Vector2 max)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(HudIconGraphic));
+            go.transform.SetParent(parent, false);
+            var rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = min;
+            rect.anchorMax = max;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var icon = go.GetComponent<HudIconGraphic>();
+            icon.IconType = type;
+            icon.color = color;
+            icon.raycastTarget = false;
+
+            var shadow = go.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.38f);
+            shadow.effectDistance = new Vector2(0f, -2f);
+            shadow.useGraphicAlpha = true;
+            return icon;
+        }
+
         public static Image Progress(Transform parent, Vector2 min, Vector2 max, Color track, Color fill)
         {
             var trackRect = Panel(parent, "ProgressTrack", track, min, max);

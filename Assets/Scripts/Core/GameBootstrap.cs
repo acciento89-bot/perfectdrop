@@ -35,12 +35,14 @@ namespace Kamilunavo.PerfectDrop
             var stats = new Text[4];
             var statRects = new RectTransform[4];
             var labels = new[] { GameText.Floor(1), GameText.Best(1), GameText.Streak(0), GameText.Coins(0) };
+            var icons = new[] { HudIconType.Floors, HudIconType.Crown, HudIconType.Flame, HudIconType.Diamond };
             for (var i = 0; i < 4; i++)
             {
                 var minX = 0.03f + i * 0.242f;
                 var panel = UiFactory.Panel(safe, $"Stat_{i}", Panel, new Vector2(minX, 0.90f), new Vector2(minX + 0.215f, 0.975f));
                 statRects[i] = panel;
-                stats[i] = UiFactory.Label(panel, "Text", labels[i], 34, new Vector2(0.08f, 0.08f), new Vector2(0.92f, 0.92f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
+                UiFactory.Icon(panel, "Icon", icons[i], Gold, new Vector2(0.075f, 0.22f), new Vector2(0.31f, 0.78f));
+                stats[i] = UiFactory.Label(panel, "Text", labels[i], 34, new Vector2(0.34f, 0.08f), new Vector2(0.94f, 0.92f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
             }
 
             var objective = UiFactory.Panel(safe, "Objective", Panel, new Vector2(0.03f, 0.79f), new Vector2(0.97f, 0.885f));
@@ -49,9 +51,10 @@ namespace Kamilunavo.PerfectDrop
             var progress = UiFactory.Progress(objective, new Vector2(0.04f, 0.08f), new Vector2(0.96f, 0.16f), new Color(0.18f, 0.22f, 0.30f), Gold);
             var feedback = UiFactory.Label(safe, "Feedback", GameText.Ready, 30, new Vector2(0.32f, 0.73f), new Vector2(0.68f, 0.78f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
             var joystick = VirtualJoystick.Create(safe, new Vector2(0.03f, 0.035f), new Vector2(0.29f, 0.18f));
-            var jump = HoldButton.Create(safe, "↑", new Vector2(0.78f, 0.035f), new Vector2(0.97f, 0.17f), new Color(0.03f, 0.06f, 0.11f, 0.92f));
+            var jump = HoldButton.Create(safe, string.Empty, new Vector2(0.78f, 0.035f), new Vector2(0.97f, 0.17f), new Color(0.03f, 0.06f, 0.11f, 0.92f));
             UiFactory.ApplyCircularImage(jump.GetComponent<Image>());
             UiFactory.AddOutline(jump.GetComponent<Image>(), Gold, 3f);
+            UiFactory.Icon(jump.transform, "JumpIcon", HudIconType.ArrowUp, TextColor, new Vector2(0.27f, 0.24f), new Vector2(0.73f, 0.76f));
 
             var player = CreatePlayer();
             var camera = CreateCamera(player.transform);
@@ -73,6 +76,15 @@ namespace Kamilunavo.PerfectDrop
 
             var boosts = UiFactory.Button(safe, "Boosts", GameText.Boosts, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.34f, 0.045f), new Vector2(0.68f, 0.125f), () => motor.ApplyBoost(1.22f, 5f));
             UiFactory.ApplyPillImage(boosts.GetComponent<Image>());
+            UiFactory.Icon(boosts.transform, "BoostIcon", HudIconType.Bolt, new Color(0.06f, 0.05f, 0.015f, 1f), new Vector2(0.11f, 0.20f), new Vector2(0.29f, 0.80f));
+            var boostLabel = boosts.transform.Find("Label")?.GetComponent<Text>();
+            if (boostLabel != null)
+            {
+                boostLabel.rectTransform.anchorMin = new Vector2(0.30f, 0f);
+                boostLabel.rectTransform.anchorMax = new Vector2(0.94f, 1f);
+                boostLabel.rectTransform.offsetMin = Vector2.zero;
+                boostLabel.rectTransform.offsetMax = Vector2.zero;
+            }
 
             var completion = UiFactory.Panel(safe, "Completion", new Color(0.02f, 0.045f, 0.085f, 0.985f), new Vector2(0.09f, 0.33f), new Vector2(0.91f, 0.67f));
             UiFactory.Label(completion, "Title", GameText.TowerCleared, 52, new Vector2(0.07f, 0.67f), new Vector2(0.93f, 0.91f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
