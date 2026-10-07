@@ -17,8 +17,8 @@ User approved campaign + endless, then the deeper arcade builder direction. The 
 - [x] A07 UTC daily challenge, three-star +75 once per day; pure idempotence and actual daily clear/reward. Ordinary daily claim remains separate.
 - [x] A08 Endless unlock after level 5; logical count beyond 30, capped 64 recent/rendered layers, saved count/geometry/powers; actual 66 placements/reload/retry and pure 1000-placement matrix.
 - [x] A09 Contextual map/settings/style/city/results, home settings after terminal result, no ghost gameplay HUD; fresh actual UI regression pass and screenshot inspection.
-- [ ] A10 Native iOS/Android build/install/input/pose/device matrix for the expanded game, final mobile art/legibility/performance/accessibility.
-- [ ] A11 Signed archive/App Store Connect processing/internal TestFlight install/real-iPhone smoke. No TestFlight upload has occurred.
+- [~] A10 Native iOS/Android build/install/input/pose/device matrix for the expanded game, final mobile art/legibility/performance/accessibility.
+- [~] A11 Signed archive uploaded and processed; internal TestFlight build 1.0 (5) is Im Test for Kamilunavo Intern with the existing owner tester. Physical installation/real-iPhone smoke remains open.
 
 Evidence: `ArcadeValidation.Validate` includes campaign, stack and historical classifier checks and passes. Actual Mac development player passed full arcade sequence; a later UI-only regression passes; final city framing/opaque-menu check passes. Functional QA uses deterministic 60 Hz simulation timing and actual game UI callbacks, not OS touch automation or a native performance measurement. Advanced unlocks were seeded only in an isolated QA profile to exercise later systems; this does not claim manual playthrough of all 30 levels. Fresh code review found and verified fixes for endless start width, resumed goal text and terminal-map settings.
 
@@ -35,17 +35,30 @@ Storage blocker resolved: user freed space; 13 GiB was verified before fresh nat
 - The user enabled Computer Use permissions; Xcode UI now works. Device Hub's UI connection still times out (rather than reporting missing grants). Native touch interaction and official Duo pose changes were not exercised. These simulator launch screenshots do not replace gameplay, physical-device, haptic/audio or performance acceptance.
 - Canonical source remains on main. Native build/export logs and screenshots are in the Codex task workspace `work/` and `outputs/`; generated Xcode projects/archive remain outside the repository under `/private/tmp/PerfectDrop-Arcade-*`.
 
-## Concept graphics pass — active, 2026-10-07
+## Concept graphics pass — final build 5 validation, 2026-10-08
 
-The user rejected the prototype visuals and requested graphics matching the attached concept images. The fourth concept's modern navy/gold cloud architecture is the binding art direction; its runner/jump controls remain superseded by the confirmed stacking game. The user authorized autonomous overnight implementation. No TestFlight/Play upload until the art/gameplay/mobile gate is satisfied.
+The user rejected the prototype visuals and requested graphics matching the attached concept images. The fourth concept's modern navy/gold cloud architecture is the binding art direction; its runner/jump controls remain superseded by the confirmed stacking game. The user authorized autonomous overnight implementation. Final desktop and native current-pose art/gameplay checks now pass. Build 5 is available as an internal-only TestFlight candidate for outstanding physical-device acceptance; this does not establish RC completion. No public App Store or Play release.
 
 - [~] Generated production portrait/landscape cloud-city backdrops and metal-panel albedo live in `Assets/Resources/Art`; real foreground stack/cuts/owned city remain 3D geometry.
 - [~] Closed beveled metal decks, continuous emissive bands inside actual landing footprints, shared frame meshes, instanced color/emission, cached studio reflection and quarter-resolution bloom.
 - [~] Licensed Barlow regular/bold, graded bordered navy/gold cards, square-fitted stars/locks, transparent map grouping and illustrated chapter atmospheres.
 - [~] Perfect landing ring and corrected spark scales, reduced-motion behavior, detailed district bases/rooftops/facade signals.
-- [x] Fresh complete desktop art pass (build4 source): shader-guarded development player built, full actual arcade callback sequence passed, and five editor matrices passed. Inspected actual map, gameplay, styles, city and 66-layer endless screenshots. Regression checks cover semantic cap-triangle winding, decoration footprints after narrow cuts, spark dimensions and map chapter→Continue lighting restoration. The latter was reproduced failing before its fix. Final read-only review found no material remaining code issue.
-- [~] Real-time 30-minute desktop render/stability soak is prepared for retained 64-layer endless, fully built district, portrait/landscape and synthetic division; this is separate from deterministic functional QA and does not establish native performance.
-- [ ] Final complete art-pass desktop/native rendering/layout/error/performance checks and review; current work is still being refined. Generated artwork alone is not runtime validation.
+- [x] Fresh complete desktop art pass (build5 source `b94f930aca3f4f6249b9d570889f8d7db215abe2`): shader-guarded development player built, full actual arcade callback/raycast sequence passed, and the combined editor matrices passed. Inspected actual map, gameplay, styles, city and 66-layer endless screenshots. Regression checks cover semantic cap-triangle winding, decoration footprints after narrow cuts, spark dimensions and map chapter→Continue lighting restoration. The latter was reproduced failing before its fix. Final read-only review found no material remaining code issue. The final navy energy/block-type card improves contrast against bright clouds.
+- [x] Final5 real-time 30-minute desktop render/stability soak completed with `PASS`: 1800 seconds, 100% focused frames, no runtime errors, Unity allocated memory first/max 97.6/98.9 MiB. All six modes had median 16.67 ms and p95 17.05–17.41 ms. Modes cover retained 64-layer endless, fully built district, portrait/landscape, chapter map and synthetic division. The batch counter was unavailable (`-1`), so no draw-call or GPU timing claim. This is separate from deterministic functional QA and does not establish native performance. Earlier interrupted/superseded long runs were not accepted.
+- [~] Desktop and native current-pose art/layout/error checks and code review passed. Real-device performance/input/audio/haptics and genuine opened/divided/rotated Duo states remain open. Generated artwork alone is not runtime validation.
+
+### Build 5 native and signing receipts
+
+- Final source: `b94f930aca3f4f6249b9d570889f8d7db215abe2`, committed and pushed to canonical main. Version `1.0`, iOS build `5`, Android versionCode `5`.
+- Native development iOS Simulator export and Release/arm64 Xcode build succeeded. Full functional sequence passed on iPhone 17 Pro (iOS 26.5), framebuffer `1206×2622`, and official iPhone Duo (iOS 27.1), current outer framebuffer `1398×2034`. Screenshots for map, live stack, powers, city, styles, daily, 66-layer endless and failure were captured at actual native resolution, without desktop framebuffer overrides. Native disabled ASTC support produces simulator texture-decompression warnings; these are not physical-device rendering/performance results.
+- Both native results explicitly cover game callbacks and actual visible-button-center raycasts. They do **not** establish OS touch delivery, real-device performance, audio/haptics, or other Duo poses. Every native run writes `RUNNING` before a fresh result into a unique directory; previous scaled diagnostic captures are superseded. See `docs/NATIVE-QA.md`.
+- A fresh final5 negative probe on official Duo deliberately put a transparent raycast blocker over the menu. It correctly produced `FAIL`, identifying blocked `Chapter0`, plus a full-resolution failure screenshot. This validates the checker; it is an intentional harness failure, not a product failure.
+- Signed Android AAB: central signing run `37698363633` succeeded with the existing Kamilunavo upload certificate. Local `jarsigner` verification passed, expected SHA-1/SHA-256 matched, and every non-signature payload entry matched the unsigned input. Signed SHA-256: `11c40700d2ef75877a24fb6e5b0ad5b87c1981742951b23f5eb7d1ba57620229`. This artifact is superseded: direct AAB icon inspection found the default Unity cube in its empty adaptive icon slots. Android-only source `f7b32aa505128891fc91b99fe1dfb1eb0c9db05a` corrects all adaptive slots with a padded transparent tower foreground and navy background. Fresh Android build5 succeeded; exported foreground/background inspected across all six densities. Replacement central signing run `37704454282` succeeded. Final signed SHA-256 `9bde38f3110cb88e8c81f030071ab220920dc65afe7bac71a0f36a6cd8316756`; local jarsigner reports jar verified, certificate fingerprints match the existing upload identity, and every non-signature payload entry matches unsigned input SHA-256 `e8082cd90cf5dabeb8bec971ac3dffdb9be5d335d484d93efe480589ce188c0f`. Asset `620144270` is a private draft signing input. An editor-only follow-up guards Android module imports/configuration with UNITY_ANDROID; fresh iOS and Android editor release validations passed, with no runtime/gameplay or exported-icon asset change. No Play upload.
+- Generic iOS device archive and App Store Connect distribution export succeeded. Extracted IPA passed strict/deep signature verification: `Apple Distribution: Piotr Kaminski (TKG684N5GL)`, bundle `com.kamilunavo.perfectdrop`, build `5`, store profile `get-task-allow=false`. Release generated code excludes the QA launch/test types. Xcode Organizer uploaded this archive successfully using TestFlight Internal Only at 01:25 Europe/Berlin on 2026-10-08; Apple processing completed. Build 1.0 (5) is Im Test in Kamilunavo Intern (one existing owner tester), with German test notes saved. Automatic distribution is disabled. Initial CLI upload failed providerId mapping; the subsequent GUI upload and server status are the success evidence. Missing vendor UnityRuntime.framework dSYM (UUID 392D7A7F-6A4F-3A7A-8788-4089FA96FF38) is an accepted upload warning; its real symbols are absent from the installed Unity support and were not fabricated.
+- IPA SHA-256: `0528e4067cf328c7f5913a2f7269cc657b092a43062096911ad64d372163ce80`.
+- A regular Mac review player also builds successfully, without development-player overlays. This is a review aid, not mobile release acceptance.
+- Additional official simctl screenConfig attempt: display 1 was powered off then restored on; display 3 (2007×2853) still captured entirely black and the app launch/container requests stalled. Simulator shut down after the bounded attempt. This is NOT an opened/rotated/divided pose pass. Device Hub CUA connection remains unavailable; prior genuine current-outer native PASS is unchanged.
+- Evidence files are in the Codex task workspace `work/concept-build5-*`, `work/concept-native-build5-*`, `work/concept-*-build5.log`, and `outputs/`. Physical iPhone/Android tests, genuine opened/divided/rotated Duo states, final native performance and TestFlight installation remain open. Earlier build3/build4 signing receipts above are historical and superseded by build5.
 
 ## Verified stacking foundation (historical checkpoint)
 
@@ -63,8 +76,8 @@ The user rejected the prototype visuals and requested graphics matching the atta
 - [x] S11 Actual Mac-player compact/wide/landscape runtime matrix and inspected screenshots (mobile gate remains S12/S13).
 - [ ] S12 Official iPhone Duo open/divided/rotation states; ordinary portrait iPhone.
 - [ ] S13 Fresh iOS/Android stacking builds and signing; physical devices/audio/haptics/performance.
-- [ ] S14 Final art/mobile screenshot gate and 30-minute stability.
-- [ ] S15 Signed archive, App Store Connect upload/processing, internal tester/install/physical TestFlight smoke.
+- [~] S14 Desktop/native current-pose art screenshots and 30-minute desktop stability passed; complete native-device/pose gate remains open.
+- [~] S15 Signed archive/upload/processing/internal tester complete for build 5; install/physical TestFlight smoke remains open.
 
 ## Current evidence
 
@@ -186,12 +199,12 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P09-T07 App Store assets
 - [ ] P09-T08 Play Store assets
 - [ ] P09-T09 TestFlight RC archive + upload
-- [ ] P09-T10 TestFlight processing + internal tester assignment
+- [x] P09-T10 TestFlight processing + internal tester assignment (build 5, internal-only candidate)
 - [ ] P09-T11 TestFlight install/smoke test on physical iPhone
 - [ ] P09-T12 staged release
 
 ## Next open task
-P03/P05: finish gameplay balance and replace remaining procedural/prototype presentation until the PRIMARY-CONCEPT screenshot-quality gate is met.
+Complete physical TestFlight input/audio/haptics/performance and genuine Duo pose acceptance. Android adaptive-icon signing/verification is complete. Perfect Drop remains the priority; subsequent games have not entered serious implementation.
 
 
 ## Unity 6.6 bootstrap verification - 2026-10-06

@@ -1,7 +1,9 @@
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
+#if UNITY_ANDROID
 using UnityEditor.Android;
+#endif
 using UnityEditor.Build;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -35,7 +37,9 @@ namespace Kamilunavo.PerfectDrop.Editor
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/PerfectDropIcon.png");
             if (icon != null)
                 PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+#if UNITY_ANDROID
             ConfigureAndroidIcons();
+#endif
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
@@ -53,6 +57,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
         }
 
+#if UNITY_ANDROID
         private static void ConfigureAndroidIcons()
         {
             const string foregroundPath = "Assets/Art/AndroidIconForeground.png";
@@ -90,6 +95,7 @@ namespace Kamilunavo.PerfectDrop.Editor
                 adaptiveIcon.SetTextures(new[] { background, foreground });
             PlayerSettings.SetPlatformIcons(NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive, icons);
         }
+#endif
     }
 }
 
