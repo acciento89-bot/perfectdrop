@@ -16,19 +16,22 @@ permissions:
 concurrency:
   group: perfectdrop-android-signing
   cancel-in-progress: false
+env:
+  SOURCE_ASSET: ${{ inputs.asset_id }}
+  SOURCE_HASH: ${{ inputs.aab_sha256 }}
+  SOURCE_COMMIT: ${{ inputs.source_commit }}
+  CENTRAL_SHA1: BCF2337D41E617C03BCAE698C09D1523654BD790
+  CENTRAL_SHA256: 7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6
 jobs:
-  sign:
+  prepare:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: read
-      id-token: write
-    env:
-      SOURCE_ASSET: ${{ inputs.asset_id }}
-      SOURCE_HASH: ${{ inputs.aab_sha256 }}
-      SOURCE_COMMIT: ${{ inputs.source_commit }}
-      CENTRAL_SHA1: BCF2337D41E617C03BCAE698C09D1523654BD790
-      CENTRAL_SHA256: 7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6
+      # GitHub requires contents:write to download an unpublished draft asset.
+      # This job cannot request the KMS signing identity.
+      contents: write
+    outputs:
+      artifact_id: ${{ steps.transfer.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -67,6 +70,40 @@ jobs:
           test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@package)" = com.kamilunavo.perfectdrop
           test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionCode)" = 3
           test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionName)" = 1.0
+      - id: transfer
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-unsigned-${{ github.run_id }}
+          path: prepared/
+          if-no-files-found: error
+          retention-days: 1
+  sign:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.prepare.outputs.artifact_id }}
+          merge-multiple: true
+          path: prepared
+      - name: Verify transferred content before requesting signing identity
+        run: |
+          set -euo pipefail
+          printf '%s  %s\n' "$SOURCE_HASH" prepared/app-release.aab | sha256sum --check --strict
+          python3 scripts/aab-payload.py prepared/app-release.aab > rechecked-payload.json
+          cmp prepared/payload.json rechecked-payload.json
+          curl -fsSL https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar -o "$RUNNER_TEMP/bundletool.jar"
+          printf '%s  %s\n' 378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584 "$RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
+          mkdir -p release
       - name: Restore existing central Kamilunavo identity
         uses: acciento89-bot/maengelfix/.github/actions/restore-central-android-signing@14bbf9332ccf58a2304027628da748ff4c6b3e61
       - name: Sign and verify unchanged bundle content
