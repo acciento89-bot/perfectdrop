@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
+using UnityEditor.Android;
 using UnityEditor.Build;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/PerfectDropIcon.png");
             if (icon != null)
                 PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+            ConfigureAndroidIcons();
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
@@ -49,6 +51,44 @@ namespace Kamilunavo.PerfectDrop.Editor
             }
 
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+        }
+
+        private static void ConfigureAndroidIcons()
+        {
+            const string foregroundPath = "Assets/Art/AndroidIconForeground.png";
+            const string backgroundPath = "Assets/Art/AndroidIconBackground.asset";
+            var foreground = AssetDatabase.LoadAssetAtPath<Texture2D>(foregroundPath);
+            if (foreground == null) return;
+            if (AssetImporter.GetAtPath(foregroundPath) is TextureImporter importer &&
+                (importer.mipmapEnabled || !importer.alphaIsTransparency ||
+                 importer.textureCompression != TextureImporterCompression.Uncompressed))
+            {
+                importer.mipmapEnabled = false;
+                importer.alphaIsTransparency = true;
+                importer.npotScale = TextureImporterNPOTScale.None;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+                foreground = AssetDatabase.LoadAssetAtPath<Texture2D>(foregroundPath);
+            }
+            var background = AssetDatabase.LoadAssetAtPath<Texture2D>(backgroundPath);
+            if (background == null)
+            {
+                background = new Texture2D(8, 8, TextureFormat.RGBA32, false)
+                {
+                    name = "AndroidIconBackground",
+                    wrapMode = TextureWrapMode.Clamp
+                };
+                var pixels = new Color32[64];
+                for (var i = 0; i < pixels.Length; i++)
+                    pixels[i] = new Color32(8, 18, 32, 255);
+                background.SetPixels32(pixels);
+                background.Apply();
+                AssetDatabase.CreateAsset(background, backgroundPath);
+            }
+            var icons = PlayerSettings.GetPlatformIcons(NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive);
+            foreach (var adaptiveIcon in icons)
+                adaptiveIcon.SetTextures(new[] { background, foreground });
+            PlayerSettings.SetPlatformIcons(NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive, icons);
         }
     }
 }
