@@ -50,7 +50,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [~] P04-T05 exact safe-area/text verification
 - [ ] P04-T06 settings
 - [ ] P04-T07 reduced motion
-- [ ] P04-T08 DE/EN localization
+- [~] P04-T08 DE/EN localization
 
 ## P05 Production visuals
 - [x] P05-T01 runtime palette/material foundation

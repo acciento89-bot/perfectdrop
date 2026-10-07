@@ -112,7 +112,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             PlayerPrefs.SetInt(CoinsKey, _coins);
             PlayerPrefs.Save();
 
-            if (FeedbackText != null) FeedbackText.text = grade.ToString().ToUpperInvariant();
+            if (FeedbackText != null) FeedbackText.text = UI.GameText.Landing(grade);
             RefreshHud();
 
             if (_currentFloor >= _platforms.Count - 1)
@@ -126,7 +126,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (_completed || Player == null) return;
             WarpPlayer(_safePosition);
             _streak = 0;
-            if (FeedbackText != null) FeedbackText.text = "READY";
+            if (FeedbackText != null) FeedbackText.text = UI.GameText.Ready;
             RefreshHud();
         }
 
@@ -148,7 +148,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (_platforms.Count > 1) _platforms[1].SetTarget(true);
             if (_motor != null) _motor.InputEnabled = true;
             if (CompletionPanel != null) CompletionPanel.SetActive(false);
-            if (FeedbackText != null) FeedbackText.text = "READY";
+            if (FeedbackText != null) FeedbackText.text = UI.GameText.Ready;
             RefreshHud();
         }
 
@@ -156,9 +156,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             _completed = true;
             if (_motor != null) _motor.InputEnabled = false;
-            if (FeedbackText != null) FeedbackText.text = "TOWER CLEAR";
+            if (FeedbackText != null) FeedbackText.text = UI.GameText.TowerCleared;
             if (CompletionText != null)
-                CompletionText.text = $"30 FLOORS CLEARED\nBEST  {_best}   •   COINS  {_coins}";
+                CompletionText.text = UI.GameText.Completion(_best, _coins);
             if (CompletionPanel != null) CompletionPanel.SetActive(true);
             RefreshHud();
         }
@@ -180,10 +180,10 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 
         private void RefreshHud()
         {
-            FloorText.text = $"FLOOR\n{_currentFloor + 1}";
-            BestText.text = $"BEST\n{Mathf.Max(1, _best)}";
-            StreakText.text = $"STREAK\nx{_streak}";
-            CoinsText.text = $"COINS\n{_coins}";
+            FloorText.text = UI.GameText.Floor(_currentFloor + 1);
+            BestText.text = UI.GameText.Best(Mathf.Max(1, _best));
+            StreakText.text = UI.GameText.Streak(_streak);
+            CoinsText.text = UI.GameText.Coins(_coins);
             if (ProgressFill != null) ProgressFill.fillAmount = (_currentFloor + 1) / 30f;
         }
     }
