@@ -9,10 +9,16 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
         private Renderer[] _renderers;
-        private readonly MaterialPropertyBlock _block = new();
+        private MaterialPropertyBlock _block;
+
+        private void Awake()
+        {
+            _block = new MaterialPropertyBlock();
+        }
 
         private void Start()
         {
+            if (_block == null) _block = new MaterialPropertyBlock();
             RefreshRenderers();
             ApplySelectedStyle();
             PlayerProfileStore.Changed += ApplySelectedStyle;
@@ -60,6 +66,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
         private void ApplyTint(Renderer renderer, Color color, Color emission)
         {
+            if (_block == null) _block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(_block);
             _block.SetColor(BaseColorId, color);
             _block.SetColor(ColorId, color);
