@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Kamilunavo.PerfectDrop.CameraSystem;
 using Kamilunavo.PerfectDrop.Gameplay;
+using Kamilunavo.PerfectDrop.Feedback;
 using Kamilunavo.PerfectDrop.Input;
 using Kamilunavo.PerfectDrop.UI;
 using Kamilunavo.PerfectDrop.Visuals;
@@ -99,6 +100,8 @@ namespace Kamilunavo.PerfectDrop
             controller.height = 2f;
             controller.radius = 0.42f;
             controller.center = new Vector3(0f, 1f, 0f);
+            go.AddComponent<AudioSource>();
+            go.AddComponent<FeedbackSystem>();
             go.AddComponent<PlayerMotor>();
             WorldArt.CreateRunnerVisual(go.transform);
             return go;

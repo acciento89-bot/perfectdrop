@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Kamilunavo.PerfectDrop.Visuals;
+using Kamilunavo.PerfectDrop.Feedback;
 
 namespace Kamilunavo.PerfectDrop.Gameplay
 {
@@ -23,6 +24,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 
         private readonly List<PrecisionPlatform> _platforms = new();
         private PlayerMotor _motor;
+        private FeedbackSystem _feedback;
         private int _currentFloor;
         private int _best;
         private int _streak;
@@ -42,6 +44,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             _best = Mathf.Clamp(PlayerPrefs.GetInt(BestKey, 1), 1, 30);
             _coins = Mathf.Max(0, PlayerPrefs.GetInt(CoinsKey, 0));
             _motor = Player != null ? Player.GetComponent<PlayerMotor>() : null;
+            _feedback = Player != null ? Player.GetComponent<FeedbackSystem>() : null;
 
             Random.InitState(260906);
             var x = 0f;
@@ -107,6 +110,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             _coins += PrecisionScoring.CoinReward(grade, _streak);
             _safePosition = SpawnPoint(platform.transform);
             WorldArt.SpawnLandingBurst(platform.transform.position + Vector3.up * (platform.transform.lossyScale.y * 0.5f), grade);
+            _feedback?.PlayLanding(grade);
 
             PlayerPrefs.SetInt(BestKey, _best);
             PlayerPrefs.SetInt(CoinsKey, _coins);
@@ -125,6 +129,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             if (_completed || Player == null) return;
             WarpPlayer(_safePosition);
+            _feedback?.PlayRecovery();
             _streak = 0;
             if (FeedbackText != null) FeedbackText.text = UI.GameText.Ready;
             RefreshHud();
@@ -160,6 +165,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (CompletionText != null)
                 CompletionText.text = UI.GameText.Completion(_best, _coins);
             if (CompletionPanel != null) CompletionPanel.SetActive(true);
+            _feedback?.PlayComplete();
             RefreshHud();
         }
 

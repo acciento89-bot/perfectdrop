@@ -1,5 +1,6 @@
 using UnityEngine;
 using Kamilunavo.PerfectDrop.Input;
+using Kamilunavo.PerfectDrop.Feedback;
 
 namespace Kamilunavo.PerfectDrop.Gameplay
 {
@@ -15,11 +16,16 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public float Gravity = 22f;
         public bool InputEnabled { get; set; } = true;
         private CharacterController _controller;
+        private FeedbackSystem _feedback;
         private float _vertical;
         private float _boostMultiplier = 1f;
         private float _boostUntil;
 
-        private void Awake() => _controller = GetComponent<CharacterController>();
+        private void Awake()
+        {
+            _controller = GetComponent<CharacterController>();
+            _feedback = GetComponent<FeedbackSystem>();
+        }
 
         private void Update()
         {
@@ -42,7 +48,11 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (planar.sqrMagnitude > 0.001f) transform.forward = Vector3.Slerp(transform.forward, planar.normalized, 1f - Mathf.Exp(-14f * Time.deltaTime));
             if (_controller.isGrounded && _vertical < 0f) _vertical = -2f;
             var wantsJump = UnityEngine.Input.GetKeyDown(KeyCode.Space) || (JumpButton != null && JumpButton.ConsumePress());
-            if (_controller.isGrounded && wantsJump) _vertical = JumpSpeed * _boostMultiplier;
+            if (_controller.isGrounded && wantsJump)
+            {
+                _vertical = JumpSpeed * _boostMultiplier;
+                _feedback?.PlayJump();
+            }
             _vertical -= Gravity * Time.deltaTime;
             var velocity = planar * (MoveSpeed * _boostMultiplier);
             velocity.y = _vertical;

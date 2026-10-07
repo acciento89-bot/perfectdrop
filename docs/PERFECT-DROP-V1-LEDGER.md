@@ -62,10 +62,10 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P05-T07 screenshot-quality gate
 
 ## P06 Audio/haptics
-- [ ] P06-T01 jump
-- [ ] P06-T02 landing grade cues
-- [ ] P06-T03 recovery cue
-- [ ] P06-T04 haptics
+- [~] P06-T01 jump
+- [~] P06-T02 landing grade cues
+- [~] P06-T03 recovery cue
+- [~] P06-T04 haptics
 - [ ] P06-T05 music/ambience
 - [ ] P06-T06 settings
 
