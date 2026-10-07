@@ -34,6 +34,27 @@ static UIView *PDActiveRootView(void)
 
 extern "C"
 {
+    void PDPlayHaptic(int kind)
+    {
+        if (@available(iOS 10.0, *))
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (kind == 2)
+                {
+                    UINotificationFeedbackGenerator *generator = [[UINotificationFeedbackGenerator alloc] init];
+                    [generator prepare];
+                    [generator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    return;
+                }
+
+                UIImpactFeedbackStyle style = kind == 1 ? UIImpactFeedbackStyleMedium : UIImpactFeedbackStyleLight;
+                UIImpactFeedbackGenerator *generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
+                [generator prepare];
+                [generator impactOccurred];
+            });
+        }
+    }
+
     int PDReservedRegionsSupported(void)
     {
         if (@available(iOS 27.1, *))
