@@ -1,0 +1,106 @@
+name: Sign verified Perfect Drop Android bundle
+on:
+  workflow_dispatch:
+    inputs:
+      asset_id:
+        description: Draft release asset ID for the locally built unsigned AAB
+        required: true
+      aab_sha256:
+        description: Expected unsigned AAB SHA-256
+        required: true
+      source_commit:
+        description: Commit used for the native Unity build
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: perfectdrop-android-signing
+  cancel-in-progress: false
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SOURCE_ASSET: ${{ inputs.asset_id }}
+      SOURCE_HASH: ${{ inputs.aab_sha256 }}
+      SOURCE_COMMIT: ${{ inputs.source_commit }}
+      CENTRAL_SHA1: BCF2337D41E617C03BCAE698C09D1523654BD790
+      CENTRAL_SHA256: 7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Verify source commit and fetch immutable input
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_ASSET" =~ ^[0-9]+$ ]]
+          [[ "$SOURCE_HASH" =~ ^[a-f0-9]{64}$ ]]
+          [[ "$SOURCE_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          test "$GITHUB_REF" = refs/heads/main
+          git fetch --no-tags origin "$SOURCE_COMMIT"
+          git merge-base --is-ancestor "$SOURCE_COMMIT" HEAD
+          git diff --exit-code "$SOURCE_COMMIT" HEAD -- Assets ProjectSettings Packages
+          mkdir -p prepared release
+          gh api "repos/$GITHUB_REPOSITORY/releases/assets/$SOURCE_ASSET" -H 'Accept: application/octet-stream' > prepared/app-release.aab
+          printf '%s  %s\n' "$SOURCE_HASH" prepared/app-release.aab | sha256sum --check --strict
+          python3 scripts/aab-payload.py prepared/app-release.aab > prepared/payload.json
+          python3 - <<'PY'
+          import re, zipfile
+          with zipfile.ZipFile('prepared/app-release.aab') as z:
+              assert not any(re.fullmatch(r'META-INF/(?:[^/]+\.(?:SF|RSA|DSA|EC)|SIG-[^/]+)',n,re.I) for n in z.namelist()), 'Input must be unsigned'
+          PY
+      - name: Validate package and build before requesting signing identity
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar -o "$RUNNER_TEMP/bundletool.jar"
+          printf '%s  %s\n' 378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584 "$RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle=prepared/app-release.aab
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@package)" = com.kamilunavo.perfectdrop
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionCode)" = 3
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionName)" = 1.0
+      - name: Restore existing central Kamilunavo identity
+        uses: acciento89-bot/maengelfix/.github/actions/restore-central-android-signing@14bbf9332ccf58a2304027628da748ff4c6b3e61
+      - name: Sign and verify unchanged bundle content
+        run: |
+          set -euo pipefail
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA1" = "$CENTRAL_SHA1"
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA256" = "$CENTRAL_SHA256"
+          cp prepared/app-release.aab release/PerfectDrop-1.0-build3.aab
+          jarsigner -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -keypass:env ANDROID_UPLOAD_KEY_PASSWORD -sigalg SHA256withRSA -digestalg SHA-256 release/PerfectDrop-1.0-build3.aab "$ANDROID_UPLOAD_KEY_ALIAS"
+          jarsigner -verify release/PerfectDrop-1.0-build3.aab > "$RUNNER_TEMP/signature.txt"
+          grep -Fq 'jar verified.' "$RUNNER_TEMP/signature.txt"
+          keytool -J-Duser.language=en -printcert -jarfile release/PerfectDrop-1.0-build3.aab > release/upload-certificate.txt
+          actual_sha1=$(sed -n 's/^[[:space:]]*SHA1: //p' release/upload-certificate.txt | tr -d ':\r\n ')
+          actual_sha256=$(sed -n 's/^[[:space:]]*SHA256: //p' release/upload-certificate.txt | tr -d ':\r\n ')
+          test "$actual_sha1" = "$CENTRAL_SHA1"
+          test "$actual_sha256" = "$CENTRAL_SHA256"
+          python3 scripts/aab-payload.py release/PerfectDrop-1.0-build3.aab > release/payload.json
+          cmp prepared/payload.json release/payload.json
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle=release/PerfectDrop-1.0-build3.aab
+          python3 - <<'PY'
+          import json,os,pathlib
+          keys=['GITHUB_SHA','GITHUB_RUN_ID','SOURCE_COMMIT','SOURCE_HASH','SOURCE_ASSET','CENTRAL_SHA1','CENTRAL_SHA256']
+          pathlib.Path('release/provenance.json').write_text(json.dumps({k:os.environ[k] for k in keys},indent=2)+'\n')
+          PY
+          (cd release && sha256sum PerfectDrop-1.0-build3.aab > SHA256SUMS)
+          echo 'Verified central signature and unchanged native build payload. No Google Play upload.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove restored signing material
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/kamilunavo-central-signing"
+          rm -f "$RUNNER_TEMP/kamilunavo-central-upload.p12"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PerfectDrop-1.0-build3-central-signed
+          path: release/
+          if-no-files-found: error
+          retention-days: 30
