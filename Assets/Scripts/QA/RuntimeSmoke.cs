@@ -148,6 +148,12 @@ namespace Kamilunavo.PerfectDrop.QA
                 Require(Mathf.Abs(_game.MovingOffset)<=.06f,"Tutorial placement window missed.");
                 FindButton("Drop").onClick.Invoke();
                 Require(_game.Run.Count==block,"Tutorial drop failed.");yield return new WaitForSeconds(.1f);
+                if(block==1 && !GamePreferences.ReducedMotion)
+                {
+                    var burst=GameObject.Find("LandingBurst_Good");Require(burst!=null,"Perfect landing spark feedback missing.");
+                    foreach(Transform spark in burst.transform)Require(spark.localScale.x<=.10f && spark.localScale.z<=.31f,"Landing spark lost its authored scale.");
+                }
+                if(block==3){yield return new WaitForSecondsRealtime(.6f);yield return Capture("tutorial-stack");}
             }
             Require(_game.Run.Completed && _game.Profile.UnlockedLevel==2 && _game.LastStars==3 && StackCampaign.Buildings(_game.Profile)==1,"Tutorial did not reward/unlock/build city.");
             yield return Capture("first-clear");
@@ -158,6 +164,10 @@ namespace Kamilunavo.PerfectDrop.QA
             {
                 if(block==4)
                 {
+                    _game.GoHome();FindButton("Chapter2").onClick.Invoke();
+                    Require(Kamilunavo.PerfectDrop.Visuals.WorldArt.ActiveChapter==2,"Chapter preview backdrop did not change.");
+                    FindButton("Continue").onClick.Invoke();
+                    Require(Kamilunavo.PerfectDrop.Visuals.WorldArt.ActiveChapter==(_game.Level.Id-1)/10 && _game.Run.Count==3,"Continue did not restore the active run's chapter.");
                     Require(_game.Run.Powers.Energy==3,"Combo energy did not charge.");
                     FindButton("PowerCenter").onClick.Invoke();
                     Require(_game.Run.Count==4,"Center power did not place exactly one block.");

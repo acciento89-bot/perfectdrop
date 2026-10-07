@@ -63,7 +63,24 @@ namespace Kamilunavo.PerfectDrop.Editor
             {
                 var block = Kamilunavo.PerfectDrop.Visuals.WorldArt.CreateStackBlock(artRoot.transform, "Block", Vector3.zero, new Vector3(3.6f,.34f,3.6f),1);
                 var mesh = block.transform.Find("MetalDeck").GetComponent<MeshFilter>().sharedMesh;
-                Assert(mesh.normals[0].y > .9f, "Visible top cap must face upward.");
+                var vertices=mesh.vertices;var triangles=mesh.triangles;var topFaces=0;
+                for(var i=0;i<triangles.Length;i+=3)
+                {
+                    var a=vertices[triangles[i]];var b=vertices[triangles[i+1]];var c=vertices[triangles[i+2]];
+                    if(a.y<.499f || b.y<.499f || c.y<.499f)continue;
+                    Assert(Vector3.Cross(b-a,c-a).y>0,"Visible top cap must face upward.");topFaces++;
+                }
+                Assert(topFaces>=6,"Beveled deck is missing its closed top cap.");
+                foreach(var dimensions in new[]{new Vector3(.03f,.34f,3.6f),new Vector3(3.6f,.34f,.1f),new Vector3(.15f,.34f,.15f)})
+                {
+                    var narrow=Kamilunavo.PerfectDrop.Visuals.WorldArt.CreateStackBlock(artRoot.transform,"Narrow",Vector3.zero,dimensions,1);
+                    foreach(var renderer in narrow.GetComponentsInChildren<Renderer>())
+                    {
+                        var bounds=renderer.bounds;
+                        Assert(bounds.min.x>=-dimensions.x*.5f-.0001f && bounds.max.x<=dimensions.x*.5f+.0001f && bounds.min.z>=-dimensions.z*.5f-.0001f && bounds.max.z<=dimensions.z*.5f+.0001f,
+                            "Decoration exceeds the real landing footprint: "+renderer.name);
+                    }
+                }
             }
             finally { UnityEngine.Object.DestroyImmediate(artRoot); }
             Debug.Log("[PerfectDrop] Stack overlap, cut geometry, perfect and miss matrix passed.");

@@ -10,7 +10,9 @@ namespace Kamilunavo.PerfectDrop.UI
         Flame,
         Diamond,
         Bolt,
-        ArrowUp
+        ArrowUp,
+        Star,
+        Lock
     }
 
     [RequireComponent(typeof(CanvasRenderer))]
@@ -23,6 +25,23 @@ namespace Kamilunavo.PerfectDrop.UI
             vh.Clear();
             switch (IconType)
             {
+                case HudIconType.Star:
+                    for (var n = 0; n < 10; n++)
+                    {
+                        var a = (90+n*36)*Mathf.Deg2Rad;
+                        var b = (90+(n+1)*36)*Mathf.Deg2Rad;
+                        var ra = n%2==0?.40f:.18f;
+                        var rb = n%2==0?.18f:.40f;
+                        AddTriangle(vh,P(.5f,.5f),P(.5f+Mathf.Cos(a)*ra,.5f+Mathf.Sin(a)*ra),P(.5f+Mathf.Cos(b)*rb,.5f+Mathf.Sin(b)*rb));
+                    }
+                    break;
+                case HudIconType.Lock:
+                    AddQuad(vh,P(.23f,.16f),P(.77f,.16f),P(.77f,.58f),P(.23f,.58f));
+                    AddThickLine(vh,P(.32f,.56f),P(.32f,.78f),.09f);
+                    AddThickLine(vh,P(.32f,.78f),P(.50f,.86f),.09f);
+                    AddThickLine(vh,P(.50f,.86f),P(.68f,.78f),.09f);
+                    AddThickLine(vh,P(.68f,.78f),P(.68f,.56f),.09f);
+                    break;
                 case HudIconType.Floors:
                     AddLayer(vh, 0.50f, 0.68f, 0.32f, 0.15f);
                     AddLayer(vh, 0.50f, 0.49f, 0.32f, 0.15f);
@@ -104,10 +123,9 @@ namespace Kamilunavo.PerfectDrop.UI
         private Vector3 ToLocal(Vector2 normalized)
         {
             var r = rectTransform.rect;
-            return new Vector3(
-                Mathf.Lerp(r.xMin, r.xMax, normalized.x),
-                Mathf.Lerp(r.yMin, r.yMax, normalized.y),
-                0f);
+            var size=Mathf.Min(r.width,r.height);
+            return new Vector3(r.center.x+(normalized.x-.5f)*size,
+                r.center.y+(normalized.y-.5f)*size,0f);
         }
     }
 }

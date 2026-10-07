@@ -17,6 +17,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private Rect _division, _area;
         private bool _hadDivision;
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
+        public bool MapOrStyleOpen => CampaignMenuOpen;
         public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen;
         private static Color Navy => new(0.035f, 0.065f, 0.12f, 1f);
         private static Color Gold => new(1f, 0.79f, 0.16f);
@@ -31,12 +32,14 @@ namespace Kamilunavo.PerfectDrop.UI
             _statsRoot = UiFactory.Panel(_safe, "Stats", Color.clear, new Vector2(.04f,.87f), new Vector2(.96f,.98f));
             _stats = new Text[4];
             var types = new[] { HudIconType.Floors, HudIconType.Crown, HudIconType.Flame, HudIconType.Diamond };
+            var statNames=new[]{T("STAPEL","STACK"),T("BESTE","BEST"),T("SERIE","STREAK"),"COINS"};
             for (var i = 0; i < 4; i++)
             {
                 var min = i * .25f;
                 var card = UiFactory.Panel(_statsRoot, "Stat"+i, Navy, new Vector2(min,0), new Vector2(min+.235f,1));
                 UiFactory.Icon(card, "Icon", types[i], Gold, new Vector2(.09f,.32f), new Vector2(.29f,.68f));
-                _stats[i] = UiFactory.Label(card,"Value","",32,new Vector2(.34f,.05f),new Vector2(.95f,.95f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
+                UiFactory.Label(card,"Heading",statNames[i],24,new Vector2(.34f,.63f),new Vector2(.95f,.94f),TextAnchor.MiddleLeft,new Color(.68f,.74f,.84f),FontStyle.Bold);
+                _stats[i] = UiFactory.Label(card,"Value","",50,new Vector2(.34f,.12f),new Vector2(.95f,.66f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
             }
             _objective = UiFactory.Panel(_safe,"Objective",Navy,new Vector2(.04f,.765f),new Vector2(.96f,.85f));
             _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.40f),new Vector2(.76f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
@@ -65,11 +68,12 @@ namespace Kamilunavo.PerfectDrop.UI
         public void Refresh()
         {
             var gameplayVisible=!CampaignMenuOpen && !CityOpen;
+            Game.SetStackVisible(gameplayVisible);
             _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);
-            _stats[0].text = T("STAPEL","STACK") + "\n" + Game.Run.Count + (Game.Run.Endless?"":"/"+Game.Run.Target);
-            _stats[1].text = T("BESTE","BEST") + "\n" + (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best);
-            _stats[2].text = T("SERIE","STREAK") + "\nx" + Game.Run.Streak;
-            _stats[3].text = "COINS\n" + Game.Profile.Coins;
+            _stats[0].text = Game.Run.Count.ToString() + (Game.Run.Endless?"":"/"+Game.Run.Target);
+            _stats[1].text = (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best).ToString();
+            _stats[2].text = "x" + Game.Run.Streak;
+            _stats[3].text = Game.Profile.Coins.ToString();
             _progress.fillAmount = Game.Run.Endless?0:Game.Run.Count/(float)Game.Run.Target;
             _drop.interactable = !Game.Run.Failed && !Game.Run.Completed && !ModalOpen;
             UpdateArcadeHud();

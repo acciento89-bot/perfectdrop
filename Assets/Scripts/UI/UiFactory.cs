@@ -7,12 +7,15 @@ namespace Kamilunavo.PerfectDrop.UI
     public static class UiFactory
     {
         private static Font _font;
+        private static Font _boldFont;
         private static Sprite _roundedSprite;
         private static Sprite _circleSprite;
         private static Sprite _pillSprite;
+        private static Material _panelMaterial;
 
-        public static Font DefaultFont => _font != null ? _font : (_font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
-        public static Sprite RoundedSprite => _roundedSprite != null ? _roundedSprite : (_roundedSprite = BuildMaskSprite(64, 14f, sliced: true));
+        public static Font DefaultFont => _font != null ? _font : (_font = Resources.Load<Font>("Fonts/Barlow-Regular") ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
+        private static Font BoldFont => _boldFont != null ? _boldFont : (_boldFont = Resources.Load<Font>("Fonts/Barlow-Bold") ?? DefaultFont);
+        public static Sprite RoundedSprite => _roundedSprite != null ? _roundedSprite : (_roundedSprite = BuildMaskSprite(128, 28f, sliced: true));
         public static Sprite CircleSprite => _circleSprite != null ? _circleSprite : (_circleSprite = BuildMaskSprite(64, 31f, sliced: false));
         public static Sprite PillSprite => _pillSprite != null ? _pillSprite : (_pillSprite = BuildMaskSprite(64, 28f, sliced: true));
 
@@ -21,6 +24,7 @@ namespace Kamilunavo.PerfectDrop.UI
             var go = new GameObject("MobileCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = go.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
             var scaler = go.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);
@@ -43,6 +47,12 @@ namespace Kamilunavo.PerfectDrop.UI
             image.color = color;
             image.sprite = RoundedSprite;
             image.type = Image.Type.Sliced;
+            if (_panelMaterial == null)
+            {
+                var shader = Resources.Load<Shader>("PerfectDropPanel");
+                if (shader != null) _panelMaterial = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            }
+            if (_panelMaterial != null) { image.material = _panelMaterial; go.AddComponent<PanelSkin>(); }
             return rect;
         }
 
@@ -57,10 +67,10 @@ namespace Kamilunavo.PerfectDrop.UI
             rect.offsetMax = Vector2.zero;
 
             var label = go.GetComponent<Text>();
-            label.font = DefaultFont;
+            label.font = style == FontStyle.Bold ? BoldFont : DefaultFont;
             label.text = text;
             label.fontSize = size;
-            label.fontStyle = style;
+            label.fontStyle = style == FontStyle.Bold && label.font == _boldFont ? FontStyle.Normal : style;
             label.alignment = alignment;
             label.color = color;
             label.resizeTextForBestFit = true;

@@ -11,6 +11,14 @@ on:
       source_commit:
         description: Commit used for the native Unity build
         required: true
+      version_name:
+        description: Expected version name of the native build
+        required: true
+        default: '1.0'
+      build_number:
+        description: Expected positive Android version code
+        required: true
+        default: '4'
 permissions:
   contents: read
 concurrency:
@@ -20,6 +28,8 @@ env:
   SOURCE_ASSET: ${{ inputs.asset_id }}
   SOURCE_HASH: ${{ inputs.aab_sha256 }}
   SOURCE_COMMIT: ${{ inputs.source_commit }}
+  VERSION_NAME: ${{ inputs.version_name }}
+  BUILD_NUMBER: ${{ inputs.build_number }}
   CENTRAL_SHA1: BCF2337D41E617C03BCAE698C09D1523654BD790
   CENTRAL_SHA256: 7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6
 jobs:
@@ -48,6 +58,8 @@ jobs:
           [[ "$SOURCE_ASSET" =~ ^[0-9]+$ ]]
           [[ "$SOURCE_HASH" =~ ^[a-f0-9]{64}$ ]]
           [[ "$SOURCE_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$VERSION_NAME" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]]
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,8}$ ]]
           test "$GITHUB_REF" = refs/heads/main
           git fetch --no-tags origin "$SOURCE_COMMIT"
           git merge-base --is-ancestor "$SOURCE_COMMIT" HEAD
@@ -68,8 +80,8 @@ jobs:
           printf '%s  %s\n' 378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584 "$RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
           java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle=prepared/app-release.aab
           test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@package)" = com.kamilunavo.perfectdrop
-          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionCode)" = 3
-          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionName)" = 1.0
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionCode)" = "$BUILD_NUMBER"
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle=prepared/app-release.aab --xpath=/manifest/@android:versionName)" = "$VERSION_NAME"
       - id: transfer
         uses: actions/upload-artifact@v4
         with:
@@ -111,24 +123,24 @@ jobs:
           set -euo pipefail
           test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA1" = "$CENTRAL_SHA1"
           test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA256" = "$CENTRAL_SHA256"
-          cp prepared/app-release.aab release/PerfectDrop-1.0-build3.aab
-          jarsigner -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -keypass:env ANDROID_UPLOAD_KEY_PASSWORD -sigalg SHA256withRSA -digestalg SHA-256 release/PerfectDrop-1.0-build3.aab "$ANDROID_UPLOAD_KEY_ALIAS"
-          jarsigner -verify release/PerfectDrop-1.0-build3.aab > "$RUNNER_TEMP/signature.txt"
+          cp prepared/app-release.aab "release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab"
+          jarsigner -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -keypass:env ANDROID_UPLOAD_KEY_PASSWORD -sigalg SHA256withRSA -digestalg SHA-256 "release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab" "$ANDROID_UPLOAD_KEY_ALIAS"
+          jarsigner -verify "release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab" > "$RUNNER_TEMP/signature.txt"
           grep -Fq 'jar verified.' "$RUNNER_TEMP/signature.txt"
-          keytool -J-Duser.language=en -printcert -jarfile release/PerfectDrop-1.0-build3.aab > release/upload-certificate.txt
+          keytool -J-Duser.language=en -printcert -jarfile "release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab" > release/upload-certificate.txt
           actual_sha1=$(sed -n 's/^[[:space:]]*SHA1: //p' release/upload-certificate.txt | tr -d ':\r\n ')
           actual_sha256=$(sed -n 's/^[[:space:]]*SHA256: //p' release/upload-certificate.txt | tr -d ':\r\n ')
           test "$actual_sha1" = "$CENTRAL_SHA1"
           test "$actual_sha256" = "$CENTRAL_SHA256"
-          python3 scripts/aab-payload.py release/PerfectDrop-1.0-build3.aab > release/payload.json
+          python3 scripts/aab-payload.py "release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab" > release/payload.json
           cmp prepared/payload.json release/payload.json
-          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle=release/PerfectDrop-1.0-build3.aab
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle="release/PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab"
           python3 - <<'PY'
           import json,os,pathlib
-          keys=['GITHUB_SHA','GITHUB_RUN_ID','SOURCE_COMMIT','SOURCE_HASH','SOURCE_ASSET','CENTRAL_SHA1','CENTRAL_SHA256']
+          keys=['GITHUB_SHA','GITHUB_RUN_ID','SOURCE_COMMIT','SOURCE_HASH','SOURCE_ASSET','VERSION_NAME','BUILD_NUMBER','CENTRAL_SHA1','CENTRAL_SHA256']
           pathlib.Path('release/provenance.json').write_text(json.dumps({k:os.environ[k] for k in keys},indent=2)+'\n')
           PY
-          (cd release && sha256sum PerfectDrop-1.0-build3.aab > SHA256SUMS)
+          (cd release && sha256sum "PerfectDrop-${VERSION_NAME}-build${BUILD_NUMBER}.aab" > SHA256SUMS)
           echo 'Verified central signature and unchanged native build payload. No Google Play upload.' >> "$GITHUB_STEP_SUMMARY"
       - name: Remove restored signing material
         if: always()
@@ -137,7 +149,7 @@ jobs:
           rm -f "$RUNNER_TEMP/kamilunavo-central-upload.p12"
       - uses: actions/upload-artifact@v4
         with:
-          name: PerfectDrop-1.0-build3-central-signed
+          name: PerfectDrop-${{ inputs.version_name }}-build${{ inputs.build_number }}-central-signed
           path: release/
           if-no-files-found: error
           retention-days: 30

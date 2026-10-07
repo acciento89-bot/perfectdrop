@@ -86,6 +86,8 @@ public static class BuildAutomation
         };
 
         var report = BuildPipeline.BuildPlayer(options);
+        foreach(var shader in UnityEngine.Resources.LoadAll<UnityEngine.Shader>(""))
+            if(ShaderUtil.ShaderHasError(shader))throw new InvalidOperationException("Build contains a shader compilation error: "+shader.name);
         if (report.summary.result != BuildResult.Succeeded)
             throw new InvalidOperationException($"Build failed: {report.summary.result} with {report.summary.totalErrors} error(s).");
     }

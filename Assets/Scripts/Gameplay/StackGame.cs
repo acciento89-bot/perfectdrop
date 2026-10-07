@@ -52,16 +52,18 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             fill.type = LightType.Directional; fill.color = new Color(.35f,.52f,1f); fill.intensity = .55f;
             fill.transform.rotation = Quaternion.Euler(25,145,0);
             var cameraObject = new GameObject("StackCamera"); cameraObject.tag = "MainCamera";
-            _camera = cameraObject.AddComponent<Camera>(); _camera.fieldOfView = 43; _camera.nearClipPlane = .15f; _camera.farClipPlane = 230;
+            _camera = cameraObject.AddComponent<Camera>(); _camera.allowHDR = true; _camera.fieldOfView = 43; _camera.nearClipPlane = .15f; _camera.farClipPlane = 230;
             cameraObject.AddComponent<AudioListener>(); cameraObject.AddComponent<CinematicGrade>();
             var feedback = new GameObject("StackFeedback",typeof(AudioSource),typeof(FeedbackSystem));
             _feedback = feedback.GetComponent<FeedbackSystem>();
             if (FindFirstObjectByType<EventSystem>() == null) new GameObject("EventSystem",typeof(EventSystem),typeof(StandaloneInputModule));
             var world = new GameObject("CloudCity").transform; _world=world;
-            WorldArt.BuildStackCloudSea(world); WorldArt.BuildSkyline(world);
+            // Authored cloud-city environment is rendered by the skybox; keep the
+            // foreground stack and earned city as live geometry.
             _tower = new GameObject("StackTower").transform;
             Profile = StackSave.Load();
             Level = Profile.RunEndless?StackCampaign.Level(1):Profile.RunChallenge?StackCampaign.Daily(DateTime.ParseExact(Profile.RunChallengeDate,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture)):StackCampaign.Level(Profile.RunLevel);
+            WorldArt.SetChapter(Level.Chapter);
             RebuildCity();
             Run = new StackRun(Level.Target,Profile.RunEndless,Vector2.one*Level.Width);
             _hasStarted = Profile.ResumeActive;
@@ -155,7 +157,11 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             else Profile.Best = Mathf.Max(Profile.Best,Run.Count);
             _feedback.PlayLanding(result.Grade == StackGrade.Perfect ? LandingGrade.Perfect : LandingGrade.Good);
             if (result.Grade == StackGrade.Perfect)
-                WorldArt.SpawnLandingBurst(new Vector3(result.Center.x,height+LayerHeight*.5f,result.Center.y),LandingGrade.Good);
+            {
+                var landing=new Vector3(result.Center.x,height+LayerHeight*.55f,result.Center.y);
+                WorldArt.SpawnLandingBurst(landing,LandingGrade.Good);
+                WorldArt.SpawnStackLandingPulse(landing,result.Size,Profile.Style);
+            }
             Hud.Grade(result.Grade);
             if(result.Rescued)Hud.ArcadeFeedback(StackHud.T("GERETTET!","SAVED!"));
             if (Run.Completed)
@@ -171,7 +177,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (_moving != null) Destroy(_moving.gameObject);
             if(Profile.RunChallenge){Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);}
             Run = new StackRun(Level.Target,Profile.RunEndless,Vector2.one*Level.Width); _hasStarted=true; LastStars=LastBonus=0; _phase = -Mathf.PI/2; MovingOffset = -Level.Width*1.24f; _nextDrop = 0;
-            Hud.HideMenus();
+            Hud.HideMenus(); WorldArt.SetChapter(Level.Chapter);
             SpawnMoving(); Hud.ResetMessage(); Save(); UpdateCamera(true);
         }
         public void StartLevel(int id)
@@ -211,16 +217,18 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if(_city!=null)Destroy(_city);
             _city=WorldArt.BuildPlayerCity(_world,Profile);_city.SetActive(false);
         }
+        public void SetStackVisible(bool active) { if(_tower!=null)_tower.gameObject.SetActive(active); }
         public void SetCityView(bool active)
         {
             if(_city!=null)_city.SetActive(active);if(_tower!=null)_tower.gameObject.SetActive(!active);
             var skyline=_world!=null?_world.Find("Skyline"):null;if(skyline!=null)skyline.gameObject.SetActive(!active);
             if(active)SelectCityDistrict(Mathf.Min(2,(Profile.UnlockedLevel-1)/10));
+            else WorldArt.SetChapter(Level.Chapter);
         }
         public void SelectCityDistrict(int district)
         {
             if(district<0 || district>2 || Profile.UnlockedLevel<district*10+1)return;
-            CityDistrict=district;
+            CityDistrict=district;WorldArt.SetChapter(district);
             for(var i=0;i<3;i++)_city.transform.Find("CityDistrict"+i).gameObject.SetActive(i==district);
         }
         public void GoHome() { Save(); Hud.ShowHome(); }

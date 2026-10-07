@@ -18,10 +18,15 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _runnerShoe;
         private static Material _cloud;
         private static Material _sun;
+        private static Material _signal;
         private static Mesh _beveledBoxMesh;
+        private static Mesh _insetFrameMesh;
+        private static Cubemap _studioReflection;
+        private static Material _skyMaterial;
+        public static int ActiveChapter { get; private set; }
 
-        public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.030f, 0.042f, 0.065f), 0.68f, 0.34f));
-        public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.22f, 0.26f, 0.34f), 0.22f, 0.50f));
+        public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.15f, 0.19f, 0.28f), 0.48f, 0.46f));
+        public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.55f, 0.62f, 0.73f), 0.38f, 0.53f));
         public static Material PlatformInset => _platformInset != null ? _platformInset : (_platformInset = CreateMaterial("PlatformInset", new Color(0.018f, 0.025f, 0.040f), 0.35f, 0.22f));
         public static Material Gold => _gold != null ? _gold : (_gold = CreateMaterial("SignalGold", new Color(1f, 0.48f, 0.035f), 0.24f, 0.76f, new Color(1.85f, 0.58f, 0.035f)));
         public static Material Cyan => _cyan != null ? _cyan : (_cyan = CreateMaterial("PrecisionCyan", new Color(0.05f, 0.72f, 0.95f), 0.18f, 0.82f, new Color(0.03f, 1.00f, 1.75f)));
@@ -40,16 +45,39 @@ namespace Kamilunavo.PerfectDrop.Visuals
             if (shader == null) shader = Shader.Find("Kamilunavo/PerfectDropSky");
             if (shader == null) return;
 
-            var material = new Material(shader)
-            {
-                name = "PerfectDropSkybox",
-                hideFlags = HideFlags.HideAndDontSave
-            };
+            if(_skyMaterial==null)_skyMaterial=new Material(shader){name="PerfectDropSkybox",hideFlags=HideFlags.HideAndDontSave};
+            var material=_skyMaterial;
             RenderSettings.skybox = material;
+            var portrait = Resources.Load<Texture2D>("Art/CloudCityPortrait");
+            var landscape = Resources.Load<Texture2D>("Art/CloudCityLandscape");
+            if (portrait != null)
+            {
+                material.SetTexture("_BackdropPortrait", portrait);
+                material.SetTexture("_BackdropLandscape", landscape != null ? landscape : portrait);
+                material.SetFloat("_UseBackdrop", 1);
+            }
+            // A small cached studio reflection gives live metal the warm/cool lighting
+            // of the authored cloud city without a per-frame reflection probe.
+            if (_studioReflection == null) _studioReflection = BuildStudioReflection();
+            RenderSettings.defaultReflectionMode = UnityEngine.Rendering.DefaultReflectionMode.Custom;
+            RenderSettings.customReflection = _studioReflection;
+            RenderSettings.reflectionIntensity = .8f;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.19f, 0.24f, 0.38f);
-            RenderSettings.ambientEquatorColor = new Color(0.21f, 0.15f, 0.20f);
-            RenderSettings.ambientGroundColor = new Color(0.055f, 0.045f, 0.065f);
+            RenderSettings.ambientSkyColor = new Color(0.40f, 0.48f, 0.68f);
+            RenderSettings.ambientEquatorColor = new Color(0.40f, 0.32f, 0.37f);
+            RenderSettings.ambientGroundColor = new Color(0.15f, 0.17f, 0.25f);
+        }
+
+        public static void SetChapter(int chapter)
+        {
+            if(_skyMaterial==null)return;
+            chapter=Mathf.Clamp(chapter,0,2);ActiveChapter=chapter;
+            var stem=chapter==0?"CloudCityDay":chapter==2?"CloudCityNight":"CloudCity";
+            var portrait=Resources.Load<Texture2D>("Art/"+stem+"Portrait")??Resources.Load<Texture2D>("Art/CloudCityPortrait");
+            var landscape=Resources.Load<Texture2D>("Art/"+stem+"Landscape")??Resources.Load<Texture2D>("Art/CloudCityLandscape");
+            if(portrait!=null)_skyMaterial.SetTexture("_BackdropPortrait",portrait);
+            if(landscape!=null)_skyMaterial.SetTexture("_BackdropLandscape",landscape);
+            RenderSettings.ambientSkyColor=chapter==2?new Color(.30f,.38f,.63f):chapter==0?new Color(.52f,.62f,.82f):new Color(.40f,.48f,.68f);
         }
 
         public static void DecoratePlatform(Transform platform, int index)
@@ -239,6 +267,21 @@ namespace Kamilunavo.PerfectDrop.Visuals
             burst.Initialize(pieces, velocity, grade == Gameplay.LandingGrade.Perfect ? 0.48f : 0.38f);
         }
 
+        public static void SpawnStackLandingPulse(Vector3 position,Vector2 size,int style)
+        {
+            if(GamePreferences.ReducedMotion)return;
+            if(_signal==null)
+            {
+                var shader=Resources.Load<Shader>("PerfectDropSignal");if(shader==null)return;
+                _signal=new Material(shader){name="PerfectLandingSignal",hideFlags=HideFlags.HideAndDontSave,enableInstancing=true};
+            }
+            if(_insetFrameMesh==null)_insetFrameMesh=BuildInsetFrame();
+            var pulse=new GameObject("PerfectLandingPulse",typeof(MeshFilter),typeof(MeshRenderer));
+            pulse.transform.position=position+Vector3.up*.018f;pulse.transform.localScale=new Vector3(size.x*1.4f,.014f,size.y*1.4f);
+            pulse.GetComponent<MeshFilter>().sharedMesh=_insetFrameMesh;pulse.GetComponent<MeshRenderer>().sharedMaterial=_signal;
+            pulse.AddComponent<StackLandingPulse>().Initialize(StyleColor(style));
+        }
+
         public static void BuildGoalBeacon(Transform parent, Vector3 center)
         {
             if (parent == null) return;
@@ -310,16 +353,21 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             root.transform.localPosition = position;
-            var body = AddBeveledBox(root.transform, "MetalDeck", Vector3.zero, size, Platform);
+            var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,-size.y*.09f,0),new Vector3(size.x,size.y*.82f,size.z), Platform);
             var tint = new MaterialPropertyBlock();
-            tint.SetColor("_Color", Color.Lerp(new Color(.07f,.12f,.23f), new Color(.25f,.16f,.32f), level/30f));
+            tint.SetColor("_Color", Color.Lerp(new Color(.28f,.34f,.46f), new Color(.38f,.28f,.40f), Mathf.Clamp01(level/30f)));
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
-            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.53f,0), new Vector3(size.x*.96f,size.y*.10f,size.z*.96f), PlatformTop);
-            var strip = Mathf.Min(.028f, Mathf.Min(size.x,size.z)*.08f);
-            AddCube(root.transform,"GoldFront",new Vector3(0,size.y*.59f,-size.z*.46f),new Vector3(size.x*.96f,.035f,strip),Gold);
-            AddCube(root.transform,"GoldBack",new Vector3(0,size.y*.59f,size.z*.46f),new Vector3(size.x*.96f,.035f,strip),Gold);
-            AddCube(root.transform,"GoldLeft",new Vector3(-size.x*.46f,size.y*.59f,0),new Vector3(strip,.035f,size.z*.96f),Gold);
-            AddCube(root.transform,"GoldRight",new Vector3(size.x*.46f,size.y*.59f,0),new Vector3(strip,.035f,size.z*.96f),Gold);
+            AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.43f,0),new Vector3(size.x*.91f,size.y*.16f,size.z*.91f),PlatformInset);
+            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.508f,0), new Vector3(size.x*.94f,size.y*.018f,size.z*.94f), PlatformTop);
+            // A continuous band replaces the corresponding body slice. It stays
+            // inside the logical footprint even after a very narrow overhang cut.
+            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,size.y*.36f,0),new Vector3(size.x,size.y*.105f,size.z),Gold);
+            AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.455f,0),new Vector3(size.x,size.y*.09f,size.z),Platform);
+            var inset=new GameObject("GoldInset",typeof(MeshFilter),typeof(MeshRenderer));
+            inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.538f,0);
+            inset.transform.localScale=new Vector3(size.x,.012f,size.z);
+            if(_insetFrameMesh==null)_insetFrameMesh=BuildInsetFrame();
+            inset.GetComponent<MeshFilter>().sharedMesh=_insetFrameMesh;inset.GetComponent<MeshRenderer>().sharedMaterial=Gold;
             return root;
         }
 
@@ -331,11 +379,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 var group=new GameObject("CityDistrict"+district);group.transform.SetParent(root.transform,false);
                 var cityParent=group.transform;
                 var origin=new Vector3((district-1)*24,0,0);
-                AddBeveledBox(cityParent,"District"+district,origin,new Vector3(19,.5f,28),PlatformTop);
+                var platform=CreateStackBlock(cityParent,"District"+district,origin,new Vector3(19,.5f,28),1+district*10);
+                StyleStackBlock(platform,district==0?0:district==1?1:2);
+                AddBeveledBox(cityParent,"DistrictFoundation"+district,origin+Vector3.down*.75f,new Vector3(18.2f,1.2f,27.2f),Platform);
+                AddCube(cityParent,"Walkway"+district,origin+new Vector3(0,.29f,0),new Vector3(1.4f,.025f,24),PlatformInset);
                 for(var slot=0;slot<10;slot++)
                 {
                     var id=district*10+slot;var point=origin+new Vector3((slot%2==0?-4:4),.35f,(slot/2-2)*5f);
-                    AddBeveledBox(cityParent,"Plot"+(id+1),point,new Vector3(3.5f,.16f,3.5f),PlatformInset);
+                    AddBeveledBox(cityParent,"Plot"+(id+1),point,new Vector3(3.5f,.16f,3.5f),PlatformTop);
                     if(profile.LevelStars[id]==0)continue;
                     var building=new GameObject("CityTower"+(id+1));building.transform.SetParent(cityParent,false);building.transform.localPosition=point;
                     var floors=3+Kamilunavo.PerfectDrop.Gameplay.StackCampaign.Level(id+1).Target/5;
@@ -344,6 +395,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
                         var piece=CreateStackBlock(building.transform,"CityFloor"+floor,new Vector3(0,.45f+floor*.85f,0),new Vector3(2.7f,.8f,2.7f),id+1);
                         StyleStackBlock(piece,district==0?0:district==1?1:2);
                     }
+                    AddBeveledBox(building.transform,"RoofCrown",new Vector3(0,floors*.85f+.18f,0),new Vector3(2.35f,.24f,2.35f),PlatformTop);
+                    AddCube(building.transform,"FacadeSignal",new Vector3(-1.36f,floors*.425f,-.65f),new Vector3(.035f,floors*.69f,.16f),district==0?Gold:Window);
                     for(var star=0;star<profile.LevelStars[id];star++)
                         AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.5f,floors*.85f+.5f,0),new Vector3(.09f,.8f,.09f),Gold);
                 }
@@ -359,9 +412,10 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var plate=block.transform.Find("TopPlate").GetComponent<Renderer>();
             var tint=new MaterialPropertyBlock();tint.SetColor("_Color",color*.5f);tint.SetColor("_EmissionColor",color*.15f);plate.SetPropertyBlock(tint);
         }
+        private static Color StyleColor(int style) => style==1?new Color(.08f,.8f,1f):style==2?new Color(1f,.18f,.55f):style==3?new Color(.2f,1f,.5f):new Color(1f,.55f,.06f);
         public static void StyleStackBlock(GameObject block,int style)
         {
-            var color=style==1?new Color(.08f,.8f,1f):style==2?new Color(1f,.18f,.55f):style==3?new Color(.2f,1f,.5f):new Color(1f,.55f,.06f);
+            var color=StyleColor(style);
             foreach(var renderer in block.GetComponentsInChildren<Renderer>())
             {
                 if(!renderer.name.StartsWith("Gold")) continue;
@@ -389,63 +443,66 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
         private static Mesh BuildBeveledBoxMesh()
         {
-            const float x = 0.5f;
-            const float z = 0.5f;
-            const float y = 0.5f;
-            const float c = 0.085f;
-            var ring = new[]
+            var vertices = new List<Vector3>(); var triangles = new List<int>(); var uvs = new List<Vector2>();
+            Vector2[] Ring(float extent) => new[] {
+                new Vector2(-extent+.055f,-extent),new Vector2(extent-.055f,-extent),
+                new Vector2(extent,-extent+.055f),new Vector2(extent,extent-.055f),
+                new Vector2(extent-.055f,extent),new Vector2(-extent+.055f,extent),
+                new Vector2(-extent,extent-.055f),new Vector2(-extent,-extent+.055f)};
+            var outer=Ring(.5f); var inner=Ring(.465f);
+            void Face(Vector3 a,Vector3 b,Vector3 c,Vector3 d)
             {
-                new Vector2(-x + c, -z), new Vector2(x - c, -z),
-                new Vector2(x, -z + c), new Vector2(x, z - c),
-                new Vector2(x - c, z), new Vector2(-x + c, z),
-                new Vector2(-x, z - c), new Vector2(-x, -z + c)
-            };
-
-            var vertices = new List<Vector3>(48);
-            var triangles = new List<int>(84);
-            var uvs = new List<Vector2>(48);
-
-            // Top and bottom caps use separate vertices so the edge keeps a crisp authored silhouette.
-            for (var i = 0; i < 8; i++)
-            {
-                vertices.Add(new Vector3(ring[i].x, y, ring[i].y));
-                uvs.Add(new Vector2(ring[i].x + 0.5f, ring[i].y + 0.5f));
+                var start=vertices.Count; vertices.AddRange(new[]{a,b,c,d});
+                uvs.AddRange(new[]{new Vector2(0,1),new Vector2(1,1),new Vector2(1,0),new Vector2(0,0)});
+                triangles.AddRange(new[]{start,start+1,start+2,start,start+2,start+3});
             }
-            for (var i = 0; i < 8; i++)
+            Vector3 Point(Vector2 v,float y) => new Vector3(v.x,y,v.y);
+            for(var i=0;i<8;i++)
             {
-                vertices.Add(new Vector3(ring[i].x, -y, ring[i].y));
-                uvs.Add(new Vector2(ring[i].x + 0.5f, ring[i].y + 0.5f));
+                var n=(i+1)%8;
+                Face(Point(inner[i],.5f),Point(inner[n],.5f),Point(outer[n],.38f),Point(outer[i],.38f));
+                Face(Point(outer[i],.38f),Point(outer[n],.38f),Point(outer[n],-.38f),Point(outer[i],-.38f));
+                Face(Point(outer[i],-.38f),Point(outer[n],-.38f),Point(inner[n],-.5f),Point(inner[i],-.5f));
             }
-
-            for (var i = 1; i < 7; i++)
+            for(var side=0;side<2;side++)
             {
-                triangles.Add(0); triangles.Add(i + 1); triangles.Add(i);
-                triangles.Add(8); triangles.Add(8 + i); triangles.Add(8 + i + 1);
+                var start=vertices.Count;var y=side==0?.5f:-.5f;
+                foreach(var v in inner){vertices.Add(Point(v,y));uvs.Add(v+Vector2.one*.5f);}
+                for(var i=1;i<7;i++)triangles.AddRange(side==0?new[]{start,start+i+1,start+i}:new[]{start,start+i,start+i+1});
             }
+            var mesh=new Mesh{name="PerfectDropBeveledBox",hideFlags=HideFlags.HideAndDontSave};
+            mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uvs);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
 
-            for (var i = 0; i < 8; i++)
+        private static Mesh BuildInsetFrame()
+        {
+            var cube=Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+            var parts=new CombineInstance[4];
+            var points=new[]{new Vector3(0,0,-.34f),new Vector3(0,0,.34f),new Vector3(-.34f,0,0),new Vector3(.34f,0,0)};
+            for(var i=0;i<4;i++)parts[i]=new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(points[i],Quaternion.identity,i<2?new Vector3(.68f,1,.012f):new Vector3(.012f,1,.68f))};
+            var mesh=new Mesh{name="DeckInsetFrame",hideFlags=HideFlags.HideAndDontSave};mesh.CombineMeshes(parts,true,true);return mesh;
+        }
+
+        private static Cubemap BuildStudioReflection()
+        {
+            const int size=32;
+            var map=new Cubemap(size,TextureFormat.RGBAHalf,true){name="CloudCityMetalReflection",hideFlags=HideFlags.HideAndDontSave};
+            var sun=new Vector3(-.55f,.4f,.7f).normalized;
+            for(var face=0;face<6;face++)
             {
-                var next = (i + 1) % 8;
-                var baseIndex = vertices.Count;
-                vertices.Add(new Vector3(ring[i].x, y, ring[i].y));
-                vertices.Add(new Vector3(ring[next].x, y, ring[next].y));
-                vertices.Add(new Vector3(ring[next].x, -y, ring[next].y));
-                vertices.Add(new Vector3(ring[i].x, -y, ring[i].y));
-                uvs.Add(new Vector2(0f, 1f));
-                uvs.Add(new Vector2(1f, 1f));
-                uvs.Add(new Vector2(1f, 0f));
-                uvs.Add(new Vector2(0f, 0f));
-                triangles.Add(baseIndex); triangles.Add(baseIndex + 1); triangles.Add(baseIndex + 2);
-                triangles.Add(baseIndex); triangles.Add(baseIndex + 2); triangles.Add(baseIndex + 3);
+                var pixels=new Color[size*size];
+                for(var y=0;y<size;y++)for(var x=0;x<size;x++)
+                {
+                    var u=(x+.5f)/size*2-1;var v=(y+.5f)/size*2-1;
+                    var dir=face switch {0=>new Vector3(1,-v,-u),1=>new Vector3(-1,-v,u),2=>new Vector3(u,1,v),3=>new Vector3(u,-1,-v),4=>new Vector3(u,-v,1),_=>new Vector3(-u,-v,-1)};
+                    dir.Normalize();
+                    var sky=Color.Lerp(new Color(.24f,.19f,.29f),new Color(.53f,.65f,.9f),Mathf.Clamp01(dir.y*.6f+.45f));
+                    var glow=Mathf.Pow(Mathf.Max(0,Vector3.Dot(dir,sun)),12);
+                    pixels[y*size+x]=sky+new Color(1.1f,.64f,.26f)*glow;
+                }
+                map.SetPixels(pixels,(CubemapFace)face);
             }
-
-            var mesh = new Mesh { name = "PerfectDropBeveledBox", hideFlags = HideFlags.HideAndDontSave };
-            mesh.SetVertices(vertices);
-            mesh.SetTriangles(triangles, 0);
-            mesh.SetUVs(0, uvs);
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-            return mesh;
+            map.Apply(true,true);return map;
         }
 
         private static GameObject AddPrimitive(PrimitiveType type, Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
@@ -487,6 +544,12 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var material = new Material(shader);
             material.name = name;
             material.hideFlags = HideFlags.HideAndDontSave;
+            material.enableInstancing = true;
+            if(name=="Platform" || name=="PlatformTop" || name=="Skyline")
+            {
+                var texture=Resources.Load<Texture2D>("Art/GunmetalPanels");
+                if(texture!=null)material.SetTexture("_MainTex",texture);
+            }
 
             if (material.HasProperty("_Color")) material.SetColor("_Color", color);
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
