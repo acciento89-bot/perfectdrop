@@ -20,8 +20,8 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [x] P01-T09 adaptive safe-area resize handling
 - [x] P01-T10 wide portrait / 4:3 layout profile
 - [x] P01-T11 fold-safe landscape fallback layout
-- [~] P01-T12 iPhone Duo runtime preparation
-- [!] P01-T13 Xcode 27.1 + iPhone Duo Device Hub validation
+- [x] P01-T12 iPhone Duo runtime preparation
+- [x] P01-T13 Xcode 27.1 + iPhone Duo Device Hub validation
 
 ## P02 Controls and camera
 - [x] P02-T01 touch joystick
@@ -71,7 +71,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 
 ## P07 Persistence/progression
 - [ ] P07-T01 versioned profile
-- [ ] P07-T02 best/coins persistence
+- [x] P07-T02 best/coins persistence
 - [ ] P07-T03 player level
 - [ ] P07-T04 cosmetics
 - [ ] P07-T05 migration tests
@@ -94,10 +94,13 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P09-T06 thermal/performance
 - [ ] P09-T07 App Store assets
 - [ ] P09-T08 Play Store assets
-- [ ] P09-T09 staged release
+- [ ] P09-T09 TestFlight RC archive + upload
+- [ ] P09-T10 TestFlight processing + internal tester assignment
+- [ ] P09-T11 TestFlight install/smoke test on physical iPhone
+- [ ] P09-T12 staged release
 
 ## Next open task
-P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Duo Device Hub validation once Xcode 27.1 is installed.
+P03/P05: finish gameplay balance and replace remaining procedural/prototype presentation until the PRIMARY-CONCEPT screenshot-quality gate is met.
 
 
 ## Unity 6.6 bootstrap verification - 2026-10-06
@@ -113,7 +116,7 @@ P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Du
 - [x] Generic iOS device Debug build succeeds in Xcode 27.0 with automatic signing.
 - [x] Code signature verified: identifier `com.kamilunavo.perfectdrop`, Apple Team `TKG684N5GL`.
 - [ ] Store-ready 1024x1024 app icon and final release/archive validation remain release tasks.
-- [ ] Local iOS Simulator QA is blocked by the currently installed CoreSimulator runtime mismatch; device builds are not blocked.
+- [x] iOS 27.1 Simulator Runtime is installed and the app launches on the official iPhone Duo simulator.
 
 
 ### iPhone Duo readiness note
@@ -122,7 +125,7 @@ P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Du
 - [x] Landscape fallback reserves a center gutter for the fold/division region.
 - [x] Minimum iOS deployment target is pinned to iOS 15 for the April 2027 submission baseline.
 - [x] Apple team ID and automatic signing are persisted in Unity PlayerSettings.
-- [!] Current local Xcode is 27.0; Apple requires Xcode 27.1/iOS 27.1 tooling for full iPhone Duo simulation and edge-to-edge validation.
+- [x] Xcode 27.1 RC + iOS 27.1 runtime are installed; Perfect Drop builds, installs and launches on the official iPhone Duo simulator.
 
 ### Adaptive display verification - 2026-10-07
 - [x] Unity editor compile is warning/error clean after the adaptive layout changes.
@@ -141,3 +144,14 @@ P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Du
 - [x] Two-axis landing scoring now measures both lateral and longitudinal error in world units.
 - [x] Spawn/checkpoint position is aligned to the actual top surface of the platform instead of floating above it.
 - [~] Procedural production pass now includes rounded HUD/controls, cyan landing bays, gold platform trim, skyline structures, milestone posts, a stylized runner and a distant goal beacon.
+
+
+### Concept-source and current gameplay verification - 2026-10-07
+- [x] Final primary concept is stored at `docs/concepts/PRIMARY-CONCEPT.png` and referenced by `docs/ART-DIRECTION.md`.
+- [x] Only the next scoring platform exposes an active precision bay; completed/future bays do not clutter the route.
+- [x] 30-floor progression, scoring, coin persistence, completion state and Run Again were exercised by the batch gameplay validation matrix.
+- [x] Best-floor and coin persistence survive a run restart in the validation matrix.
+- [x] Completion disables movement input and the restart path restores it.
+- [x] Completion overlay participates in compact, wide, landscape and fold/division responsive layouts.
+- [x] Current concept-driven presentation compiles and a fresh macOS development preview launches without runtime exceptions.
+- [~] World presentation now has a procedural dusk sky, cloud layer, skyline, layered platform construction, route emission and a human runner silhouette. It remains below the final concept screenshot-quality gate and must receive authored-production assets/polish before release.
