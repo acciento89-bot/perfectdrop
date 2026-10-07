@@ -76,14 +76,14 @@ namespace Kamilunavo.PerfectDrop
 
             var completion = UiFactory.Panel(safe, "Completion", new Color(0.02f, 0.045f, 0.085f, 0.985f), new Vector2(0.09f, 0.33f), new Vector2(0.91f, 0.67f));
             UiFactory.Label(completion, "Title", GameText.TowerCleared, 52, new Vector2(0.07f, 0.67f), new Vector2(0.93f, 0.91f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
-            var completionText = UiFactory.Label(completion, "Summary", GameText.Completion(1, 0), 31, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.66f), TextAnchor.MiddleCenter, TextColor, FontStyle.Bold);
+            var completionText = UiFactory.Label(completion, "Summary", GameText.Completion(1, 0, PlayerProfileStore.Level), 31, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.66f), TextAnchor.MiddleCenter, TextColor, FontStyle.Bold);
             UiFactory.Button(completion, "RunAgain", GameText.RunAgain, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.31f), course.RestartRun);
             completion.gameObject.SetActive(false);
             course.CompletionPanel = completion.gameObject;
             course.CompletionText = completionText;
 
             var settingsRoot = UiFactory.Panel(safe, "Settings", new Color(0.02f, 0.045f, 0.085f, 0.99f), new Vector2(0.12f, 0.25f), new Vector2(0.88f, 0.75f));
-            UiFactory.Label(settingsRoot, "Title", GameText.SettingsTitle, 44, new Vector2(0.07f, 0.81f), new Vector2(0.93f, 0.96f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            UiFactory.Label(settingsRoot, "Title", GameText.SettingsTitle, 44, new Vector2(0.07f, 0.81f), new Vector2(0.58f, 0.96f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
             UiFactory.Label(settingsRoot, "SoundLabel", GameText.Sound, 30, new Vector2(0.08f, 0.61f), new Vector2(0.62f, 0.76f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
             UiFactory.Label(settingsRoot, "HapticsLabel", GameText.Haptics, 30, new Vector2(0.08f, 0.43f), new Vector2(0.62f, 0.58f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
             UiFactory.Label(settingsRoot, "MotionLabel", GameText.ReducedMotion, 27, new Vector2(0.08f, 0.25f), new Vector2(0.62f, 0.40f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
@@ -100,6 +100,38 @@ namespace Kamilunavo.PerfectDrop
             settings.HapticsValue = hapticsToggle.transform.Find("Label").GetComponent<Text>();
             settings.MotionValue = motionToggle.transform.Find("Label").GetComponent<Text>();
             UiFactory.Button(settingsRoot, "Close", GameText.Close, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.26f, 0.06f), new Vector2(0.74f, 0.18f), settings.Close);
+
+            var progressionRoot = UiFactory.Panel(safe, "Progression", new Color(0.02f, 0.045f, 0.085f, 0.995f), new Vector2(0.08f, 0.13f), new Vector2(0.92f, 0.86f));
+            UiFactory.Label(progressionRoot, "Title", GameText.ProfileTitle, 44, new Vector2(0.06f, 0.87f), new Vector2(0.94f, 0.97f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            var levelText = UiFactory.Label(progressionRoot, "Level", GameText.ProfileLevel(PlayerProfileStore.Level), 34, new Vector2(0.06f, 0.76f), new Vector2(0.45f, 0.86f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
+            var xpText = UiFactory.Label(progressionRoot, "XP", GameText.ProfileXp(PlayerProfileStore.XpIntoLevel, PlayerProfileStore.XpForNextLevel), 26, new Vector2(0.48f, 0.76f), new Vector2(0.94f, 0.86f), TextAnchor.MiddleRight, TextColor);
+
+            UiFactory.Label(progressionRoot, "DailyTitle", GameText.DailyReward, 29, new Vector2(0.06f, 0.64f), new Vector2(0.66f, 0.72f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            var dailyText = UiFactory.Label(progressionRoot, "DailyStatus", GameText.DailyRewardStatus(PlayerProfileStore.CanClaimDailyReward), 23, new Vector2(0.06f, 0.54f), new Vector2(0.66f, 0.64f), TextAnchor.MiddleLeft, TextColor);
+
+            UiFactory.Label(progressionRoot, "ChallengeTitle", GameText.DailyChallenge, 29, new Vector2(0.06f, 0.43f), new Vector2(0.66f, 0.51f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            var challengeText = UiFactory.Label(progressionRoot, "ChallengeStatus", GameText.DailyChallengeStatus(PlayerProfileStore.DailyChallengeProgress, PlayerProfileStore.DailyChallengeTarget, PlayerProfileStore.DailyChallengeClaimed), 23, new Vector2(0.06f, 0.33f), new Vector2(0.66f, 0.43f), TextAnchor.MiddleLeft, TextColor);
+
+            UiFactory.Label(progressionRoot, "StyleTitle", GameText.RunnerStyle, 29, new Vector2(0.06f, 0.22f), new Vector2(0.66f, 0.30f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            var styleText = UiFactory.Label(progressionRoot, "StyleStatus", GameText.StyleStatus(PlayerProfileStore.StyleName(PlayerProfileStore.SelectedStyle, GameText.German), PlayerProfileStore.Level), 23, new Vector2(0.06f, 0.12f), new Vector2(0.66f, 0.22f), TextAnchor.MiddleLeft, TextColor);
+
+            var progression = safe.gameObject.AddComponent<ProgressionPanel>();
+            progression.Root = progressionRoot.gameObject;
+            progression.Motor = motor;
+            progression.Course = course;
+            progression.StyleController = player.GetComponent<RunnerStyleController>();
+            progression.LevelText = levelText;
+            progression.XpText = xpText;
+            progression.DailyText = dailyText;
+            progression.ChallengeText = challengeText;
+            progression.StyleText = styleText;
+            progression.DailyButton = UiFactory.Button(progressionRoot, "DailyClaim", GameText.Claim, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.70f, 0.54f), new Vector2(0.94f, 0.70f), progression.ClaimDaily);
+            progression.ChallengeButton = UiFactory.Button(progressionRoot, "ChallengeClaim", GameText.Claim, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.70f, 0.33f), new Vector2(0.94f, 0.49f), progression.ClaimChallenge);
+            progression.StyleButton = UiFactory.Button(progressionRoot, "StyleNext", GameText.NextStyle, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.70f, 0.12f), new Vector2(0.94f, 0.28f), progression.NextStyle);
+            UiFactory.Button(progressionRoot, "Close", GameText.Close, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.34f, 0.025f), new Vector2(0.66f, 0.105f), progression.Close);
+            progressionRoot.gameObject.SetActive(false);
+
+            UiFactory.Button(settingsRoot, "Profile", GameText.Progression, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.64f, 0.82f), new Vector2(0.92f, 0.95f), progression.Open);
             settingsRoot.gameObject.SetActive(false);
 
             UiFactory.Button(objective, "Menu", GameText.Menu, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.82f, 0.38f), new Vector2(0.96f, 0.84f), settings.Open);
@@ -113,7 +145,8 @@ namespace Kamilunavo.PerfectDrop
                 boosts.GetComponent<RectTransform>(),
                 jump.GetComponent<RectTransform>(),
                 completion,
-                settingsRoot);
+                settingsRoot,
+                progressionRoot);
 
             course.Build();
         }
@@ -129,6 +162,7 @@ namespace Kamilunavo.PerfectDrop
             go.AddComponent<FeedbackSystem>();
             go.AddComponent<PlayerMotor>();
             WorldArt.CreateRunnerVisual(go.transform);
+            go.AddComponent<RunnerStyleController>();
             return go;
         }
 

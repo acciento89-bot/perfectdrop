@@ -15,7 +15,10 @@ namespace Kamilunavo.PerfectDrop.Editor
             const string audioKey = "perfectdrop.settings.audio";
             const string hapticsKey = "perfectdrop.settings.haptics";
             const string motionKey = "perfectdrop.settings.reducedMotion";
+            const string profileKey = PlayerProfileStore.StorageKey;
 
+            var hadProfile = PlayerPrefs.HasKey(profileKey);
+            var oldProfile = PlayerPrefs.GetString(profileKey, string.Empty);
             var hadBest = PlayerPrefs.HasKey(bestKey);
             var hadCoins = PlayerPrefs.HasKey(coinsKey);
             var oldBest = PlayerPrefs.GetInt(bestKey, 1);
@@ -30,6 +33,8 @@ namespace Kamilunavo.PerfectDrop.Editor
             GameObject root = null;
             try
             {
+                PlayerPrefs.DeleteKey(profileKey);
+                PlayerProfileStore.ResetCacheForTests();
                 PlayerPrefs.SetInt(bestKey, 1);
                 PlayerPrefs.SetInt(coinsKey, 0);
                 PlayerPrefs.SetInt(audioKey, 1);
@@ -132,12 +137,14 @@ namespace Kamilunavo.PerfectDrop.Editor
             finally
             {
                 if (root != null) UnityEngine.Object.DestroyImmediate(root);
+                if (hadProfile) PlayerPrefs.SetString(profileKey, oldProfile); else PlayerPrefs.DeleteKey(profileKey);
                 if (hadBest) PlayerPrefs.SetInt(bestKey, oldBest); else PlayerPrefs.DeleteKey(bestKey);
                 if (hadCoins) PlayerPrefs.SetInt(coinsKey, oldCoins); else PlayerPrefs.DeleteKey(coinsKey);
                 if (hadAudio) PlayerPrefs.SetInt(audioKey, oldAudio); else PlayerPrefs.DeleteKey(audioKey);
                 if (hadHaptics) PlayerPrefs.SetInt(hapticsKey, oldHaptics); else PlayerPrefs.DeleteKey(hapticsKey);
                 if (hadMotion) PlayerPrefs.SetInt(motionKey, oldMotion); else PlayerPrefs.DeleteKey(motionKey);
                 PlayerPrefs.Save();
+                PlayerProfileStore.ResetCacheForTests();
             }
         }
 

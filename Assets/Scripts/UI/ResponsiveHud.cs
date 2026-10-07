@@ -22,6 +22,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private RectTransform _jump;
         private RectTransform _completion;
         private RectTransform _settings;
+        private RectTransform _progression;
         private RectTransform _root;
 
         private Vector2 _lastSize = new(-1f, -1f);
@@ -43,7 +44,8 @@ namespace Kamilunavo.PerfectDrop.UI
             RectTransform boosts,
             RectTransform jump,
             RectTransform completion,
-            RectTransform settings)
+            RectTransform settings,
+            RectTransform progression)
         {
             _root = GetComponent<RectTransform>();
             _stats = stats;
@@ -54,6 +56,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _jump = jump;
             _completion = completion;
             _settings = settings;
+            _progression = progression;
             Apply(force: true);
         }
 
@@ -211,6 +214,7 @@ namespace Kamilunavo.PerfectDrop.UI
             PlaceInArea(_jump, right, new Vector2(0.62f, 0.04f), new Vector2(0.98f, 0.30f));
             PlaceInArea(_completion, right, new Vector2(0.05f, 0.30f), new Vector2(0.95f, 0.68f));
             PlaceInArea(_settings, right, new Vector2(0.03f, 0.18f), new Vector2(0.97f, 0.82f));
+            PlaceInArea(_progression, right, new Vector2(0.02f, 0.08f), new Vector2(0.98f, 0.92f));
         }
 
         private void ApplyHorizontalDivision(Rect division)
@@ -234,6 +238,7 @@ namespace Kamilunavo.PerfectDrop.UI
             PlaceInArea(_jump, bottom, new Vector2(0.79f, 0.08f), new Vector2(0.98f, 0.50f));
             PlaceInArea(_completion, top, new Vector2(0.12f, 0.12f), new Vector2(0.88f, 0.80f));
             PlaceInArea(_settings, top, new Vector2(0.08f, 0.04f), new Vector2(0.92f, 0.94f));
+            PlaceInArea(_progression, top, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.98f));
         }
 
         private static void PlaceInArea(RectTransform rect, Rect area, Vector2 localMin, Vector2 localMax)
@@ -262,6 +267,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Place(_jump, new Vector2(0.78f, 0.035f), new Vector2(0.97f, 0.17f));
             Place(_completion, new Vector2(0.09f, 0.33f), new Vector2(0.91f, 0.67f));
             Place(_settings, new Vector2(0.12f, 0.25f), new Vector2(0.88f, 0.75f));
+            Place(_progression, new Vector2(0.08f, 0.13f), new Vector2(0.92f, 0.86f));
         }
 
         private void ApplyWidePortrait()
@@ -282,6 +288,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Place(_jump, new Vector2(0.80f, 0.04f), new Vector2(0.965f, 0.175f));
             Place(_completion, new Vector2(0.12f, 0.32f), new Vector2(0.88f, 0.69f));
             Place(_settings, new Vector2(0.14f, 0.23f), new Vector2(0.86f, 0.77f));
+            Place(_progression, new Vector2(0.10f, 0.11f), new Vector2(0.90f, 0.89f));
         }
 
         private void ApplyLandscape()
@@ -300,6 +307,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Place(_jump, new Vector2(0.82f, 0.055f), new Vector2(0.97f, 0.29f));
             Place(_completion, new Vector2(0.54f, 0.25f), new Vector2(0.96f, 0.72f));
             Place(_settings, new Vector2(0.54f, 0.15f), new Vector2(0.96f, 0.82f));
+            Place(_progression, new Vector2(0.53f, 0.07f), new Vector2(0.97f, 0.93f));
         }
 
         private static void Place(RectTransform rect, Vector2 min, Vector2 max)

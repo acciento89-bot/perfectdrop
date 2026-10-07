@@ -8,8 +8,6 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 {
     public sealed class PrecisionCourse : MonoBehaviour
     {
-        private const string BestKey = "perfectdrop.bestFloor";
-        private const string CoinsKey = "perfectdrop.coins";
         private const float FallRecoveryDistance = 3.0f;
 
         // Authored 30-floor route. The path deliberately alternates gentle and stronger
@@ -65,8 +63,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 
         public void Build()
         {
-            _best = Mathf.Clamp(PlayerPrefs.GetInt(BestKey, 1), 1, 30);
-            _coins = Mathf.Max(0, PlayerPrefs.GetInt(CoinsKey, 0));
+            PlayerProfileStore.Initialize();
+            _best = PlayerProfileStore.BestFloor;
+            _coins = PlayerProfileStore.Coins;
             _motor = Player != null ? Player.GetComponent<PlayerMotor>() : null;
             _feedback = Player != null ? Player.GetComponent<FeedbackSystem>() : null;
 
@@ -129,14 +128,13 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             _currentFloor = platform.Index;
             _best = Mathf.Max(_best, _currentFloor + 1);
             _streak = grade == LandingGrade.Safe ? 0 : _streak + 1;
-            _coins += PrecisionScoring.CoinReward(grade, _streak);
+            var coinReward = PrecisionScoring.CoinReward(grade, _streak);
+            PlayerProfileStore.RecordLanding(grade, _streak, _best, coinReward);
+            _best = PlayerProfileStore.BestFloor;
+            _coins = PlayerProfileStore.Coins;
             _safePosition = SpawnPoint(platform.transform);
             WorldArt.SpawnLandingBurst(platform.transform.position + Vector3.up * (platform.transform.lossyScale.y * 0.5f), grade);
             _feedback?.PlayLanding(grade);
-
-            PlayerPrefs.SetInt(BestKey, _best);
-            PlayerPrefs.SetInt(CoinsKey, _coins);
-            PlayerPrefs.Save();
 
             if (FeedbackText != null) FeedbackText.text = UI.GameText.Landing(grade);
             RefreshHud();
@@ -182,10 +180,13 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private void CompleteRun()
         {
             _completed = true;
+            PlayerProfileStore.CompleteTower();
+            _best = PlayerProfileStore.BestFloor;
+            _coins = PlayerProfileStore.Coins;
             if (_motor != null) _motor.InputEnabled = false;
             if (FeedbackText != null) FeedbackText.text = UI.GameText.TowerCleared;
             if (CompletionText != null)
-                CompletionText.text = UI.GameText.Completion(_best, _coins);
+                CompletionText.text = UI.GameText.Completion(_best, _coins, PlayerProfileStore.Level);
             if (CompletionPanel != null) CompletionPanel.SetActive(true);
             _feedback?.PlayComplete();
             RefreshHud();

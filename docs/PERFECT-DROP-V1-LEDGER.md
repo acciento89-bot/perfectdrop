@@ -70,16 +70,16 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P06-T06 settings
 
 ## P07 Persistence/progression
-- [ ] P07-T01 versioned profile
+- [x] P07-T01 versioned profile
 - [x] P07-T02 best/coins persistence
-- [ ] P07-T03 player level
-- [ ] P07-T04 cosmetics
-- [ ] P07-T05 migration tests
+- [~] P07-T03 player level
+- [~] P07-T04 cosmetics
+- [x] P07-T05 migration tests
 
 ## P08 Retention/monetization
-- [ ] P08-T01 daily reward
-- [ ] P08-T02 daily challenge
-- [ ] P08-T03 achievements
+- [~] P08-T01 daily reward
+- [~] P08-T02 daily challenge
+- [~] P08-T03 achievements
 - [ ] P08-T04 cosmetic catalog
 - [ ] P08-T05 StoreKit sandbox
 - [ ] P08-T06 Google Play Billing sandbox
@@ -165,3 +165,9 @@ P03/P05: finish gameplay balance and replace remaining procedural/prototype pres
 - [x] Authored deterministic 29-gap route pattern replaces random floor spacing and passes the automated conservative no-boost reachability gate.
 
 - [x] Mobile control visual pass: pill-shaped BOOST, gold-ring jump control and directional joystick affordances visually verified in the Mac preview.
+
+### Progression/retention implementation - 2026-10-07
+- [x] Versioned JSON profile (`perfectdrop.profile.v1`) migrates legacy best-floor/coin data and survives cache reload.
+- [x] Automated profile matrix passes: one-claim-per-UTC-day reward, daily challenge progress/claim lock, first-Perfect/streak/tower achievements, XP/level growth and unlocked style persistence.
+- [~] Profile panel exposes level/XP, daily reward, daily challenge and runner style selection without adding permanent gameplay HUD clutter; visual/device QA is still open.
+- [~] Three runner colorways are level-gated (Signal Gold, Neon Cyan, Rose Pulse) and update through renderer property blocks; final device visual QA remains open.
