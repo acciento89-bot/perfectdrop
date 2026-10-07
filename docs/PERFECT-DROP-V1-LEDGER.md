@@ -22,7 +22,18 @@ User approved campaign + endless, then the deeper arcade builder direction. The 
 
 Evidence: `ArcadeValidation.Validate` includes campaign, stack and historical classifier checks and passes. Actual Mac development player passed full arcade sequence; a later UI-only regression passes; final city framing/opaque-menu check passes. Functional QA uses deterministic 60 Hz simulation timing and actual game UI callbacks, not OS touch automation or a native performance measurement. Advanced unlocks were seeded only in an isolated QA profile to exercise later systems; this does not claim manual playthrough of all 30 levels. Fresh code review found and verified fixes for endless start width, resumed goal text and terminal-map settings.
 
-Build limitation: free disk fell to approximately 400 MB after removing superseded owned outputs and an old Xcode derived cache. The expanded game's native exports/archives need more space. No personal source files or installed runtimes were deleted. No physical iPhone was detected during the earlier device inventory.
+Storage blocker resolved: user freed space; 13 GiB was verified before fresh native builds. No physical iPhone or Android device was detected in the fresh inventory. Release gates remain open as detailed below.
+
+### Fresh native build evidence — 2026-10-07
+
+- Expanded game's fresh iOS Simulator export and Xcode 27.1 RC Release/arm64 build succeeded. Installed and launched on the official iPhone Duo (iOS 27.1) and iPhone 17 Pro (iOS 26.5). Native screenshots show the fresh campaign map; Duo's outer screen (`display=1`) was inspected. The default inner-screen capture was inactive/black; this is not an inner/open/divided-pose pass.
+- Fresh Android IL2CPP Release AAB build 3 succeeded, package `com.kamilunavo.perfectdrop`, version `1.0`, minimum SDK 26 / target SDK 36. Final rebuild includes the new tower icon. Certificate inspection shows **Android Debug**: this is a QA artifact, not a Google Play upload-ready signed release. Existing upload keystore information is required or a new key must be established.
+- Added an opaque 1024×1024 tower icon; exported iOS catalog includes `Icon-Store-1024.png`. The fresh archive no longer emits the missing App Store icon warning.
+- Fresh generic-device iOS Release archive succeeded: bundle `com.kamilunavo.perfectdrop`, version `1.0` / build `3`, minimum iOS 15.0, arm64, team `TKG684N5GL`. `codesign --verify --deep --strict` succeeds. Archive is development signed; distribution export remains separate.
+- Local App Store Connect distribution export failed with **No Accounts** and **No profiles**. Xcode must have the authorized Apple account for the existing team/app; signing identities alone do not provide the missing App Store provisioning profile. No IPA or TestFlight upload was produced.
+- Bootstrap no longer resets configured release version/build numbers. Regression reproduced the reset before the fix and passes afterward; read-only code review found no material issue.
+- Computer Use reported pending Accessibility/Screen Recording grants and then timed out. Native touch interaction and official Duo pose changes were not exercised. These simulator launch screenshots do not replace gameplay, physical-device, haptic/audio or performance acceptance.
+- Canonical source remains on main. Native build/export logs and screenshots are in the Codex task workspace `work/` and `outputs/`; generated Xcode projects/archive remain outside the repository under `/private/tmp/PerfectDrop-Arcade-*`.
 
 ## Verified stacking foundation (historical checkpoint)
 

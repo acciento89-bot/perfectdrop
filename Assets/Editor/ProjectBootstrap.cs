@@ -25,9 +25,15 @@ namespace Kamilunavo.PerfectDrop.Editor
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.allowedAutorotateToLandscapeLeft = true;
             PlayerSettings.allowedAutorotateToLandscapeRight = true;
-            PlayerSettings.bundleVersion = "1.0";
-            PlayerSettings.iOS.buildNumber = "1";
-            PlayerSettings.Android.bundleVersionCode = 1;
+            if (string.IsNullOrWhiteSpace(PlayerSettings.bundleVersion))
+                PlayerSettings.bundleVersion = "1.0";
+            if (string.IsNullOrWhiteSpace(PlayerSettings.iOS.buildNumber))
+                PlayerSettings.iOS.buildNumber = "1";
+            if (PlayerSettings.Android.bundleVersionCode < 1)
+                PlayerSettings.Android.bundleVersionCode = 1;
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/PerfectDropIcon.png");
+            if (icon != null)
+                PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
