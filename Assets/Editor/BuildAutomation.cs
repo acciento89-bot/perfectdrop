@@ -57,6 +57,12 @@ public static class BuildAutomation
         Build(BuildTarget.StandaloneOSX, GetOutput("-buildOutput", "/private/tmp/PerfectDropPreview.app"), development: true);
     }
 
+    public static void BuildMacReview()
+    {
+        PlayerSettings.resizableWindow = true;
+        Build(BuildTarget.StandaloneOSX, GetOutput("-buildOutput", "/private/tmp/PerfectDropReview.app"), development: false);
+    }
+
     private static void Build(BuildTarget target, string output, bool development)
     {
         if (target == BuildTarget.iOS)

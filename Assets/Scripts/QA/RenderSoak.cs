@@ -78,11 +78,12 @@ namespace Kamilunavo.PerfectDrop.QA
                     nextSample=elapsed+1;var memory=Profiler.GetTotalAllocatedMemoryLong();
                     if(_firstMemory==0)_firstMemory=memory;_maxMemory=Math.Max(_maxMemory,memory);
                     var count=0;foreach(var renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))if(renderer.enabled && renderer.gameObject.activeInHierarchy)count++;
-                    _csv.WriteLine(string.Join(",",elapsed.ToString("F1",CultureInfo.InvariantCulture),_mode,Screen.width,Screen.height,Application.isFocused?1:0,(Time.unscaledDeltaTime*1000).ToString("F2",CultureInfo.InvariantCulture),_batches.Valid?_batches.LastValue:-1,(memory/1048576d).ToString("F1",CultureInfo.InvariantCulture),count));_csv.Flush();
+                    _csv.WriteLine(string.Join(",",elapsed.ToString("F1",CultureInfo.InvariantCulture),_mode,Screen.width,Screen.height,Application.isFocused?1:0,(Time.unscaledDeltaTime*1000).ToString("F2",CultureInfo.InvariantCulture),_batches.Valid && _batches.LastValue>0?_batches.LastValue:-1,(memory/1048576d).ToString("F1",CultureInfo.InvariantCulture),count));_csv.Flush();
                 }
                 yield return null;
             }
             var summary=new List<string>{"Desktop real-time rendering soak; not native performance or OS touch acceptance.","Duration seconds: "+_seconds,"Focused frame share: "+(_focusedFrames/(double)Math.Max(1,_frameCount)).ToString("P1",CultureInfo.InvariantCulture),"Unity allocated memory first/max MiB: "+(_firstMemory/1048576d).ToString("F1",CultureInfo.InvariantCulture)+" / "+(_maxMemory/1048576d).ToString("F1",CultureInfo.InvariantCulture)};
+            summary.Add("Batch samples of -1 mean the runtime counter is unavailable; no zero-drawcall or GPU-timing claim.");
             foreach(var pair in _frames){pair.Value.Sort();summary.Add(pair.Key+" frame-time median/p95 ms: "+pair.Value[pair.Value.Count/2].ToString("F2",CultureInfo.InvariantCulture)+" / "+pair.Value[Mathf.Min(pair.Value.Count-1,Mathf.FloorToInt(pair.Value.Count*.95f))].ToString("F2",CultureInfo.InvariantCulture));}
             if(_focusedFrames/(double)Math.Max(1,_frameCount)<.95)_errors.Add("Too much unfocused time for moving-scene stability evidence.");
             summary.AddRange(_errors);File.WriteAllLines(Path.Combine(_output,"result.txt"),summary);File.WriteAllText(Path.Combine(_output,"status.txt"),_errors.Count==0?"PASS":"FAIL");
