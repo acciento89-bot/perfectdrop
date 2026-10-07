@@ -56,9 +56,9 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [x] P05-T01 runtime palette/material foundation
 - [ ] P05-T02 final character + animation
 - [~] P05-T03 authored platform kit
-- [ ] P05-T04 skyline/cloud kit
+- [~] P05-T04 skyline/cloud kit
 - [~] P05-T05 landing VFX
-- [ ] P05-T06 final lighting/post-processing
+- [~] P05-T06 final lighting/post-processing
 - [ ] P05-T07 screenshot-quality gate
 
 ## P06 Audio/haptics
@@ -66,8 +66,8 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [~] P06-T02 landing grade cues
 - [~] P06-T03 recovery cue
 - [~] P06-T04 haptics
-- [ ] P06-T05 music/ambience
-- [ ] P06-T06 settings
+- [~] P06-T05 music/ambience
+- [~] P06-T06 settings
 
 ## P07 Persistence/progression
 - [x] P07-T01 versioned profile
@@ -179,3 +179,13 @@ P03/P05: finish gameplay balance and replace remaining procedural/prototype pres
 - [x] Latest generic iOS device build succeeds and its code signature verifies for `com.kamilunavo.perfectdrop` / team `TKG684N5GL`.
 - [x] Latest Android IL2CPP APK succeeds; manifest verified as `com.kamilunavo.perfectdrop`, version `1.0` (`1`).
 - [~] Physical-device audio mix and actual tactile haptic feel remain the final acceptance gate.
+
+### Concept HUD / cinematic presentation pass - 2026-10-07
+- [x] Four top stat cards now use dedicated vector-style floor/crown/flame/coin glyphs matching the primary concept hierarchy.
+- [x] BOOST and JUMP controls use dedicated vector glyphs instead of text-only placeholders.
+- [x] Low-cost mobile cinematic grade adds controlled contrast, saturation, warmth and edge vignette.
+- [x] Cloud layer receives subtle reduced-motion-aware drift and the distant goal beacon receives a restrained pulse/rotation treatment.
+- [x] Unity 6.6 compile succeeds after the presentation pass; gameplay, profile and Duo validation matrices remain green.
+- [x] Android release AAB build 2 succeeds and reports package `com.kamilunavo.perfectdrop`, version `1.0` / code `2`.
+- [x] Xcode 27.1 RC generic iOS Release build 2 succeeds and signs as `com.kamilunavo.perfectdrop` / team `TKG684N5GL`.
+- [~] Official iPhone Duo simulator runtime currently hits a CoreAudio/Data Migration simulator-service failure on launch; native device build and reserved-region compile/validation are unaffected. Physical/TestFlight validation remains the release gate.

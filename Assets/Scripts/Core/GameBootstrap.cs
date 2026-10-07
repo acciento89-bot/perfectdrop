@@ -183,6 +183,7 @@ namespace Kamilunavo.PerfectDrop
             var go = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener), typeof(OrbitCamera));
             go.tag = "MainCamera";
             var camera = go.GetComponent<Camera>();
+            go.AddComponent<CinematicGrade>();
             camera.fieldOfView = 58f;
             camera.clearFlags = CameraClearFlags.Skybox;
             camera.backgroundColor = new Color(0.025f, 0.055f, 0.105f);

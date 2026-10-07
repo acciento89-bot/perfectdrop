@@ -209,6 +209,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var sun = AddPrimitive(PrimitiveType.Sphere, atmosphere, "HorizonSun", new Vector3(36f, 13f, 150f), new Vector3(8f, 8f, 8f), Sun);
             sun.isStatic = true;
 
+            var animator = atmosphere.gameObject.AddComponent<AtmosphereAnimator>();
+            animator.Bind(atmosphere);
             Random.state = previous;
         }
 
@@ -255,6 +257,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
             AddCube(beacon, "CoreVertical", center, new Vector3(0.13f, radius * 1.15f, 0.10f), Cyan);
             AddCube(beacon, "CoreHorizontal", center, new Vector3(radius * 1.15f, 0.13f, 0.10f), Cyan);
+            beacon.gameObject.AddComponent<GoalBeaconAnimator>();
         }
 
         public static void BuildSkyline(Transform parent, int seed = 260907)
