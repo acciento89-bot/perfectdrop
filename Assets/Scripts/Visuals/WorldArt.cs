@@ -21,7 +21,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Mesh _beveledBoxMesh;
 
         public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.030f, 0.042f, 0.065f), 0.68f, 0.34f));
-        public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.085f, 0.095f, 0.120f), 0.48f, 0.50f));
+        public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.22f, 0.26f, 0.34f), 0.22f, 0.50f));
         public static Material PlatformInset => _platformInset != null ? _platformInset : (_platformInset = CreateMaterial("PlatformInset", new Color(0.018f, 0.025f, 0.040f), 0.35f, 0.22f));
         public static Material Gold => _gold != null ? _gold : (_gold = CreateMaterial("SignalGold", new Color(1f, 0.48f, 0.035f), 0.24f, 0.76f, new Color(1.85f, 0.58f, 0.035f)));
         public static Material Cyan => _cyan != null ? _cyan : (_cyan = CreateMaterial("PrecisionCyan", new Color(0.05f, 0.72f, 0.95f), 0.18f, 0.82f, new Color(0.03f, 1.00f, 1.75f)));
@@ -293,6 +293,36 @@ namespace Kamilunavo.PerfectDrop.Visuals
             Random.state = previous;
         }
 
+        public static void BuildStackCloudSea(Transform parent)
+        {
+            var shader = Resources.Load<Shader>("PerfectDropCloudSea");
+            var mesh = new Mesh { name = "CloudSeaSurface" };
+            mesh.vertices = new[] { new Vector3(-200,-6,-200), new Vector3(-200,-6,200), new Vector3(200,-6,200), new Vector3(200,-6,-200) };
+            mesh.triangles = new[] { 0,1,2,0,2,3 }; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            var sea = new GameObject("CloudSea",typeof(MeshFilter),typeof(MeshRenderer));
+            sea.transform.SetParent(parent,false);
+            sea.GetComponent<MeshFilter>().sharedMesh = mesh;
+            sea.GetComponent<MeshRenderer>().sharedMaterial = new Material(shader) { name = "SunsetCloudSea" };
+        }
+
+        public static GameObject CreateStackBlock(Transform parent, string name, Vector3 position, Vector3 size, int level)
+        {
+            var root = new GameObject(name);
+            root.transform.SetParent(parent, false);
+            root.transform.localPosition = position;
+            var body = AddBeveledBox(root.transform, "MetalDeck", Vector3.zero, size, Platform);
+            var tint = new MaterialPropertyBlock();
+            tint.SetColor("_Color", Color.Lerp(new Color(.07f,.12f,.23f), new Color(.25f,.16f,.32f), level/30f));
+            body.GetComponent<Renderer>().SetPropertyBlock(tint);
+            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.53f,0), new Vector3(size.x*.96f,size.y*.10f,size.z*.96f), PlatformTop);
+            var strip = Mathf.Min(.028f, Mathf.Min(size.x,size.z)*.08f);
+            AddCube(root.transform,"GoldFront",new Vector3(0,size.y*.59f,-size.z*.46f),new Vector3(size.x*.96f,.035f,strip),Gold);
+            AddCube(root.transform,"GoldBack",new Vector3(0,size.y*.59f,size.z*.46f),new Vector3(size.x*.96f,.035f,strip),Gold);
+            AddCube(root.transform,"GoldLeft",new Vector3(-size.x*.46f,size.y*.59f,0),new Vector3(strip,.035f,size.z*.96f),Gold);
+            AddCube(root.transform,"GoldRight",new Vector3(size.x*.46f,size.y*.59f,0),new Vector3(strip,.035f,size.z*.96f),Gold);
+            return root;
+        }
+
         private static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
         {
             return AddPrimitive(PrimitiveType.Cube, parent, name, localPosition, localScale, material);
@@ -344,8 +374,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
             for (var i = 1; i < 7; i++)
             {
-                triangles.Add(0); triangles.Add(i); triangles.Add(i + 1);
-                triangles.Add(8); triangles.Add(8 + i + 1); triangles.Add(8 + i);
+                triangles.Add(0); triangles.Add(i + 1); triangles.Add(i);
+                triangles.Add(8); triangles.Add(8 + i); triangles.Add(8 + i + 1);
             }
 
             for (var i = 0; i < 8; i++)
@@ -416,6 +446,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             if (material.HasProperty("_Color")) material.SetColor("_Color", color);
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
+            if (material.HasProperty("_Detail")) material.SetFloat("_Detail", name == "PlatformTop" ? 1f : 0f);
             if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
             if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
 

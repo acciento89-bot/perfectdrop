@@ -1,0 +1,156 @@
+using UnityEngine;
+using UnityEngine.UI;
+using Kamilunavo.PerfectDrop.Gameplay;
+
+namespace Kamilunavo.PerfectDrop.UI
+{
+    public sealed class StackHud : MonoBehaviour
+    {
+        public StackGame Game;
+        private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup;
+        private Text[] _stats;
+        private Text _status, _hint, _popupTitle, _popupBody;
+        private Image _progress;
+        private Button _drop, _retry, _close, _daily, _sound, _haptics, _motion;
+        private int _width, _height;
+        private Rect _division, _area;
+        private bool _hadDivision;
+        public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
+        public bool ModalOpen => _popup != null && _popup.gameObject.activeSelf;
+        private static Color Navy => new(0.035f, 0.065f, 0.12f, 0.97f);
+        private static Color Gold => new(1f, 0.79f, 0.16f);
+        public static string T(string de, string en) => GameText.German ? de : en;
+
+        public void Build(StackGame game)
+        {
+            Game = game;
+            var canvas = UiFactory.CreateCanvas();
+            _safe = UiFactory.Panel(canvas.transform, "StackSafeArea", Color.clear, Vector2.zero, Vector2.one);
+            _safe.gameObject.AddComponent<SafeAreaFitter>();
+            _statsRoot = UiFactory.Panel(_safe, "Stats", Color.clear, new Vector2(.04f,.87f), new Vector2(.96f,.98f));
+            _stats = new Text[4];
+            var types = new[] { HudIconType.Floors, HudIconType.Crown, HudIconType.Flame, HudIconType.Diamond };
+            for (var i = 0; i < 4; i++)
+            {
+                var min = i * .25f;
+                var card = UiFactory.Panel(_statsRoot, "Stat"+i, Navy, new Vector2(min,0), new Vector2(min+.235f,1));
+                UiFactory.Icon(card, "Icon", types[i], Gold, new Vector2(.09f,.32f), new Vector2(.29f,.68f));
+                _stats[i] = UiFactory.Label(card,"Value","",32,new Vector2(.34f,.05f),new Vector2(.95f,.95f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
+            }
+            _objective = UiFactory.Panel(_safe,"Objective",Navy,new Vector2(.04f,.765f),new Vector2(.96f,.85f));
+            _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.40f),new Vector2(.76f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
+            _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.13f),new Vector2(.74f,.44f),TextAnchor.MiddleLeft,Color.white);
+            _progress = UiFactory.Progress(_objective,new Vector2(.045f,.04f),new Vector2(.955f,.10f),new Color(.22f,.27f,.35f),Gold);
+            UiFactory.Button(_objective,"Menu",T("MENÜ","MENU"),new Color(.14f,.20f,.29f),Color.white,new Vector2(.79f,.15f),new Vector2(.965f,.93f),OpenSettings);
+            _drop = UiFactory.Button(_safe,"Drop",T("ABSETZEN","DROP"),Gold,Navy,new Vector2(.10f,.055f),new Vector2(.90f,.15f),game.Drop);
+            _dropRect = (RectTransform)_drop.transform;
+            UiFactory.ApplyPillImage(_drop.GetComponent<Image>());
+            _popup = UiFactory.Panel(_safe,"ContextPanel",Navy,new Vector2(.07f,.23f),new Vector2(.93f,.75f));
+            _popupTitle = UiFactory.Label(_popup,"Title","",45,new Vector2(.07f,.79f),new Vector2(.93f,.96f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
+            _popupBody = UiFactory.Label(_popup,"Body","",29,new Vector2(.07f,.58f),new Vector2(.93f,.79f),TextAnchor.MiddleCenter,Color.white);
+            _retry = UiFactory.Button(_popup,"Retry",T("NOCHMAL","PLAY AGAIN"),Gold,Navy,new Vector2(.10f,.13f),new Vector2(.90f,.31f),()=> { Close(); Game.NewRun(); });
+            _close = UiFactory.Button(_popup,"Close",T("WEITER","RESUME"),Gold,Navy,new Vector2(.10f,.06f),new Vector2(.90f,.205f),Close);
+            _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.555f),new Vector2(.90f,.70f),()=> { GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
+            _haptics = UiFactory.Button(_popup,"Haptics","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.39f),new Vector2(.90f,.535f),()=> { GamePreferences.HapticsEnabled = !GamePreferences.HapticsEnabled; UpdateSettings(); });
+            _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.225f),new Vector2(.90f,.37f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
+            _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.72f),new Vector2(.90f,.865f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
+            foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null;
+            _popup.gameObject.SetActive(false);
+            Layout(true); Refresh();
+        }
+
+        public void Refresh()
+        {
+            _stats[0].text = T("STAPEL","STACK") + "\n" + Game.Run.Layers.Count + "/30";
+            _stats[1].text = T("BESTE","BEST") + "\n" + Game.Profile.Best;
+            _stats[2].text = T("SERIE","STREAK") + "\nx" + Game.Run.Streak;
+            _stats[3].text = "COINS\n" + Game.Profile.Coins;
+            _progress.fillAmount = Game.Run.Layers.Count / 30f;
+            _drop.interactable = !Game.Run.Failed && !Game.Run.Completed && !ModalOpen;
+        }
+        public void Grade(StackGrade grade)
+        {
+            _status.text = grade == StackGrade.Perfect ? T("PERFEKT!","PERFECT!") : grade == StackGrade.Good ? T("GUT GESTAPELT","GOOD DROP") : T("DANEBEN","MISSED");
+            _hint.text = grade == StackGrade.Perfect ? T("Fläche bleibt erhalten · Serienbonus","Area preserved · streak bonus") : grade == StackGrade.Good ? T("Überstand fällt herunter.","Overhang falls away.") : T("Kein Überlapp. Versuch es nochmal.","No overlap. Try again.");
+        }
+        public void ResetMessage()
+        {
+            _status.text = "PERFECT DROP";
+            _hint.text = T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop.");
+            Refresh();
+        }
+        public void Terminal(bool won)
+        {
+            Controls(false);
+            _retry.gameObject.SetActive(true);
+            _popupTitle.text = won ? T("30 / 30 — GESCHAFFT!","30 / 30 — COMPLETE!") : T("DANEBEN!","MISSED!");
+            _popupBody.gameObject.SetActive(true);
+            _popupBody.text = T("Gestapelt","Stacked") + " " + Game.Run.Layers.Count + "/30\n" + Game.Run.EarnedCoins + " " + T("Coins verdient","coins earned");
+            _popup.gameObject.SetActive(true); Refresh();
+        }
+        public void OpenSettings()
+        {
+            if (Game.Run.Failed || Game.Run.Completed) return;
+            Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
+            _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
+            // Settings title and daily control occupy separate rows.
+            Set((RectTransform)_popupTitle.transform,.07f,.885f,.93f,.99f);
+            UpdateSettings(); _popup.gameObject.SetActive(true); Refresh(); Game.Save();
+        }
+        public void Close()
+        {
+            Game.UiClick(); _popup.gameObject.SetActive(false);
+            Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f);
+            Refresh();
+        }
+        private void Controls(bool settings)
+        {
+            foreach (var button in new[] { _close, _sound, _haptics, _motion, _daily }) button.gameObject.SetActive(settings);
+        }
+        private void UpdateSettings()
+        {
+            SetLabel(_sound, T("TON","SOUND") + ": " + GameText.ToggleValue(GamePreferences.AudioEnabled));
+            SetLabel(_haptics, T("HAPTIK","HAPTICS") + ": " + GameText.ToggleValue(GamePreferences.HapticsEnabled));
+            SetLabel(_motion, T("WENIGER BEWEGUNG","REDUCED MOTION") + ": " + GameText.ToggleValue(GamePreferences.ReducedMotion));
+            SetLabel(_daily, StackSave.CanClaim(Game.Profile) ? T("TÄGLICH +25 COINS HOLEN","CLAIM DAILY +25 COINS") : T("HEUTE BEREITS GEHOLT","DAILY CLAIMED"));
+            _daily.interactable = StackSave.CanClaim(Game.Profile);
+        }
+        private static void SetLabel(Button button, string text) => button.GetComponentInChildren<Text>().text = text;
+        private void Update() => Layout(false);
+        private void Layout(bool force)
+        {
+            var hasDivision = ReservedRegionProvider.TryGetDivisionRegion(out var division);
+            if (!force && _width == Screen.width && _height == Screen.height && _area == Screen.safeArea && _hadDivision == hasDivision && division == _division) return;
+            _width = Screen.width; _height = Screen.height; _area = Screen.safeArea; _division = division; _hadDivision = hasDivision;
+            var pane = new Rect(0,0,1,1);
+            if (hasDivision)
+            {
+                var safe = Screen.safeArea;
+                var d = new Rect((division.x*Screen.width-safe.x)/safe.width,(division.y*Screen.height-safe.y)/safe.height,division.width*Screen.width/safe.width,division.height*Screen.height/safe.height);
+                if (d.height >= d.width)
+                    pane = d.x >= 1-d.xMax ? new Rect(0,0,Mathf.Max(.05f,d.x-.015f),1) : new Rect(d.xMax+.015f,0,Mathf.Max(.05f,1-d.xMax-.015f),1);
+                else
+                    pane = d.y >= 1-d.yMax ? new Rect(0,0,1,Mathf.Max(.05f,d.y-.015f)) : new Rect(0,d.yMax+.015f,1,Mathf.Max(.05f,1-d.yMax-.015f));
+            }
+            var screenSafe = Screen.safeArea;
+            WorldPane = new Rect((screenSafe.x+pane.x*screenSafe.width)/Screen.width, (screenSafe.y+pane.y*screenSafe.height)/Screen.height, pane.width*screenSafe.width/Screen.width, pane.height*screenSafe.height/Screen.height);
+            Place(_statsRoot,pane,new Rect(.04f,.875f,.92f,.105f));
+            Place(_objective,pane,new Rect(.04f,.76f,.92f,.09f));
+            Place(_dropRect,pane,new Rect(.10f,.05f,.80f,.10f));
+            Place(_popup,pane,new Rect(.06f,.20f,.88f,.56f));
+            var aspect = Screen.width * pane.width / Mathf.Max(1, Screen.height*pane.height);
+            if (aspect > 1.2f)
+            {
+                Place(_statsRoot,pane,new Rect(.025f,.80f,.55f,.17f));
+                Place(_objective,pane,new Rect(.60f,.77f,.37f,.20f));
+                Place(_dropRect,pane,new Rect(.72f,.05f,.25f,.17f));
+                Place(_popup,pane,new Rect(.05f,.025f,.90f,.95f));
+            }
+        }
+        private static void Place(RectTransform rect, Rect pane, Rect slot) => Set(rect,pane.x+slot.x*pane.width,pane.y+slot.y*pane.height,pane.x+slot.xMax*pane.width,pane.y+slot.yMax*pane.height);
+        private static void Set(RectTransform rect,float x,float y,float xmax,float ymax)
+        {
+            rect.anchorMin = new Vector2(x,y); rect.anchorMax = new Vector2(xmax,ymax); rect.offsetMin = rect.offsetMax = Vector2.zero;
+        }
+    }
+}

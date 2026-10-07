@@ -1,3 +1,50 @@
+# Perfect Drop V1 Ledger — canonical Stack game
+
+The user explicitly confirmed classic tap-to-stack on 2026-10-07. This supersedes the former precision-jump brief. Historical checks below are not stacking-game acceptance.
+
+Status: `[ ]` open; `[~]` implemented / unverified; `[x]` implemented + compiled + runtime/functionally/visually verified; `[!]` blocked or failing.
+
+## Current stacking scope
+
+- [x] S01 Alternate X/Z moving blocks; tap placement; overlap retained; overhang falls.
+- [x] S02 Perfect snap without shrink; clear Perfect/Good/Miss and streak/coin rewards.
+- [x] S03 Exactly 30 placements excluding pedestal; terminal state rejects duplicate placement.
+- [x] S04 Immediate miss/result/retry; no runner, joystick, jump or boost in active game.
+- [~] S05 Separate versioned stacking best/coins/tower save; historical jump profile preserved.
+- [~] S06 Resume settled tower; pause settings; lifecycle save; no progress loss on resize.
+- [~] S07 DE/EN stat/action/settings/result text and contextual daily claim.
+- [~] S08 Reused audio/preferences/native haptic bridge and gold landing burst.
+- [~] S09 Beveled metal blocks, corrected top-cap winding, visible gold rails and procedural cloud sea.
+- [~] S10 Safe-area/native division-aware HUD with contextual panels.
+- [x] S11 Actual Mac-player compact/wide/landscape runtime matrix and inspected screenshots (mobile gate remains S12/S13).
+- [ ] S12 Official iPhone Duo open/divided/rotation states; ordinary portrait iPhone.
+- [ ] S13 Fresh iOS/Android stacking builds and signing; physical devices/audio/haptics/performance.
+- [ ] S14 Final art/mobile screenshot gate and 30-minute stability.
+- [ ] S15 Signed archive, App Store Connect upload/processing, internal tester/install/physical TestFlight smoke.
+
+## Current evidence
+
+- Pre-transition Git history and local diff/untracked QA were backed up before the mechanic changed.
+- Stack rule tests first failed on missing perfect alignment, then passed overlap/cut symmetry, edge miss, perfect preservation, 30-layer completion and terminal guards.
+- A mesh regression test reproduced downward-facing top caps; it passed after the winding correction.
+- Stack profile round-trip and malformed-data recovery pass in the editor matrix.
+- A fresh Mac development player builds and renders the new stacking game; first screenshots inspected.
+- Fresh Mac player passed the complete 30-drop UI callback sequence, cut-piece presence, perfect streak, terminal rejection, immediate retry/miss, settings pause, daily once-only claim, resize/progress preservation, and scene reload of saved layers/rewards.
+- Functional QA uses deterministic 60 Hz simulation timing; this is not a real frame-rate/performance measurement. The overly narrow original harness timing window was corrected to match real Perfect tolerance.
+- Actual screenshots inspected: 540x960, 800x600, 600x800, settings/result/miss/resume and a synthetic division. The latter does not establish official native Duo pose validation.
+- Camera checks cover horizontal slab corner bounds at motion extremes and on first resize frame. A fresh reviewer identified and verified fixes for terminal-menu retry loss, portrait clipping and transient resize clipping.
+- Fresh StackValidation.ValidatePlatform passes overlap/mesh/profile/motion range and historical display classifier checks.
+- New release iOS Simulator Unity export succeeds; Xcode compile/installation/actual native screenshots remain pending.
+- On 2026-10-07 the user additionally confirmed a level campaign plus unlockable endless mode. The 30-block tower is the validated foundation, not the complete approved game.
+- Ruling: preserve old jump code/history during transition, but keep it inactive behind the existing scene bootstrap. Do not credit its historical QA toward this game.
+- Ruling: use a separate `perfectdrop.stack.profile.v1` namespace so reinterpretation cannot overwrite historical jump progress.
+
+---
+
+# Historical pre-correction jump-game ledger (superseded)
+
+The following record is retained as history only. Its checkboxes do not establish completion of the confirmed stacking product.
+
 # Perfect Drop V1 Ledger
 
 Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]` verified complete · `[!]` blocked

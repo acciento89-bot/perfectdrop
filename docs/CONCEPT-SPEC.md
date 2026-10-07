@@ -1,23 +1,9 @@
-# Perfect Drop Approved Implementation Concept
+# Perfect Drop Concept Specification
 
-Portrait 9:16.
+Canonical gameplay: the user confirmed classic Stack on 2026-10-07. Alternating moving blocks, tap to place, cut overhang, perfect alignment/streak bonuses, fail on no overlap, finish at 30 placements. The starting pedestal does not count.
 
-Top: Floor, Best, Streak, Coins.
-Below: PRECISION JUMP / Land inside the marked bay / progress.
-Gameplay: character centered lower-middle, next bay + 2-4 future platforms visible, warm goal ring in distance.
-Bottom: joystick left, Boosts center, Jump right.
+`concepts/PRIMARY-CONCEPT.png` remains the palette/lighting/material/environment inspiration: navy metal, gold light, warm dusk and a cloud city. Its runner, jump bays, joystick, boost and jump button are superseded by the confirmed stack mechanic.
 
-All UI is real interactive Unity UI; all gameplay geometry is real 3D content. The concept is a production target, not a raster background.
+Active HUD: Stack/30, Best, Streak, Coins, brief instructions/grade, Menu and a large Drop action. Modal settings, daily claim, miss/retry and completion appear in their appropriate states. Free-space drag orbits; it never drops.
 
-
-## iPhone Duo / adaptive display contract
-
-The primary art direction remains portrait-first at 9:16, but the runtime must not assume a fixed phone aspect ratio.
-
-- Interactive foreground UI stays inside `Screen.safeArea`; background/world rendering remains edge-to-edge.
-- Classic portrait phones use the compact layout.
-- Wider portrait windows, including the iPhone Duo inner display, use a wide-portrait layout with smaller edge controls and no critical UI through the middle interaction band.
-- A landscape/resizable fallback keeps the center 12% free of critical HUD/controls so the physical fold/division region cannot cover required actions.
-- Opening/closing/resizing must not recreate the gameplay scene or reset progress.
-- No fixed pixel widths for HUD placement; anchors are recomputed when safe-area or window dimensions change.
-- Xcode 27.1 / iOS 27.1 Device Hub validation is a release gate before claiming full iPhone Duo verification.
+No automatic interpretation of a historical jump-game ledger check as stacking acceptance. Current evidence must be recorded under the Stack section of the V1 ledger.

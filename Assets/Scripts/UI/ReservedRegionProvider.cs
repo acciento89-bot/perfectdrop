@@ -5,6 +5,9 @@ namespace Kamilunavo.PerfectDrop.UI
 {
     public static class ReservedRegionProvider
     {
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public static Rect? QaDivision;
+#endif
         public static bool IsSupported
         {
             get
@@ -19,6 +22,9 @@ namespace Kamilunavo.PerfectDrop.UI
 
         public static bool TryGetDivisionRegion(out Rect region)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (QaDivision.HasValue) { region = QaDivision.Value; return true; }
+#endif
 #if UNITY_IOS && !UNITY_EDITOR
             if (PDGetPrimaryReservedRegion(1, out var x, out var y, out var width, out var height) != 0)
             {

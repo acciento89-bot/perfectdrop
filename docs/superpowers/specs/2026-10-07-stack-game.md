@@ -1,0 +1,7 @@
+# Perfect Drop — confirmed stacking game
+
+User correction on 2026-10-07 supersedes all prior precision-jump gameplay instructions. User confirmed classic Stack mechanics: laterally moving blocks, tap to place, overhang cut away, perfect bonus, target 30 placed blocks. The pedestal is not one of the 30. Alternate X and Z movement, preserve overlap on each placement, fail immediately on no overlap, restart immediately, finish at exactly 30. Perfect drops snap to the previous center without shrinking and reward a coin/streak bonus.
+
+Keep bundle IDs, existing App Store entry, Unity 6000.6.4f1, native iOS/Android, main, safe-area/native Duo work and dark skyline/gold concept atmosphere. Runner, joystick, jump and boost are not stacking-game controls. The concept image is art/lighting inspiration; its illustrated jump mechanic is superseded. A single large drop control and optional tap on free world space are sufficient. Dragging free space or right-mouse dragging orbits the tower; it must not place a block. Settings pause movement and resume the same phase. Rotation/resize preserve the tower. Save settled layers and progression through lifecycle events. A separate stacking save namespace preserves historical jump-game data untouched.
+
+New evidence must include deterministic overlap/grade/30-layer tests, actual running player scenarios, screenshots at portrait/wide/landscape, native mobile builds and device/TestFlight gates. No release/upload while those gates remain open.

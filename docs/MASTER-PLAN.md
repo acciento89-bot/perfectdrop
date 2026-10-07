@@ -1,52 +1,14 @@
-# Perfect Drop V1 Master Plan
+# Perfect Drop — Stack Master Plan
 
-## Objective
-Ship a polished portrait precision-platform game for iOS and Android matching the approved implementation concept.
+The user's 2026-10-07 correction is canonical: Perfect Drop is classic tap-to-stack, target 30 placed blocks. Prior precision-jump plans are superseded.
 
-## P00 Product lock
-Core loop, controls, progression, visual identity, monetization boundaries and launch KPIs.
+1. Deterministic alternating-axis overlap, cut geometry, perfect tolerance and terminal-state rules.
+2. One-tap moving-block gameplay, immediate miss/retry, completion at 30, streak/coins/best.
+3. Dark beveled metal blocks with gold light; cloud-city environment; no runner, joystick or jump controls.
+4. Contextual settings, daily claim, DE/EN, audio/haptics/reduced motion.
+5. Versioned stacking save namespace; resume settled tower without disturbing historical jump data.
+6. Safe-area and native Duo division-aware UI, preserved state across rotation/resize.
+7. Real player, simulator/device, Android and performance tests; record fresh evidence in V1 ledger.
+8. Review, commit/push main, iOS signed archive, TestFlight upload/processing/internal tester/install/physical smoke. No public-store publication.
 
-## P01 Native mobile foundation
-Unity project, identifiers, editor bootstrap, safe-area UI, touch input, orientation and performance target.
-
-## P02 Core movement
-Third-person movement, responsive jump, touch joystick, swipe camera and instant recovery.
-
-## P03 Precision course
-30-floor course, landing bays, reachability, fall handling and progression.
-
-## P04 Scoring
-Perfect/Good/Safe grades, streak, coins and PB/best.
-
-## P05 Game feel
-Camera damping, animation, VFX, audio and haptics.
-
-## P06 Progression
-Player level, unlockable themes, cosmetics and versioned save schema.
-
-## P07 Retention
-Daily reward, daily challenge, achievements and session goals.
-
-## P08 Monetization
-Optional cosmetics/boosts only; no direct competitive score purchase.
-
-## P09 UI/UX
-Production HUD, result/retry, boost panel, settings, DE/EN and accessibility.
-
-## P10 Production art
-Final dark navy / warm-gold floating-city environment optimized for mobile.
-
-## P11 QA
-Rules tests, device matrix, memory/thermal checks and stability runs.
-
-## P12 Release
-App Store / Google Play assets, privacy, billing sandbox and staged rollout.
-
-## Definition of Done
-- 60 FPS target on supported reference devices.
-- No known P0/P1 gameplay defects.
-- Instant fall recovery.
-- Touch and camera never conflict.
-- Course remains reachable/readable.
-- UI matches approved implementation concept.
-- iOS and Android builds pass store validation.
+Detailed spec and execution plan: `superpowers/specs/2026-10-07-stack-game.md` and `superpowers/plans/2026-10-07-stack-game.md`.
