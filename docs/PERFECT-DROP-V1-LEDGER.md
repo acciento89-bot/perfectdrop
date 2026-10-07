@@ -55,7 +55,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 ## P05 Production visuals
 - [x] P05-T01 runtime palette/material foundation
 - [ ] P05-T02 final character + animation
-- [ ] P05-T03 authored platform kit
+- [~] P05-T03 authored platform kit
 - [ ] P05-T04 skyline/cloud kit
 - [~] P05-T05 landing VFX
 - [ ] P05-T06 final lighting/post-processing
@@ -159,3 +159,5 @@ P03/P05: finish gameplay balance and replace remaining procedural/prototype pres
 - [~] World presentation now has a procedural dusk sky, cloud layer, skyline, layered platform construction, route emission and a human runner silhouette. It remains below the final concept screenshot-quality gate and must receive authored-production assets/polish before release.
 
 - [x] Settings/reduced-motion preference persistence is covered by the automated gameplay validation matrix; visual/device QA remains open.
+- [x] Release-config iOS Simulator build succeeds on Xcode 27.1 RC and launches on the official iPhone Duo plus iPhone 17 Pro simulator.
+- [~] Platform deck/core/top silhouettes now use a reusable beveled production mesh instead of visible primitive cubes; final authored material/texture pass remains open.

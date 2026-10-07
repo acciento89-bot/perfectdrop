@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kamilunavo.PerfectDrop.Visuals
@@ -17,6 +18,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _runnerShoe;
         private static Material _cloud;
         private static Material _sun;
+        private static Mesh _beveledBoxMesh;
 
         public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.030f, 0.042f, 0.065f), 0.68f, 0.34f));
         public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.085f, 0.095f, 0.120f), 0.48f, 0.50f));
@@ -57,9 +59,9 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var renderer = platform.GetComponent<Renderer>();
             if (renderer != null) renderer.enabled = false;
 
-            AddCube(platform, "Deck", new Vector3(0f, -0.01f, 0f), new Vector3(0.985f, 0.86f, 0.985f), Platform);
-            AddCube(platform, "Undercore", new Vector3(0f, -0.54f, 0f), new Vector3(0.82f, 0.42f, 0.80f), PlatformInset);
-            AddCube(platform, "TopPlate", new Vector3(0f, 0.48f, 0f), new Vector3(0.94f, 0.075f, 0.92f), PlatformTop);
+            AddBeveledBox(platform, "Deck", new Vector3(0f, -0.01f, 0f), new Vector3(0.985f, 0.86f, 0.985f), Platform);
+            AddBeveledBox(platform, "Undercore", new Vector3(0f, -0.54f, 0f), new Vector3(0.82f, 0.42f, 0.80f), PlatformInset);
+            AddBeveledBox(platform, "TopPlate", new Vector3(0f, 0.48f, 0f), new Vector3(0.94f, 0.075f, 0.92f), PlatformTop);
 
             AddCube(platform, "TrimFront", new Vector3(0f, 0.555f, -0.487f), new Vector3(0.97f, 0.060f, 0.024f), Gold);
             AddCube(platform, "TrimBack", new Vector3(0f, 0.555f, 0.487f), new Vector3(0.97f, 0.060f, 0.024f), Gold);
@@ -283,6 +285,81 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
         {
             return AddPrimitive(PrimitiveType.Cube, parent, name, localPosition, localScale, material);
+        }
+
+        private static GameObject AddBeveledBox(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
+        {
+            var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localPosition;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = localScale;
+            go.GetComponent<MeshFilter>().sharedMesh = BeveledBoxMesh;
+            go.GetComponent<MeshRenderer>().sharedMaterial = material;
+            return go;
+        }
+
+        private static Mesh BeveledBoxMesh => _beveledBoxMesh != null ? _beveledBoxMesh : (_beveledBoxMesh = BuildBeveledBoxMesh());
+
+        private static Mesh BuildBeveledBoxMesh()
+        {
+            const float x = 0.5f;
+            const float z = 0.5f;
+            const float y = 0.5f;
+            const float c = 0.085f;
+            var ring = new[]
+            {
+                new Vector2(-x + c, -z), new Vector2(x - c, -z),
+                new Vector2(x, -z + c), new Vector2(x, z - c),
+                new Vector2(x - c, z), new Vector2(-x + c, z),
+                new Vector2(-x, z - c), new Vector2(-x, -z + c)
+            };
+
+            var vertices = new List<Vector3>(48);
+            var triangles = new List<int>(84);
+            var uvs = new List<Vector2>(48);
+
+            // Top and bottom caps use separate vertices so the edge keeps a crisp authored silhouette.
+            for (var i = 0; i < 8; i++)
+            {
+                vertices.Add(new Vector3(ring[i].x, y, ring[i].y));
+                uvs.Add(new Vector2(ring[i].x + 0.5f, ring[i].y + 0.5f));
+            }
+            for (var i = 0; i < 8; i++)
+            {
+                vertices.Add(new Vector3(ring[i].x, -y, ring[i].y));
+                uvs.Add(new Vector2(ring[i].x + 0.5f, ring[i].y + 0.5f));
+            }
+
+            for (var i = 1; i < 7; i++)
+            {
+                triangles.Add(0); triangles.Add(i); triangles.Add(i + 1);
+                triangles.Add(8); triangles.Add(8 + i + 1); triangles.Add(8 + i);
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                var next = (i + 1) % 8;
+                var baseIndex = vertices.Count;
+                vertices.Add(new Vector3(ring[i].x, y, ring[i].y));
+                vertices.Add(new Vector3(ring[next].x, y, ring[next].y));
+                vertices.Add(new Vector3(ring[next].x, -y, ring[next].y));
+                vertices.Add(new Vector3(ring[i].x, -y, ring[i].y));
+                uvs.Add(new Vector2(0f, 1f));
+                uvs.Add(new Vector2(1f, 1f));
+                uvs.Add(new Vector2(1f, 0f));
+                uvs.Add(new Vector2(0f, 0f));
+                triangles.Add(baseIndex); triangles.Add(baseIndex + 1); triangles.Add(baseIndex + 2);
+                triangles.Add(baseIndex); triangles.Add(baseIndex + 2); triangles.Add(baseIndex + 3);
+            }
+
+            var mesh = new Mesh { name = "PerfectDropBeveledBox", hideFlags = HideFlags.HideAndDontSave };
+            mesh.SetVertices(vertices);
+            mesh.SetTriangles(triangles, 0);
+            mesh.SetUVs(0, uvs);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static GameObject AddPrimitive(PrimitiveType type, Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)

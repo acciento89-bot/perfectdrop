@@ -10,7 +10,7 @@ public static class BuildAutomation
     public static void BuildAndroid()
     {
         EditorUserBuildSettings.buildAppBundle = false;
-        Build(BuildTarget.Android, GetOutput("-buildOutput", "Builds/Android/app-dev.apk"));
+        Build(BuildTarget.Android, GetOutput("-buildOutput", "Builds/Android/app-dev.apk"), development: true);
     }
 
     public static void BuildIOS()
@@ -20,7 +20,7 @@ public static class BuildAutomation
         {
             PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
-            Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"));
+            Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"), development: false);
         }
         finally
         {
@@ -34,7 +34,7 @@ public static class BuildAutomation
         try
         {
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-            Build(BuildTarget.iOS, GetOutput("-buildOutput", "/private/tmp/PerfectDrop-iOS-Simulator"));
+            Build(BuildTarget.iOS, GetOutput("-buildOutput", "/private/tmp/PerfectDrop-iOS-Simulator"), development: false);
         }
         finally
         {
@@ -45,10 +45,10 @@ public static class BuildAutomation
     public static void BuildMacPreview()
     {
         PlayerSettings.resizableWindow = true;
-        Build(BuildTarget.StandaloneOSX, GetOutput("-buildOutput", "/private/tmp/PerfectDropPreview.app"));
+        Build(BuildTarget.StandaloneOSX, GetOutput("-buildOutput", "/private/tmp/PerfectDropPreview.app"), development: true);
     }
 
-    private static void Build(BuildTarget target, string output)
+    private static void Build(BuildTarget target, string output, bool development)
     {
         if (target == BuildTarget.iOS)
         {
@@ -73,7 +73,7 @@ public static class BuildAutomation
             scenes = scenes,
             locationPathName = output,
             target = target,
-            options = BuildOptions.Development | BuildOptions.AllowDebugging
+            options = development ? BuildOptions.Development | BuildOptions.AllowDebugging : BuildOptions.None
         };
 
         var report = BuildPipeline.BuildPlayer(options);
