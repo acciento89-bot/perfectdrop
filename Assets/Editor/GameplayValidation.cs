@@ -12,17 +12,42 @@ namespace Kamilunavo.PerfectDrop.Editor
         {
             const string bestKey = "perfectdrop.bestFloor";
             const string coinsKey = "perfectdrop.coins";
+            const string audioKey = "perfectdrop.settings.audio";
+            const string hapticsKey = "perfectdrop.settings.haptics";
+            const string motionKey = "perfectdrop.settings.reducedMotion";
 
             var hadBest = PlayerPrefs.HasKey(bestKey);
             var hadCoins = PlayerPrefs.HasKey(coinsKey);
             var oldBest = PlayerPrefs.GetInt(bestKey, 1);
             var oldCoins = PlayerPrefs.GetInt(coinsKey, 0);
+            var hadAudio = PlayerPrefs.HasKey(audioKey);
+            var hadHaptics = PlayerPrefs.HasKey(hapticsKey);
+            var hadMotion = PlayerPrefs.HasKey(motionKey);
+            var oldAudio = PlayerPrefs.GetInt(audioKey, 1);
+            var oldHaptics = PlayerPrefs.GetInt(hapticsKey, 1);
+            var oldMotion = PlayerPrefs.GetInt(motionKey, 0);
 
             GameObject root = null;
             try
             {
                 PlayerPrefs.SetInt(bestKey, 1);
                 PlayerPrefs.SetInt(coinsKey, 0);
+                PlayerPrefs.SetInt(audioKey, 1);
+                PlayerPrefs.SetInt(hapticsKey, 1);
+                PlayerPrefs.SetInt(motionKey, 0);
+
+                Assert(GamePreferences.AudioEnabled, "Audio must default to enabled.");
+                Assert(GamePreferences.HapticsEnabled, "Haptics must default to enabled.");
+                Assert(!GamePreferences.ReducedMotion, "Reduced motion must default to disabled.");
+                GamePreferences.AudioEnabled = false;
+                GamePreferences.HapticsEnabled = false;
+                GamePreferences.ReducedMotion = true;
+                Assert(!GamePreferences.AudioEnabled, "Audio preference must persist a disabled value.");
+                Assert(!GamePreferences.HapticsEnabled, "Haptics preference must persist a disabled value.");
+                Assert(GamePreferences.ReducedMotion, "Reduced-motion preference must persist an enabled value.");
+                GamePreferences.AudioEnabled = true;
+                GamePreferences.HapticsEnabled = true;
+                GamePreferences.ReducedMotion = false;
 
                 Assert(PrecisionScoring.Grade(0f, 0f, 1f, 1f) == LandingGrade.Perfect, "Center landing must be Perfect.");
                 Assert(PrecisionScoring.Grade(0.3f, 0.2f, 1f, 1f) == LandingGrade.Good, "Mid landing must be Good.");
@@ -109,6 +134,9 @@ namespace Kamilunavo.PerfectDrop.Editor
                 if (root != null) UnityEngine.Object.DestroyImmediate(root);
                 if (hadBest) PlayerPrefs.SetInt(bestKey, oldBest); else PlayerPrefs.DeleteKey(bestKey);
                 if (hadCoins) PlayerPrefs.SetInt(coinsKey, oldCoins); else PlayerPrefs.DeleteKey(coinsKey);
+                if (hadAudio) PlayerPrefs.SetInt(audioKey, oldAudio); else PlayerPrefs.DeleteKey(audioKey);
+                if (hadHaptics) PlayerPrefs.SetInt(hapticsKey, oldHaptics); else PlayerPrefs.DeleteKey(hapticsKey);
+                if (hadMotion) PlayerPrefs.SetInt(motionKey, oldMotion); else PlayerPrefs.DeleteKey(motionKey);
                 PlayerPrefs.Save();
             }
         }

@@ -28,6 +28,13 @@ namespace Kamilunavo.PerfectDrop.UI
         public static string Boosts => German ? "BOOST" : "BOOSTS";
         public static string TowerCleared => German ? "TURM GESCHAFFT" : "TOWER CLEARED";
         public static string RunAgain => German ? "NOCHMAL" : "RUN AGAIN";
+        public static string Menu => German ? "MENÜ" : "MENU";
+        public static string SettingsTitle => German ? "EINSTELLUNGEN" : "SETTINGS";
+        public static string Sound => German ? "TON" : "SOUND";
+        public static string Haptics => German ? "HAPTIK" : "HAPTICS";
+        public static string ReducedMotion => German ? "WENIGER BEWEGUNG" : "REDUCED MOTION";
+        public static string Close => German ? "SCHLIESSEN" : "CLOSE";
+        public static string ToggleValue(bool enabled) => German ? (enabled ? "AN" : "AUS") : (enabled ? "ON" : "OFF");
 
         public static string Landing(LandingGrade grade)
         {

@@ -44,8 +44,8 @@ namespace Kamilunavo.PerfectDrop
             }
 
             var objective = UiFactory.Panel(safe, "Objective", Panel, new Vector2(0.03f, 0.79f), new Vector2(0.97f, 0.885f));
-            UiFactory.Label(objective, "Title", GameText.ObjectiveTitle, 36, new Vector2(0.04f, 0.50f), new Vector2(0.96f, 0.92f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
-            UiFactory.Label(objective, "Subtitle", GameText.ObjectiveSubtitle, 28, new Vector2(0.04f, 0.20f), new Vector2(0.96f, 0.54f), TextAnchor.MiddleLeft, TextColor);
+            UiFactory.Label(objective, "Title", GameText.ObjectiveTitle, 36, new Vector2(0.04f, 0.50f), new Vector2(0.77f, 0.92f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            UiFactory.Label(objective, "Subtitle", GameText.ObjectiveSubtitle, 28, new Vector2(0.04f, 0.20f), new Vector2(0.77f, 0.54f), TextAnchor.MiddleLeft, TextColor);
             var progress = UiFactory.Progress(objective, new Vector2(0.04f, 0.08f), new Vector2(0.96f, 0.16f), new Color(0.18f, 0.22f, 0.30f), Gold);
             var feedback = UiFactory.Label(safe, "Feedback", GameText.Ready, 30, new Vector2(0.32f, 0.73f), new Vector2(0.68f, 0.78f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
             var joystick = VirtualJoystick.Create(safe, new Vector2(0.03f, 0.035f), new Vector2(0.29f, 0.18f));
@@ -80,6 +80,28 @@ namespace Kamilunavo.PerfectDrop
             course.CompletionPanel = completion.gameObject;
             course.CompletionText = completionText;
 
+            var settingsRoot = UiFactory.Panel(safe, "Settings", new Color(0.02f, 0.045f, 0.085f, 0.99f), new Vector2(0.12f, 0.25f), new Vector2(0.88f, 0.75f));
+            UiFactory.Label(settingsRoot, "Title", GameText.SettingsTitle, 44, new Vector2(0.07f, 0.81f), new Vector2(0.93f, 0.96f), TextAnchor.MiddleLeft, Gold, FontStyle.Bold);
+            UiFactory.Label(settingsRoot, "SoundLabel", GameText.Sound, 30, new Vector2(0.08f, 0.61f), new Vector2(0.62f, 0.76f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
+            UiFactory.Label(settingsRoot, "HapticsLabel", GameText.Haptics, 30, new Vector2(0.08f, 0.43f), new Vector2(0.62f, 0.58f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
+            UiFactory.Label(settingsRoot, "MotionLabel", GameText.ReducedMotion, 27, new Vector2(0.08f, 0.25f), new Vector2(0.62f, 0.40f), TextAnchor.MiddleLeft, TextColor, FontStyle.Bold);
+
+            var settings = safe.gameObject.AddComponent<SettingsPanel>();
+            settings.Root = settingsRoot.gameObject;
+            settings.Motor = motor;
+            settings.Course = course;
+
+            var soundToggle = UiFactory.Button(settingsRoot, "SoundToggle", GameText.ToggleValue(GamePreferences.AudioEnabled), Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.68f, 0.61f), new Vector2(0.92f, 0.76f), settings.ToggleSound);
+            var hapticsToggle = UiFactory.Button(settingsRoot, "HapticsToggle", GameText.ToggleValue(GamePreferences.HapticsEnabled), Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.68f, 0.43f), new Vector2(0.92f, 0.58f), settings.ToggleHaptics);
+            var motionToggle = UiFactory.Button(settingsRoot, "MotionToggle", GameText.ToggleValue(GamePreferences.ReducedMotion), Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.68f, 0.25f), new Vector2(0.92f, 0.40f), settings.ToggleReducedMotion);
+            settings.SoundValue = soundToggle.transform.Find("Label").GetComponent<Text>();
+            settings.HapticsValue = hapticsToggle.transform.Find("Label").GetComponent<Text>();
+            settings.MotionValue = motionToggle.transform.Find("Label").GetComponent<Text>();
+            UiFactory.Button(settingsRoot, "Close", GameText.Close, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.26f, 0.06f), new Vector2(0.74f, 0.18f), settings.Close);
+            settingsRoot.gameObject.SetActive(false);
+
+            UiFactory.Button(objective, "Menu", GameText.Menu, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.80f, 0.29f), new Vector2(0.96f, 0.87f), settings.Open);
+
             var responsive = safe.gameObject.AddComponent<ResponsiveHud>();
             responsive.Bind(
                 statRects,
@@ -88,7 +110,8 @@ namespace Kamilunavo.PerfectDrop
                 joystick.GetComponent<RectTransform>(),
                 boosts.GetComponent<RectTransform>(),
                 jump.GetComponent<RectTransform>(),
-                completion);
+                completion,
+                settingsRoot);
 
             course.Build();
         }

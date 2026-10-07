@@ -204,6 +204,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
         public static void SpawnLandingBurst(Vector3 worldPosition, Gameplay.LandingGrade grade)
         {
+            if (GamePreferences.ReducedMotion) return;
             var root = new GameObject($"LandingBurst_{grade}").transform;
             root.position = worldPosition + Vector3.up * 0.12f;
 

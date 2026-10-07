@@ -48,8 +48,8 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [x] P04-T03 course progress
 - [x] P04-T04 joystick / Boosts / Jump layout
 - [~] P04-T05 exact safe-area/text verification
-- [ ] P04-T06 settings
-- [ ] P04-T07 reduced motion
+- [~] P04-T06 settings
+- [~] P04-T07 reduced motion
 - [~] P04-T08 DE/EN localization
 
 ## P05 Production visuals
@@ -157,3 +157,5 @@ P03/P05: finish gameplay balance and replace remaining procedural/prototype pres
 - [x] Completion overlay participates in compact, wide, landscape and fold/division responsive layouts.
 - [x] Current concept-driven presentation compiles and a fresh macOS development preview launches without runtime exceptions.
 - [~] World presentation now has a procedural dusk sky, cloud layer, skyline, layered platform construction, route emission and a human runner silhouette. It remains below the final concept screenshot-quality gate and must receive authored-production assets/polish before release.
+
+- [x] Settings/reduced-motion preference persistence is covered by the automated gameplay validation matrix; visual/device QA remains open.

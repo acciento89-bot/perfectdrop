@@ -64,12 +64,13 @@ namespace Kamilunavo.PerfectDrop.Feedback
 
         private void Play(AudioClip clip, float volume)
         {
-            if (_source == null || clip == null) return;
+            if (!GamePreferences.AudioEnabled || _source == null || clip == null) return;
             _source.PlayOneShot(clip, volume);
         }
 
         private static void Haptic()
         {
+            if (!GamePreferences.HapticsEnabled) return;
 #if UNITY_IOS || UNITY_ANDROID
             if (Application.isMobilePlatform) Handheld.Vibrate();
 #endif
