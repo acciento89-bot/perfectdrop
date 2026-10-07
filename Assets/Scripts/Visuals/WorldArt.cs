@@ -70,9 +70,11 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
             var torso = AddCube(visual, "Torso", new Vector3(0f, 1.12f, 0f), new Vector3(0.72f, 0.72f, 0.38f), RunnerDark).transform;
             AddCube(torso, "ChestSignal", new Vector3(0f, 0.06f, 0.52f), new Vector3(0.78f, 0.15f, 0.045f), Gold);
+            AddCube(torso, "BackSignal", new Vector3(0f, 0.06f, -0.52f), new Vector3(0.78f, 0.15f, 0.045f), Cyan);
 
             var head = AddPrimitive(PrimitiveType.Sphere, visual, "Head", new Vector3(0f, 1.72f, 0f), new Vector3(0.54f, 0.54f, 0.54f), RunnerLight).transform;
             AddCube(head, "Visor", new Vector3(0f, 0.02f, 0.49f), new Vector3(0.72f, 0.20f, 0.06f), Cyan);
+            AddCube(head, "RearHelmetSignal", new Vector3(0f, 0.02f, -0.49f), new Vector3(0.54f, 0.12f, 0.05f), Gold);
 
             var leftArm = AddCube(visual, "LeftArm", new Vector3(-0.48f, 1.10f, 0f), new Vector3(0.18f, 0.68f, 0.20f), RunnerDark).transform;
             var rightArm = AddCube(visual, "RightArm", new Vector3(0.48f, 1.10f, 0f), new Vector3(0.18f, 0.68f, 0.20f), RunnerDark).transform;
@@ -86,6 +88,26 @@ namespace Kamilunavo.PerfectDrop.Visuals
             animator.LeftLeg = leftLeg;
             animator.RightLeg = rightLeg;
             return animator;
+        }
+
+        public static void BuildGoalBeacon(Transform parent, Vector3 center)
+        {
+            if (parent == null) return;
+            var beacon = new GameObject("GoalBeacon").transform;
+            beacon.SetParent(parent, false);
+
+            const int segments = 28;
+            const float radius = 3.1f;
+            for (var i = 0; i < segments; i++)
+            {
+                var angle = i * Mathf.PI * 2f / segments;
+                var position = center + new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f);
+                var segment = AddCube(beacon, $"Ring_{i:00}", position, new Vector3(0.42f, 0.42f, 0.24f), Gold);
+                segment.transform.localRotation = Quaternion.Euler(0f, 0f, -angle * Mathf.Rad2Deg);
+            }
+
+            AddCube(beacon, "CoreVertical", center, new Vector3(0.16f, radius * 1.15f, 0.12f), Cyan);
+            AddCube(beacon, "CoreHorizontal", center, new Vector3(radius * 1.15f, 0.16f, 0.12f), Cyan);
         }
 
         public static void BuildSkyline(Transform parent, int seed = 260907)
@@ -143,19 +165,26 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
         private static Material CreateMaterial(string name, Color color, float metallic, float smoothness, Color? emission = null)
         {
-            var material = new Material(Shader.Find("Standard"))
-            {
-                name = name,
-                color = color,
-                hideFlags = HideFlags.HideAndDontSave
-            };
-            material.SetFloat("_Metallic", metallic);
-            material.SetFloat("_Glossiness", smoothness);
-            if (emission.HasValue)
+            var shader = Resources.Load<Shader>("PerfectDropSurface");
+            if (shader == null) shader = Shader.Find("Kamilunavo/PerfectDropSurface");
+            if (shader == null) throw new System.InvalidOperationException("PerfectDropSurface shader is missing from Resources.");
+
+            var material = new Material(shader);
+            material.name = name;
+            material.hideFlags = HideFlags.HideAndDontSave;
+
+            if (material.HasProperty("_Color")) material.SetColor("_Color", color);
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+            if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
+            if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
+            if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
+
+            if (emission.HasValue && material.HasProperty("_EmissionColor"))
             {
                 material.EnableKeyword("_EMISSION");
                 material.SetColor("_EmissionColor", emission.Value);
             }
+
             return material;
         }
     }

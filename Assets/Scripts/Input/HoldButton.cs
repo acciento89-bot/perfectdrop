@@ -17,7 +17,12 @@ namespace Kamilunavo.PerfectDrop.Input
             go.transform.SetParent(parent, false);
             var rect = go.GetComponent<RectTransform>();
             rect.anchorMin = min; rect.anchorMax = max; rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero;
-            go.GetComponent<Image>().color = color;
+            var image = go.GetComponent<Image>();
+            image.color = color;
+            UI.UiFactory.ApplyRoundedImage(image);
+            var shadow = go.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.34f);
+            shadow.effectDistance = new Vector2(0f, -4f);
             UI.UiFactory.Label(go.transform, "Label", label, 42, Vector2.zero, Vector2.one, TextAnchor.MiddleCenter, Color.white, FontStyle.Bold);
             return go.GetComponent<HoldButton>();
         }

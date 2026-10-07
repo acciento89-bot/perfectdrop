@@ -19,6 +19,12 @@ public static class BuildAutomation
         Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"));
     }
 
+    public static void BuildMacPreview()
+    {
+        PlayerSettings.resizableWindow = true;
+        Build(BuildTarget.StandaloneOSX, GetOutput("-buildOutput", "/private/tmp/PerfectDropPreview.app"));
+    }
+
     private static void Build(BuildTarget target, string output)
     {
         if (target == BuildTarget.iOS)

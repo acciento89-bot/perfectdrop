@@ -53,7 +53,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P04-T08 DE/EN localization
 
 ## P05 Production visuals
-- [~] P05-T01 runtime palette/material foundation
+- [x] P05-T01 runtime palette/material foundation
 - [ ] P05-T02 final character + animation
 - [ ] P05-T03 authored platform kit
 - [ ] P05-T04 skyline/cloud kit
@@ -130,3 +130,14 @@ P02/P04: runtime visual QA of the responsive controls/HUD, followed by iPhone Du
 - [x] Android IL2CPP development build revalidated after the adaptive changes.
 - [x] iOS Xcode export + signed generic-device build revalidated after the adaptive changes.
 - [x] Exported iOS project confirms deployment target 15.0, Team TKG684N5GL and bundle ID `com.kamilunavo.perfectdrop`.
+
+### Interactive desktop-player QA - 2026-10-07
+- [x] Development player launched without runtime exceptions after the production-material shader fix.
+- [x] Compact portrait layout rendered and remained playable.
+- [x] Wide portrait layout reflowed without overlapping mandatory controls.
+- [x] Resizable 4:3 landscape layout reflowed with stats left, objective right and critical controls outside the center band.
+- [x] Real keyboard-controlled jump reached Floor 2 and produced `GOOD`, streak x1 and 4 coins.
+- [x] Intentional fall recovered to the last safe platform; Floor/Best stayed at 2, streak reset to x0 and feedback returned to `READY`.
+- [x] Two-axis landing scoring now measures both lateral and longitudinal error in world units.
+- [x] Spawn/checkpoint position is aligned to the actual top surface of the platform instead of floating above it.
+- [~] Procedural production pass now includes rounded HUD/controls, cyan landing bays, gold platform trim, skyline structures, milestone posts, a stylized runner and a distant goal beacon.

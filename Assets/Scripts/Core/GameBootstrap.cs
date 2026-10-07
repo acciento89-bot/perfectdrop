@@ -5,6 +5,7 @@ using Kamilunavo.PerfectDrop.CameraSystem;
 using Kamilunavo.PerfectDrop.Gameplay;
 using Kamilunavo.PerfectDrop.Input;
 using Kamilunavo.PerfectDrop.UI;
+using Kamilunavo.PerfectDrop.Visuals;
 
 namespace Kamilunavo.PerfectDrop
 {
@@ -21,6 +22,7 @@ namespace Kamilunavo.PerfectDrop
             RenderSettings.fog = true;
             RenderSettings.fogColor = new Color(0.22f, 0.35f, 0.55f);
             RenderSettings.fogDensity = 0.006f;
+            RenderSettings.ambientLight = new Color(0.12f, 0.16f, 0.24f);
             EnsureEventSystem();
             CreateLighting();
 
@@ -89,7 +91,7 @@ namespace Kamilunavo.PerfectDrop
             controller.radius = 0.42f;
             controller.center = new Vector3(0f, 1f, 0f);
             go.AddComponent<PlayerMotor>();
-            go.GetComponent<Renderer>().material = new Material(Shader.Find("Standard")) { color = new Color(0.05f, 0.06f, 0.08f) };
+            WorldArt.CreateRunnerVisual(go.transform);
             return go;
         }
 
@@ -99,6 +101,9 @@ namespace Kamilunavo.PerfectDrop
             go.tag = "MainCamera";
             var camera = go.GetComponent<Camera>();
             camera.fieldOfView = 58f;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.025f, 0.055f, 0.105f);
+            camera.allowHDR = true;
             var orbit = go.GetComponent<OrbitCamera>();
             orbit.Target = target;
             orbit.Distance = 7.5f;
@@ -119,7 +124,7 @@ namespace Kamilunavo.PerfectDrop
 
         private static void EnsureEventSystem()
         {
-            if (FindFirstObjectByType<EventSystem>() != null) return;
+            if (FindAnyObjectByType<EventSystem>() != null) return;
             new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         }
     }

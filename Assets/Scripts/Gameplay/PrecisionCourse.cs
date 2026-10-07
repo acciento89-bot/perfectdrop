@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Kamilunavo.PerfectDrop.Visuals;
 
 namespace Kamilunavo.PerfectDrop.Gameplay
 {
@@ -20,35 +21,44 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private int _streak;
         private int _coins;
         private Vector3 _safePosition;
-        private static readonly Color Dark = new(0.035f, 0.055f, 0.09f);
-        private static readonly Color Gold = new(1f, 0.63f, 0.08f);
+        private const float FallRecoveryDistance = 3.6f;
 
         public void Build()
         {
             Random.InitState(260906);
-            var x = 0f; var y = 0f; var z = 0f;
+            var x = 0f;
+            var y = 0f;
+            var z = 0f;
+
             for (var i = 0; i < 30; i++)
             {
-                if (i > 0) { x = Mathf.Clamp(x + Random.Range(-2.2f, 2.2f), -5.8f, 5.8f); y += Random.Range(0.65f, 1.05f); z += Random.Range(4.3f, 5.1f); }
+                if (i > 0)
+                {
+                    x = Mathf.Clamp(x + Random.Range(-2.2f, 2.2f), -5.8f, 5.8f);
+                    y += Random.Range(0.65f, 1.05f);
+                    z += Random.Range(4.3f, 5.1f);
+                }
+
                 var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 go.name = $"Floor_{i + 1:00}";
                 go.transform.SetParent(transform, false);
                 go.transform.position = new Vector3(x, y, z);
                 go.transform.localScale = new Vector3(5.6f, 0.65f, 4.2f);
-                go.GetComponent<Renderer>().material = new Material(Shader.Find("Standard")) { color = Dark };
+
                 var marker = go.AddComponent<PrecisionPlatform>();
                 marker.Index = i;
                 marker.BayHalfWidth = 1.65f;
+                marker.BayHalfDepth = 1.10f;
                 _platforms.Add(marker);
-                var bay = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                bay.name = "LandingBay";
-                bay.transform.SetParent(go.transform, false);
-                bay.transform.localPosition = new Vector3(0f, 0.53f, 0f);
-                bay.transform.localScale = new Vector3(0.62f, 0.08f, 0.62f);
-                Destroy(bay.GetComponent<Collider>());
-                bay.GetComponent<Renderer>().material = new Material(Shader.Find("Standard")) { color = Gold };
+
+                WorldArt.DecoratePlatform(go.transform, i);
+                WorldArt.CreateLandingBay(go.transform, marker.BayHalfWidth, marker.BayHalfDepth);
             }
-            _safePosition = _platforms[0].transform.position + Vector3.up * 1.5f;
+
+            WorldArt.BuildSkyline(transform);
+            WorldArt.BuildGoalBeacon(transform, new Vector3(x, y + 4.8f, z + 8f));
+
+            _safePosition = SpawnPoint(_platforms[0].transform);
             Player.position = _safePosition;
             RefreshHud();
         }
@@ -57,19 +67,24 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             if (Player == null || _platforms.Count == 0) return;
             var floorY = _platforms[Mathf.Clamp(_currentFloor, 0, _platforms.Count - 1)].transform.position.y;
-            if (Player.position.y < floorY - 9f) Respawn();
+            if (Player.position.y < floorY - FallRecoveryDistance) Respawn();
         }
 
         public void RegisterLanding(PrecisionPlatform platform, Vector3 playerPosition)
         {
             if (platform.Index <= _currentFloor || platform.Index > _currentFloor + 1) return;
-            var local = platform.transform.InverseTransformPoint(playerPosition);
-            var grade = PrecisionScoring.Grade(Mathf.Abs(local.x), platform.BayHalfWidth);
+
+            var offset = playerPosition - platform.transform.position;
+            var localX = Vector3.Dot(offset, platform.transform.right.normalized);
+            var localZ = Vector3.Dot(offset, platform.transform.forward.normalized);
+            var grade = PrecisionScoring.Grade(localX, localZ, platform.BayHalfWidth, platform.BayHalfDepth);
+
             _currentFloor = platform.Index;
             _best = Mathf.Max(_best, _currentFloor + 1);
             _streak = grade == LandingGrade.Safe ? 0 : _streak + 1;
             _coins += PrecisionScoring.CoinReward(grade, _streak);
-            _safePosition = platform.transform.position + Vector3.up * 1.5f;
+            _safePosition = SpawnPoint(platform.transform);
+
             if (FeedbackText != null) FeedbackText.text = grade.ToString().ToUpperInvariant();
             RefreshHud();
         }
@@ -80,9 +95,16 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (controller != null) controller.enabled = false;
             Player.position = _safePosition;
             if (controller != null) controller.enabled = true;
+
             _streak = 0;
             if (FeedbackText != null) FeedbackText.text = "READY";
             RefreshHud();
+        }
+
+        private static Vector3 SpawnPoint(Transform platform)
+        {
+            var top = platform.lossyScale.y * 0.5f;
+            return platform.position + Vector3.up * (top + 0.06f);
         }
 
         private void RefreshHud()
