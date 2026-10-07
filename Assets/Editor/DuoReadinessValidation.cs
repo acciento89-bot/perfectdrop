@@ -13,7 +13,9 @@ namespace Kamilunavo.PerfectDrop.Editor
             AssertLayout(1536f, 2048f, MobileLayoutClass.WidePortrait, "iPhone Duo / 3:4 portrait");
             AssertLayout(2048f, 1536f, MobileLayoutClass.Landscape, "iPhone Duo / 4:3 landscape");
             AssertLayout(2556f, 1179f, MobileLayoutClass.Landscape, "wide resizable landscape");
-            UnityEngine.Debug.Log("[PerfectDrop] Adaptive display matrix passed.");
+            AssertDivision(new UnityEngine.Rect(0.48f, 0f, 0.04f, 1f), expectedVertical: true, "vertical folding region");
+            AssertDivision(new UnityEngine.Rect(0f, 0.48f, 1f, 0.04f), expectedVertical: false, "horizontal folding region");
+            UnityEngine.Debug.Log("[PerfectDrop] Adaptive display + reserved-region matrix passed.");
         }
 
         private static void AssertLayout(float width, float height, MobileLayoutClass expected, string label)
@@ -21,6 +23,13 @@ namespace Kamilunavo.PerfectDrop.Editor
             var actual = ResponsiveHud.Classify(width, height);
             if (actual != expected)
                 throw new InvalidOperationException($"{label}: expected {expected}, got {actual} ({width}x{height}).");
+        }
+
+        private static void AssertDivision(UnityEngine.Rect region, bool expectedVertical, string label)
+        {
+            var actual = ResponsiveHud.IsVerticalDivision(region);
+            if (actual != expectedVertical)
+                throw new InvalidOperationException($"{label}: expected vertical={expectedVertical}, got {actual}.");
         }
     }
 }

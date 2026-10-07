@@ -57,7 +57,7 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P05-T02 final character + animation
 - [ ] P05-T03 authored platform kit
 - [ ] P05-T04 skyline/cloud kit
-- [ ] P05-T05 landing VFX
+- [~] P05-T05 landing VFX
 - [ ] P05-T06 final lighting/post-processing
 - [ ] P05-T07 screenshot-quality gate
 
@@ -117,6 +117,8 @@ P03/P05: finish gameplay balance and replace remaining procedural/prototype pres
 - [x] Code signature verified: identifier `com.kamilunavo.perfectdrop`, Apple Team `TKG684N5GL`.
 - [ ] Store-ready 1024x1024 app icon and final release/archive validation remain release tasks.
 - [x] iOS 27.1 Simulator Runtime is installed and the app launches on the official iPhone Duo simulator.
+- [x] Latest Perfect Drop simulator build renders correctly on the iPhone Duo inner display with the adaptive landscape HUD.
+- [x] Automated gameplay progression/restart matrix passes, including conservative no-boost reachability for all 30 floors.
 
 
 ### iPhone Duo readiness note

@@ -15,8 +15,31 @@ public static class BuildAutomation
 
     public static void BuildIOS()
     {
-        PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
-        Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"));
+        var previousSdk = PlayerSettings.iOS.sdkVersion;
+        try
+        {
+            PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
+            PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+            Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"));
+        }
+        finally
+        {
+            PlayerSettings.iOS.sdkVersion = previousSdk;
+        }
+    }
+
+    public static void BuildIOSSimulator()
+    {
+        var previousSdk = PlayerSettings.iOS.sdkVersion;
+        try
+        {
+            PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+            Build(BuildTarget.iOS, GetOutput("-buildOutput", "/private/tmp/PerfectDrop-iOS-Simulator"));
+        }
+        finally
+        {
+            PlayerSettings.iOS.sdkVersion = previousSdk;
+        }
     }
 
     public static void BuildMacPreview()

@@ -20,7 +20,11 @@ namespace Kamilunavo.PerfectDrop.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             PlayerSettings.companyName = "Kamilunavo";
             PlayerSettings.productName = "Perfect Drop";
-            PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
+            PlayerSettings.allowedAutorotateToPortrait = true;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
             PlayerSettings.bundleVersion = "1.0";
             PlayerSettings.iOS.buildNumber = "1";
             PlayerSettings.Android.bundleVersionCode = 1;

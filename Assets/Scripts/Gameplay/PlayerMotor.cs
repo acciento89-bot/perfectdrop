@@ -10,9 +10,10 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public HoldButton JumpButton;
         public Transform CameraTransform;
         public PrecisionCourse Course;
-        public float MoveSpeed = 5.8f;
-        public float JumpSpeed = 8.2f;
+        public float MoveSpeed = 7.2f;
+        public float JumpSpeed = 8.8f;
         public float Gravity = 22f;
+        public bool InputEnabled { get; set; } = true;
         private CharacterController _controller;
         private float _vertical;
         private float _boostMultiplier = 1f;
@@ -23,6 +24,14 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private void Update()
         {
             if (Time.time > _boostUntil) _boostMultiplier = 1f;
+            if (!InputEnabled)
+            {
+                if (_controller.isGrounded) _vertical = -2f;
+                else _vertical -= Gravity * Time.deltaTime;
+                _controller.Move(Vector3.up * (_vertical * Time.deltaTime));
+                return;
+            }
+
             var touch = Joystick != null ? Joystick.Value : Vector2.zero;
             var keyboard = new Vector2(UnityEngine.Input.GetAxisRaw("Horizontal"), UnityEngine.Input.GetAxisRaw("Vertical"));
             var move = touch.sqrMagnitude > 0.01f ? touch : Vector2.ClampMagnitude(keyboard, 1f);
@@ -40,7 +49,19 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             _controller.Move(velocity * Time.deltaTime);
         }
 
-        public void ApplyBoost(float multiplier, float duration) { _boostMultiplier = Mathf.Max(1f, multiplier); _boostUntil = Time.time + Mathf.Max(0.1f, duration); }
+        public void ApplyBoost(float multiplier, float duration)
+        {
+            if (!InputEnabled) return;
+            _boostMultiplier = Mathf.Max(1f, multiplier);
+            _boostUntil = Time.time + Mathf.Max(0.1f, duration);
+        }
+
+        public void ResetMotion()
+        {
+            _vertical = -2f;
+            _boostMultiplier = 1f;
+            _boostUntil = 0f;
+        }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {

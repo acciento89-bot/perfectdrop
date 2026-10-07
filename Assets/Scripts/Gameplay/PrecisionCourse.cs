@@ -7,6 +7,10 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 {
     public sealed class PrecisionCourse : MonoBehaviour
     {
+        private const string BestKey = "perfectdrop.bestFloor";
+        private const string CoinsKey = "perfectdrop.coins";
+        private const float FallRecoveryDistance = 3.0f;
+
         public Transform Player;
         public Text FloorText;
         public Text BestText;
@@ -14,17 +18,31 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public Text CoinsText;
         public Text FeedbackText;
         public Image ProgressFill;
+        public GameObject CompletionPanel;
+        public Text CompletionText;
 
         private readonly List<PrecisionPlatform> _platforms = new();
+        private PlayerMotor _motor;
         private int _currentFloor;
         private int _best;
         private int _streak;
         private int _coins;
         private Vector3 _safePosition;
-        private const float FallRecoveryDistance = 3.6f;
+        private bool _completed;
+
+        public int CurrentFloor => _currentFloor + 1;
+        public int Best => _best;
+        public int Streak => _streak;
+        public int Coins => _coins;
+        public bool IsCompleted => _completed;
+        public IReadOnlyList<PrecisionPlatform> Platforms => _platforms;
 
         public void Build()
         {
+            _best = Mathf.Clamp(PlayerPrefs.GetInt(BestKey, 1), 1, 30);
+            _coins = Mathf.Max(0, PlayerPrefs.GetInt(CoinsKey, 0));
+            _motor = Player != null ? Player.GetComponent<PlayerMotor>() : null;
+
             Random.InitState(260906);
             var x = 0f;
             var y = 0f;
@@ -34,9 +52,11 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             {
                 if (i > 0)
                 {
-                    x = Mathf.Clamp(x + Random.Range(-2.2f, 2.2f), -5.8f, 5.8f);
-                    y += Random.Range(0.65f, 1.05f);
-                    z += Random.Range(4.3f, 5.1f);
+                    // Mobile-first spacing: every jump is reachable without requiring a paid/temporary boost.
+                    // Difficulty comes from landing precision and lateral correction, not impossible gaps.
+                    x = Mathf.Clamp(x + Random.Range(-1.45f, 1.45f), -5.2f, 5.2f);
+                    y += Random.Range(0.58f, 0.92f);
+                    z += Random.Range(3.15f, 3.75f);
                 }
 
                 var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -52,26 +72,26 @@ namespace Kamilunavo.PerfectDrop.Gameplay
                 _platforms.Add(marker);
 
                 WorldArt.DecoratePlatform(go.transform, i);
-                WorldArt.CreateLandingBay(go.transform, marker.BayHalfWidth, marker.BayHalfDepth);
+                marker.LandingBayRoot = WorldArt.CreateLandingBay(go.transform, marker.BayHalfWidth, marker.BayHalfDepth);
+                marker.SetTarget(false);
             }
 
+            WorldArt.BuildAtmosphere(transform);
             WorldArt.BuildSkyline(transform);
             WorldArt.BuildGoalBeacon(transform, new Vector3(x, y + 4.8f, z + 8f));
 
-            _safePosition = SpawnPoint(_platforms[0].transform);
-            Player.position = _safePosition;
-            RefreshHud();
+            StartRun();
         }
 
         private void Update()
         {
-            if (Player == null || _platforms.Count == 0) return;
-            var floorY = _platforms[Mathf.Clamp(_currentFloor, 0, _platforms.Count - 1)].transform.position.y;
-            if (Player.position.y < floorY - FallRecoveryDistance) Respawn();
+            if (_completed || Player == null || _platforms.Count == 0) return;
+            if (Player.position.y < _safePosition.y - FallRecoveryDistance) Respawn();
         }
 
         public void RegisterLanding(PrecisionPlatform platform, Vector3 playerPosition)
         {
+            if (_completed || platform == null) return;
             if (platform.Index <= _currentFloor || platform.Index > _currentFloor + 1) return;
 
             var offset = playerPosition - platform.transform.position;
@@ -79,26 +99,77 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var localZ = Vector3.Dot(offset, platform.transform.forward.normalized);
             var grade = PrecisionScoring.Grade(localX, localZ, platform.BayHalfWidth, platform.BayHalfDepth);
 
+            _platforms[_currentFloor].SetTarget(false);
+            platform.SetTarget(false);
             _currentFloor = platform.Index;
             _best = Mathf.Max(_best, _currentFloor + 1);
             _streak = grade == LandingGrade.Safe ? 0 : _streak + 1;
             _coins += PrecisionScoring.CoinReward(grade, _streak);
             _safePosition = SpawnPoint(platform.transform);
+            WorldArt.SpawnLandingBurst(platform.transform.position + Vector3.up * (platform.transform.lossyScale.y * 0.5f), grade);
+
+            PlayerPrefs.SetInt(BestKey, _best);
+            PlayerPrefs.SetInt(CoinsKey, _coins);
+            PlayerPrefs.Save();
 
             if (FeedbackText != null) FeedbackText.text = grade.ToString().ToUpperInvariant();
             RefreshHud();
+
+            if (_currentFloor >= _platforms.Count - 1)
+                CompleteRun();
+            else
+                _platforms[_currentFloor + 1].SetTarget(true);
         }
 
         public void Respawn()
         {
-            var controller = Player.GetComponent<CharacterController>();
-            if (controller != null) controller.enabled = false;
-            Player.position = _safePosition;
-            if (controller != null) controller.enabled = true;
-
+            if (_completed || Player == null) return;
+            WarpPlayer(_safePosition);
             _streak = 0;
             if (FeedbackText != null) FeedbackText.text = "READY";
             RefreshHud();
+        }
+
+        public void RestartRun()
+        {
+            StartRun();
+        }
+
+        private void StartRun()
+        {
+            if (_platforms.Count == 0 || Player == null) return;
+
+            foreach (var platform in _platforms) platform.SetTarget(false);
+            _currentFloor = 0;
+            _streak = 0;
+            _completed = false;
+            _safePosition = SpawnPoint(_platforms[0].transform);
+            WarpPlayer(_safePosition);
+            if (_platforms.Count > 1) _platforms[1].SetTarget(true);
+            if (_motor != null) _motor.InputEnabled = true;
+            if (CompletionPanel != null) CompletionPanel.SetActive(false);
+            if (FeedbackText != null) FeedbackText.text = "READY";
+            RefreshHud();
+        }
+
+        private void CompleteRun()
+        {
+            _completed = true;
+            if (_motor != null) _motor.InputEnabled = false;
+            if (FeedbackText != null) FeedbackText.text = "TOWER CLEAR";
+            if (CompletionText != null)
+                CompletionText.text = $"30 FLOORS CLEARED\nBEST  {_best}   •   COINS  {_coins}";
+            if (CompletionPanel != null) CompletionPanel.SetActive(true);
+            RefreshHud();
+        }
+
+        private void WarpPlayer(Vector3 position)
+        {
+            var controller = Player.GetComponent<CharacterController>();
+            if (controller != null) controller.enabled = false;
+            Player.position = position;
+            if (controller != null) controller.enabled = true;
+            if (_motor != null) _motor.ResetMotion();
         }
 
         private static Vector3 SpawnPoint(Transform platform)

@@ -23,6 +23,7 @@ namespace Kamilunavo.PerfectDrop
             RenderSettings.fogColor = new Color(0.22f, 0.35f, 0.55f);
             RenderSettings.fogDensity = 0.006f;
             RenderSettings.ambientLight = new Color(0.12f, 0.16f, 0.24f);
+            WorldArt.ApplySkybox();
             EnsureEventSystem();
             CreateLighting();
 
@@ -48,6 +49,7 @@ namespace Kamilunavo.PerfectDrop
             var feedback = UiFactory.Label(safe, "Feedback", "READY", 30, new Vector2(0.32f, 0.73f), new Vector2(0.68f, 0.78f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
             var joystick = VirtualJoystick.Create(safe, new Vector2(0.03f, 0.035f), new Vector2(0.29f, 0.18f));
             var jump = HoldButton.Create(safe, "↑", new Vector2(0.78f, 0.035f), new Vector2(0.97f, 0.17f), new Color(0.03f, 0.06f, 0.11f, 0.92f));
+            UiFactory.ApplyCircularImage(jump.GetComponent<Image>());
 
             var player = CreatePlayer();
             var camera = CreateCamera(player.transform);
@@ -69,6 +71,14 @@ namespace Kamilunavo.PerfectDrop
 
             var boosts = UiFactory.Button(safe, "Boosts", "BOOSTS", Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.34f, 0.045f), new Vector2(0.68f, 0.125f), () => motor.ApplyBoost(1.22f, 5f));
 
+            var completion = UiFactory.Panel(safe, "Completion", new Color(0.02f, 0.045f, 0.085f, 0.985f), new Vector2(0.09f, 0.33f), new Vector2(0.91f, 0.67f));
+            UiFactory.Label(completion, "Title", "TOWER CLEARED", 52, new Vector2(0.07f, 0.67f), new Vector2(0.93f, 0.91f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
+            var completionText = UiFactory.Label(completion, "Summary", "30 FLOORS CLEARED", 31, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.66f), TextAnchor.MiddleCenter, TextColor, FontStyle.Bold);
+            UiFactory.Button(completion, "RunAgain", "RUN AGAIN", Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.31f), course.RestartRun);
+            completion.gameObject.SetActive(false);
+            course.CompletionPanel = completion.gameObject;
+            course.CompletionText = completionText;
+
             var responsive = safe.gameObject.AddComponent<ResponsiveHud>();
             responsive.Bind(
                 statRects,
@@ -76,16 +86,15 @@ namespace Kamilunavo.PerfectDrop
                 feedback.rectTransform,
                 joystick.GetComponent<RectTransform>(),
                 boosts.GetComponent<RectTransform>(),
-                jump.GetComponent<RectTransform>());
+                jump.GetComponent<RectTransform>(),
+                completion);
 
             course.Build();
         }
 
         private static GameObject CreatePlayer()
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            go.name = "Runner";
-            Destroy(go.GetComponent<Collider>());
+            var go = new GameObject("Runner");
             var controller = go.AddComponent<CharacterController>();
             controller.height = 2f;
             controller.radius = 0.42f;
@@ -101,7 +110,7 @@ namespace Kamilunavo.PerfectDrop
             go.tag = "MainCamera";
             var camera = go.GetComponent<Camera>();
             camera.fieldOfView = 58f;
-            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.clearFlags = CameraClearFlags.Skybox;
             camera.backgroundColor = new Color(0.025f, 0.055f, 0.105f);
             camera.allowHDR = true;
             var orbit = go.GetComponent<OrbitCamera>();
