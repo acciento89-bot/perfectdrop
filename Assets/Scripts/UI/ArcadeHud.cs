@@ -16,7 +16,8 @@ namespace Kamilunavo.PerfectDrop.UI
         private void BuildArcadeMenus()
         {
             _powerRow=UiFactory.Panel(_safe,"Powers",Color.clear,Vector2.zero,Vector2.one);
-            _powerInfo=UiFactory.Label(_powerRow,"Energy","",28,new Vector2(.02f,.74f),new Vector2(.98f,1),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
+            var powerInfoCard=UiFactory.Panel(_powerRow,"PowerInfoCard",Navy,new Vector2(0,.74f),new Vector2(.985f,1));
+            _powerInfo=UiFactory.Label(powerInfoCard,"Energy","",28,new Vector2(.02f,0),new Vector2(.98f,1),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
             _powerButtons=new Button[3];
             for(var i=0;i<3;i++)
             {

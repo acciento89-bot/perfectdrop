@@ -39,11 +39,21 @@ public static class BuildAutomation
 
     public static void BuildIOSSimulator()
     {
+        BuildSimulator(development: false);
+    }
+
+    public static void BuildIOSSimulatorQa()
+    {
+        BuildSimulator(development: true);
+    }
+
+    private static void BuildSimulator(bool development)
+    {
         var previousSdk = PlayerSettings.iOS.sdkVersion;
         try
         {
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-            Build(BuildTarget.iOS, GetOutput("-buildOutput", "/private/tmp/PerfectDrop-iOS-Simulator"), development: false);
+            Build(BuildTarget.iOS, GetOutput("-buildOutput", "/private/tmp/PerfectDrop-iOS-Simulator"), development);
         }
         finally
         {

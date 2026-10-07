@@ -31,7 +31,7 @@ namespace Kamilunavo.PerfectDrop.QA
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
-            var args=Environment.GetCommandLineArgs();
+            var args=QaLaunch.Arguments();
             for(var i=0;i<args.Length-1;i++)if(args[i]=="-qaRenderSoak")
             {
                 StackSave.QaKey="perfectdrop.render-soak.qa.v1";
@@ -69,7 +69,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 {
                     nextPhase=elapsed+60; _mode="warmup"; yield return Phase(phase++%6);
                     yield return new WaitForSecondsRealtime(2);
-                    ScreenCapture.CaptureScreenshot(Path.Combine(_output,_mode+".png"));
+                    ScreenCapture.CaptureScreenshot(QaLaunch.ScreenshotPath(_output,_mode));
                 }
                 if(!_frames.TryGetValue(_mode,out var frames)){frames=new List<float>();_frames[_mode]=frames;}
                 frames.Add(Time.unscaledDeltaTime*1000);_frameCount++;if(Application.isFocused)_focusedFrames++;

@@ -4,6 +4,8 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using Kamilunavo.PerfectDrop.Gameplay;
 namespace Kamilunavo.PerfectDrop.QA
 {
@@ -15,7 +17,7 @@ namespace Kamilunavo.PerfectDrop.QA
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
-            var args = Environment.GetCommandLineArgs();
+            var args = QaLaunch.Arguments();
             for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity")
             {
                 StackSave.QaKey = args[i]!="-qaSmoke"?"perfectdrop.arcade.qa.v1":"perfectdrop.stack.qa.v1";
@@ -27,20 +29,34 @@ namespace Kamilunavo.PerfectDrop.QA
         private IEnumerator Start()
         {
             Directory.CreateDirectory(_output);
+            File.WriteAllText(Path.Combine(_output,"result.txt"),"RUNNING\n");
             Time.captureDeltaTime = 1f / 60f; // Functional input timing; this does not measure real frame rate.
             var run = _cityOnly?RunCity():_arcade?RunArcade():Run();
-            while (true)
+            var pending = new Stack<IEnumerator>();
+            pending.Push(run);
+            while (pending.Count > 0)
             {
                 object next;
-                try { if (!run.MoveNext()) break; next=run.Current; }
+                try
+                {
+                    var current = pending.Peek();
+                    if (!current.MoveNext()) { pending.Pop(); continue; }
+                    next=current.Current;
+                }
                 catch (Exception error)
                 {
                     Debug.LogException(error); File.WriteAllText(Path.Combine(_output,"result.txt"),"FAIL\n"+error);
-                    ScreenCapture.CaptureScreenshot(Path.Combine(_output,"failure.png")); yield break;
+                    ScreenCapture.CaptureScreenshot(QaLaunch.ScreenshotPath(_output,"failure")); yield break;
                 }
-                yield return next;
+                if (next is IEnumerator nested && !(next is CustomYieldInstruction)) pending.Push(nested);
+                else yield return next;
             }
             File.WriteAllText(Path.Combine(_output,"result.txt"),_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
+            if (Application.isMobilePlatform) File.WriteAllText(Path.Combine(_output,"result.txt"),
+                "PASS: native current pose; game callbacks and visible-button raycasts. " +
+                (_cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
+                "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n" +
+                $"Final framebuffer: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}.\n");
             Debug.Log("[PerfectDrop][QA] Stack runtime matrix passed.");
         }
         private IEnumerator Run()
@@ -83,15 +99,15 @@ namespace Kamilunavo.PerfectDrop.QA
                 if (floor==5)
                 {
                     yield return Capture("portrait");
-                    Screen.SetResolution(800,600,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f); yield return Capture("landscape");
+                    SetReviewResolution(800,600,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f); yield return Capture("landscape");
                     Require(_game.Run.Layers.Count==5,"Resize reset progress.");
                     Kamilunavo.PerfectDrop.UI.ReservedRegionProvider.QaDivision = new Rect(.48f,0,.04f,1);
                     yield return new WaitForSecondsRealtime(.5f); yield return Capture("division-synthetic");
                     CheckFraming();
                     Kamilunavo.PerfectDrop.UI.ReservedRegionProvider.QaDivision = null;
-                    Screen.SetResolution(600,800,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f); yield return Capture("wide-portrait");
+                    SetReviewResolution(600,800,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f); yield return Capture("wide-portrait");
                     Require(_game.Run.Layers.Count==5,"Second resize reset progress.");
-                    Screen.SetResolution(540,960,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f);
+                    SetReviewResolution(540,960,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f);
                     var coins = _game.Profile.Coins;
                     _game.Save();
                     yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);
@@ -122,7 +138,7 @@ namespace Kamilunavo.PerfectDrop.QA
             yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);
             _game=FindFirstObjectByType<StackGame>();yield return Capture("level-map");FindButton("City").onClick.Invoke();FindButton("CityDistrict0").onClick.Invoke();
             yield return new WaitForSecondsRealtime(.5f);yield return Capture("city-portrait");
-            Screen.SetResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("city-landscape");
+            SetReviewResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("city-landscape");
             var building=GameObject.Find("CityTower1");var bounds=new Bounds(building.transform.position,Vector3.zero);
             foreach(var renderer in building.GetComponentsInChildren<Renderer>())bounds.Encapsulate(renderer.bounds);
             for(var i=0;i<8;i++)
@@ -138,8 +154,8 @@ namespace Kamilunavo.PerfectDrop.QA
             Require(GameObject.Find("LevelMap")!=null,"Campaign did not open its map.");
             Require(FindButton("LevelSlot0").interactable && !FindButton("LevelSlot1").interactable,"Fresh level locks incorrect.");
             yield return Capture("level-map");
-            Screen.SetResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("map-landscape");
-            Screen.SetResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
+            SetReviewResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("map-landscape");
+            SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
             FindButton("LevelSlot0").onClick.Invoke();
             for(var block=1;block<=6;block++)
             {
@@ -200,8 +216,8 @@ namespace Kamilunavo.PerfectDrop.QA
             yield return new WaitForSecondsRealtime(.5f);Require(_game.Hud.CityOpen,"City did not open.");
             FindButton("CityDistrict0").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);yield return Capture("owned-city");
             Require(GameObject.Find("Skyline")==null,"Legacy skyline occluded city view.");
-            Screen.SetResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("city-landscape");
-            Screen.SetResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
+            SetReviewResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("city-landscape");
+            SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
             Require(GameObject.Find("CityTower1")!=null,"Completed tower missing in city view.");
             FindButton("CityBack").onClick.Invoke();FindButton("Styles").onClick.Invoke();
             var wallet=_game.Profile.Coins;FindButton("Style1").onClick.Invoke();
@@ -259,9 +275,41 @@ namespace Kamilunavo.PerfectDrop.QA
         }
         private IEnumerator Capture(string name)
         {
+            if (Application.isMobilePlatform) name = name.Replace("wide-portrait", "native-current-pose").Replace("landscape", "native-current-pose").Replace("portrait", "native-current-pose");
             yield return new WaitForEndOfFrame();
-            ScreenCapture.CaptureScreenshot(Path.Combine(_output,name+".png"));
+            CheckButtonRaycasts();
+            File.AppendAllText(Path.Combine(_output,"captures.txt"),$"{name}: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}\n");
+            ScreenCapture.CaptureScreenshot(QaLaunch.ScreenshotPath(_output,name));
             yield return new WaitForSecondsRealtime(.3f);
+        }
+        private static void CheckButtonRaycasts()
+        {
+            if (Array.IndexOf(QaLaunch.Arguments(), "-qaBlockedButtonProbe") >= 0 && GameObject.Find("QaRaycastBlocker") == null)
+            {
+                var blocker = new GameObject("QaRaycastBlocker", typeof(RectTransform), typeof(Image));
+                var rect = (RectTransform)blocker.transform;
+                rect.SetParent(FindFirstObjectByType<Canvas>().transform, false);
+                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                blocker.GetComponent<Image>().color = Color.clear;
+            }
+            Canvas.ForceUpdateCanvases();
+            var hits = new List<RaycastResult>();
+            foreach (var button in FindObjectsByType<Button>(FindObjectsSortMode.None))
+            {
+                if (!button.isActiveAndEnabled || !button.IsInteractable()) continue;
+                var rect = (RectTransform)button.transform;
+                var point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
+                hits.Clear();
+                EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
+                Require(hits.Count > 0 && hits[0].gameObject.GetComponentInParent<Button>() == button,
+                    "Visible button center is blocked or outside the input area: " + button.name);
+            }
+        }
+        private static void SetReviewResolution(int width, int height, bool fullscreen)
+        {
+            // Mobile render-size overrides do not simulate actual device rotation/poses.
+            if (!Application.isMobilePlatform) Screen.SetResolution(width, height, fullscreen);
         }
         private static Button FindButton(string name)
         {
