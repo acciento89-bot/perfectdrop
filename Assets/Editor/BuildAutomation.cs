@@ -10,7 +10,15 @@ public static class BuildAutomation
     public static void BuildAndroid()
     {
         EditorUserBuildSettings.buildAppBundle = false;
+        ApplyVersionArguments();
         Build(BuildTarget.Android, GetOutput("-buildOutput", "Builds/Android/app-dev.apk"), development: true);
+    }
+
+    public static void BuildAndroidRelease()
+    {
+        EditorUserBuildSettings.buildAppBundle = true;
+        ApplyVersionArguments();
+        Build(BuildTarget.Android, GetOutput("-buildOutput", "Builds/Android/PerfectDrop.aab"), development: false);
     }
 
     public static void BuildIOS()
@@ -20,6 +28,7 @@ public static class BuildAutomation
         {
             PlayerSettings.iOS.appleDeveloperTeamID = "TKG684N5GL";
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+            ApplyVersionArguments();
             Build(BuildTarget.iOS, GetOutput("-buildOutput", "Builds/iOS"), development: false);
         }
         finally
@@ -79,6 +88,31 @@ public static class BuildAutomation
         var report = BuildPipeline.BuildPlayer(options);
         if (report.summary.result != BuildResult.Succeeded)
             throw new InvalidOperationException($"Build failed: {report.summary.result} with {report.summary.totalErrors} error(s).");
+    }
+
+    private static void ApplyVersionArguments()
+    {
+        var versionName = GetOptionalArgument("-versionName");
+        if (!string.IsNullOrWhiteSpace(versionName))
+            PlayerSettings.bundleVersion = versionName.Trim();
+
+        var buildNumber = GetOptionalArgument("-buildNumber");
+        if (string.IsNullOrWhiteSpace(buildNumber)) return;
+        if (!int.TryParse(buildNumber, out var numericBuild) || numericBuild < 1)
+            throw new InvalidOperationException($"Invalid -buildNumber '{buildNumber}'. Expected a positive integer.");
+
+        PlayerSettings.iOS.buildNumber = numericBuild.ToString();
+        PlayerSettings.Android.bundleVersionCode = numericBuild;
+    }
+
+    private static string GetOptionalArgument(string key)
+    {
+        var args = Environment.GetCommandLineArgs();
+        for (var i = 0; i < args.Length - 1; i++)
+        {
+            if (args[i] == key) return args[i + 1];
+        }
+        return null;
     }
 
     private static string GetOutput(string key, string fallback)
