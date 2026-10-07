@@ -9,6 +9,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
     [Serializable] public struct StackLayer { public Vector2 Center, Size; }
     public struct StackDrop
     {
+        public bool Rescued;
         public StackGrade Grade;
         public Vector2 Center, Size, CutCenter, CutSize;
     }
@@ -62,30 +63,61 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 
     public sealed class StackRun
     {
+        public const int RetainedLayers = 64;
         public readonly List<StackLayer> Layers = new();
+        public StackPowers Powers { get; private set; } = new();
+        public int Count { get; private set; }
+        public int PerfectDrops { get; private set; }
+        public int MaxStreak { get; private set; }
+        public int Target { get; }
+        public bool Endless { get; }
+        private readonly Vector2 _startSize;
+        public StackRun(int target=StackRules.Target,bool endless=false,Vector2? startSize=null)
+        {
+            if(!endless && (target<1 || target>30)) throw new ArgumentOutOfRangeException(nameof(target));
+            Target=target; Endless=endless; _startSize=startSize ?? Vector2.one*StackRules.BaseWidth;
+        }
         public int Streak { get; private set; }
         public int EarnedCoins { get; private set; }
         public bool Failed { get; private set; }
-        public bool Completed => Layers.Count == StackRules.Target;
-        public StackAxis Axis => Layers.Count % 2 == 0 ? StackAxis.X : StackAxis.Z;
-        public StackLayer Top => Layers.Count == 0 ? new StackLayer { Size = Vector2.one * StackRules.BaseWidth } : Layers[Layers.Count - 1];
-        public StackDrop Place(float offset)
+        public bool Completed => !Endless && Count >= Target;
+        public StackAxis Axis => Count % 2 == 0 ? StackAxis.X : StackAxis.Z;
+        public StackLayer Top => Layers.Count == 0 ? new StackLayer { Size = _startSize } : Layers[Layers.Count - 1];
+        public StackDrop Place(float offset,StackBlockKind kind=StackBlockKind.Standard)
         {
             if (Failed || Completed) throw new InvalidOperationException("A terminal run cannot accept another block.");
             var center = Top.Center + (Axis == StackAxis.X ? new Vector2(offset, 0) : new Vector2(0, offset));
             var drop = StackRules.Evaluate(center, Top.Size, Top.Center, Axis);
+            var risk=Powers.Risk; Powers.Risk=false;
+            if(risk && drop.Grade!=StackGrade.Perfect)drop.Grade=StackGrade.Miss;
+            if(Powers.RepairReady && drop.Grade!=StackGrade.Perfect)
+            {
+                Powers.RepairReady=false;
+                drop=new StackDrop { Grade=StackGrade.Good,Center=Top.Center,Size=Top.Size,Rescued=true };
+            }
+            if(kind==StackBlockKind.Fragile && drop.Grade==StackGrade.Good && !drop.Rescued)
+            { if(Axis==StackAxis.X)drop.Size.x*=.9f;else drop.Size.y*=.9f; }
             if (drop.Grade == StackGrade.Miss) { Failed = true; Streak = 0; return drop; }
             Streak = drop.Grade == StackGrade.Perfect ? Streak + 1 : 0;
-            EarnedCoins += drop.Grade == StackGrade.Perfect ? 3 + Mathf.Min(Streak, 7) : 1;
+            if(drop.Grade==StackGrade.Perfect) PerfectDrops++;
+            MaxStreak=Mathf.Max(MaxStreak,Streak);
+            var reward=drop.Grade==StackGrade.Perfect?3+Mathf.Min(Streak,7)+(kind==StackBlockKind.Bonus?4:0):1;
+            EarnedCoins+=drop.Grade==StackGrade.Perfect && risk?reward*2:reward;
+            if(drop.Grade==StackGrade.Perfect)Powers.Charge(risk);
             Layers.Add(new StackLayer { Center = drop.Center, Size = drop.Size });
+            Count++;
+            if(Endless && Layers.Count>RetainedLayers) Layers.RemoveAt(0);
             return drop;
         }
-        public void Restore(IEnumerable<StackLayer> layers, int streak, int earnedCoins)
+        public void Restore(IEnumerable<StackLayer> layers, int streak, int earnedCoins,int total=0,int perfect=0,int maxStreak=0)
         {
             Layers.Clear(); Layers.AddRange(layers);
-            Streak = Mathf.Clamp(streak, 0, Layers.Count);
+            Count=Mathf.Max(total,Layers.Count);
+            Streak = Mathf.Clamp(streak, 0, Count);
+            PerfectDrops=Mathf.Clamp(perfect,0,Count); MaxStreak=Mathf.Clamp(Mathf.Max(maxStreak,Streak),0,Count);
             EarnedCoins = Mathf.Max(0, earnedCoins);
             Failed = false;
         }
+        public void RestorePowers(StackPowers powers) { Powers=powers ?? new StackPowers(); }
     }
 }

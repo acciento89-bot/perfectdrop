@@ -323,6 +323,51 @@ namespace Kamilunavo.PerfectDrop.Visuals
             return root;
         }
 
+        public static GameObject BuildPlayerCity(Transform parent,StackProfile profile)
+        {
+            var root=new GameObject("OwnedCity");root.transform.SetParent(parent,false);root.transform.localPosition=new Vector3(0,-4,42);
+            for(var district=0;district<3;district++)
+            {
+                var group=new GameObject("CityDistrict"+district);group.transform.SetParent(root.transform,false);
+                var cityParent=group.transform;
+                var origin=new Vector3((district-1)*24,0,0);
+                AddBeveledBox(cityParent,"District"+district,origin,new Vector3(19,.5f,28),PlatformTop);
+                for(var slot=0;slot<10;slot++)
+                {
+                    var id=district*10+slot;var point=origin+new Vector3((slot%2==0?-4:4),.35f,(slot/2-2)*5f);
+                    AddBeveledBox(cityParent,"Plot"+(id+1),point,new Vector3(3.5f,.16f,3.5f),PlatformInset);
+                    if(profile.LevelStars[id]==0)continue;
+                    var building=new GameObject("CityTower"+(id+1));building.transform.SetParent(cityParent,false);building.transform.localPosition=point;
+                    var floors=3+Kamilunavo.PerfectDrop.Gameplay.StackCampaign.Level(id+1).Target/5;
+                    for(var floor=0;floor<floors;floor++)
+                    {
+                        var piece=CreateStackBlock(building.transform,"CityFloor"+floor,new Vector3(0,.45f+floor*.85f,0),new Vector3(2.7f,.8f,2.7f),id+1);
+                        StyleStackBlock(piece,district==0?0:district==1?1:2);
+                    }
+                    for(var star=0;star<profile.LevelStars[id];star++)
+                        AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.5f,floors*.85f+.5f,0),new Vector3(.09f,.8f,.09f),Gold);
+                }
+            }
+            return root;
+        }
+        public static void MarkSpecialBlock(GameObject block,Kamilunavo.PerfectDrop.Gameplay.StackBlockKind kind)
+        {
+            if(kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Standard)return;
+            var color=kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Bonus?new Color(1f,.65f,.12f):
+                kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Fragile?new Color(.9f,.25f,.65f):
+                kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Drift?new Color(.15f,.75f,1f):new Color(.2f,.9f,.5f);
+            var plate=block.transform.Find("TopPlate").GetComponent<Renderer>();
+            var tint=new MaterialPropertyBlock();tint.SetColor("_Color",color*.5f);tint.SetColor("_EmissionColor",color*.15f);plate.SetPropertyBlock(tint);
+        }
+        public static void StyleStackBlock(GameObject block,int style)
+        {
+            var color=style==1?new Color(.08f,.8f,1f):style==2?new Color(1f,.18f,.55f):style==3?new Color(.2f,1f,.5f):new Color(1f,.55f,.06f);
+            foreach(var renderer in block.GetComponentsInChildren<Renderer>())
+            {
+                if(!renderer.name.StartsWith("Gold")) continue;
+                var tint=new MaterialPropertyBlock(); tint.SetColor("_Color",color); tint.SetColor("_EmissionColor",color*1.85f); renderer.SetPropertyBlock(tint);
+            }
+        }
         private static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
         {
             return AddPrimitive(PrimitiveType.Cube, parent, name, localPosition, localScale, material);

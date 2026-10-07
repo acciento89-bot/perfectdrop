@@ -4,7 +4,28 @@ The user explicitly confirmed classic tap-to-stack on 2026-10-07. This supersede
 
 Status: `[ ]` open; `[~]` implemented / unverified; `[x]` implemented + compiled + runtime/functionally/visually verified; `[!]` blocked or failing.
 
-## Current stacking scope
+## Approved Arcade Builder scope — 2026-10-07
+
+User approved campaign + endless, then the deeper arcade builder direction. The former fixed 30-block tower is now the foundation. Campaign targets range from 6 to 30; endless exceeds 30.
+
+- [x] A01 30 configured levels/three chapters, star goals, next-level unlocks and improved-record rewards; editor matrix and actual first/advanced-level UI flow verified on Mac.
+- [x] A02 Perfect energy, slow time/center/save abilities, costs, unlocks, active timer pause/save/reload; pure matrix and actual ability button flows verified on Mac.
+- [x] A03 Special bonus/fragile/drift/wind types; distinct moving top colors, rules/motion and visible labels; pure rule checks and actual later-level/daily/endless placements verified on Mac.
+- [x] A04 Optional Perfect-or-fail risk, doubled Perfect rewards and protection; actual reward, saved miss and failure/retry verified on Mac.
+- [x] A05 Earned-coin styles, purchase once/owned selection; actual shop callbacks and inspected screenshot.
+- [x] A06 Owned city built from campaign star records, three selectable/unlocked districts; no legacy skyline occlusion; inspected portrait/landscape captures and geometry clear of navigation.
+- [x] A07 UTC daily challenge, three-star +75 once per day; pure idempotence and actual daily clear/reward. Ordinary daily claim remains separate.
+- [x] A08 Endless unlock after level 5; logical count beyond 30, capped 64 recent/rendered layers, saved count/geometry/powers; actual 66 placements/reload/retry and pure 1000-placement matrix.
+- [x] A09 Contextual map/settings/style/city/results, home settings after terminal result, no ghost gameplay HUD; fresh actual UI regression pass and screenshot inspection.
+- [ ] A10 Native iOS/Android build/install/input/pose/device matrix for the expanded game, final mobile art/legibility/performance/accessibility.
+- [ ] A11 Signed archive/App Store Connect processing/internal TestFlight install/real-iPhone smoke. No TestFlight upload has occurred.
+
+Evidence: `ArcadeValidation.Validate` includes campaign, stack and historical classifier checks and passes. Actual Mac development player passed full arcade sequence; a later UI-only regression passes; final city framing/opaque-menu check passes. Functional QA uses deterministic 60 Hz simulation timing and actual game UI callbacks, not OS touch automation or a native performance measurement. Advanced unlocks were seeded only in an isolated QA profile to exercise later systems; this does not claim manual playthrough of all 30 levels. Fresh code review found and verified fixes for endless start width, resumed goal text and terminal-map settings.
+
+Build limitation: free disk fell to approximately 400 MB after removing superseded owned outputs and an old Xcode derived cache. The expanded game's native exports/archives need more space. No personal source files or installed runtimes were deleted. No physical iPhone was detected during the earlier device inventory.
+
+## Verified stacking foundation (historical checkpoint)
+
 
 - [x] S01 Alternate X/Z moving blocks; tap placement; overlap retained; overhang falls.
 - [x] S02 Perfect snap without shrink; clear Perfect/Good/Miss and streak/coin rewards.
@@ -34,7 +55,7 @@ Status: `[ ]` open; `[~]` implemented / unverified; `[x]` implemented + compiled
 - Actual screenshots inspected: 540x960, 800x600, 600x800, settings/result/miss/resume and a synthetic division. The latter does not establish official native Duo pose validation.
 - Camera checks cover horizontal slab corner bounds at motion extremes and on first resize frame. A fresh reviewer identified and verified fixes for terminal-menu retry loss, portrait clipping and transient resize clipping.
 - Fresh StackValidation.ValidatePlatform passes overlap/mesh/profile/motion range and historical display classifier checks.
-- New release iOS Simulator Unity export succeeds; Xcode compile/installation/actual native screenshots remain pending.
+- The fixed-30 foundation exported successfully for iOS Simulator before the campaign expansion. That superseded export was removed as an owned temporary artifact; it does not validate the expanded game. Native compile/installation/screenshots remain pending.
 - On 2026-10-07 the user additionally confirmed a level campaign plus unlockable endless mode. The 30-block tower is the validated foundation, not the complete approved game.
 - Ruling: preserve old jump code/history during transition, but keep it inactive behind the existing scene bootstrap. Do not credit its historical QA toward this game.
 - Ruling: use a separate `perfectdrop.stack.profile.v1` namespace so reinterpretation cannot overwrite historical jump progress.

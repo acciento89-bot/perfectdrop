@@ -8,7 +8,14 @@ namespace Kamilunavo.PerfectDrop
     [Serializable]
     public sealed class StackProfile
     {
-        public int Schema = 1, Best, Coins, Towers, Streak, RunCoins;
+        public int Schema = 2, Best, Coins, Towers, Streak, RunCoins;
+        public int UnlockedLevel=1, RunLevel=1, TotalPlaced, PerfectDrops, MaxStreak, EndlessBest, OwnedStyles=1, Style;
+        public int[] LevelStars = new int[30];
+        public bool RunEndless;
+        public bool RunChallenge, ChallengeRewarded;
+        public string RunChallengeDate="",ChallengeDate="";
+        public int ChallengeStars;
+        public StackPowers Powers = new();
         public bool ResumeActive;
         public float Phase;
         public string DailyClaim = "";
@@ -30,15 +37,33 @@ namespace Kamilunavo.PerfectDrop
             StackProfile data;
             try { data = JsonUtility.FromJson<StackProfile>(json); }
             catch (ArgumentException) { return new StackProfile(); }
-            if (data == null || data.Schema != 1) return new StackProfile();
+            if (data == null || (data.Schema != 1 && data.Schema != 2)) return new StackProfile();
+            if(data.Schema==1)
+            { data.Schema=2; data.ResumeActive=false; data.Layers=new(); data.Streak=data.RunCoins=data.TotalPlaced=0; data.Phase=0; }
             data.Best = Mathf.Clamp(data.Best, 0, StackRules.Target);
             data.Coins = Mathf.Max(0, data.Coins);
             data.Towers = Mathf.Max(0, data.Towers);
+            data.UnlockedLevel=Mathf.Clamp(data.UnlockedLevel,1,30);
+            data.RunLevel=Mathf.Clamp(data.RunLevel,1,data.UnlockedLevel);
+            data.EndlessBest=Mathf.Max(0,data.EndlessBest);
+            data.OwnedStyles=(data.OwnedStyles&15)|1;
+            data.Style=Mathf.Clamp(data.Style,0,3);
+            if((data.OwnedStyles&(1<<data.Style))==0) data.Style=0;
+            if(data.LevelStars==null || data.LevelStars.Length!=30) data.LevelStars=new int[30];
+            for(var i=0;i<30;i++) data.LevelStars[i]=Mathf.Clamp(data.LevelStars[i],0,3);
             if (data.Layers == null) data.Layers = new List<StackLayer>();
-            var valid = data.Layers.Count < StackRules.Target && !float.IsNaN(data.Phase) && !float.IsInfinity(data.Phase);
+            data.TotalPlaced=Mathf.Max(data.TotalPlaced,data.Layers.Count);
+            var valid = !float.IsNaN(data.Phase) && !float.IsInfinity(data.Phase);
+            var validChallengeDate=DateTime.TryParseExact(data.RunChallengeDate,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture,System.Globalization.DateTimeStyles.None,out var challengeDay);
+            var runTarget=data.RunChallenge && validChallengeDate?StackCampaign.Daily(challengeDay).Target:StackCampaign.Level(data.RunLevel).Target;
+            valid &= !data.RunChallenge || !data.RunEndless && validChallengeDate;
+            valid &= data.RunEndless ? StackCampaign.EndlessUnlocked(data) && data.Layers.Count==Mathf.Min(StackRun.RetainedLayers,data.TotalPlaced) : data.TotalPlaced<runTarget && data.Layers.Count==data.TotalPlaced;
+            data.Powers ??= new StackPowers();data.Powers.Energy=Mathf.Clamp(data.Powers.Energy,0,6);
+            data.Powers.SlowSeconds=float.IsNaN(data.Powers.SlowSeconds) || float.IsInfinity(data.Powers.SlowSeconds)?0:Mathf.Clamp(data.Powers.SlowSeconds,0,3);
+            data.ChallengeStars=Mathf.Clamp(data.ChallengeStars,0,3);
             foreach (var layer in data.Layers)
                 valid &= Finite(layer.Center) && Finite(layer.Size) && layer.Size.x > 0 && layer.Size.y > 0 && layer.Size.x <= StackRules.BaseWidth && layer.Size.y <= StackRules.BaseWidth;
-            if (!valid) { data.ResumeActive = false; data.Layers.Clear(); data.Streak = data.RunCoins = 0; data.Phase = 0; }
+            if (!valid) { if(!validChallengeDate)data.RunChallenge=false;data.Powers=new StackPowers();data.PerfectDrops=data.MaxStreak=0; data.ResumeActive = false; data.Layers.Clear(); data.Streak = data.RunCoins = data.TotalPlaced = 0; data.Phase = 0; }
             return data;
         }
         private static bool Finite(Vector2 v) => !float.IsNaN(v.x) && !float.IsInfinity(v.x) && !float.IsNaN(v.y) && !float.IsInfinity(v.y);

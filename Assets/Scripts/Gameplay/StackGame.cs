@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,7 +15,15 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public StackProfile Profile { get; private set; }
         public StackHud Hud { get; private set; }
         public float MovingOffset { get; private set; }
+        public StackLevel Level { get; private set; }
+        public int LastStars { get; private set; }
+        public int LastBonus { get; private set; }
+        private bool _hasStarted;
         private Transform _tower, _moving;
+        private Transform _world;
+        private GameObject _city;
+        public int CityDistrict { get; private set; }
+        public StackBlockKind CurrentKind => StackCampaign.Kind(Profile.RunEndless || Profile.RunChallenge?Profile.UnlockedLevel:Level.Id,Run.Count);
         private Camera _camera;
         private FeedbackSystem _feedback;
         private readonly List<GameObject> _placed = new();
@@ -48,17 +57,22 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var feedback = new GameObject("StackFeedback",typeof(AudioSource),typeof(FeedbackSystem));
             _feedback = feedback.GetComponent<FeedbackSystem>();
             if (FindFirstObjectByType<EventSystem>() == null) new GameObject("EventSystem",typeof(EventSystem),typeof(StandaloneInputModule));
-            var world = new GameObject("CloudCity").transform;
+            var world = new GameObject("CloudCity").transform; _world=world;
             WorldArt.BuildStackCloudSea(world); WorldArt.BuildSkyline(world);
             _tower = new GameObject("StackTower").transform;
             Profile = StackSave.Load();
-            Run = new StackRun();
-            if (Profile.ResumeActive) { Run.Restore(Profile.Layers,Profile.Streak,Profile.RunCoins); _phase = Profile.Phase; }
+            Level = Profile.RunEndless?StackCampaign.Level(1):Profile.RunChallenge?StackCampaign.Daily(DateTime.ParseExact(Profile.RunChallengeDate,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture)):StackCampaign.Level(Profile.RunLevel);
+            RebuildCity();
+            Run = new StackRun(Level.Target,Profile.RunEndless,Vector2.one*Level.Width);
+            _hasStarted = Profile.ResumeActive;
+            if (Profile.ResumeActive) { Run.Restore(Profile.Layers,Profile.Streak,Profile.RunCoins,Profile.TotalPlaced,Profile.PerfectDrops,Profile.MaxStreak); _phase = Profile.Phase; }
             else _phase = -Mathf.PI/2;
+            if(Profile.ResumeActive)Run.RestorePowers(Profile.Powers);
             CreateBlock("Pedestal",Vector2.zero,Vector2.one*4f,-LayerHeight,0);
-            for (var i=0;i<Run.Layers.Count;i++) _placed.Add(CreateBlock("Placed_"+(i+1),Run.Layers[i].Center,Run.Layers[i].Size,i*LayerHeight,i+1));
+            for (var i=0;i<Run.Layers.Count;i++) _placed.Add(CreateBlock("Placed_"+(i+1),Run.Layers[i].Center,Run.Layers[i].Size,i*LayerHeight,Run.Count-Run.Layers.Count+i+1));
             SpawnMoving();
-            Hud = gameObject.AddComponent<StackHud>(); Hud.Build(this);
+            Hud = gameObject.AddComponent<StackHud>(); Hud.Build(this); Hud.ResetMessage();
+            if(!Profile.ResumeActive) Hud.ShowHome();
             UpdateCamera(true);
         }
 
@@ -67,8 +81,13 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (Run == null || _paused) return;
             if (!Hud.ModalOpen && !Run.Failed && !Run.Completed)
             {
-                _phase += Mathf.Min(Time.deltaTime,.05f)*(1.05f + Run.Layers.Count*.032f);
+                var delta=Mathf.Min(Time.deltaTime,.05f);
+                Run.Powers.Tick(delta);
+                var speed=(Run.Endless?1.05f:Level.Speed)+Mathf.Min(Run.Count,80)*.020f;
+                if(CurrentKind==StackBlockKind.Drift)speed*=1+.30f*Mathf.Sin(_phase*2);
+                _phase += delta*speed*(Run.Powers.SlowSeconds>0?.35f:1f);
                 MovingOffset = Mathf.Sin(_phase) * StackRules.MotionExtent(Run.Top.Size,Run.Axis);
+                if(CurrentKind==StackBlockKind.Wind)MovingOffset+=Mathf.Sin(_phase*2.3f)*(Run.Axis==StackAxis.X?Run.Top.Size.x:Run.Top.Size.y)*.12f;
                 var position = Run.Top.Center + (Run.Axis == StackAxis.X ? new Vector2(MovingOffset,0) : new Vector2(0,MovingOffset));
                 _moving.localPosition = new Vector3(position.x,Run.Layers.Count*LayerHeight,position.y);
             }
@@ -78,7 +97,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             if (_width != Screen.width || _height != Screen.height)
             { _pointerActive = false; _width = Screen.width; _height = Screen.height; }
-            if (Hud.ModalOpen) { _pointerActive = false; return; }
+            if (Hud.ModalOpen && !Hud.CityOpen) { _pointerActive = false; return; }
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space)) Drop();
             if (UnityEngine.Input.GetMouseButton(1)) _yaw += UnityEngine.Input.GetAxis("Mouse X")*3;
             if (UnityEngine.Input.touchCount > 0)
@@ -114,7 +133,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             // Suppress only duplicate events from a single tap; no blocking placement animation.
             _nextDrop = Time.unscaledTime+.06f;
             var oldCoins = Run.EarnedCoins;
-            var result = Run.Place(MovingOffset);
+            var kind=CurrentKind;
+            var result = Run.Place(MovingOffset,kind);
             var height = (Run.Layers.Count-1)*LayerHeight;
             if (result.Grade == StackGrade.Miss)
             {
@@ -122,17 +142,25 @@ namespace Kamilunavo.PerfectDrop.Gameplay
                 _feedback.PlayRecovery(); Hud.Grade(result.Grade); Save(); Hud.Terminal(false); return;
             }
             Destroy(_moving.gameObject);
-            _placed.Add(CreateBlock("Placed_"+Run.Layers.Count,result.Center,result.Size,height,Run.Layers.Count));
-            if (result.Grade == StackGrade.Good)
+            if(Run.Endless && Run.Count>StackRun.RetainedLayers)
+            {
+                Destroy(_placed[0]); _placed.RemoveAt(0);
+                foreach(var block in _placed) block.transform.localPosition-=Vector3.up*LayerHeight;
+            }
+            _placed.Add(CreateBlock("Placed_"+Run.Count,result.Center,result.Size,height,Run.Count));
+            if (result.Grade == StackGrade.Good && result.CutSize.x>0 && result.CutSize.y>0)
                 CreateBlock("Overhang",result.CutCenter,result.CutSize,height,Run.Layers.Count).AddComponent<StackOffcut>();
             Profile.Coins += Run.EarnedCoins-oldCoins;
-            Profile.Best = Mathf.Max(Profile.Best,Run.Layers.Count);
+            if(Run.Endless) Profile.EndlessBest=Mathf.Max(Profile.EndlessBest,Run.Count);
+            else Profile.Best = Mathf.Max(Profile.Best,Run.Count);
             _feedback.PlayLanding(result.Grade == StackGrade.Perfect ? LandingGrade.Perfect : LandingGrade.Good);
             if (result.Grade == StackGrade.Perfect)
                 WorldArt.SpawnLandingBurst(new Vector3(result.Center.x,height+LayerHeight*.5f,result.Center.y),LandingGrade.Good);
             Hud.Grade(result.Grade);
+            if(result.Rescued)Hud.ArcadeFeedback(StackHud.T("GERETTET!","SAVED!"));
             if (Run.Completed)
-            { Profile.Towers++; _feedback.PlayComplete(); Hud.Terminal(true); }
+            { Profile.Towers++; LastStars=StackCampaign.Stars(Level,Run); LastBonus=Profile.RunChallenge?StackCampaign.RecordDaily(Profile,Level,Run,Profile.RunChallengeDate):StackCampaign.Record(Profile,Level,Run);
+                if(!Profile.RunChallenge && LastBonus>0)RebuildCity(); _feedback.PlayComplete(); Hud.Terminal(true); }
             else { _phase = -Mathf.PI/2; SpawnMoving(); }
             Save(); Hud.Refresh();
         }
@@ -141,8 +169,67 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             foreach (var block in _placed) if (block != null) Destroy(block);
             _placed.Clear();
             if (_moving != null) Destroy(_moving.gameObject);
-            Run = new StackRun(); _phase = -Mathf.PI/2; MovingOffset = -StackRules.BaseWidth*1.24f; _nextDrop = 0;
+            if(Profile.RunChallenge){Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);}
+            Run = new StackRun(Level.Target,Profile.RunEndless,Vector2.one*Level.Width); _hasStarted=true; LastStars=LastBonus=0; _phase = -Mathf.PI/2; MovingOffset = -Level.Width*1.24f; _nextDrop = 0;
+            Hud.HideMenus();
             SpawnMoving(); Hud.ResetMessage(); Save(); UpdateCamera(true);
+        }
+        public void StartLevel(int id)
+        {
+            if(id<1 || id>Profile.UnlockedLevel) return;
+            Profile.RunChallenge=false; Profile.RunEndless=false; Profile.RunLevel=id; Level=StackCampaign.Level(id); NewRun();
+        }
+        public void StartEndless()
+        {
+            if(!StackCampaign.EndlessUnlocked(Profile)) return;
+            Profile.RunChallenge=false; Profile.RunEndless=true; Level=StackCampaign.Level(1); NewRun();
+        }
+        public void StartChallenge()
+        {
+            Profile.RunChallenge=true;Profile.RunEndless=false;
+            Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);NewRun();
+        }
+        public void UsePower(StackPower power)
+        {
+            if(Hud.ModalOpen || _paused || Run.Completed || Run.Failed || !StackCampaign.PowerUnlocked(Profile,power) || !Run.Powers.Activate(power))return;
+            UiClick();
+            if(power==StackPower.Center)
+            {
+                _phase=0;MovingOffset=0;
+                _moving.localPosition=new Vector3(Run.Top.Center.x,Run.Layers.Count*LayerHeight,Run.Top.Center.y);
+                _nextDrop=0;Drop();
+            }
+            Save();Hud.Refresh();
+        }
+        public void ToggleRisk()
+        {
+            if(Hud.ModalOpen || _paused || Run.Completed || Run.Failed || Profile.UnlockedLevel<6)return;
+            Run.Powers.Risk=!Run.Powers.Risk;Save();Hud.Refresh();
+        }
+        private void RebuildCity()
+        {
+            if(_city!=null)Destroy(_city);
+            _city=WorldArt.BuildPlayerCity(_world,Profile);_city.SetActive(false);
+        }
+        public void SetCityView(bool active)
+        {
+            if(_city!=null)_city.SetActive(active);if(_tower!=null)_tower.gameObject.SetActive(!active);
+            var skyline=_world!=null?_world.Find("Skyline"):null;if(skyline!=null)skyline.gameObject.SetActive(!active);
+            if(active)SelectCityDistrict(Mathf.Min(2,(Profile.UnlockedLevel-1)/10));
+        }
+        public void SelectCityDistrict(int district)
+        {
+            if(district<0 || district>2 || Profile.UnlockedLevel<district*10+1)return;
+            CityDistrict=district;
+            for(var i=0;i<3;i++)_city.transform.Find("CityDistrict"+i).gameObject.SetActive(i==district);
+        }
+        public void GoHome() { Save(); Hud.ShowHome(); }
+        public bool SelectStyle(int style)
+        {
+            if(!StackCampaign.SelectStyle(Profile,style)) return false;
+            foreach(var block in _placed) WorldArt.StyleStackBlock(block,style);
+            if(_moving!=null) WorldArt.StyleStackBlock(_moving.gameObject,style);
+            Save(); return true;
         }
         private void SpawnMoving()
         {
@@ -150,10 +237,12 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             MovingOffset = Mathf.Sin(_phase)*StackRules.MotionExtent(top.Size,Run.Axis);
             var center = top.Center + (Run.Axis == StackAxis.X ? new Vector2(MovingOffset,0) : new Vector2(0,MovingOffset));
             _moving = CreateBlock("MovingBlock",center,top.Size,Run.Layers.Count*LayerHeight,Run.Layers.Count+1).transform;
+            WorldArt.MarkSpecialBlock(_moving.gameObject,CurrentKind);
         }
         private GameObject CreateBlock(string name,Vector2 center,Vector2 size,float height,int level)
         {
             var block = WorldArt.CreateStackBlock(_tower,name,new Vector3(center.x,height,center.y),new Vector3(size.x,LayerHeight,size.y),level);
+            WorldArt.StyleStackBlock(block,Profile.Style);
             return block;
         }
         private void UpdateCamera(bool snap)
@@ -161,6 +250,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var top = Run.Top.Center;
             var height = Run.Layers.Count*LayerHeight;
             var focus = new Vector3(top.x,height-.7f,top.y);
+            var cityView=Hud!=null && Hud.CityOpen;
+            if(cityView)focus=new Vector3((CityDistrict-1)*24,1,42);
             var yaw = _yaw*Mathf.Deg2Rad;
             var size = Run.Top.Size;
             var x = Mathf.Abs(Mathf.Cos(yaw)); var z = Mathf.Abs(Mathf.Sin(yaw));
@@ -168,7 +259,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var depth = z*size.x*.5f + x*size.y*.5f + Mathf.Max(z*size.x,x*size.y)*1.24f;
             var tan = Mathf.Tan(_camera.fieldOfView*.5f*Mathf.Deg2Rad);
             var distance = Mathf.Max(17f, horizontal/(tan*_camera.aspect*.82f)+depth+2f);
-            var desired = focus + new Vector3(Mathf.Sin(yaw),.65f,-Mathf.Cos(yaw)).normalized*distance;
+            if(cityView)distance=Mathf.Max(76f,12f/(tan*_camera.aspect*.82f)+15f);
+            var desired = focus + new Vector3(Mathf.Sin(yaw),cityView?1f:.65f,-Mathf.Cos(yaw)).normalized*distance;
             var paneNow = Hud != null ? Hud.WorldPane : new Rect(0,0,1,1);
             var layoutChanged = !Mathf.Approximately(_cameraAspect,_camera.aspect) || _cameraPane != paneNow;
             _cameraAspect = _camera.aspect; _cameraPane = paneNow;
@@ -193,7 +285,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public void Save()
         {
             if (Profile == null || Run == null) return;
-            Profile.ResumeActive = !Run.Failed && !Run.Completed;
+            Profile.ResumeActive = _hasStarted && !Run.Failed && !Run.Completed;
+            Profile.Powers=Run.Powers;
+            Profile.TotalPlaced=Run.Count; Profile.PerfectDrops=Run.PerfectDrops; Profile.MaxStreak=Run.MaxStreak;
             Profile.Layers = new List<StackLayer>(Run.Layers);
             Profile.Streak = Run.Streak; Profile.RunCoins = Run.EarnedCoins; Profile.Phase = _phase;
             StackSave.Save(Profile);

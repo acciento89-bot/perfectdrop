@@ -1,14 +1,12 @@
-# Perfect Drop — Stack Master Plan
+# Perfect Drop master plan
 
-The user's 2026-10-07 correction is canonical: Perfect Drop is classic tap-to-stack, target 30 placed blocks. Prior precision-jump plans are superseded.
+Canonical direction: native tap-to-stack Arcade Builder approved 2026-10-07. The old precision-jump brief is superseded. Campaign + unlockable endless was confirmed, followed by special blocks, charged abilities, optional risk, earned styles, own city and daily challenges.
 
-1. Deterministic alternating-axis overlap, cut geometry, perfect tolerance and terminal-state rules.
-2. One-tap moving-block gameplay, immediate miss/retry, completion at 30, streak/coins/best.
-3. Dark beveled metal blocks with gold light; cloud-city environment; no runner, joystick or jump controls.
-4. Contextual settings, daily claim, DE/EN, audio/haptics/reduced motion.
-5. Versioned stacking save namespace; resume settled tower without disturbing historical jump data.
-6. Safe-area and native Duo division-aware UI, preserved state across rotation/resize.
-7. Real player, simulator/device, Android and performance tests; record fresh evidence in V1 ledger.
-8. Review, commit/push main, iOS signed archive, TestFlight upload/processing/internal tester/install/physical smoke. No public-store publication.
+Main remains canonical. Preserve bundle `com.kamilunavo.perfectdrop`, team `TKG684N5GL`, ASC `6819872064`. Primary concept supplies dark metal/gold/sky/cloud atmosphere; its runner/jump controls are superseded.
 
-Detailed spec and execution plan: `superpowers/specs/2026-10-07-stack-game.md` and `superpowers/plans/2026-10-07-stack-game.md`.
+- Verified Mac checkpoint: campaign/rules/economy/powers/special blocks/risk/city/daily/endless, actual runtime and inspected UI captures.
+- Next: free build capacity, fresh iOS/Android exports, Xcode 27.1 RC official iPhone Duo and ordinary-phone screenshots/pose/input, real mobile art/performance/accessibility/lifecycle/audio/haptics.
+- Then: signed release archive, existing ASC entry upload/processing, internal TestFlight tester/install and real-iPhone smoke. Never claim RC based solely on compilation.
+- Only after actual Perfect Drop TestFlight RC: Rising Steps, One More Floor, Repair Empire in that order.
+
+Detailed confirmed scope/implementation plan: `docs/superpowers/specs/2026-10-07-campaign-game.md`, `docs/superpowers/plans/2026-10-07-campaign-game.md`. Ledger is authoritative for evidence/open gates.

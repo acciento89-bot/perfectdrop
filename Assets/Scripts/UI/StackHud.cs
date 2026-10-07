@@ -4,20 +4,21 @@ using Kamilunavo.PerfectDrop.Gameplay;
 
 namespace Kamilunavo.PerfectDrop.UI
 {
-    public sealed class StackHud : MonoBehaviour
+    public sealed partial class StackHud : MonoBehaviour
     {
         public StackGame Game;
         private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup;
         private Text[] _stats;
         private Text _status, _hint, _popupTitle, _popupBody;
         private Image _progress;
-        private Button _drop, _retry, _close, _daily, _sound, _haptics, _motion;
+        private Button _drop, _retry, _close, _daily, _sound, _haptics, _motion, _settingsMap;
+        private bool _settingsReturnsHome;
         private int _width, _height;
         private Rect _division, _area;
         private bool _hadDivision;
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
-        public bool ModalOpen => _popup != null && _popup.gameObject.activeSelf;
-        private static Color Navy => new(0.035f, 0.065f, 0.12f, 0.97f);
+        public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen;
+        private static Color Navy => new(0.035f, 0.065f, 0.12f, 1f);
         private static Color Gold => new(1f, 0.79f, 0.16f);
         public static string T(string de, string en) => GameText.German ? de : en;
 
@@ -49,11 +50,13 @@ namespace Kamilunavo.PerfectDrop.UI
             _popupTitle = UiFactory.Label(_popup,"Title","",45,new Vector2(.07f,.79f),new Vector2(.93f,.96f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
             _popupBody = UiFactory.Label(_popup,"Body","",29,new Vector2(.07f,.58f),new Vector2(.93f,.79f),TextAnchor.MiddleCenter,Color.white);
             _retry = UiFactory.Button(_popup,"Retry",T("NOCHMAL","PLAY AGAIN"),Gold,Navy,new Vector2(.10f,.13f),new Vector2(.90f,.31f),()=> { Close(); Game.NewRun(); });
-            _close = UiFactory.Button(_popup,"Close",T("WEITER","RESUME"),Gold,Navy,new Vector2(.10f,.06f),new Vector2(.90f,.205f),Close);
-            _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.555f),new Vector2(.90f,.70f),()=> { GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
-            _haptics = UiFactory.Button(_popup,"Haptics","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.39f),new Vector2(.90f,.535f),()=> { GamePreferences.HapticsEnabled = !GamePreferences.HapticsEnabled; UpdateSettings(); });
-            _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.225f),new Vector2(.90f,.37f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
-            _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.72f),new Vector2(.90f,.865f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
+            _close = UiFactory.Button(_popup,"Close",T("WEITER","RESUME"),Gold,Navy,new Vector2(.10f,.07f),new Vector2(.90f,.18f),Close);
+            _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
+            _haptics = UiFactory.Button(_popup,"Haptics","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.49f),new Vector2(.90f,.60f),()=> { GamePreferences.HapticsEnabled = !GamePreferences.HapticsEnabled; UpdateSettings(); });
+            _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
+            _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.77f),new Vector2(.90f,.88f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
+            _settingsMap=UiFactory.Button(_popup,"SettingsMap",T("LEVELÜBERSICHT","LEVEL MAP"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.10f,.21f),new Vector2(.90f,.32f),game.GoHome);
+            BuildCampaignMenus(); BuildArcadeMenus();
             foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null;
             _popup.gameObject.SetActive(false);
             Layout(true); Refresh();
@@ -61,12 +64,15 @@ namespace Kamilunavo.PerfectDrop.UI
 
         public void Refresh()
         {
-            _stats[0].text = T("STAPEL","STACK") + "\n" + Game.Run.Layers.Count + "/30";
-            _stats[1].text = T("BESTE","BEST") + "\n" + Game.Profile.Best;
+            var gameplayVisible=!CampaignMenuOpen && !CityOpen;
+            _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);
+            _stats[0].text = T("STAPEL","STACK") + "\n" + Game.Run.Count + (Game.Run.Endless?"":"/"+Game.Run.Target);
+            _stats[1].text = T("BESTE","BEST") + "\n" + (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best);
             _stats[2].text = T("SERIE","STREAK") + "\nx" + Game.Run.Streak;
             _stats[3].text = "COINS\n" + Game.Profile.Coins;
-            _progress.fillAmount = Game.Run.Layers.Count / 30f;
+            _progress.fillAmount = Game.Run.Endless?0:Game.Run.Count/(float)Game.Run.Target;
             _drop.interactable = !Game.Run.Failed && !Game.Run.Completed && !ModalOpen;
+            UpdateArcadeHud();
         }
         public void Grade(StackGrade grade)
         {
@@ -75,23 +81,25 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void ResetMessage()
         {
-            _status.text = "PERFECT DROP";
-            _hint.text = T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop.");
+            _status.text = Game.Run.Endless?T("ENDLOS","ENDLESS"):Game.Profile.RunChallenge?T("TAGES-CHALLENGE","DAILY CHALLENGE"):"LEVEL "+Game.Level.Id;
+            _hint.text = GoalText(Game.Level,Game.Run.Endless);
             Refresh();
         }
         public void Terminal(bool won)
         {
             Controls(false);
             _retry.gameObject.SetActive(true);
-            _popupTitle.text = won ? T("30 / 30 — GESCHAFFT!","30 / 30 — COMPLETE!") : T("DANEBEN!","MISSED!");
+            _popupTitle.text = won ? Game.Profile.RunChallenge?T("CHALLENGE GESCHAFFT!","CHALLENGE COMPLETE!"):T("LEVEL "+Game.Level.Id+" GESCHAFFT!","LEVEL "+Game.Level.Id+" COMPLETE!") : T("DANEBEN!","MISSED!");
             _popupBody.gameObject.SetActive(true);
-            _popupBody.text = T("Gestapelt","Stacked") + " " + Game.Run.Layers.Count + "/30\n" + Game.Run.EarnedCoins + " " + T("Coins verdient","coins earned");
+            _popupBody.text = T("Gestapelt","Stacked") + " " + Game.Run.Count + (Game.Run.Endless?"":"/"+Game.Run.Target) + "\n" + (won?Game.LastStars+" "+T("STERNE","STARS")+" · "+Game.LastBonus+" "+T("Bonus-Coins","bonus coins")+"\n":"") + Game.Run.EarnedCoins + " " + T("Coins verdient","coins earned");
+            ShowTerminalActions(won);
             _popup.gameObject.SetActive(true); Refresh();
         }
         public void OpenSettings()
         {
-            if (Game.Run.Failed || Game.Run.Completed) return;
-            Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
+            if (!CampaignMenuOpen && (Game.Run.Failed || Game.Run.Completed)) return;
+            _settingsReturnsHome=CampaignMenuOpen;
+            HideMenus(); Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
             _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
             // Settings title and daily control occupy separate rows.
             Set((RectTransform)_popupTitle.transform,.07f,.885f,.93f,.99f);
@@ -99,13 +107,14 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void Close()
         {
-            Game.UiClick(); _popup.gameObject.SetActive(false);
+            Game.UiClick(); _popup.gameObject.SetActive(false); HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f);
+            if(_settingsReturnsHome){_settingsReturnsHome=false;ShowHome();}
             Refresh();
         }
         private void Controls(bool settings)
         {
-            foreach (var button in new[] { _close, _sound, _haptics, _motion, _daily }) button.gameObject.SetActive(settings);
+            foreach (var button in new[] { _close, _sound, _haptics, _motion, _daily, _settingsMap }) button.gameObject.SetActive(settings);
         }
         private void UpdateSettings()
         {
@@ -116,7 +125,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _daily.interactable = StackSave.CanClaim(Game.Profile);
         }
         private static void SetLabel(Button button, string text) => button.GetComponentInChildren<Text>().text = text;
-        private void Update() => Layout(false);
+        private void Update() { Layout(false); UpdateArcadeHud(); }
         private void Layout(bool force)
         {
             var hasDivision = ReservedRegionProvider.TryGetDivisionRegion(out var division);
@@ -132,12 +141,13 @@ namespace Kamilunavo.PerfectDrop.UI
                 else
                     pane = d.y >= 1-d.yMax ? new Rect(0,0,1,Mathf.Max(.05f,d.y-.015f)) : new Rect(0,d.yMax+.015f,1,Mathf.Max(.05f,1-d.yMax-.015f));
             }
+            LayoutCampaign(pane); LayoutArcade(pane);
             var screenSafe = Screen.safeArea;
             WorldPane = new Rect((screenSafe.x+pane.x*screenSafe.width)/Screen.width, (screenSafe.y+pane.y*screenSafe.height)/Screen.height, pane.width*screenSafe.width/Screen.width, pane.height*screenSafe.height/Screen.height);
             Place(_statsRoot,pane,new Rect(.04f,.875f,.92f,.105f));
             Place(_objective,pane,new Rect(.04f,.76f,.92f,.09f));
             Place(_dropRect,pane,new Rect(.10f,.05f,.80f,.10f));
-            Place(_popup,pane,new Rect(.06f,.20f,.88f,.56f));
+            Place(_popup,pane,new Rect(.06f,.16f,.88f,.70f));
             var aspect = Screen.width * pane.width / Mathf.Max(1, Screen.height*pane.height);
             if (aspect > 1.2f)
             {
