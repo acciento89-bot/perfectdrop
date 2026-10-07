@@ -13,7 +13,7 @@ namespace Kamilunavo.PerfectDrop
     public sealed class GameBootstrap : MonoBehaviour
     {
         private static readonly Color Panel = new(0.035f, 0.075f, 0.13f, 0.96f);
-        private static readonly Color Gold = new(1f, 0.64f, 0.08f, 1f);
+        private static readonly Color Gold = new(1f, 0.78f, 0.12f, 1f);
         private static readonly Color TextColor = new(0.97f, 0.985f, 1f, 1f);
 
         private void Start()
@@ -51,6 +51,7 @@ namespace Kamilunavo.PerfectDrop
             var joystick = VirtualJoystick.Create(safe, new Vector2(0.03f, 0.035f), new Vector2(0.29f, 0.18f));
             var jump = HoldButton.Create(safe, "↑", new Vector2(0.78f, 0.035f), new Vector2(0.97f, 0.17f), new Color(0.03f, 0.06f, 0.11f, 0.92f));
             UiFactory.ApplyCircularImage(jump.GetComponent<Image>());
+            UiFactory.AddOutline(jump.GetComponent<Image>(), Gold, 3f);
 
             var player = CreatePlayer();
             var camera = CreateCamera(player.transform);
@@ -71,6 +72,7 @@ namespace Kamilunavo.PerfectDrop
             motor.Course = course;
 
             var boosts = UiFactory.Button(safe, "Boosts", GameText.Boosts, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.34f, 0.045f), new Vector2(0.68f, 0.125f), () => motor.ApplyBoost(1.22f, 5f));
+            UiFactory.ApplyPillImage(boosts.GetComponent<Image>());
 
             var completion = UiFactory.Panel(safe, "Completion", new Color(0.02f, 0.045f, 0.085f, 0.985f), new Vector2(0.09f, 0.33f), new Vector2(0.91f, 0.67f));
             UiFactory.Label(completion, "Title", GameText.TowerCleared, 52, new Vector2(0.07f, 0.67f), new Vector2(0.93f, 0.91f), TextAnchor.MiddleCenter, Gold, FontStyle.Bold);
@@ -100,7 +102,7 @@ namespace Kamilunavo.PerfectDrop
             UiFactory.Button(settingsRoot, "Close", GameText.Close, Gold, new Color(0.08f, 0.07f, 0.03f), new Vector2(0.26f, 0.06f), new Vector2(0.74f, 0.18f), settings.Close);
             settingsRoot.gameObject.SetActive(false);
 
-            UiFactory.Button(objective, "Menu", GameText.Menu, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.80f, 0.29f), new Vector2(0.96f, 0.87f), settings.Open);
+            UiFactory.Button(objective, "Menu", GameText.Menu, new Color(0.12f, 0.17f, 0.24f, 1f), TextColor, new Vector2(0.82f, 0.38f), new Vector2(0.96f, 0.84f), settings.Open);
 
             var responsive = safe.gameObject.AddComponent<ResponsiveHud>();
             responsive.Bind(

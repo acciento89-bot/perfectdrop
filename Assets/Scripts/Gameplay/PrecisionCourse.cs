@@ -12,6 +12,30 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private const string CoinsKey = "perfectdrop.coins";
         private const float FallRecoveryDistance = 3.0f;
 
+        // Authored 30-floor route. The path deliberately alternates gentle and stronger
+        // lateral corrections while keeping every center-to-center jump inside the
+        // conservative no-boost reachability envelope validated by GameplayValidation.
+        private static readonly float[] LateralPattern =
+        {
+             0.55f, -0.95f,  1.30f, -0.45f, -1.35f,  1.65f,  0.35f, -1.70f,  1.15f,  0.80f,
+            -1.55f,  1.75f, -0.70f, -1.40f,  1.10f,  1.55f, -1.65f,  0.50f,  1.25f, -1.30f,
+            -0.85f,  1.70f, -1.10f,  0.60f,  1.50f, -1.45f,  0.95f, -0.55f,  0.00f
+        };
+
+        private static readonly float[] RisePattern =
+        {
+            0.58f, 0.62f, 0.66f, 0.60f, 0.72f, 0.68f, 0.74f, 0.64f, 0.76f, 0.70f,
+            0.78f, 0.70f, 0.82f, 0.74f, 0.84f, 0.76f, 0.80f, 0.72f, 0.86f, 0.78f,
+            0.84f, 0.76f, 0.88f, 0.80f, 0.86f, 0.82f, 0.90f, 0.84f, 0.72f
+        };
+
+        private static readonly float[] ForwardPattern =
+        {
+            3.15f, 3.25f, 3.30f, 3.20f, 3.35f, 3.45f, 3.30f, 3.55f, 3.40f, 3.25f,
+            3.60f, 3.35f, 3.50f, 3.65f, 3.45f, 3.55f, 3.70f, 3.40f, 3.65f, 3.50f,
+            3.55f, 3.70f, 3.60f, 3.45f, 3.70f, 3.55f, 3.65f, 3.50f, 3.40f
+        };
+
         public Transform Player;
         public Text FloorText;
         public Text BestText;
@@ -46,7 +70,6 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             _motor = Player != null ? Player.GetComponent<PlayerMotor>() : null;
             _feedback = Player != null ? Player.GetComponent<FeedbackSystem>() : null;
 
-            Random.InitState(260906);
             var x = 0f;
             var y = 0f;
             var z = 0f;
@@ -55,11 +78,10 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             {
                 if (i > 0)
                 {
-                    // Mobile-first spacing: every jump is reachable without requiring a paid/temporary boost.
-                    // Difficulty comes from landing precision and lateral correction, not impossible gaps.
-                    x = Mathf.Clamp(x + Random.Range(-1.45f, 1.45f), -5.2f, 5.2f);
-                    y += Random.Range(0.58f, 0.92f);
-                    z += Random.Range(3.15f, 3.75f);
+                    var patternIndex = i - 1;
+                    x = Mathf.Clamp(x + LateralPattern[patternIndex], -5.2f, 5.2f);
+                    y += RisePattern[patternIndex];
+                    z += ForwardPattern[patternIndex];
                 }
 
                 var go = GameObject.CreatePrimitive(PrimitiveType.Cube);

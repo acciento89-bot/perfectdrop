@@ -9,10 +9,12 @@ namespace Kamilunavo.PerfectDrop.UI
         private static Font _font;
         private static Sprite _roundedSprite;
         private static Sprite _circleSprite;
+        private static Sprite _pillSprite;
 
         public static Font DefaultFont => _font != null ? _font : (_font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
         public static Sprite RoundedSprite => _roundedSprite != null ? _roundedSprite : (_roundedSprite = BuildMaskSprite(64, 14f, sliced: true));
         public static Sprite CircleSprite => _circleSprite != null ? _circleSprite : (_circleSprite = BuildMaskSprite(64, 31f, sliced: false));
+        public static Sprite PillSprite => _pillSprite != null ? _pillSprite : (_pillSprite = BuildMaskSprite(64, 28f, sliced: true));
 
         public static Canvas CreateCanvas()
         {
@@ -117,6 +119,23 @@ namespace Kamilunavo.PerfectDrop.UI
             if (image == null) return;
             image.sprite = RoundedSprite;
             image.type = Image.Type.Sliced;
+        }
+
+        public static void ApplyPillImage(Image image)
+        {
+            if (image == null) return;
+            image.sprite = PillSprite;
+            image.type = Image.Type.Sliced;
+        }
+
+        public static Outline AddOutline(Graphic graphic, Color color, float thickness)
+        {
+            if (graphic == null) return null;
+            var outline = graphic.gameObject.AddComponent<Outline>();
+            outline.effectColor = color;
+            outline.effectDistance = new Vector2(Mathf.Max(1f, thickness), Mathf.Max(1f, thickness));
+            outline.useGraphicAlpha = true;
+            return outline;
         }
 
         private static Sprite BuildMaskSprite(int size, float radius, bool sliced)

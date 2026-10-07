@@ -41,6 +41,10 @@ namespace Kamilunavo.PerfectDrop.Input
             var knobImage = knob.GetComponent<Image>();
             knobImage.color = new Color(0.86f, 0.90f, 0.96f, 0.94f);
             UI.UiFactory.ApplyCircularImage(knobImage);
+            UI.UiFactory.Label(root.transform, "UpHint", "▲", 18, new Vector2(0.42f, 0.78f), new Vector2(0.58f, 0.96f), TextAnchor.MiddleCenter, new Color(0.72f, 0.77f, 0.86f, 0.62f), FontStyle.Bold);
+            UI.UiFactory.Label(root.transform, "DownHint", "▼", 18, new Vector2(0.42f, 0.04f), new Vector2(0.58f, 0.22f), TextAnchor.MiddleCenter, new Color(0.72f, 0.77f, 0.86f, 0.62f), FontStyle.Bold);
+            UI.UiFactory.Label(root.transform, "LeftHint", "◀", 18, new Vector2(0.04f, 0.42f), new Vector2(0.20f, 0.58f), TextAnchor.MiddleCenter, new Color(0.72f, 0.77f, 0.86f, 0.62f), FontStyle.Bold);
+            UI.UiFactory.Label(root.transform, "RightHint", "▶", 18, new Vector2(0.80f, 0.42f), new Vector2(0.96f, 0.58f), TextAnchor.MiddleCenter, new Color(0.72f, 0.77f, 0.86f, 0.62f), FontStyle.Bold);
             var joystick = root.GetComponent<VirtualJoystick>();
             joystick.Knob = kr;
             return joystick;
