@@ -10,7 +10,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 {
     public sealed class StackGame : MonoBehaviour
     {
-        public const float LayerHeight = .34f;
+        public const float LayerHeight = .52f;
         public StackRun Run { get; private set; }
         public StackProfile Profile { get; private set; }
         public StackHud Hud { get; private set; }
@@ -266,7 +266,10 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             var top = Run.Top.Center;
             var height = Run.Layers.Count*LayerHeight;
-            var focus = new Vector3(top.x,height-.7f,top.y);
+            // Give the gold slabs volume and keep their overlap surface above
+            // the landscape power controls. Placement rules stay in the X/Z plane.
+            var landscape=Hud!=null && Screen.width*Hud.WorldPane.width>Screen.height*Hud.WorldPane.height*1.2f;
+            var focus = new Vector3(top.x,height-(landscape?1.55f:.7f),top.y);
             var cityView=Hud!=null && Hud.CityOpen;
             if(cityView)focus=new Vector3((CityDistrict-1)*24,1,42);
             var yaw = _yaw*Mathf.Deg2Rad;
