@@ -8,6 +8,9 @@ namespace Kamilunavo.PerfectDrop.Monetization
     public sealed class StorePurchases : MonoBehaviour
     {
         private StoreController _store;
+        private readonly StoreReconnectGate _reconnect=new();
+        public bool CanRetry=>Application.isMobilePlatform&&!Ready&&!Busy&&!IsPresenting&&_reconnect.CanBegin(Time.realtimeSinceStartupAsDouble);
+        public void RetryConnection(){if(CanRetry)Connect();}
         private StackGame _game;
         private readonly HashSet<string> _fetched=new();
         private readonly HashSet<string> _deferred=new();
@@ -28,10 +31,11 @@ namespace Kamilunavo.PerfectDrop.Monetization
         }
         private async void Connect()
         {
+            if(Ready||Busy||!_reconnect.TryBegin(Time.realtimeSinceStartupAsDouble))return;
             Busy=true;SetStatus(T("Store wird verbunden …","Connecting to store …"));
             try
             {
-                _store=UnityIAPServices.StoreController();
+                if(_store==null){_store=UnityIAPServices.StoreController();
                 _store.OnStoreDisconnected+=Disconnected;
                 _store.OnProductsFetched+=ProductsFetched;
                 _store.OnProductsFetchFailed+=ProductsFailed;
@@ -42,15 +46,16 @@ namespace Kamilunavo.PerfectDrop.Monetization
                 _store.OnPurchaseDeferred+=Deferred;
                 _store.OnPurchaseConfirmed+=Confirmed;
                 // Own pending-order handling also covers restoration, without double dispatch.
-                _store.ProcessPendingOrdersOnPurchasesFetched(false);
+                _store.ProcessPendingOrdersOnPurchasesFetched(false);}
                 await _store.Connect();
                 if(this==null)return;
-                if(_store.GetConnectionState()!=ConnectionState.Connected){Busy=false;return;}
+                if(_store.GetConnectionState()!=ConnectionState.Connected){Unavailable(T("Store gerade nicht erreichbar","Store currently unavailable"));return;}
                 _store.FetchProductsWithNoRetries(new List<ProductDefinition>{
                     new(CommerceRules.Starter,ProductType.NonConsumable),
                     new(CommerceRules.Collection,ProductType.NonConsumable)});
             }
             catch(Exception){if(this!=null)Unavailable(T("Store gerade nicht erreichbar","Store currently unavailable"));}
+            finally{_reconnect.EndAttempt();}
         }
         public string Price(string id)=>_store?.GetProductById(id)?.metadata?.localizedPriceString??"";
         public bool Owned(string id)=>_game!=null && (_game.Profile.Commerce.Entitlements&(id==CommerceRules.Starter?1:id==CommerceRules.Collection?2:0))!=0;
@@ -137,7 +142,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         private void Disconnected(StoreConnectionFailureDescription failure)=>Unavailable(T("Store-Verbindung unterbrochen","Store disconnected"));
         private void ProductsFailed(ProductFetchFailed failure)=>Unavailable(T("Shop gerade nicht verfügbar","Shop currently unavailable"));
         private void PurchasesFailed(PurchasesFetchFailureDescription failure){Busy=false;SetStatus(T("Käufe konnten nicht geladen werden","Purchases could not be loaded"));}
-        private void Unavailable(string message){Ready=false;Busy=false;SetStatus(message);}
+        private void Unavailable(string message){_reconnect.Failed(Time.realtimeSinceStartupAsDouble);Ready=false;Busy=false;SetStatus(message);}
         private void SetStatus(string message){if(!Busy)IsPresenting=false;Status=message;Changed?.Invoke();}
         private void OnDestroy()
         {

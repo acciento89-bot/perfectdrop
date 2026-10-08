@@ -8,7 +8,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private RectTransform _shop, _shopViewport, _shopContent;
         private ScrollRect _shopScroll;
         private Text _shopStatus;
-        private Button _starterBuy, _collectionBuy, _restorePurchases, _video, _privacy;
+        private Button _starterBuy, _collectionBuy, _restorePurchases, _retryPurchases, _video, _privacy;
         private int _shopSecond=-1;
         private Button[] _premiumStyles;
         public bool ShopOpen=>_shop!=null && _shop.gameObject.activeSelf;
@@ -38,6 +38,7 @@ namespace Kamilunavo.PerfectDrop.UI
             }
             _video=ShopButton("OptionalVideo","",()=>Game.Videos?.Watch());
             _privacy=ShopButton("AdPrivacy",T("WERBE-DATENSCHUTZ","AD PRIVACY OPTIONS"),()=>Game.Videos?.ShowPrivacy());
+            _retryPurchases=ShopButton("RetryStore",T("STORE ERNEUT VERBINDEN","RECONNECT STORE"),()=>Game.Purchases?.RetryConnection());
             _restorePurchases=ShopButton("RestorePurchases",T("KÄUFE WIEDERHERSTELLEN","RESTORE PURCHASES"),()=>Game.Purchases?.Restore());
             UiFactory.Button(_shop,"ShopBack",T("ZURÜCK ZU DESIGNS","BACK TO DESIGNS"),Gold,Navy,new Vector2(.08f,.04f),new Vector2(.92f,.17f),ShowStyles);
             UiFactory.Button(_styles,"ExtraDesigns",T("EXTRA-DESIGNS / SHOP","EXTRA DESIGNS / SHOP"),new Color(.20f,.13f,.33f),Color.white,new Vector2(.08f,.16f),new Vector2(.92f,.27f),ShowShop);
@@ -68,6 +69,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 SetLabel(_premiumStyles[i],names[i]+" · "+(Game.Profile.Style==style?T("AKTIV","ACTIVE"):owned?T("AUSWÄHLEN","SELECT"):T("IM PAKET ENTHALTEN","INCLUDED IN PACK")));
                 _premiumStyles[i].interactable=owned && !(store?.Busy??false);
             }
+            _retryPurchases.gameObject.SetActive(store!=null && !store.Ready);_retryPurchases.interactable=store?.CanRetry==true;
             _restorePurchases.interactable=store!=null && store.Ready && !store.Busy;
         }
         private void PurchaseLabel(Button button,string id,string title)
