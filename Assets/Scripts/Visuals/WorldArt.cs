@@ -9,6 +9,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _platformTop;
         private static Material _platformInset;
         private static Material _gold;
+        private static Material _goldPlate;
         private static Material _cyan;
         private static Material _tower;
         private static Material _window;
@@ -29,6 +30,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.55f, 0.62f, 0.73f), 0.38f, 0.53f));
         public static Material PlatformInset => _platformInset != null ? _platformInset : (_platformInset = CreateMaterial("PlatformInset", new Color(0.018f, 0.025f, 0.040f), 0.35f, 0.22f));
         public static Material Gold => _gold != null ? _gold : (_gold = CreateMaterial("SignalGold", new Color(1f, 0.48f, 0.035f), 0.24f, 0.76f, new Color(1.85f, 0.58f, 0.035f)));
+        private static Material GoldPlate => _goldPlate != null ? _goldPlate : (_goldPlate = CreateMaterial("GoldPlate", new Color(1f, .78f, .30f), .65f, .72f, new Color(.65f, .35f, .035f)));
         public static Material Cyan => _cyan != null ? _cyan : (_cyan = CreateMaterial("PrecisionCyan", new Color(0.05f, 0.72f, 0.95f), 0.18f, 0.82f, new Color(0.03f, 1.00f, 1.75f)));
         public static Material Tower => _tower != null ? _tower : (_tower = CreateMaterial("Skyline", new Color(0.07f, 0.09f, 0.15f), 0.74f, 0.28f));
         public static Material Window => _window != null ? _window : (_window = CreateMaterial("Window", new Color(0.19f, 0.52f, 0.72f), 0.12f, 0.78f, new Color(0.05f, 0.55f, 1.00f)));
@@ -353,16 +355,18 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             root.transform.localPosition = position;
-            var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,-size.y*.09f,0),new Vector3(size.x,size.y*.82f,size.z), Platform);
+            var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,size.y*.025f,0),new Vector3(size.x,size.y*.79f,size.z), Platform);
             var tint = new MaterialPropertyBlock();
-            tint.SetColor("_Color", Color.Lerp(new Color(.28f,.34f,.46f), new Color(.38f,.28f,.40f), Mathf.Clamp01(level/30f)));
+            tint.SetColor("_Color", Color.Lerp(new Color(.22f,.27f,.34f), new Color(.25f,.21f,.29f), Mathf.Clamp01(level/30f)));
             tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
-            AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.43f,0),new Vector3(size.x*.91f,size.y*.16f,size.z*.91f),PlatformInset);
-            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.508f,0), new Vector3(size.x*.94f,size.y*.018f,size.z*.94f), PlatformTop);
+            AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.44f,0),new Vector3(size.x*.91f,size.y*.12f,size.z*.91f),PlatformInset);
+            // A metallic gold inset and a dark shoulder mirror the app icon.
+            // All parts scale with the actual retained/cut footprint, including slivers.
+            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.508f,0), new Vector3(size.x*.66f,size.y*.018f,size.z*.66f), GoldPlate);
             // A continuous band replaces the corresponding body slice. It stays
             // inside the logical footprint even after a very narrow overhang cut.
-            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,size.y*.36f,0),new Vector3(size.x,size.y*.105f,size.z),Gold);
+            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.43f,0),new Vector3(size.x,size.y*.14f,size.z),Gold);
             AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.455f,0),new Vector3(size.x,size.y*.09f,size.z),Platform);
             var inset=new GameObject("GoldInset",typeof(MeshFilter),typeof(MeshRenderer));
             inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.538f,0);
@@ -555,7 +559,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             material.name = name;
             material.hideFlags = HideFlags.HideAndDontSave;
             material.enableInstancing = true;
-            if(name=="Platform" || name=="PlatformTop" || name=="Skyline")
+            if(name=="Platform" || name=="PlatformTop" || name=="Skyline" || name=="GoldPlate")
             {
                 var texture=Resources.Load<Texture2D>("Art/GunmetalPanels");
                 if(texture!=null)material.SetTexture("_MainTex",texture);
@@ -565,6 +569,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
             if (material.HasProperty("_Detail")) material.SetFloat("_Detail", name == "PlatformTop" ? 1f : 0f);
+            if (material.HasProperty("_GoldFinish")) material.SetFloat("_GoldFinish", name == "GoldPlate" ? 1f : 0f);
             if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
             if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
 

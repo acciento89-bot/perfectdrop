@@ -13,6 +13,8 @@ namespace Kamilunavo.PerfectDrop.QA
     {
         private string _output;
         private bool _arcade,_uiOnly,_cityOnly;
+        private static bool? _requestedLandscape;
+        private static bool RotateNative => Application.isMobilePlatform && Environment.GetEnvironmentVariable("PERFECTDROP_QA_ROTATE") == "1";
         private StackGame _game;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -55,7 +57,7 @@ namespace Kamilunavo.PerfectDrop.QA
             if (Application.isMobilePlatform) File.WriteAllText(Path.Combine(_output,"result.txt"),
                 "PASS: native current pose; game callbacks and visible-button raycasts. " +
                 (_cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
-                "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n" +
+                (RotateNative ? "\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\n" : "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n") +
                 $"Final framebuffer: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}.\n");
             Debug.Log("[PerfectDrop][QA] Stack runtime matrix passed.");
         }
@@ -305,7 +307,15 @@ namespace Kamilunavo.PerfectDrop.QA
         }
         private IEnumerator Capture(string name)
         {
-            if (Application.isMobilePlatform) name = name.Replace("wide-portrait", "native-current-pose").Replace("landscape", "native-current-pose").Replace("portrait", "native-current-pose");
+            if (RotateNative && _requestedLandscape.HasValue)
+            {
+                var deadline=Time.realtimeSinceStartup+6;
+                while((Screen.width>Screen.height)!=_requestedLandscape.Value && Time.realtimeSinceStartup<deadline)yield return null;
+                Require((Screen.width>Screen.height)==_requestedLandscape.Value,"Native orientation did not settle before capture: "+name);
+                yield return new WaitForSecondsRealtime(.2f);
+            }
+            if (RotateNative) name += "-native-"+Screen.width+"x"+Screen.height;
+            else if (Application.isMobilePlatform) name = name.Replace("wide-portrait", "native-current-pose").Replace("landscape", "native-current-pose").Replace("portrait", "native-current-pose");
             yield return new WaitForEndOfFrame();
             CheckButtonRaycasts();
             File.AppendAllText(Path.Combine(_output,"captures.txt"),$"{name}: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}\n");
@@ -353,8 +363,10 @@ namespace Kamilunavo.PerfectDrop.QA
         }
         private static void SetReviewResolution(int width, int height, bool fullscreen)
         {
-            // Mobile render-size overrides do not simulate actual device rotation/poses.
-            if (!Application.isMobilePlatform) Screen.SetResolution(width, height, fullscreen);
+            // Device QA requests real orientation rather than changing render resolution.
+            // Ordinary native probes retain their existing current-pose behavior.
+            if (RotateNative){_requestedLandscape=width>height;Screen.orientation=_requestedLandscape.Value?ScreenOrientation.LandscapeLeft:ScreenOrientation.Portrait;}
+            else if (!Application.isMobilePlatform) Screen.SetResolution(width, height, fullscreen);
         }
         private static Button FindButton(string name)
         {

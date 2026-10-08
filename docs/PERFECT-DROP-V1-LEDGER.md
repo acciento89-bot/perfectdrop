@@ -315,6 +315,14 @@ Complete physical TestFlight input/audio/haptics/performance and genuine Duo pos
 
 Next execution block: restore authorized Unity/system-service access; compile and run GameplayValidation, DuoReadinessValidation and ProfileValidation; launch the current game and capture compact portrait plus official Duo layouts; fix only reproduced defects; iterate art to the concept gate before RC archive/upload.
 
+## Gold block / upper HUD follow-up — 2026-10-08 evening, native validation pending
+
+User requested block quality closer to PerfectDropIcon.png: standard decks now use dark beveled metal shoulders, a bright metallic gold inset and a continuous lower gold band. Six renderers per block and the existing shared meshes/metal texture are retained. The finish gradient is bound to local UVs; special block plate cues and owned rail/body styles remain separate. Retained/cut footprints and gameplay/economy are unchanged.
+
+Stat heading/value and objective status/hint anchor regions now have an explicit gap rather than overlap. Desktop 956x440 did not reproduce the user's physical upper-HUD defect; do not claim its full physical resolution from source spacing alone. Wide centered landscape Drop is preserved.
+
+Desktop review1 passed the actual 30-placement/cut/miss/retry/pause/resize/save/reload matrix; inspected actual portrait and 956x440 captures. Review2 passed the full campaign/powers/special/risk/city/styles/daily/66-layer endless/reload matrix and its brighter gold tutorial capture was inspected. The subsequent small brushed-finish shader change compiled for iOS/Metal and editor arcade/campaign/stack/cut-geometry/reserved-region/release-version checks pass. Fresh native runtime validation of the final finish and actual rotation remains IMPLEMENTED / UNVERIFIED at this source checkpoint. New development-only opt-in PERFECTDROP_QA_ROTATE requests real native orientation, waits for dimensions to settle and keeps separate pose screenshots. Native QA is functional callback/raycast evidence, not physical touch, genuine commerce or a performance measurement. Evidence is in delivery workspace work/perfectdrop-gold-*.
+
 ## Optional monetization work — 2026-10-08 morning (not yet released)
 - User approved voluntary rewarded videos + cosmetic/starter purchases, and explicitly chose a wide centered landscape Drop control. Earlier right-side fix is superseded by centered (.20,.07,.60,.20), powers above (.12,.29,.76,.20).
 - Installed official UnityIAP5.4.4, GoogleMobileAds11.5.0, EDM1.2.187. AdMob existing account verified through Safari; created unpublished Perfect Drop iOS/Android entries and one 50-Coins rewarded unit each. Runtime configuration deliberately remains internal test ads.

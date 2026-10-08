@@ -14,6 +14,8 @@ Deep navy #071426, panel navy #101C32, slate metal #313642, signal gold #FFC52E,
 
 Stacked blocks use beveled metal decks, a separate inset top plate and fine gold perimeter strips. Retained footprint and the falling cut-off piece must read clearly. Simple box collisions may exist internally; visible blocks are shaped meshes. The tower stands above soft cloud texture and layered distant skyline silhouettes. Environment art must not obscure the moving block. Final material/skyline/polish and physical mobile performance remain explicit acceptance gates.
 
+User follow-up 2026-10-08: [PerfectDropIcon.png](../Assets/Art/PerfectDropIcon.png) is the additional block material reference. Standard blocks have dark metal shoulders, a bright inset gold plate with restrained brushed variation and a continuous lower gold band. The finish follows local UVs while the slab moves. Keep special pink/blue/green top cues and owned rail/body designs distinct. Share the existing mesh/materials and keep six renderers per block, including thin cut pieces; visual quality must be checked on actual native renders.
+
 ## Camera
 
 An elevated three-quarter view shows overlap in both alternating axes. Smooth vertical tracking follows the settled tower, with enough framing to see the moving slab at both extremes. The player may orbit by dragging free space; yaw is never forced back behind a character. Tap and drag are distinct. Resize/rotation reflow UI and camera framing without recreating the tower or losing progress. Completion may frame the full tower without delaying Retry.

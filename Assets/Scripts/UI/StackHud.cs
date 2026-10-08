@@ -38,12 +38,12 @@ namespace Kamilunavo.PerfectDrop.UI
                 var min = i * .25f;
                 var card = UiFactory.Panel(_statsRoot, "Stat"+i, Navy, new Vector2(min,0), new Vector2(min+.235f,1));
                 UiFactory.Icon(card, "Icon", types[i], Gold, new Vector2(.09f,.32f), new Vector2(.29f,.68f));
-                UiFactory.Label(card,"Heading",statNames[i],24,new Vector2(.34f,.63f),new Vector2(.95f,.94f),TextAnchor.MiddleLeft,new Color(.68f,.74f,.84f),FontStyle.Bold);
-                _stats[i] = UiFactory.Label(card,"Value","",50,new Vector2(.34f,.12f),new Vector2(.95f,.66f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
+                UiFactory.Label(card,"Heading",statNames[i],24,new Vector2(.34f,.70f),new Vector2(.95f,.94f),TextAnchor.MiddleLeft,new Color(.68f,.74f,.84f),FontStyle.Bold);
+                _stats[i] = UiFactory.Label(card,"Value","",50,new Vector2(.34f,.12f),new Vector2(.95f,.60f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
             }
             _objective = UiFactory.Panel(_safe,"Objective",Navy,new Vector2(.04f,.765f),new Vector2(.96f,.85f));
-            _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.40f),new Vector2(.76f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
-            _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.13f),new Vector2(.74f,.44f),TextAnchor.MiddleLeft,Color.white);
+            _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.48f),new Vector2(.76f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
+            _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.15f),new Vector2(.74f,.38f),TextAnchor.MiddleLeft,Color.white);
             _progress = UiFactory.Progress(_objective,new Vector2(.045f,.04f),new Vector2(.955f,.10f),new Color(.22f,.27f,.35f),Gold);
             UiFactory.Button(_objective,"Menu",T("MENÜ","MENU"),new Color(.14f,.20f,.29f),Color.white,new Vector2(.79f,.15f),new Vector2(.965f,.93f),OpenSettings);
             _drop = UiFactory.Button(_safe,"Drop",T("ABSETZEN","DROP"),Gold,Navy,new Vector2(.10f,.055f),new Vector2(.90f,.15f),game.Drop);
