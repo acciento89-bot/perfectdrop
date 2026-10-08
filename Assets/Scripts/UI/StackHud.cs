@@ -157,7 +157,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 Place(_statsRoot,pane,new Rect(.025f,.80f,.55f,.17f));
                 Place(_objective,pane,new Rect(.60f,.77f,.37f,.20f));
-                Place(_dropRect,pane,new Rect(.72f,.05f,.25f,.17f));
+                Place(_dropRect,pane,new Rect(.69f,.09f,.27f,.24f));
                 Place(_popup,pane,new Rect(.05f,.025f,.90f,.95f));
             }
         }

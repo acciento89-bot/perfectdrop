@@ -60,6 +60,14 @@ The user rejected the prototype visuals and requested graphics matching the atta
 - Additional official simctl screenConfig attempt: display 1 was powered off then restored on; display 3 (2007×2853) still captured entirely black and the app launch/container requests stalled. Simulator shut down after the bounded attempt. This is NOT an opened/rotated/divided pose pass. Device Hub CUA connection remains unavailable; prior genuine current-outer native PASS is unchanged.
 - Evidence files are in the Codex task workspace `work/concept-build5-*`, `work/concept-native-build5-*`, `work/concept-*-build5.log`, and `outputs/`. Physical iPhone/Android tests, genuine opened/divided/rotated Duo states, final native performance and TestFlight installation remain open. Earlier build3/build4 signing receipts above are historical and superseded by build5.
 
+## Physical feedback and next monetization scope — 2026-10-08
+
+User tested TestFlight1.0(5) on a real iPhone16ProMax: runs well, sound/haptics good, no perceived stutter; other behavior okay except awkward landscape Drop. This is qualitative physical feedback, not measured FPS/thermal/lifecycle acceptance. No Duo available; its genuine poses remain open.
+
+Landscape investigation confirmed build5 Drop/Risk partial overlap with actual runtime bounds-check FAIL plus failure screenshot. Fix gives landscape Drop larger right-side target and more inset, moves powers to left. Fresh full30-drop/cut/miss/retry/settings/save/resize/reload QA PASS in4:3 and956×440 layouts; inspected captures. Desktop same-aspect evidence is not a new physical-iPhone verification. Portrait unchanged.
+
+User selected optional rewarded videos + design/starter native IAP. Old no-real-money campaign spec is superseded only for this newly requested optional shop; existing free content is preserved. Design/plan: `docs/superpowers/specs/2026-10-08-monetization.md`, `docs/superpowers/plans/2026-10-08-monetization.md`. AdMob account question pending. No new SDK or real money implementation yet at this checkpoint. Prior autonomous implementation/main push/internal TestFlight authorization persists; no public release.
+
 ## Verified stacking foundation (historical checkpoint)
 
 

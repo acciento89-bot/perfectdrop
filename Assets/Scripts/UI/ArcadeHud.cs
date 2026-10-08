@@ -62,6 +62,8 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             if(_powerRow==null)return;
             Place(_powerRow,pane,new Rect(.04f,.165f,.92f,.135f));
+            if (Screen.width*pane.width > Screen.height*pane.height*1.2f)
+                Place(_powerRow,pane,new Rect(.04f,.07f,.60f,.25f));
             Place(_cityPanel,pane,new Rect(0,0,1,1));
         }
         private void UpdateArcadeHud()

@@ -100,6 +100,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 {
                     yield return Capture("portrait");
                     SetReviewResolution(800,600,false); yield return null; CheckFraming(); yield return new WaitForSecondsRealtime(.5f); yield return Capture("landscape");
+                    SetReviewResolution(956,440,false); yield return new WaitForSecondsRealtime(.5f); yield return Capture("iphone16-pro-max-landscape");
                     Require(_game.Run.Layers.Count==5,"Resize reset progress.");
                     Kamilunavo.PerfectDrop.UI.ReservedRegionProvider.QaDivision = new Rect(.48f,0,.04f,1);
                     yield return new WaitForSecondsRealtime(.5f); yield return Capture("division-synthetic");
@@ -294,6 +295,21 @@ namespace Kamilunavo.PerfectDrop.QA
                 blocker.GetComponent<Image>().color = Color.clear;
             }
             Canvas.ForceUpdateCanvases();
+            var drop = GameObject.Find("Drop")?.GetComponent<Button>();
+            if (drop != null && drop.isActiveAndEnabled)
+            {
+                var corners = new Vector3[4];
+                ((RectTransform)drop.transform).GetWorldCorners(corners);
+                var dropBounds = new Rect(corners[0].x, corners[0].y, corners[2].x-corners[0].x, corners[2].y-corners[0].y);
+                foreach (var name in new[] { "Power0", "Power1", "Power2", "Risk" })
+                {
+                    var control = GameObject.Find(name)?.GetComponent<Button>();
+                    if (control == null || !control.isActiveAndEnabled) continue;
+                    ((RectTransform)control.transform).GetWorldCorners(corners);
+                    var bounds = new Rect(corners[0].x, corners[0].y, corners[2].x-corners[0].x, corners[2].y-corners[0].y);
+                    Require(!dropBounds.Overlaps(bounds), "Drop target overlaps another gameplay control: " + name);
+                }
+            }
             var hits = new List<RaycastResult>();
             foreach (var button in FindObjectsByType<Button>(FindObjectsSortMode.None))
             {
