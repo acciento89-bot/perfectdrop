@@ -35,7 +35,7 @@ Files: Assets/Scripts/Monetization/CommerceRules.cs, StorePurchases.cs; Core/Sta
 Interfaces: CommerceRules.ApplyPending(profile,productId,transactionId), RestoreEntitlement(profile,productId), returning grant/change outcome; StorePurchases exposes fetched products/prices/busy/status plus Buy and Restore.
 - [x] Write failing pure replay/restore/unknown/migration/persistence-boundary checks.
 - [x] Install pinned package, implement rules/store SDK lifecycle and run checks.
-- [ ] Compile editor + native iOS/Android; inspect SDK events/receipt boundaries against installed APIs.
+- [x] Compile editor + native iOS/Android; inspect SDK events/receipt boundaries against installed APIs.
 - [x] Commit verified purchase subsystem and ledger actual pending live-store configuration.
 
 ### Task3: premium shop and cosmetics
@@ -54,6 +54,6 @@ Files: Monetization/RewardedVideos.cs, MonetizationConfig.cs; Editor/build plugi
 
 ### Task5: final integration/release candidate
 - [x] Fresh whole-change read-only review, fix concrete findings with regression checks.
-- [ ] Native simulator/layout compile, signed Android with existing central key, signed iOS archive/internal TestFlight next number.
+- [x] Native simulator/layout compile, signed Android with existing central key, signed iOS archive/internal TestFlight next number.
 - [ ] Actual StoreKit sandbox buy/cancel/restore and rewarded completion/no-fill. No live earnings claim without real catalog/account configuration.
-- [ ] Commit/push clean source, update ledger and actionable device/store handoff.
+- [x] Commit/push clean source, update ledger and actionable device/store handoff.
