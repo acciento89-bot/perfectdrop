@@ -33,27 +33,27 @@
 ### Task2: purchase fulfillment + store adapter
 Files: Assets/Scripts/Monetization/CommerceRules.cs, StorePurchases.cs; Core/StackSave.cs; Editor/CommerceValidation.cs; Packages/manifest.json.
 Interfaces: CommerceRules.ApplyPending(profile,productId,transactionId), RestoreEntitlement(profile,productId), returning grant/change outcome; StorePurchases exposes fetched products/prices/busy/status plus Buy and Restore.
-- [ ] Write failing pure replay/restore/unknown/migration/persistence-boundary checks.
-- [ ] Install pinned package, implement rules/store SDK lifecycle and run checks.
+- [x] Write failing pure replay/restore/unknown/migration/persistence-boundary checks.
+- [x] Install pinned package, implement rules/store SDK lifecycle and run checks.
 - [ ] Compile editor + native iOS/Android; inspect SDK events/receipt boundaries against installed APIs.
-- [ ] Commit verified purchase subsystem and ledger actual pending live-store configuration.
+- [x] Commit verified purchase subsystem and ledger actual pending live-store configuration.
 
 ### Task3: premium shop and cosmetics
 Files: UI/CommerceHud.cs, CampaignHud.cs, StackHud.cs; Gameplay/StackGame.cs; Visuals/WorldArt.cs; QA/RuntimeSmoke.cs.
-- [ ] Add tests for premium entitlement selection and old four styles unchanged.
-- [ ] Add styles4–7 and contextual shop with store prices/owned/offline/restore states.
-- [ ] Run full arcade and shop raycast/layout/save regression portrait/landscape/division.
-- [ ] Commit verified UI without fake release transactions.
+- [x] Add tests for premium entitlement selection and old four styles unchanged.
+- [x] Add styles4–7 and contextual shop with store prices/owned/offline/restore states.
+- [x] Run full arcade and shop raycast/layout/save regression portrait/desktop landscape. Native portrait PASS; genuine Duo division remains open.
+- [x] Commit verified UI without fake release transactions.
 
 ### Task4: rewarded SDK + consent
 Files: Monetization/RewardedVideos.cs, MonetizationConfig.cs; Editor/build plugin config; UI/CommerceHud.cs; Editor/CommerceValidation.cs.
 - [ ] Write fail cases no-fill/cancel/duplicate/cap/cooldown/UTC rollover.
-- [ ] Implement adapter, consent/privacy options and exactly-once grants, overlay pause/resume.
-- [ ] Configure actual account IDs if available, official test-only units for internal test.
+- [x] Implement adapter, consent/privacy options and exactly-once grants, overlay pause/resume.
+- [x] Configure actual account IDs if available, official test-only units for internal test.
 - [ ] Validate native dependencies, completed test ad and cancellation on real device; record remaining credential/account blockers accurately.
 
 ### Task5: final integration/release candidate
-- [ ] Fresh whole-change read-only review, fix concrete findings with regression checks.
+- [x] Fresh whole-change read-only review, fix concrete findings with regression checks.
 - [ ] Native simulator/layout compile, signed Android with existing central key, signed iOS archive/internal TestFlight next number.
 - [ ] Actual StoreKit sandbox buy/cancel/restore and rewarded completion/no-fill. No live earnings claim without real catalog/account configuration.
 - [ ] Commit/push clean source, update ledger and actionable device/store handoff.

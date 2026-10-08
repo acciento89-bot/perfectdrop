@@ -240,10 +240,18 @@ namespace Kamilunavo.PerfectDrop.QA
             _game.Save();Require(StackSave.Load().Style==6,"Premium style not saved.");
             Kamilunavo.PerfectDrop.Monetization.CommerceRules.ReconcileEntitlements(_game.Profile,new string[0]);
             _game.RefreshProfileStyle();
-            var moving=GameObject.Find("MovingBlock");
             Require(_game.Profile.Style==0,"Revoked premium style remains selected.");
-            var rim=moving.transform.Find("GoldBand").GetComponent<Renderer>();var paint=new MaterialPropertyBlock();rim.GetPropertyBlock(paint);
-            Require((paint.GetColor("_Color")-new Color(1f,.55f,.06f)).maxColorComponent<.01f,"Revoked style still displayed on moving block.");
+            // This run is completed, so no moving block exists. Home/shop hides
+            // the placed tower; inspect its renderers without activating it.
+            var rims=Array.FindAll(FindObjectsByType<Renderer>(FindObjectsInactive.Include,FindObjectsSortMode.None),
+                candidate=>candidate.name=="GoldBand" && candidate.transform.parent.name.StartsWith("Placed_"));
+            Require(rims.Length>0,"Placed block rims missing from hidden tower.");
+            foreach(var rim in rims)
+            {
+                var paint=new MaterialPropertyBlock();rim.GetPropertyBlock(paint);
+                var restored=paint.GetColor("_Color");var expected=new Color(1f,.55f,.06f);
+                Require(Mathf.Abs(restored.r-expected.r)<.01f && Mathf.Abs(restored.g-expected.g)<.01f && Mathf.Abs(restored.b-expected.b)<.01f,"Revoked style still displayed on placed tower.");
+            }
             FindButton("ShopBack").onClick.Invoke();SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
             FindButton("Back").onClick.Invoke();if(_uiOnly)yield break;FindButton("Challenge").onClick.Invoke();
             for(var block=1;block<=_game.Run.Target;block++)

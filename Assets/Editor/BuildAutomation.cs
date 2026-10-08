@@ -101,7 +101,10 @@ public static class BuildAutomation
             options = development ? BuildOptions.Development | BuildOptions.AllowDebugging : BuildOptions.None
         };
 
+        if((target==BuildTarget.iOS || target==BuildTarget.Android) && EditorUserBuildSettings.activeBuildTarget!=target)
+            throw new InvalidOperationException("Native SDK postprocessors require launching Unity with -buildTarget "+target+" before this build.");
         var report = BuildPipeline.BuildPlayer(options);
+        if(target==BuildTarget.iOS && report.summary.result==BuildResult.Succeeded)Kamilunavo.PerfectDrop.Editor.CommerceBuildHooks.ValidateIosAds(output);
         foreach(var shader in UnityEngine.Resources.LoadAll<UnityEngine.Shader>(""))
             if(ShaderUtil.ShaderHasError(shader))throw new InvalidOperationException("Build contains a shader compilation error: "+shader.name);
         if (report.summary.result != BuildResult.Succeeded)
