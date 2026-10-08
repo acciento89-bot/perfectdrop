@@ -15,3 +15,9 @@ QA profiles use separate save keys. On mobile, desktop resize requests are skipp
 Unity prefixes the app's persistent directory when saving mobile screenshots, so the QA helper supplies a relative screenshot path while writing result files to the full data path.
 
 The desktop real-time render soak is separate. It renders retained 64-layer endless, a fully earned city, portrait/landscape, a chapter map, and a synthetic division. It requires at least 95% foreground frames. Invalidate a run interrupted by export/editor UI and repeat it; never reinterpret a missing/zero batch counter as zero draw calls. Desktop timings and synthetic regions do not establish native GPU performance or official Duo pose acceptance.
+
+## Final5 OS-input/extra-screen limitations (2026-10-08)
+
+An additional native CUA click at the visible Level1 centre `(170,323)` in the 600×800 desktop player arrived as Unity GUI `(1706,254)` / legacy input `(1706,546)` with `hit=none`, despite focus. Native mouse down/up arrived, but did not hit the intended content. This bounded automation attempt is not a passed OS-input test and did not justify modifying the shared mobile input logic. Evidence: `work/concept-build5-input-observation.log` and its status receipt.
+
+Official simctl `io screenConfig` powered display1 off and then restored it on. Display3 (2007×2853) still captured black, and launch/container requests stalled until simulator shutdown. This is not a genuine opened/divided/rotation pose pass. Do not substitute synthetic desktop division, inactive second-display pixels, or callback invocation for that acceptance.
