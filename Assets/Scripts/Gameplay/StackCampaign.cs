@@ -65,7 +65,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public static int StyleCost(int style) => style==0?0:style==1?75:style==2?150:250;
         public static bool SelectStyle(StackProfile profile,int style)
         {
-            if(style<0 || style>3) return false;
+            if(style<0 || style>7) return false;
+            Monetization.CommerceRules.Normalize(profile);
+            if(style>=4 && (profile.OwnedStyles&(1<<style))==0)return false;
             var bit=1<<style;
             if((profile.OwnedStyles&bit)==0)
             {

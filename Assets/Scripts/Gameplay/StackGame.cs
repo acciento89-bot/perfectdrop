@@ -14,6 +14,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public StackRun Run { get; private set; }
         public StackProfile Profile { get; private set; }
         public StackHud Hud { get; private set; }
+        public Monetization.StorePurchases Purchases {get;private set;}
+        public Monetization.RewardedVideos Videos {get;private set;}
         public float MovingOffset { get; private set; }
         public StackLevel Level { get; private set; }
         public int LastStars { get; private set; }
@@ -76,6 +78,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             Hud = gameObject.AddComponent<StackHud>(); Hud.Build(this); Hud.ResetMessage();
             if(!Profile.ResumeActive) Hud.ShowHome();
             UpdateCamera(true);
+            Purchases=gameObject.AddComponent<Monetization.StorePurchases>();
+            Purchases.Changed+=Hud.RefreshCommerce;Purchases.Initialize(this);
+            Videos=gameObject.AddComponent<Monetization.RewardedVideos>();Videos.Changed+=Hud.RefreshCommerce;Videos.Initialize(this);
         }
 
         private void Update()
@@ -235,9 +240,13 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public bool SelectStyle(int style)
         {
             if(!StackCampaign.SelectStyle(Profile,style)) return false;
-            foreach(var block in _placed) WorldArt.StyleStackBlock(block,style);
-            if(_moving!=null) WorldArt.StyleStackBlock(_moving.gameObject,style);
+            RefreshProfileStyle();
             Save(); return true;
+        }
+        public void RefreshProfileStyle()
+        {
+            foreach(var block in _placed)WorldArt.StyleStackBlock(block,Profile.Style);
+            if(_moving!=null)WorldArt.StyleStackBlock(_moving.gameObject,Profile.Style);
         }
         private void SpawnMoving()
         {

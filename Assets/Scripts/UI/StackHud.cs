@@ -18,7 +18,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private bool _hadDivision;
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
         public bool MapOrStyleOpen => CampaignMenuOpen;
-        public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen;
+        public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false);
         private static Color Navy => new(0.035f, 0.065f, 0.12f, 1f);
         private static Color Gold => new(1f, 0.79f, 0.16f);
         public static string T(string de, string en) => GameText.German ? de : en;
@@ -59,8 +59,8 @@ namespace Kamilunavo.PerfectDrop.UI
             _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
             _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.77f),new Vector2(.90f,.88f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
             _settingsMap=UiFactory.Button(_popup,"SettingsMap",T("LEVELÜBERSICHT","LEVEL MAP"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.10f,.21f),new Vector2(.90f,.32f),game.GoHome);
-            BuildCampaignMenus(); BuildArcadeMenus();
-            foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null;
+            BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu();
+            foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null || graphic.GetComponent<RectMask2D>() != null;
             _popup.gameObject.SetActive(false);
             Layout(true); Refresh();
         }
@@ -129,7 +129,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _daily.interactable = StackSave.CanClaim(Game.Profile);
         }
         private static void SetLabel(Button button, string text) => button.GetComponentInChildren<Text>().text = text;
-        private void Update() { Layout(false); UpdateArcadeHud(); }
+        private void Update() { Layout(false); UpdateArcadeHud(); UpdateCommerce(); }
         private void Layout(bool force)
         {
             var hasDivision = ReservedRegionProvider.TryGetDivisionRegion(out var division);
@@ -145,7 +145,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 else
                     pane = d.y >= 1-d.yMax ? new Rect(0,0,1,Mathf.Max(.05f,d.y-.015f)) : new Rect(0,d.yMax+.015f,1,Mathf.Max(.05f,1-d.yMax-.015f));
             }
-            LayoutCampaign(pane); LayoutArcade(pane);
+            LayoutCampaign(pane); LayoutArcade(pane); LayoutCommerce(pane);
             var screenSafe = Screen.safeArea;
             WorldPane = new Rect((screenSafe.x+pane.x*screenSafe.width)/Screen.width, (screenSafe.y+pane.y*screenSafe.height)/Screen.height, pane.width*screenSafe.width/Screen.width, pane.height*screenSafe.height/Screen.height);
             Place(_statsRoot,pane,new Rect(.04f,.875f,.92f,.105f));
@@ -157,7 +157,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 Place(_statsRoot,pane,new Rect(.025f,.80f,.55f,.17f));
                 Place(_objective,pane,new Rect(.60f,.77f,.37f,.20f));
-                Place(_dropRect,pane,new Rect(.69f,.09f,.27f,.24f));
+                Place(_dropRect,pane,new Rect(.20f,.07f,.60f,.20f));
                 Place(_popup,pane,new Rect(.05f,.025f,.90f,.95f));
             }
         }

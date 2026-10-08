@@ -224,7 +224,28 @@ namespace Kamilunavo.PerfectDrop.QA
             var wallet=_game.Profile.Coins;FindButton("Style1").onClick.Invoke();
             Require(_game.Profile.Style==1 && _game.Profile.Coins==wallet-75,"Style purchase failed.");
             FindButton("Style1").onClick.Invoke();Require(_game.Profile.Coins==wallet-75,"Style charged twice.");
-            yield return Capture("styles");FindButton("Back").onClick.Invoke();if(_uiOnly)yield break;FindButton("Challenge").onClick.Invoke();
+            yield return Capture("styles");
+            FindButton("ExtraDesigns").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
+            Require(_game.Hud.ShopOpen && _game.Hud.ModalOpen,"Shop does not pause gameplay.");
+            var shopCoins=_game.Profile.Coins;
+            Require(!_game.Purchases.CanBuy(Kamilunavo.PerfectDrop.Monetization.CommerceRules.Starter) && !_game.Videos.CanWatch,"Offline QA exposes a fake native purchase/video.");
+            Require(!FindButton("BuyStarter").interactable && !FindButton("OptionalVideo").interactable,"Unavailable purchase/video buttons enabled.");
+            Require(!_game.SelectStyle(4) && _game.Profile.Coins==shopCoins,"Locked premium style changed wallet.");
+            yield return Capture("shop-offline-portrait");
+            SetReviewResolution(956,440,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("shop-offline-landscape");
+            var scroll=GameObject.Find("ShopScroll").GetComponent<ScrollRect>();scroll.verticalNormalizedPosition=0;
+            yield return new WaitForSecondsRealtime(.5f);yield return Capture("shop-bottom-landscape");
+            Kamilunavo.PerfectDrop.Monetization.CommerceRules.RestoreEntitlement(_game.Profile,Kamilunavo.PerfectDrop.Monetization.CommerceRules.Collection);
+            _game.Hud.RefreshCommerce();Require(_game.SelectStyle(6) && _game.Profile.Coins==shopCoins,"Owned style selection changed coins.");
+            _game.Save();Require(StackSave.Load().Style==6,"Premium style not saved.");
+            Kamilunavo.PerfectDrop.Monetization.CommerceRules.ReconcileEntitlements(_game.Profile,new string[0]);
+            _game.RefreshProfileStyle();
+            var moving=GameObject.Find("MovingBlock");
+            Require(_game.Profile.Style==0,"Revoked premium style remains selected.");
+            var rim=moving.transform.Find("GoldBand").GetComponent<Renderer>();var paint=new MaterialPropertyBlock();rim.GetPropertyBlock(paint);
+            Require((paint.GetColor("_Color")-new Color(1f,.55f,.06f)).maxColorComponent<.01f,"Revoked style still displayed on moving block.");
+            FindButton("ShopBack").onClick.Invoke();SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
+            FindButton("Back").onClick.Invoke();if(_uiOnly)yield break;FindButton("Challenge").onClick.Invoke();
             for(var block=1;block<=_game.Run.Target;block++)
             {
                 var until=Time.realtimeSinceStartup+30;
@@ -301,7 +322,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 var corners = new Vector3[4];
                 ((RectTransform)drop.transform).GetWorldCorners(corners);
                 var dropBounds = new Rect(corners[0].x, corners[0].y, corners[2].x-corners[0].x, corners[2].y-corners[0].y);
-                foreach (var name in new[] { "Power0", "Power1", "Power2", "Risk" })
+                foreach (var name in new[] { "PowerSlow", "PowerCenter", "PowerRepair", "Risk" })
                 {
                     var control = GameObject.Find(name)?.GetComponent<Button>();
                     if (control == null || !control.isActiveAndEnabled) continue;
@@ -313,7 +334,7 @@ namespace Kamilunavo.PerfectDrop.QA
             var hits = new List<RaycastResult>();
             foreach (var button in FindObjectsByType<Button>(FindObjectsSortMode.None))
             {
-                if (!button.isActiveAndEnabled || !button.IsInteractable()) continue;
+                if (!button.isActiveAndEnabled || !button.IsInteractable() || button.GetComponent<Graphic>().canvasRenderer.cull) continue;
                 var rect = (RectTransform)button.transform;
                 var point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
                 hits.Clear();

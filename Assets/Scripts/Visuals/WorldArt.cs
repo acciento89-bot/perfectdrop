@@ -356,6 +356,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,-size.y*.09f,0),new Vector3(size.x,size.y*.82f,size.z), Platform);
             var tint = new MaterialPropertyBlock();
             tint.SetColor("_Color", Color.Lerp(new Color(.28f,.34f,.46f), new Color(.38f,.28f,.40f), Mathf.Clamp01(level/30f)));
+            tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
             AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.43f,0),new Vector3(size.x*.91f,size.y*.16f,size.z*.91f),PlatformInset);
             AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.508f,0), new Vector3(size.x*.94f,size.y*.018f,size.z*.94f), PlatformTop);
@@ -412,12 +413,21 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var plate=block.transform.Find("TopPlate").GetComponent<Renderer>();
             var tint=new MaterialPropertyBlock();tint.SetColor("_Color",color*.5f);tint.SetColor("_EmissionColor",color*.15f);plate.SetPropertyBlock(tint);
         }
-        private static Color StyleColor(int style) => style==1?new Color(.08f,.8f,1f):style==2?new Color(1f,.18f,.55f):style==3?new Color(.2f,1f,.5f):new Color(1f,.55f,.06f);
+        private static Color StyleColor(int style) => style switch {
+            1=>new Color(.08f,.8f,1f),2=>new Color(1f,.18f,.55f),3=>new Color(.2f,1f,.5f),
+            4=>new Color(1f,.36f,.14f),5=>new Color(.75f,.93f,1f),6=>new Color(.64f,.25f,1f),7=>new Color(1f,.87f,.25f),
+            _=>new Color(1f,.55f,.06f)};
         public static void StyleStackBlock(GameObject block,int style)
         {
             var color=StyleColor(style);
             foreach(var renderer in block.GetComponentsInChildren<Renderer>())
             {
+                if(renderer.name=="MetalDeck")
+                {
+                    var body=new MaterialPropertyBlock();renderer.GetPropertyBlock(body);
+                    var bodyColor=style<4?body.GetColor("_DeckBaseColor"):style==4?new Color(.32f,.15f,.075f):style==5?new Color(.73f,.83f,.88f):style==6?new Color(.085f,.035f,.16f):new Color(.30f,.22f,.065f);
+                    body.SetColor("_Color",bodyColor);body.SetFloat("_Metallic",style<4?renderer.sharedMaterial.GetFloat("_Metallic"):style==5?.20f:.72f);body.SetFloat("_Glossiness",style<4?renderer.sharedMaterial.GetFloat("_Glossiness"):style==5?.85f:.62f);renderer.SetPropertyBlock(body);continue;
+                }
                 if(!renderer.name.StartsWith("Gold")) continue;
                 var tint=new MaterialPropertyBlock(); tint.SetColor("_Color",color); tint.SetColor("_EmissionColor",color*1.85f); renderer.SetPropertyBlock(tint);
             }

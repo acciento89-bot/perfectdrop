@@ -7,6 +7,17 @@
     "com.unity.modules.tetgen": "1.0.0",
     "com.unity.modules.timelinefoundation": "1.0.0",
     "com.unity.modules.vectorgraphics": "1.0.0",
-    "com.unity.modules.screencapture": "1.0.0"
-  }
+    "com.unity.modules.screencapture": "1.0.0",
+    "com.unity.purchasing": "5.4.4",
+    "com.google.ads.mobile": "11.5.0"
+  },
+  "scopedRegistries": [
+    {
+      "name": "Google OpenUPM",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.google"
+      ]
+    }
+  ]
 }

@@ -9,6 +9,8 @@ namespace Kamilunavo.PerfectDrop
     public sealed class StackProfile
     {
         public int Schema = 2, Best, Coins, Towers, Streak, RunCoins;
+        public Monetization.CommerceProfile Commerce = new();
+        public Monetization.RewardProfile Rewards = new();
         public int UnlockedLevel=1, RunLevel=1, TotalPlaced, PerfectDrops, MaxStreak, EndlessBest, OwnedStyles=1, Style;
         public int[] LevelStars = new int[30];
         public bool RunEndless;
@@ -46,9 +48,9 @@ namespace Kamilunavo.PerfectDrop
             data.UnlockedLevel=Mathf.Clamp(data.UnlockedLevel,1,30);
             data.RunLevel=Mathf.Clamp(data.RunLevel,1,data.UnlockedLevel);
             data.EndlessBest=Mathf.Max(0,data.EndlessBest);
-            data.OwnedStyles=(data.OwnedStyles&15)|1;
-            data.Style=Mathf.Clamp(data.Style,0,3);
-            if((data.OwnedStyles&(1<<data.Style))==0) data.Style=0;
+            Monetization.CommerceRules.Normalize(data);
+            data.Rewards??=new Monetization.RewardProfile();data.Rewards.Sessions??=new List<string>();
+            data.Rewards.Count=Mathf.Clamp(data.Rewards.Count,0,Monetization.RewardRules.DailyLimit);
             if(data.LevelStars==null || data.LevelStars.Length!=30) data.LevelStars=new int[30];
             for(var i=0;i<30;i++) data.LevelStars[i]=Mathf.Clamp(data.LevelStars[i],0,3);
             if (data.Layers == null) data.Layers = new List<StackLayer>();

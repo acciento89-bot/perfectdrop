@@ -12,7 +12,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private HudIconGraphic[,] _levelStars;
         private Button _endless,_continue,_next,_map;
         private int _chapter;
-        private bool CampaignMenuOpen => (_home!=null && _home.gameObject.activeSelf) || (_styles!=null && _styles.gameObject.activeSelf);
+        private bool CampaignMenuOpen => ShopOpen || (_home!=null && _home.gameObject.activeSelf) || (_styles!=null && _styles.gameObject.activeSelf);
         private void BuildCampaignMenus()
         {
             _home=UiFactory.Panel(_safe,"LevelMap",Color.clear,Vector2.zero,Vector2.one);
@@ -61,7 +61,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void HideMenus()
         {
-            HideArcadeMenus();
+            HideArcadeMenus();if(_shop!=null)_shop.gameObject.SetActive(false);
             _home.gameObject.SetActive(false);_styles.gameObject.SetActive(false);_popup.gameObject.SetActive(false);HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f); Refresh();
         }
@@ -112,6 +112,18 @@ namespace Kamilunavo.PerfectDrop.UI
             if(_home==null)return;
             Place(_home,pane,new Rect(.04f,.015f,.92f,.97f));Place(_styles,pane,new Rect(.04f,.015f,.92f,.97f));
             var landscape=Screen.width*pane.width > Screen.height*pane.height*1.2f;
+            if(landscape)
+            {
+                for(var i=0;i<4;i++)Set((RectTransform)_styleButtons[i].transform,.06f+(i%2)*.46f,.56f-(i/2)*.20f,.48f+(i%2)*.46f,.74f-(i/2)*.20f);
+                Set((RectTransform)_styles.Find("ExtraDesigns"),.08f,.19f,.92f,.33f);
+                Set((RectTransform)_styles.Find("Back"),.08f,.025f,.92f,.165f);
+            }
+            else
+            {
+                for(var i=0;i<4;i++)Set((RectTransform)_styleButtons[i].transform,.08f,.66f-i*.125f,.92f,.765f-i*.125f);
+                Set((RectTransform)_styles.Find("ExtraDesigns"),.08f,.16f,.92f,.27f);
+                Set((RectTransform)_styles.Find("Back"),.08f,.04f,.92f,.15f);
+            }
             for(var i=0;i<10;i++)
             {
                 var cols=landscape?5:2;var rows=landscape?2:5;
