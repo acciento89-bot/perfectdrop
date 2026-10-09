@@ -44,14 +44,24 @@ Shader "Kamilunavo/PerfectDropPanel"
             {
                 fixed4 c=(tex2D(_MainTex,i.uv)+_TextureSampleAdd)*i.color;
                 float2 size=max(i.panel.zw,1), localPoint=(i.panel.xy-.5)*size;
-                float radius=min(10,min(size.x,size.y)*.20);
+                float radius=min(28,min(size.x,size.y)*.24);
                 float2 q=abs(localPoint)-(size*.5-radius);
                 float distance=length(max(q,0))+min(max(q.x,q.y),0)-radius;
-                float edge=1-smoothstep(.4,1.4,abs(distance+1));
-                float gold=step(.5,i.color.r)*step(.3,i.color.g);
-                c.rgb*=lerp(.95,1.08,i.panel.y);
-                c.rgb+=pow(saturate(i.panel.y),8)*lerp(float3(.02,.035,.055),float3(.10,.07,.01),gold);
-                c.rgb=lerp(c.rgb,lerp(float3(.23,.31,.44),float3(1,.87,.41),gold),edge*.28);
+                float aa=max(.7,fwidth(distance));
+                float edge=1-smoothstep(.65,1.6,abs(distance+1.5));
+                float gold=step(.48,i.color.r)*step(.25,i.color.g)*step(i.color.b,i.color.g*.7);
+                float height=saturate(i.panel.y);
+                // Warm bevel, cream reflection and an amber lower face give gold
+                // actions the same finish as the live decks. Dark cards stay cool.
+                float3 navy=c.rgb*lerp(.82,1.12,height)+float3(.018,.029,.05)*pow(height,5);
+                float3 metal=c.rgb*lerp(float3(.94,.69,.29),float3(1.04,1.11,1.5),height);
+                float sheenBand=(height-.78)*10;
+                float sheen=exp2(-sheenBand*sheenBand);
+                metal+=float3(.11,.085,.025)*sheen;
+                c.rgb=lerp(navy,metal,gold);
+                float3 rim=lerp(float3(.30,.40,.57),float3(1,.91,.57),gold);
+                c.rgb=lerp(c.rgb,rim,edge*lerp(.34,.68,gold));
+                c.a*=1-smoothstep(-aa,aa,distance);
                 #ifdef UNITY_UI_CLIP_RECT
                 c.a*=UnityGet2DClipping(i.world.xy,_ClipRect);
                 #endif

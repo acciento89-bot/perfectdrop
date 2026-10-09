@@ -28,16 +28,15 @@ namespace Kamilunavo.PerfectDrop.UI
             _starterBuy=ShopButton("BuyStarter","",()=>Game.Purchases?.Buy(CommerceRules.Starter));
             _collectionBuy=ShopButton("BuyCollection","",()=>Game.Purchases?.Buy(CommerceRules.Collection));
             _starterBuy.GetComponent<Image>().color=new Color(.24f,.13f,.065f);_collectionBuy.GetComponent<Image>().color=new Color(.19f,.10f,.32f);
-            TowerPreviewGraphic.Add(_starterBuy.transform,"StarterSpecimen",new Color(1f,.36f,.14f),new Vector2(.02f,.04f),new Vector2(.25f,.96f),4);
-            TowerPreviewGraphic.Add(_collectionBuy.transform,"CollectionSpecimen",new Color(.64f,.25f,1),new Vector2(.02f,.04f),new Vector2(.25f,.96f),5);
+            TowerPreviewGraphic.AddStyle(_starterBuy.transform,"StarterSpecimen",4,new Vector2(.02f,.04f),new Vector2(.25f,.96f),4);
+            TowerPreviewGraphic.AddStyle(_collectionBuy.transform,"CollectionSpecimen",6,new Vector2(.02f,.04f),new Vector2(.25f,.96f),5);
             foreach(var pack in new[]{_starterBuy,_collectionBuy})Set((RectTransform)pack.transform.Find("Label"),.28f,.10f,.97f,.90f);
             _premiumStyles=new Button[4];
-            var colors=new[]{new Color(1f,.36f,.14f),new Color(.75f,.93f,1f),new Color(.64f,.25f,1f),new Color(1f,.87f,.25f)};
             for(var i=0;i<4;i++)
             {
                 var style=i+4;_premiumStyles[i]=ShopButton("PremiumStyle"+style,"",()=>{if(Game.SelectStyle(style))Game.UiClick();RefreshCommerce();});
                 var rect=(RectTransform)_premiumStyles[i].transform;Set((RectTransform)rect.Find("Label"),.18f,.05f,.98f,.95f);
-                TowerPreviewGraphic.Add(rect,"DesignPreview",colors[i],new Vector2(.02f,.04f),new Vector2(.25f,.96f),3);
+                TowerPreviewGraphic.AddStyle(rect,"DesignPreview",style,new Vector2(.02f,.04f),new Vector2(.25f,.96f),3);
                 Set((RectTransform)rect.Find("Label"),.28f,.10f,.97f,.90f);
             }
             _video=ShopButton("OptionalVideo","",()=>Game.Videos?.Watch());
@@ -71,6 +70,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var style=i+4;var owned=(Game.Profile.OwnedStyles&(1<<style))!=0;
                 SetLabel(_premiumStyles[i],names[i]+" · "+(Game.Profile.Style==style?T("AKTIV","ACTIVE"):owned?T("AUSWÄHLEN","SELECT"):T("IM PAKET ENTHALTEN","INCLUDED IN PACK")));
+                _premiumStyles[i].GetComponent<Image>().color=Game.Profile.Style==style?new Color(.24f,.18f,.09f):new Color(.045f,.075f,.13f,.98f);
                 _premiumStyles[i].interactable=owned && !(store?.Busy??false);
             }
             _retryPurchases.gameObject.SetActive(store!=null && !store.Ready);_retryPurchases.interactable=store?.CanRetry==true;

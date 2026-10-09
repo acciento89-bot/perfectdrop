@@ -61,8 +61,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 _styleButtons[i]=UiFactory.Button(_styles,"Style"+i,"",new Color(.045f,.075f,.13f,.96f),Color.white,new Vector2(.08f,.66f-i*.155f),new Vector2(.92f,.79f-i*.155f),()=>{if(Game.SelectStyle(style))Game.UiClick();RefreshStyles();});
                 var styleRect=(RectTransform)_styleButtons[i].transform;
                 Set((RectTransform)styleRect.Find("Label"),.25f,.05f,.96f,.95f);
-                var colors=new[]{Gold,new Color(.08f,.8f,1f),new Color(1f,.18f,.55f),new Color(.2f,1f,.5f)};
-                TowerPreviewGraphic.Add(styleRect,"StyleTower",colors[i],new Vector2(.06f,.24f),new Vector2(.94f,.98f));
+                TowerPreviewGraphic.AddStyle(styleRect,"StyleTower",i,new Vector2(.06f,.24f),new Vector2(.94f,.98f));
                 Set((RectTransform)styleRect.Find("Label"),.05f,.025f,.95f,.25f);
                 styleRect.Find("Label").GetComponent<Text>().fontSize=27;
             }
@@ -92,8 +91,8 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var id=_chapter*10+i+1; var unlocked=id<=Game.Profile.UnlockedLevel;
                 var starsHere=Game.Profile.LevelStars[id-1];
-                SetLabel(_levels[i],"LEVEL "+id+"\n"+(unlocked?StackCampaign.Level(id).Target+" "+T("BLÖCKE","BLOCKS"):T("GESPERRT","LOCKED")));
                 var current=unlocked && id==Game.Profile.UnlockedLevel;
+                SetLabel(_levels[i],"LEVEL "+id+(current?"  ›":"")+"\n"+(unlocked?StackCampaign.Level(id).Target+" "+T("BLÖCKE","BLOCKS"):T("GESPERRT","LOCKED")));
                 _levels[i].GetComponent<Image>().color=current?new Color(.30f,.20f,.055f,.98f):new Color(.045f,.075f,.13f,.96f);
                 _levelIcons[i].IconType=unlocked?HudIconType.Floors:HudIconType.Lock;
                 _levelIcons[i].color=unlocked?Gold:new Color(.46f,.54f,.66f); _levelIcons[i].SetVerticesDirty();
@@ -117,6 +116,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var owned=(Game.Profile.OwnedStyles&(1<<i))!=0;
                 SetLabel(_styleButtons[i],names[i]+" · "+(Game.Profile.Style==i?T("AKTIV","ACTIVE"):owned?T("AUSWÄHLEN","SELECT"):StackCampaign.StyleCost(i)+" COINS"));
+                _styleButtons[i].GetComponent<Image>().color=Game.Profile.Style==i?new Color(.24f,.18f,.09f):new Color(.045f,.075f,.13f,.98f);
                 _styleButtons[i].interactable=owned || Game.Profile.Coins>=StackCampaign.StyleCost(i);
             }
         }

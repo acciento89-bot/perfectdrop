@@ -40,7 +40,7 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<3;i++)
             {
                 var district=i;
-                _cityTabs[i]=UiFactory.Button(_cityPanel,"CityDistrict"+i,T("BEZIRK ","DISTRICT ")+(i+1),new Color(.13f,.2f,.3f),Color.white,new Vector2(.04f+i*.31f,.72f),new Vector2(.34f+i*.31f,.80f),()=>Game.SelectCityDistrict(district));
+                _cityTabs[i]=UiFactory.Button(_cityPanel,"CityDistrict"+i,T("BEZIRK ","DISTRICT ")+(i+1),new Color(.13f,.2f,.3f),Color.white,new Vector2(.04f+i*.31f,.72f),new Vector2(.34f+i*.31f,.80f),()=>{Game.SelectCityDistrict(district);RefreshCityTabs();});
             }
             _cityPanel.gameObject.SetActive(false);
         }
@@ -50,7 +50,18 @@ namespace Kamilunavo.PerfectDrop.UI
             Game.Save();HideMenus();_cityPanel.gameObject.SetActive(true);Game.SetCityView(true);
             _cityInfo.text=StackCampaign.Buildings(Game.Profile)+" / 30 "+T("TÜRME","TOWERS")+"\n"+T("Neue Bezirke: Level 11 und 21","New districts: levels 11 and 21");
             for(var i=0;i<3;i++)_cityTabs[i].interactable=Game.Profile.UnlockedLevel>=i*10+1;
+            RefreshCityTabs();
             Refresh();
+        }
+        private void RefreshCityTabs()
+        {
+            for(var i=0;i<3;i++)
+            {
+                var selected=Game.CityDistrict==i;
+                _cityTabs[i].GetComponent<Image>().color=selected?Gold:new Color(.045f,.075f,.13f,.98f);
+                _cityTabs[i].GetComponentInChildren<Text>().color=selected?Navy:Color.white;
+                SetLabel(_cityTabs[i],T("BEZIRK ","DISTRICT ")+(i+1)+(selected?"  ›":""));
+            }
         }
         private void RefreshArcadeHome()
         {
@@ -73,6 +84,16 @@ namespace Kamilunavo.PerfectDrop.UI
                 button.GetComponentInChildren<Text>().fontSize=landscape?26:29;
             }
             Place(_cityPanel,pane,new Rect(0,0,1,1));
+            Canvas.ForceUpdateCanvases();
+            var cityHeight=Mathf.Max(1,_cityPanel.rect.height);
+            var tabHeight=UiMetrics.TargetSize(_cityPanel,49)/cityHeight;
+            var backHeight=UiMetrics.TargetSize(_cityPanel,54)/cityHeight;
+            Set((RectTransform)_cityPanel.Find("CityHeader"),.03f,.85f,.97f,.98f);
+            for(var i=0;i<3;i++)Set((RectTransform)_cityTabs[i].transform,.04f+i*.31f,.83f-tabHeight,.34f+i*.31f,.83f);
+            Set((RectTransform)_cityPanel.Find("CityBack"),.08f,.045f,.92f,.045f+backHeight);
+            var cityTitle=(RectTransform)_cityPanel.Find("CityHeader/Title");
+            if(landscape){Set(cityTitle,.04f,.12f,.60f,.90f);Set((RectTransform)_cityInfo.transform,.63f,.06f,.97f,.94f);}
+            else{Set(cityTitle,.05f,.54f,.95f,.94f);Set((RectTransform)_cityInfo.transform,.05f,.06f,.95f,.49f);}
         }
         private void UpdateArcadeHud()
         {

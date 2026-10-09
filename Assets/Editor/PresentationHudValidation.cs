@@ -30,6 +30,7 @@ namespace Kamilunavo.PerfectDrop.Editor
                         safe.anchorMin=safe.anchorMax=new Vector2(.5f,.5f);safe.sizeDelta=points;
                         // Canvas units become physical pixels at scale3, while points are safe rect units.
                         typeof(StackHud).GetMethod("LayoutCampaign",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(hud,new object[]{new Rect(0,0,1,1)});
+                        typeof(StackHud).GetMethod("LayoutArcade",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(hud,new object[]{new Rect(0,0,1,1)});
                         Canvas.ForceUpdateCanvases();
                         foreach(var button in canvas.GetComponentsInChildren<Button>())
                         {
@@ -38,6 +39,35 @@ namespace Kamilunavo.PerfectDrop.Editor
                             Check(rect.width/3>=48-.01f && rect.height/3>=48-.01f,"Compact primary target too small "+points+" "+button.name+" "+rect);checks++;
                         }
                         foreach(var graphic in canvas.GetComponentsInChildren<Graphic>(true)){Check(graphic.GetComponent<CanvasRenderer>()!=null,"Missing graphic renderer "+graphic.name);checks++;}
+                        foreach(var button in canvas.GetComponentsInChildren<Button>(true))
+                        {
+                            if(!button.name.StartsWith("CityDistrict") && button.name!="CityBack")continue;
+                            var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
+                            Check(rect.width/3>=48-.01f && rect.height/3>=48-.01f,"City target too small "+points+" "+button.name+" "+rect);checks++;
+                        }
+                        foreach(var specimen in canvas.GetComponentsInChildren<TowerPreviewGraphic>(true))
+                        {
+                            using(var vertices=new VertexHelper())
+                            {
+                                typeof(TowerPreviewGraphic).GetMethod("OnPopulateMesh",BindingFlags.Instance|BindingFlags.NonPublic,null,new[]{typeof(VertexHelper)},null).Invoke(specimen,new object[]{vertices});
+                                var vertex=new UIVertex();
+                                for(var v=0;v<vertices.currentVertCount;v++)
+                                {
+                                    vertices.PopulateUIVertex(ref vertex,v);
+                                    Check(specimen.rectTransform.rect.Contains(vertex.position),"Specimen leaves card bounds: "+specimen.name);checks++;
+                                }
+                            }
+                        }
+                        // A locked card must stay legible over the sunlit cloud background.
+                        // Unity's default disabled tint halves alpha as well as brightness.
+                        foreach(var button in canvas.GetComponentsInChildren<Button>())
+                        {
+                            var colors=button.colors;colors.fadeDuration=0;button.colors=colors;
+                            button.interactable=false;
+                            var image=button.targetGraphic as Image;
+                            if(image==null || image.color.a<.9f)continue;
+                            Check(image.color.a*image.canvasRenderer.GetColor().a>=.9f,"Disabled card becomes transparent: "+button.name);checks++;
+                        }
                     }
                     finally{if(canvas!=null)UnityEngine.Object.DestroyImmediate(canvas.gameObject);UnityEngine.Object.DestroyImmediate(root);UiMetrics.QaPointScale=null;}
                 }

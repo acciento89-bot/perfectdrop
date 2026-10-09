@@ -23,7 +23,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private bool _hasStarted;
         private Transform _tower, _moving;
         private Transform _world;
-        private GameObject _city;
+        private GameObject _city, _pedestal;
         public int CityDistrict { get; private set; }
         public StackBlockKind CurrentKind => StackCampaign.Kind(Profile.RunEndless || Profile.RunChallenge?Profile.UnlockedLevel:Level.Id,Run.Count);
         private Camera _camera;
@@ -72,7 +72,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if (Profile.ResumeActive) { Run.Restore(Profile.Layers,Profile.Streak,Profile.RunCoins,Profile.TotalPlaced,Profile.PerfectDrops,Profile.MaxStreak); _phase = Profile.Phase; }
             else _phase = -Mathf.PI/2;
             if(Profile.ResumeActive)Run.RestorePowers(Profile.Powers);
-            CreateBlock("Pedestal",Vector2.zero,Vector2.one*4f,-LayerHeight,0);
+            _pedestal=CreateBlock("Pedestal",Vector2.zero,Vector2.one*4f,-LayerHeight,0);
             for (var i=0;i<Run.Layers.Count;i++) _placed.Add(CreateBlock("Placed_"+(i+1),Run.Layers[i].Center,Run.Layers[i].Size,i*LayerHeight,Run.Count-Run.Layers.Count+i+1));
             SpawnMoving();
             Hud = gameObject.AddComponent<StackHud>(); Hud.Build(this); Hud.ResetMessage();
@@ -245,8 +245,9 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         }
         public void RefreshProfileStyle()
         {
+            if(_pedestal!=null)WorldArt.StyleStackBlock(_pedestal,Profile.Style);
             foreach(var block in _placed)WorldArt.StyleStackBlock(block,Profile.Style);
-            if(_moving!=null)WorldArt.StyleStackBlock(_moving.gameObject,Profile.Style);
+            if(_moving!=null){WorldArt.StyleStackBlock(_moving.gameObject,Profile.Style);WorldArt.MarkSpecialBlock(_moving.gameObject,CurrentKind);}
         }
         private void SpawnMoving()
         {

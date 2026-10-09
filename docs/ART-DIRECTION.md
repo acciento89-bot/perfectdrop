@@ -16,6 +16,8 @@ Stacked blocks use beveled metal decks, a separate inset top plate and fine gold
 
 User follow-up 2026-10-08: [PerfectDropIcon.png](../Assets/Art/PerfectDropIcon.png) is the additional block material reference. Standard blocks have dark metal shoulders, a bright inset gold plate with restrained brushed variation and a continuous lower gold band. The finish follows local UVs while the slab moves. Keep special pink/blue/green top cues and owned rail/body designs distinct. Share the existing mesh/materials and keep six renderers per block, including thin cut pieces; visual quality must be checked on actual native renders.
 
+Second finish pass, 2026-10-09: use cream reflected highlights and amber shaded gold rather than a uniformly emissive orange plate. Dark shoulders retain a visible blue metal face. Gallery specimens use the same broad shoulder, inset gold plate and lower accent band; purchased body finishes remain distinguishable. Navy cards must retain opacity when unavailable. City glass has separate window bays, sparse warm rooms, vertical light fins and recessed crown lighting; reserve full neon treatment for the neon district. This direction is implemented in source and still requires fresh rendered acceptance.
+
 ## Camera
 
 An elevated three-quarter view shows overlap in both alternating axes. Smooth vertical tracking follows the settled tower, with enough framing to see the moving slab at both extremes. The player may orbit by dragging free space; yaw is never forced back behind a character. Tap and drag are distinct. Resize/rotation reflow UI and camera framing without recreating the tower or losing progress. Completion may frame the full tower without delaying Retry.

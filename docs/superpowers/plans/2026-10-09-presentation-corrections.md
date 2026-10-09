@@ -48,3 +48,14 @@ Files: TutorialHud.cs, StackSave.cs, StackHud.cs, StackGame.cs, PresentationVali
 - [ ] Review complete diff once with a fresh reviewer; fix important findings and regressions.
 - [ ] Build native QA, iOS release and Android release serially, inspect actual surfaces and validate payloads.
 - [ ] Commit/push source, retain archives and signed binaries in unpublished drafts, distribute only internal TestFlight.
+
+## Second visual finish pass — screenshot acceptance
+
+Source changes following the build8 captures are implemented but unverified in Unity/native output. No new build number or distribution is prepared by this pass.
+
+- Re-run `PresentationHudValidation.Validate`: existing measured controls plus city tab/Back targets, specimen vertices inside their own rectangles, and rendered disabled-image opacity. Re-run `PresentationValidation.Validate` and the existing campaign/stack gates.
+- Use `-qaPresentation <output>` for the existing portrait/landscape, tutorial, gallery, styles, shop and city screenshots. Inspect 430 portrait and 932 landscape against `perfectdrop-presentation-mac2`; keep 190-point divided-pane checks. Use `-qaArcade <output>` to retain paid-style ownership/revocation repaint, endless geometry and progression coverage.
+- Standard live slab: visible blue metal front face, gold-to-cream top reflection, dark shoulder around the inset and intact lower gold band. Inspect moving-axis extremes, manual yaw, a thin cut piece and a multi-layer tower; six renderers and retained footprints stay unchanged.
+- Gallery/style/shop: dimensional gold-filled specimens remain fully inside the card at all floor counts, inactive cards stay opaque against bright clouds, the current level/selected style is readable, and pearl/copper/violet/solar bodies look different. Real ownership, prices and disabled buying states remain authoritative.
+- City: inspect empty, six-building and completed districts in both orientations; individual window bays and dark piers replace repeated cyan stripes, vertical light fins and recessed crowns stay legible, star antenna counts still match records, and selected district has a textual marker. Header and Back are smaller; tabs and Back remain at least48 logical points. None enters the existing city camera pane.
+- Inspect shader edge antialiasing, rounded borders, the Drop gradient and progress fill on actual Metal/Android. Reject washout, noisy gold, disappearing strokes or unreadable dark faces. Physical performance remains unmeasured; city additions retain material-batched meshes and CityMeshOwner disposal.

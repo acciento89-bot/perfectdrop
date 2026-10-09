@@ -20,9 +20,11 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _cloud;
         private static Material _sun;
         private static Material _signal;
-        private static Material _garden,_paving;
+        private static Material _garden,_paving,_cityGlass,_warmWindow;
         private static Material Garden => _garden!=null?_garden:(_garden=CreateMaterial("CityGarden",new Color(.13f,.29f,.20f),.05f,.25f));
         private static Material Paving => _paving!=null?_paving:(_paving=CreateMaterial("CityPaving",new Color(.33f,.38f,.43f),.2f,.4f));
+        private static Material CityGlass => _cityGlass!=null?_cityGlass:(_cityGlass=CreateMaterial("CityGlass",new Color(.08f,.20f,.31f),.52f,.82f,new Color(.015f,.075f,.12f)));
+        private static Material WarmWindow => _warmWindow!=null?_warmWindow:(_warmWindow=CreateMaterial("WarmWindow",new Color(.73f,.48f,.22f),.22f,.66f,new Color(.50f,.26f,.075f)));
         private static Mesh _beveledBoxMesh;
         private static Mesh _insetFrameMesh;
         private static Cubemap _studioReflection;
@@ -33,7 +35,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.55f, 0.62f, 0.73f), 0.38f, 0.53f));
         public static Material PlatformInset => _platformInset != null ? _platformInset : (_platformInset = CreateMaterial("PlatformInset", new Color(0.018f, 0.025f, 0.040f), 0.35f, 0.22f));
         public static Material Gold => _gold != null ? _gold : (_gold = CreateMaterial("SignalGold", new Color(1f, 0.48f, 0.035f), 0.24f, 0.76f, new Color(1.85f, 0.58f, 0.035f)));
-        private static Material GoldPlate => _goldPlate != null ? _goldPlate : (_goldPlate = CreateMaterial("GoldPlate", new Color(1f, .78f, .30f), .65f, .72f, new Color(.65f, .35f, .035f)));
+        private static Material GoldPlate => _goldPlate != null ? _goldPlate : (_goldPlate = CreateMaterial("GoldPlate", new Color(1f, .80f, .35f), .62f, .76f, new Color(.16f, .085f, .008f)));
         public static Material Cyan => _cyan != null ? _cyan : (_cyan = CreateMaterial("PrecisionCyan", new Color(0.05f, 0.72f, 0.95f), 0.18f, 0.82f, new Color(0.03f, 1.00f, 1.75f)));
         public static Material Tower => _tower != null ? _tower : (_tower = CreateMaterial("Skyline", new Color(0.07f, 0.09f, 0.15f), 0.74f, 0.28f));
         public static Material Window => _window != null ? _window : (_window = CreateMaterial("Window", new Color(0.19f, 0.52f, 0.72f), 0.12f, 0.78f, new Color(0.05f, 0.55f, 1.00f)));
@@ -284,7 +286,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var pulse=new GameObject("PerfectLandingPulse",typeof(MeshFilter),typeof(MeshRenderer));
             pulse.transform.position=position+Vector3.up*.018f;pulse.transform.localScale=new Vector3(size.x*1.4f,.014f,size.y*1.4f);
             pulse.GetComponent<MeshFilter>().sharedMesh=_insetFrameMesh;pulse.GetComponent<MeshRenderer>().sharedMaterial=_signal;
-            pulse.AddComponent<StackLandingPulse>().Initialize(StyleColor(style));
+            pulse.AddComponent<StackLandingPulse>().Initialize(StackStylePalette.Get(style).Accent);
         }
 
         public static void BuildGoalBeacon(Transform parent, Vector3 center)
@@ -360,7 +362,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             root.transform.localPosition = position;
             var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,size.y*.025f,0),new Vector3(size.x,size.y*.79f,size.z), Platform);
             var tint = new MaterialPropertyBlock();
-            tint.SetColor("_Color", Color.Lerp(new Color(.22f,.27f,.34f), new Color(.25f,.21f,.29f), Mathf.Clamp01(level/30f)));
+            tint.SetColor("_Color", Color.Lerp(new Color(.30f,.35f,.44f), new Color(.33f,.28f,.38f), Mathf.Clamp01(level/30f)));
             tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
             AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.44f,0),new Vector3(size.x*.91f,size.y*.12f,size.z*.91f),PlatformInset);
@@ -410,25 +412,39 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     if(profile.LevelStars[id]==0)continue;
                     var building=new GameObject("CityTower"+(id+1));building.transform.SetParent(cityParent,false);building.transform.localPosition=point;
                     var floors=4+Kamilunavo.PerfectDrop.Gameplay.StackCampaign.Level(id+1).Target/4;
-                    var accent=district==0?Gold:district==1?Cyan:Window;
+                    var accent=district==2?Cyan:Gold;
                     var width=slot%3==0?3.2f:2.7f;var depth=slot%3==1?3.5f:2.8f;
                     AddBeveledBox(building.transform,"StoneLobby",new Vector3(0,.45f,0),new Vector3(width+.4f,.75f,depth+.4f),PlatformTop);
-                    AddCube(building.transform,"LobbyGlass",new Vector3(0,.45f,-depth*.51f),new Vector3(width*.75f,.58f,.035f),Window);
+                    AddCube(building.transform,"LobbyGlass",new Vector3(0,.45f,-depth*.51f),new Vector3(width*.75f,.58f,.035f),CityGlass);
                     for(var floor=0;floor<floors;floor++)
                     {
                         var setback=floor>floors*.65f && slot%3==0?.75f:1f;
                         var y=1f+floor*.72f;
                         AddBeveledBox(building.transform,"CityFloor"+floor,new Vector3(0,y,0),new Vector3(width*setback,.7f,depth*setback),Tower);
-                        AddCube(building.transform,"FacadeWindowsFront"+floor,new Vector3(0,y,-depth*setback*.501f),new Vector3(width*setback*.82f,.40f,.025f),Window);
-                        AddCube(building.transform,"FacadeWindowsSide"+floor,new Vector3(-width*setback*.501f,y,0),new Vector3(.025f,.4f,depth*setback*.82f),Window);
-                        AddCube(building.transform,"ArchitecturalBand"+floor,new Vector3(0,y+.34f,-depth*setback*.51f),new Vector3(width*setback,.035f,.04f),accent);
-                        for(var mullion=-1;mullion<=1;mullion++)AddCube(building.transform,"Mullion"+floor+"_"+mullion,new Vector3(mullion*width*setback*.27f,y,-depth*setback*.515f),new Vector3(.075f,.48f,.035f),Platform);
+                        // Individual dark glass bays leave the stone piers readable.
+                        // Sparse warm rooms avoid the repeated cyan-striped toy silhouette.
+                        var bays=slot%3==1?4:3;
+                        for(var bay=0;bay<bays;bay++)
+                        {
+                            var x=((bay+.5f)/bays-.5f)*width*setback*.82f;
+                            var z=((bay+.5f)/bays-.5f)*depth*setback*.82f;
+                            var glass=(floor*3+bay+slot)%5==0?WarmWindow:CityGlass;
+                            AddCube(building.transform,"FacadeBayFront"+floor+"_"+bay,new Vector3(x,y,-depth*setback*.501f),new Vector3(width*setback*.64f/bays,.45f,.025f),glass);
+                            AddCube(building.transform,"FacadeBaySide"+floor+"_"+bay,new Vector3(-width*setback*.501f,y,z),new Vector3(.025f,.45f,depth*setback*.64f/bays),glass);
+                        }
+                        if(floor==floors-1 || floor==floors/2)
+                            AddCube(building.transform,"ArchitecturalBand"+floor,new Vector3(0,y+.34f,-depth*setback*.51f),new Vector3(width*setback,.035f,.04f),accent);
+                        AddCube(building.transform,"LightFin"+floor,new Vector3(width*setback*.43f,y,-depth*setback*.512f),new Vector3(.045f,.72f,.035f),accent);
                     }
                     var roof=1f+floors*.72f;
-                    AddBeveledBox(building.transform,"RoofCrown",new Vector3(0,roof,0),new Vector3(width*.9f,.3f,depth*.9f),Platform);
-                    AddCube(building.transform,"RoofSignal",new Vector3(0,roof+.17f,0),new Vector3(width*.78f,.025f,depth*.78f),accent);
-                    AddBeveledBox(building.transform,"Penthouse",new Vector3(.2f,roof+.55f,0),new Vector3(width*.5f,.75f,depth*.5f),Tower);
-                    for(var star=0;star<profile.LevelStars[id];star++)AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.4f,roof+1.1f,0),new Vector3(.055f,.65f,.055f),accent);
+                    var roofSetback=slot%3==0?.75f:1f;
+                    AddBeveledBox(building.transform,"RoofCrown",new Vector3(0,roof,0),new Vector3(width*roofSetback,.30f,depth*roofSetback),Platform);
+                    // Recessed gold skylight with a dark center echoes the stack shoulder.
+                    AddBeveledBox(building.transform,"RoofSignal",new Vector3(0,roof+.17f,0),new Vector3(width*roofSetback*.82f,.045f,depth*roofSetback*.82f),accent);
+                    AddBeveledBox(building.transform,"RoofRecess",new Vector3(0,roof+.20f,0),new Vector3(width*roofSetback*.70f,.045f,depth*roofSetback*.70f),PlatformInset);
+                    var penthouseSize=slot%3==1?new Vector3(width*.32f,1.25f,depth*.32f):new Vector3(width*.42f,.65f,depth*.42f);
+                    AddBeveledBox(building.transform,"Penthouse",new Vector3(.15f,roof+penthouseSize.y*.5f+.24f,.10f),penthouseSize,Tower);
+                    for(var star=0;star<profile.LevelStars[id];star++)AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.4f,roof+penthouseSize.y+.57f,0),new Vector3(.055f,.65f,.055f),accent);
                     BakeBuilding(building);
                 }
             }
@@ -460,25 +476,30 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Fragile?new Color(.9f,.25f,.65f):
                 kind==Kamilunavo.PerfectDrop.Gameplay.StackBlockKind.Drift?new Color(.15f,.75f,1f):new Color(.2f,.9f,.5f);
             var plate=block.transform.Find("TopPlate").GetComponent<Renderer>();
-            var tint=new MaterialPropertyBlock();tint.SetColor("_Color",color*.5f);tint.SetColor("_EmissionColor",color*.15f);plate.SetPropertyBlock(tint);
+            var tint=new MaterialPropertyBlock();plate.GetPropertyBlock(tint);tint.SetColor("_Color",color);tint.SetColor("_EmissionColor",color*.075f);tint.SetFloat("_GoldFinish",.04f);plate.SetPropertyBlock(tint);
         }
-        private static Color StyleColor(int style) => style switch {
-            1=>new Color(.08f,.8f,1f),2=>new Color(1f,.18f,.55f),3=>new Color(.2f,1f,.5f),
-            4=>new Color(1f,.36f,.14f),5=>new Color(.75f,.93f,1f),6=>new Color(.64f,.25f,1f),7=>new Color(1f,.87f,.25f),
-            _=>new Color(1f,.55f,.06f)};
         public static void StyleStackBlock(GameObject block,int style)
         {
-            var color=StyleColor(style);
+            var finish=StackStylePalette.Get(style);
             foreach(var renderer in block.GetComponentsInChildren<Renderer>())
             {
-                if(renderer.name=="MetalDeck")
+                var paint=new MaterialPropertyBlock();renderer.GetPropertyBlock(paint);
+                if(renderer.name=="MetalDeck" || renderer.name=="DeckCrown")
                 {
-                    var body=new MaterialPropertyBlock();renderer.GetPropertyBlock(body);
-                    var bodyColor=style<4?body.GetColor("_DeckBaseColor"):style==4?new Color(.32f,.15f,.075f):style==5?new Color(.73f,.83f,.88f):style==6?new Color(.085f,.035f,.16f):new Color(.30f,.22f,.065f);
-                    body.SetColor("_Color",bodyColor);body.SetFloat("_Metallic",style<4?renderer.sharedMaterial.GetFloat("_Metallic"):style==5?.20f:.72f);body.SetFloat("_Glossiness",style<4?renderer.sharedMaterial.GetFloat("_Glossiness"):style==5?.85f:.62f);renderer.SetPropertyBlock(body);continue;
+                    var body=style==0&&renderer.name=="MetalDeck"?paint.GetColor("_DeckBaseColor"):finish.Body;
+                    paint.SetColor("_Color",body);paint.SetFloat("_Metallic",finish.Metallic);paint.SetFloat("_Glossiness",finish.Smoothness);
                 }
-                if(!renderer.name.StartsWith("Gold")) continue;
-                var tint=new MaterialPropertyBlock(); tint.SetColor("_Color",color); tint.SetColor("_EmissionColor",color*1.85f); renderer.SetPropertyBlock(tint);
+                else if(renderer.name=="TopPlate")
+                {
+                    paint.SetColor("_Color",finish.Plate);paint.SetColor("_EmissionColor",finish.Plate*.075f);
+                    paint.SetFloat("_GoldFinish",finish.GoldFinish);paint.SetFloat("_Metallic",.62f);paint.SetFloat("_Glossiness",.76f);
+                }
+                else if(renderer.name.StartsWith("Gold"))
+                {
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*1.85f);
+                }
+                else continue;
+                renderer.SetPropertyBlock(paint);
             }
         }
         private static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)

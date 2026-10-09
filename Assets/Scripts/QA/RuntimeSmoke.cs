@@ -13,7 +13,7 @@ namespace Kamilunavo.PerfectDrop.QA
     public sealed class RuntimeSmoke : MonoBehaviour
     {
         private string _output;
-        private bool _arcade,_uiOnly,_cityOnly,_presentation;
+        private bool _arcade,_uiOnly,_cityOnly,_presentation,_styles;
         private readonly List<string> _errors=new();
         private void Awake()=>Application.logMessageReceived+=RecordError;
         private void OnDestroy()=>Application.logMessageReceived-=RecordError;
@@ -25,12 +25,12 @@ namespace Kamilunavo.PerfectDrop.QA
         private static void Bootstrap()
         {
             var args = QaLaunch.Arguments();
-            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity" || args[i]=="-qaPresentation")
+            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity" || args[i]=="-qaPresentation" || args[i]=="-qaStyles")
             {
                 StackSave.QaKey = args[i]!="-qaSmoke"?"perfectdrop.arcade.qa.v1":"perfectdrop.stack.qa.v1";
                 PlayerPrefs.DeleteKey(StackSave.QaKey);
                 var root = new GameObject("StackRuntimeSmoke"); DontDestroyOnLoad(root);
-                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity";smoke._presentation=args[i]=="-qaPresentation"; break;
+                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity";smoke._presentation=args[i]=="-qaPresentation";smoke._styles=args[i]=="-qaStyles"; break;
             }
         }
         private IEnumerator Start()
@@ -38,7 +38,7 @@ namespace Kamilunavo.PerfectDrop.QA
             Directory.CreateDirectory(_output);
             File.WriteAllText(Path.Combine(_output,"result.txt"),"RUNNING\n");
             Time.captureDeltaTime = 1f / 60f; // Functional input timing; this does not measure real frame rate.
-            var run = _presentation?RunPresentation():_cityOnly?RunCity():_arcade?RunArcade():Run();
+            var run = _styles?RunStyles():_presentation?RunPresentation():_cityOnly?RunCity():_arcade?RunArcade():Run();
             var pending = new Stack<IEnumerator>();
             pending.Push(run);
             while (pending.Count > 0)
@@ -59,13 +59,45 @@ namespace Kamilunavo.PerfectDrop.QA
                 else yield return next;
             }
             if(_errors.Count>0){File.WriteAllText(Path.Combine(_output,"result.txt"),"FAIL: runtime logged errors\n"+string.Join("\n",_errors));yield break;}
-            File.WriteAllText(Path.Combine(_output,"result.txt"),_presentation?"PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n":_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
+            File.WriteAllText(Path.Combine(_output,"result.txt"),_styles?"PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n":_presentation?"PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n":_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
             if (Application.isMobilePlatform) File.WriteAllText(Path.Combine(_output,"result.txt"),
                 "PASS: native current pose; game callbacks and visible-button raycasts. " +
-                (_presentation ? "Presentation/tutorial/frustum." : _cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
+                (_styles ? "Eight styles/actual shader overrides/reload." : _presentation ? "Presentation/tutorial/frustum." : _cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
                 (RotateNative ? "\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\n" : "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n") +
                 $"Final framebuffer: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}.\n");
             Debug.Log("[PerfectDrop][QA] Stack runtime matrix passed.");
+        }
+        private IEnumerator RunStyles()
+        {
+            yield return new WaitForSecondsRealtime(1);_game=FindFirstObjectByType<StackGame>();Require(_game!=null,"Style test game did not boot.");
+            _game.Profile.Coins=1000;_game.Profile.OwnedStyles=15;_game.Profile.UnlockedLevel=21;_game.Profile.TutorialComplete=true;
+            Kamilunavo.PerfectDrop.Monetization.CommerceRules.RestoreEntitlement(_game.Profile,Kamilunavo.PerfectDrop.Monetization.CommerceRules.Starter);
+            Kamilunavo.PerfectDrop.Monetization.CommerceRules.RestoreEntitlement(_game.Profile,Kamilunavo.PerfectDrop.Monetization.CommerceRules.Collection);
+            _game.StartLevel(1);float deadline=Time.realtimeSinceStartup+12;while(Mathf.Abs(_game.MovingOffset)>.04f&&Time.realtimeSinceStartup<deadline)yield return null;
+            Require(Mathf.Abs(_game.MovingOffset)<=.04f,"Style fixture missed actual placement window.");FindButton("Drop").onClick.Invoke();yield return null;Require(_game.Run.Count==1,"Style fixture has no actual placed slab.");
+            for(int style=0;style<8;style++)
+            {
+                int wallet=_game.Profile.Coins,owned=_game.Profile.OwnedStyles,placed=_game.Run.Count;_game.GoHome();FindButton("Styles").onClick.Invoke();
+                if(style>=4)FindButton("ExtraDesigns").onClick.Invoke();var button=FindButton(style<4?"Style"+style:"PremiumStyle"+style);Require(button.interactable,"Owned style button disabled.");button.onClick.Invoke();
+                Require(_game.Profile.Style==style&&_game.Profile.Coins==wallet&&_game.Profile.OwnedStyles==owned&&_game.Run.Count==placed,"Actual design UI changed economy or placement state.");
+                var preview=button.GetComponentInChildren<TowerPreviewGraphic>();var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(style);Require(preview!=null&&Near(preview.Body,finish.Body)&&Near(preview.Plate,finish.Plate)&&Near(preview.Accent,finish.Accent),"Actual design specimen differs from gameplay palette.");
+                button.onClick.Invoke();Require(_game.Profile.Coins==wallet,"Selecting owned design twice charged coins.");_game.Hud.HideMenus();yield return null;CheckLiveStyle(style);yield return Capture("style-"+style+"-gameplay");
+                _game.Save();var saved=StackSave.Load();Require(saved.Style==style&&saved.Coins==wallet&&saved.OwnedStyles==owned&&saved.TotalPlaced==placed,"Fresh parsed profile lost selected skin or replayed payment.");
+                yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);_game=FindFirstObjectByType<StackGame>();
+                Require(_game.Profile.Style==style&&_game.Profile.Coins==wallet&&_game.Run.Count==placed,"Scene reload lost skin or changed wallet/tower.");CheckLiveStyle(style);yield return Capture("style-"+style+"-reloaded");
+            }
+            _game.StartLevel(21);_game.Hud.HideMenus();
+            // Level21's initial sequence is advanced by real placements until a special moving slab appears.
+            for(int i=0;i<8&&_game.CurrentKind==StackBlockKind.Standard;i++){deadline=Time.realtimeSinceStartup+15;while(Mathf.Abs(_game.MovingOffset)>.04f&&Time.realtimeSinceStartup<deadline)yield return null;Require(Mathf.Abs(_game.MovingOffset)<=.04f,"Special style fixture missed timing.");FindButton("Drop").onClick.Invoke();yield return new WaitForSecondsRealtime(.1f);}
+            Require(_game.CurrentKind!=StackBlockKind.Standard,"Style fixture did not reach a special moving slab.");var before=PartPaint(GameObject.Find("MovingBlock"),"TopPlate").GetColor("_Color");Require(_game.SelectStyle(2),"Special style switch rejected.");var after=PartPaint(GameObject.Find("MovingBlock"),"TopPlate").GetColor("_Color");Require(Near(before,after),"Changing design erased the active special block cue.");yield return Capture("style-special-cue-retained");
+        }
+        static bool Near(Color a,Color b)=>Mathf.Abs(a.r-b.r)+Mathf.Abs(a.g-b.g)+Mathf.Abs(a.b-b.b)+Mathf.Abs(a.a-b.a)<.005f;
+        static MaterialPropertyBlock PartPaint(GameObject block,string part){var paint=new MaterialPropertyBlock();block.transform.Find(part).GetComponent<Renderer>().GetPropertyBlock(paint);return paint;}
+        void CheckLiveStyle(int style)
+        {
+            var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(style);var moving=GameObject.Find("MovingBlock");Require(moving!=null,"Style test moving block missing.");var tower=moving.transform.parent;int seen=0;bool pedestalSeen=false;
+            foreach(Transform block in tower){if(block.name!="Pedestal"&&block.name!="MovingBlock"&&!block.name.StartsWith("Placed_"))continue;seen++;if(block.name=="Pedestal")pedestalSeen=true;foreach(string part in new[]{"MetalDeck","DeckCrown","TopPlate","GoldBand","GoldInset"}){var renderer=block.Find(part).GetComponent<Renderer>();Require(renderer.sharedMaterial.shader.name=="Kamilunavo/PerfectDropSurface"&&renderer.sharedMaterial.HasProperty("_Color"),"Style assertion targets a property not consumed by actual shader.");var paint=PartPaint(block.gameObject,part);Color expected=part=="TopPlate"?finish.Plate:part.StartsWith("Gold")?finish.Accent:style==0&&part=="MetalDeck"?paint.GetColor("_DeckBaseColor"):finish.Body;Require(Near(paint.GetColor("_Color"),expected),"Actual shader color mismatch on "+block.name+"/"+part+" for design "+style);if(part=="TopPlate")Require(Mathf.Abs(paint.GetFloat("_GoldFinish")-finish.GoldFinish)<.001f,"Actual plate shader keeps stale finish.");}}
+            Require(pedestalSeen&&seen>=3,"Style test must inspect actual pedestal, moving and placed slabs.");
         }
         private IEnumerator RunPresentation()
         {

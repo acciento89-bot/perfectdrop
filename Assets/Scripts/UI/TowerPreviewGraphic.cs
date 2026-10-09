@@ -6,32 +6,51 @@ namespace Kamilunavo.PerfectDrop.UI
     public sealed class TowerPreviewGraphic : MaskableGraphic
     {
         public Color Accent=new Color(1,.79f,.16f);
+        public Color Body=new Color(.12f,.16f,.23f);
+        public Color Plate=new Color(1,.78f,.30f);
         public int Floors=4;
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
             mesh.Clear();var r=rectTransform.rect;
-            var scale=Mathf.Min(r.width/1.25f,r.height/1.25f);
-            var center=r.center+new Vector2(0,-scale*.24f);
-            for(var i=0;i<Floors;i++)
+            var floors=Mathf.Clamp(Floors,1,8);
+            var scale=Mathf.Min(r.width/1.12f,r.height/(.64f+(floors-1)*.145f));
+            var center=r.center+Vector2.down*((floors-1)*.145f*.5f-.015f)*scale;
+            var dark=Color.Lerp(Body,new Color(.025f,.04f,.075f),.56f);
+            var warm=Color.Lerp(Accent,new Color(1,.94f,.71f),.35f);
+            var plateLight=Color.Lerp(Plate,new Color(1,.97f,.79f),.60f);
+            for(var i=0;i<floors;i++)
             {
-                var c=center+new Vector2(0,i*scale*.115f);
+                var c=center+Vector2.up*(i*scale*.145f);
                 var a=c+new Vector2(-scale*.47f,0);var b=c+new Vector2(-scale*.08f,-scale*.19f);
                 var d=c+new Vector2(scale*.47f,scale*.045f);var e=c+new Vector2(scale*.08f,scale*.23f);
-                var depth=Vector2.down*scale*.075f;
-                Quad(mesh,a,b,b+depth,a+depth,new Color(.08f,.11f,.17f));
-                Quad(mesh,b,d,d+depth,b+depth,new Color(.035f,.055f,.095f));
-                Quad(mesh,a+depth*.65f,b+depth*.65f,b+depth*.82f,a+depth*.82f,Accent*.85f);
-                Quad(mesh,b+depth*.65f,d+depth*.65f,d+depth*.82f,b+depth*.82f,Accent);
-                Quad(mesh,a,b,d,e,new Color(.15f,.19f,.25f));
+                var depth=Vector2.down*scale*.105f;
+                Quad(mesh,a,b,b+depth,a+depth,Color.Lerp(Body,Color.white,.10f),Body,Body,dark);
+                Quad(mesh,b,d,d+depth,b+depth,Body,dark,dark,Shade(Body,.72f));
+                Quad(mesh,a+depth*.70f,b+depth*.70f,b+depth*.91f,a+depth*.91f,warm,Accent,Shade(Accent,.65f),Shade(Accent,.77f));
+                Quad(mesh,b+depth*.70f,d+depth*.70f,d+depth*.91f,b+depth*.91f,Accent,warm,Shade(Accent,.82f),Shade(Accent,.65f));
+                // A broad metal shoulder and bright inset carry the game's slab silhouette.
+                Quad(mesh,a,b,d,e,Body,Shade(Body,.72f),Color.Lerp(Body,Color.white,.18f),Color.Lerp(Body,Color.white,.30f));
                 var q=(a+b+d+e)*.25f;
-                Quad(mesh,Vector2.Lerp(q,a,.81f),Vector2.Lerp(q,b,.81f),Vector2.Lerp(q,d,.81f),Vector2.Lerp(q,e,.81f),Accent);
-                Quad(mesh,Vector2.Lerp(q,a,.74f),Vector2.Lerp(q,b,.74f),Vector2.Lerp(q,d,.74f),Vector2.Lerp(q,e,.74f),Color.Lerp(Accent,new Color(.20f,.22f,.25f),.2f));
-                Quad(mesh,Vector2.Lerp(q,a,.70f),Vector2.Lerp(q,b,.70f),Vector2.Lerp(q,d,.70f),Vector2.Lerp(q,e,.70f),new Color(.35f,.28f,.12f));
+                var pa=Vector2.Lerp(q,a,.70f);var pb=Vector2.Lerp(q,b,.70f);var pd=Vector2.Lerp(q,d,.70f);var pe=Vector2.Lerp(q,e,.70f);
+                Quad(mesh,pa,pb,pd,pe,warm,Shade(Accent,.83f),Accent,warm);
+                Quad(mesh,Vector2.Lerp(q,a,.64f),Vector2.Lerp(q,b,.64f),Vector2.Lerp(q,d,.64f),Vector2.Lerp(q,e,.64f),Shade(Plate,.84f),Color.Lerp(Plate,new Color(.48f,.24f,.045f),.42f),plateLight,Color.Lerp(plateLight,Color.white,.25f));
+                // Fine upper lip, kept inside the footprint and drawn with vertex gradients.
+                Quad(mesh,a,b,Vector2.Lerp(b,q,.025f),Vector2.Lerp(a,q,.025f),new Color(.38f,.44f,.54f),Body,Body,Body);
+                Quad(mesh,b,d,Vector2.Lerp(d,q,.025f),Vector2.Lerp(b,q,.025f),Body,new Color(.51f,.57f,.63f),Body,Body);
             }
         }
-        private static void Quad(VertexHelper mesh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color tint)
+        private static Color Shade(Color color,float amount) => new Color(color.r*amount,color.g*amount,color.b*amount,1);
+        private static void Quad(VertexHelper mesh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color ca,Color cb,Color cc,Color cd)
         {
-            var n=mesh.currentVertCount;mesh.AddVert(a,tint,Vector2.zero);mesh.AddVert(b,tint,Vector2.zero);mesh.AddVert(c,tint,Vector2.zero);mesh.AddVert(d,tint,Vector2.zero);mesh.AddTriangle(n,n+1,n+2);mesh.AddTriangle(n,n+2,n+3);
+            var n=mesh.currentVertCount;mesh.AddVert(a,ca,Vector2.zero);mesh.AddVert(b,cb,Vector2.zero);mesh.AddVert(c,cc,Vector2.zero);mesh.AddVert(d,cd,Vector2.zero);mesh.AddTriangle(n,n+1,n+2);mesh.AddTriangle(n,n+2,n+3);
+        }
+        public void ApplyStyle(int style)
+        {
+            var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(style);Accent=finish.Accent;Body=finish.Body;Plate=finish.Plate;SetVerticesDirty();
+        }
+        public static TowerPreviewGraphic AddStyle(Transform parent,string name,int style,Vector2 min,Vector2 max,int floors=4)
+        {
+            var graphic=Add(parent,name,Color.white,min,max,floors);graphic.ApplyStyle(style);return graphic;
         }
         public static TowerPreviewGraphic Add(Transform parent,string name,Color tint,Vector2 min,Vector2 max,int floors=4)
         {

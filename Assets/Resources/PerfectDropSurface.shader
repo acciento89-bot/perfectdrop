@@ -47,11 +47,20 @@ Shader "Kamilunavo/PerfectDropSurface"
             float3 metal = tex2D(_MainTex, IN.uv_MainTex).rgb;
             // UV-bound finish travels with the deck instead of swimming through
             // world space as it moves. Reuse the existing metal texture sample.
-            half finish = lerp(.78, 1.16, saturate(IN.uv_MainTex.x*.65 + IN.uv_MainTex.y*.35));
-            o.Albedo = tint.rgb * metal * lerp(1, (.94+grain*.12)*(1-seam*.16), _Detail) * lerp(1, finish, _GoldFinish);
+            float2 uv=IN.uv_MainTex;
+            half diagonal=saturate(uv.x*.65+uv.y*.35);
+            half finish=lerp(.66,1.08,diagonal);
+            half reflectionBand=(diagonal-.66)*8;
+            half reflection=exp2(-reflectionBand*reflectionBand);
+            half brush=sin(uv.y*920+metal.g*8)*.008;
+            half edge=smoothstep(.44,.485,max(abs(uv.x-.5),abs(uv.y-.5)));
+            float3 gold=lerp(float3(.77,.52,.21),float3(1.07,1.04,.85),diagonal)+reflection*float3(.13,.11,.055)+brush;
+            // The same UV-bound finish runs across plate faces and bevels.
+            // Avoid an emissive orange sheet: reflected light supplies the volume.
+            o.Albedo = tint.rgb * lerp(metal,lerp(.90,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.94+grain*.12)*(1-seam*.16), _Detail);
             o.Metallic = _Metallic;
-            o.Smoothness = saturate(_Glossiness - _GoldFinish*(1-metal.r)*.12);
-            o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish, _GoldFinish);
+            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.10+edge*.12));
+            o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish*.72, _GoldFinish);
             o.Alpha = tint.a;
         }
         ENDCG

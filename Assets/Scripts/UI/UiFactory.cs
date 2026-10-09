@@ -96,6 +96,8 @@ namespace Kamilunavo.PerfectDrop.UI
             colors.normalColor = Color.white;
             colors.highlightedColor = new Color(1.08f, 1.08f, 1.08f, 1f);
             colors.pressedColor = new Color(0.84f, 0.84f, 0.84f, 1f);
+            // Dim unavailable metal without letting the bright cloud city through.
+            colors.disabledColor = new Color(.88f, .90f, .94f, 1f);
             colors.fadeDuration = 0.08f;
             button.colors = colors;
             if (onClick != null) button.onClick.AddListener(onClick);
