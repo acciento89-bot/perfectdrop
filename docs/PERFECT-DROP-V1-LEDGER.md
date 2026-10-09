@@ -206,8 +206,8 @@ Status: `[ ]` open · `[~]` implemented but not runtime/device verified · `[x]`
 - [ ] P09-T06 thermal/performance
 - [ ] P09-T07 App Store assets
 - [ ] P09-T08 Play Store assets
-- [ ] P09-T09 TestFlight RC archive + upload
-- [x] P09-T10 TestFlight processing + internal tester assignment (build 5, internal-only candidate)
+- [x] P09-T09 TestFlight signed archive + internal-only upload (build8; physical acceptance remains open)
+- [x] P09-T10 TestFlight processing + internal tester assignment (build8, internal-only candidate)
 - [ ] P09-T11 TestFlight install/smoke test on physical iPhone
 - [ ] P09-T12 staged release
 
