@@ -1,0 +1,29 @@
+{
+  "game": "PerfectDrop",
+  "repository": "acciento89-bot/perfectdrop",
+  "nativeSourceCommit": "95d76275d8ee5b71ae82a1f60d0c26572aea8250",
+  "internalVersion": "1.0(9)",
+  "testflight": {
+    "appId": "6819872064",
+    "buildId": "91529c26-b976-41bf-b35f-5776c4a99c63",
+    "version": "1.0",
+    "build": 9,
+    "status": "Im Test",
+    "group": "Kamilunavo Intern",
+    "groupId": "1f1e1ba3-ea2f-4827-86b3-5c74e06ddbc2",
+    "testers": 1,
+    "notesSaved": true,
+    "observedVia": "Authenticated Safari App Store Connect UI",
+    "publicRelease": false
+  },
+  "ipa": "/Users/piotrkaminski/Developer/KamilunavoDelivery-20261009/outputs/PerfectDrop-1.0-build9-AppStore.ipa",
+  "ipaSHA256": "c0238c85b0292c103b76544c630ba1102a36f0f84bdf621b6edecad1aa8dac88",
+  "android": "/Users/piotrkaminski/Developer/KamilunavoDelivery-20261009/outputs/perfectdrop-build9-central-signed/PerfectDrop-1.0-build9.aab",
+  "androidSHA256": "c26abe449ee588e0780810214cbfec3d520a76e616256eef588931d413d9d223",
+  "androidPayloadEntries": 570,
+  "signingRun": "37995021514",
+  "unpublishedBackupTag": "perfectdrop-build9-presentation-tutorial",
+  "archiveSHA256": "9e316452fb5a700cea94577da5506e299affeba4eb05c8157c64d8905d970c82",
+  "archiveFilesByteVerified": 60,
+  "vendorSymbolWarning": "UnityRuntime.framework dSYM UUID392D7A7F-6A4F-3A7A-8788-4089FA96FF38 missing; own framework symbols retained in verified archive"
+}
