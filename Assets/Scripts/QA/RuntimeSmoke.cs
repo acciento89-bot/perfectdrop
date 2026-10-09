@@ -7,12 +7,17 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using Kamilunavo.PerfectDrop.Gameplay;
+using Kamilunavo.PerfectDrop.UI;
 namespace Kamilunavo.PerfectDrop.QA
 {
     public sealed class RuntimeSmoke : MonoBehaviour
     {
         private string _output;
-        private bool _arcade,_uiOnly,_cityOnly;
+        private bool _arcade,_uiOnly,_cityOnly,_presentation;
+        private readonly List<string> _errors=new();
+        private void Awake()=>Application.logMessageReceived+=RecordError;
+        private void OnDestroy()=>Application.logMessageReceived-=RecordError;
+        private void RecordError(string message,string trace,LogType type){if(type==LogType.Error || type==LogType.Exception || type==LogType.Assert)_errors.Add(message);}
         private static bool? _requestedLandscape;
         private static bool RotateNative => Application.isMobilePlatform && Environment.GetEnvironmentVariable("PERFECTDROP_QA_ROTATE") == "1";
         private StackGame _game;
@@ -20,12 +25,12 @@ namespace Kamilunavo.PerfectDrop.QA
         private static void Bootstrap()
         {
             var args = QaLaunch.Arguments();
-            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity")
+            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity" || args[i]=="-qaPresentation")
             {
                 StackSave.QaKey = args[i]!="-qaSmoke"?"perfectdrop.arcade.qa.v1":"perfectdrop.stack.qa.v1";
                 PlayerPrefs.DeleteKey(StackSave.QaKey);
                 var root = new GameObject("StackRuntimeSmoke"); DontDestroyOnLoad(root);
-                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity"; break;
+                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity";smoke._presentation=args[i]=="-qaPresentation"; break;
             }
         }
         private IEnumerator Start()
@@ -33,7 +38,7 @@ namespace Kamilunavo.PerfectDrop.QA
             Directory.CreateDirectory(_output);
             File.WriteAllText(Path.Combine(_output,"result.txt"),"RUNNING\n");
             Time.captureDeltaTime = 1f / 60f; // Functional input timing; this does not measure real frame rate.
-            var run = _cityOnly?RunCity():_arcade?RunArcade():Run();
+            var run = _presentation?RunPresentation():_cityOnly?RunCity():_arcade?RunArcade():Run();
             var pending = new Stack<IEnumerator>();
             pending.Push(run);
             while (pending.Count > 0)
@@ -53,20 +58,69 @@ namespace Kamilunavo.PerfectDrop.QA
                 if (next is IEnumerator nested && !(next is CustomYieldInstruction)) pending.Push(nested);
                 else yield return next;
             }
-            File.WriteAllText(Path.Combine(_output,"result.txt"),_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
+            if(_errors.Count>0){File.WriteAllText(Path.Combine(_output,"result.txt"),"FAIL: runtime logged errors\n"+string.Join("\n",_errors));yield break;}
+            File.WriteAllText(Path.Combine(_output,"result.txt"),_presentation?"PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n":_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
             if (Application.isMobilePlatform) File.WriteAllText(Path.Combine(_output,"result.txt"),
                 "PASS: native current pose; game callbacks and visible-button raycasts. " +
-                (_cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
+                (_presentation ? "Presentation/tutorial/frustum." : _cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
                 (RotateNative ? "\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\n" : "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n") +
                 $"Final framebuffer: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}.\n");
             Debug.Log("[PerfectDrop][QA] Stack runtime matrix passed.");
+        }
+        private IEnumerator RunPresentation()
+        {
+            yield return new WaitForSecondsRealtime(1);
+            _game=FindFirstObjectByType<StackGame>();Require(_game!=null,"Game did not boot.");
+            yield return Capture("gallery-home-portrait");
+            FindButton("Learn").onClick.Invoke();Require(_game.Hud.TutorialActive && _game.Run.Count==0,"Guide did not start a real fresh run.");
+            yield return Capture("guide-overlap");
+            for(var step=0;step<3;step++)
+            {
+                var deadline=Time.realtimeSinceStartup+12;
+                while(Mathf.Abs(_game.MovingOffset)>.04f && Time.realtimeSinceStartup<deadline)yield return null;
+                Require(Mathf.Abs(_game.MovingOffset)<=.04f,"Perfect tutorial timing deadline.");
+                FindButton("Drop").onClick.Invoke();yield return new WaitForSecondsRealtime(.1f);
+                Require(_game.Run.Count==step+1,"Actual tutorial drop did not place.");CheckFraming();yield return Capture("guide-drop-"+(step+1));
+            }
+            Require(_game.Profile.TutorialComplete && !_game.Hud.TutorialActive,"Guide did not complete after real placements.");
+            var wallet=_game.Profile.Coins;var count=_game.Run.Count;var owned=_game.Profile.OwnedStyles;
+            _game.Hud.ShowHome();FindButton("Learn").onClick.Invoke();Require(_game.Run.Count==count && _game.Profile.Coins==wallet,"Guide replay reset or credited the live run.");
+            FindButton("SkipGuide").onClick.Invoke();Require(_game.Run.Count==count && StackSave.Load().Coins==wallet && StackSave.Load().OwnedStyles==owned,"Skip changed persisted wallet/ownership/run.");
+            _game.Profile.UnlockedLevel=21;_game.Profile.Coins=357;_game.Profile.OwnedStyles=255;
+            for(var i=0;i<5;i++)_game.Profile.LevelStars[i]=3;
+            _game.StartLevel(21); // Rebuild earned city through ordinary completion later.
+            foreach(var pose in new[]{new Vector2Int(430,932),new Vector2Int(932,430)})
+            {
+                SetReviewResolution(pose.x,pose.y,false);yield return new WaitForSecondsRealtime(.8f);
+                _game.Hud.ShowHome();yield return Capture("gallery-home-"+pose.x);
+                GameObject.Find("LevelGalleryScroll").GetComponent<ScrollRect>().verticalNormalizedPosition=0;yield return new WaitForSecondsRealtime(.2f);yield return Capture("gallery-last-levels-"+pose.x);
+                FindButton("Styles").onClick.Invoke();yield return Capture("gallery-styles-"+pose.x);
+                FindButton("ExtraDesigns").onClick.Invoke();yield return Capture("gallery-shop-"+pose.x);
+                var scroll=GameObject.Find("ShopScroll").GetComponent<ScrollRect>();scroll.verticalNormalizedPosition=0;
+                yield return new WaitForSecondsRealtime(.2f);yield return Capture("gallery-shop-bottom-"+pose.x);
+                _game.Hud.ShowHome();FindButton("Continue").onClick.Invoke();
+                yield return new WaitForSecondsRealtime(.3f);CheckFraming();yield return Capture("stack-clear-space-"+pose.x);
+                // Sample both ends of the real moving slab, not only center timing.
+                for(var frame=0;frame<160;frame++){CheckFraming();yield return null;}
+                var yaw=typeof(StackGame).GetField("_yaw",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                foreach(var angle in new[]{-160f,145f,-35f}){yaw.SetValue(_game,angle);yield return null;CheckFraming();}
+                _game.Hud.OpenSettings();yield return Capture("settings-"+pose.x);_game.Hud.Close();
+            }
+            _game.StartLevel(6);
+            for(var block=0;block<_game.Run.Target;block++)
+            {
+                var deadline=Time.realtimeSinceStartup+12;while(Mathf.Abs(_game.MovingOffset)>.04f && Time.realtimeSinceStartup<deadline)yield return null;
+                FindButton("Drop").onClick.Invoke();yield return new WaitForSecondsRealtime(.1f);
+            }
+            _game.Hud.ShowHome();FindButton("City").onClick.Invoke();FindButton("CityDistrict0").onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);yield return Capture("district-architectural-landscape");
+            SetReviewResolution(430,932,false);yield return new WaitForSecondsRealtime(.8f);yield return Capture("district-architectural-portrait");
         }
         private IEnumerator Run()
         {
             yield return new WaitForSecondsRealtime(1);
             _game=FindFirstObjectByType<StackGame>();
             Require(_game!=null,"Stack game did not boot.");
-            _game.Profile.UnlockedLevel=30;
+            _game.Profile.TutorialComplete=true;_game.Profile.UnlockedLevel=30;
             _game.StartLevel(30);
             var initialWidth=_game.Level.Width;
             var drop=FindButton("Drop");
@@ -302,7 +356,7 @@ namespace Kamilunavo.PerfectDrop.QA
             {
                 var corner = bounds.center + Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));
                 var point = Camera.main.WorldToViewportPoint(corner);
-                Require(point.z > 0 && point.x >= pane.xMin && point.x <= pane.xMax,"Moving slab clipped outside available pane.");
+                Require(point.z > 0 && point.x >= pane.xMin && point.x <= pane.xMax && point.y >= pane.yMin && point.y <= pane.yMax,"Moving slab clipped outside available pane.");
             }
         }
         private IEnumerator Capture(string name)
@@ -355,6 +409,8 @@ namespace Kamilunavo.PerfectDrop.QA
                 if (!button.isActiveAndEnabled || !button.IsInteractable() || button.GetComponent<Graphic>().canvasRenderer.cull) continue;
                 var rect = (RectTransform)button.transform;
                 var point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
+                var clipping=button.GetComponentInParent<RectMask2D>();
+                if(clipping!=null && !UiMetrics.ScreenRect((RectTransform)clipping.transform).Contains(point))continue; // Scroll to expose this center before tapping.
                 hits.Clear();
                 EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
                 Require(hits.Count > 0 && hits[0].gameObject.GetComponentInParent<Button>() == button,

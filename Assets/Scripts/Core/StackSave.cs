@@ -14,6 +14,7 @@ namespace Kamilunavo.PerfectDrop
         public int UnlockedLevel=1, RunLevel=1, TotalPlaced, PerfectDrops, MaxStreak, EndlessBest, OwnedStyles=1, Style;
         public int[] LevelStars = new int[30];
         public bool RunEndless;
+        public bool TutorialComplete;
         public bool RunChallenge, ChallengeRewarded;
         public string RunChallengeDate="",ChallengeDate="";
         public int ChallengeStars;

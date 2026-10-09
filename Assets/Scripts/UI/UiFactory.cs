@@ -35,7 +35,7 @@ namespace Kamilunavo.PerfectDrop.UI
 
         public static RectTransform Panel(Transform parent, string name, Color color, Vector2 min, Vector2 max)
         {
-            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             go.transform.SetParent(parent, false);
             var rect = go.GetComponent<RectTransform>();
             rect.anchorMin = min;
@@ -58,7 +58,7 @@ namespace Kamilunavo.PerfectDrop.UI
 
         public static Text Label(Transform parent, string name, string text, int size, Vector2 min, Vector2 max, TextAnchor alignment, Color color, FontStyle style = FontStyle.Normal)
         {
-            var go = new GameObject(name, typeof(RectTransform), typeof(Text));
+            var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
             go.transform.SetParent(parent, false);
             var rect = go.GetComponent<RectTransform>();
             rect.anchorMin = min;
@@ -106,7 +106,7 @@ namespace Kamilunavo.PerfectDrop.UI
 
         public static HudIconGraphic Icon(Transform parent, string name, HudIconType type, Color color, Vector2 min, Vector2 max)
         {
-            var go = new GameObject(name, typeof(RectTransform), typeof(HudIconGraphic));
+            var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(HudIconGraphic));
             go.transform.SetParent(parent, false);
             var rect = go.GetComponent<RectTransform>();
             rect.anchorMin = min;

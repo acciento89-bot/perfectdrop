@@ -15,8 +15,8 @@ namespace Kamilunavo.PerfectDrop.UI
         private void BuildCommerceMenu()
         {
             _shop=UiFactory.Panel(_safe,"PremiumShop",Navy,Vector2.zero,Vector2.one);
-            UiFactory.Label(_shop,"Title",T("EXTRA-DESIGNS","EXTRA DESIGNS"),48,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
-            _shopStatus=UiFactory.Label(_shop,"StoreStatus","",30,new Vector2(.06f,.79f),new Vector2(.94f,.9f),TextAnchor.MiddleCenter,Color.white);
+            UiFactory.Label(_shop,"Title",T("EXTRA-DESIGNS","EXTRA DESIGNS"),42,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
+            _shopStatus=UiFactory.Label(_shop,"StoreStatus","",25,new Vector2(.06f,.80f),new Vector2(.94f,.9f),TextAnchor.MiddleLeft,Color.white);
             var scrollObject=new GameObject("ShopScroll",typeof(RectTransform),typeof(ScrollRect));
             scrollObject.transform.SetParent(_shop,false);Set((RectTransform)scrollObject.transform,.04f,.19f,.96f,.78f);
             _shopScroll=scrollObject.GetComponent<ScrollRect>();_shopScroll.horizontal=false;_shopScroll.movementType=ScrollRect.MovementType.Clamped;
@@ -28,13 +28,17 @@ namespace Kamilunavo.PerfectDrop.UI
             _starterBuy=ShopButton("BuyStarter","",()=>Game.Purchases?.Buy(CommerceRules.Starter));
             _collectionBuy=ShopButton("BuyCollection","",()=>Game.Purchases?.Buy(CommerceRules.Collection));
             _starterBuy.GetComponent<Image>().color=new Color(.24f,.13f,.065f);_collectionBuy.GetComponent<Image>().color=new Color(.19f,.10f,.32f);
+            TowerPreviewGraphic.Add(_starterBuy.transform,"StarterSpecimen",new Color(1f,.36f,.14f),new Vector2(.02f,.04f),new Vector2(.25f,.96f),4);
+            TowerPreviewGraphic.Add(_collectionBuy.transform,"CollectionSpecimen",new Color(.64f,.25f,1),new Vector2(.02f,.04f),new Vector2(.25f,.96f),5);
+            foreach(var pack in new[]{_starterBuy,_collectionBuy})Set((RectTransform)pack.transform.Find("Label"),.28f,.10f,.97f,.90f);
             _premiumStyles=new Button[4];
             var colors=new[]{new Color(1f,.36f,.14f),new Color(.75f,.93f,1f),new Color(.64f,.25f,1f),new Color(1f,.87f,.25f)};
             for(var i=0;i<4;i++)
             {
                 var style=i+4;_premiumStyles[i]=ShopButton("PremiumStyle"+style,"",()=>{if(Game.SelectStyle(style))Game.UiClick();RefreshCommerce();});
                 var rect=(RectTransform)_premiumStyles[i].transform;Set((RectTransform)rect.Find("Label"),.18f,.05f,.98f,.95f);
-                UiFactory.Icon(rect,"DesignPreview",HudIconType.Floors,colors[i],new Vector2(.025f,.20f),new Vector2(.14f,.80f));
+                TowerPreviewGraphic.Add(rect,"DesignPreview",colors[i],new Vector2(.02f,.04f),new Vector2(.25f,.96f),3);
+                Set((RectTransform)rect.Find("Label"),.28f,.10f,.97f,.90f);
             }
             _video=ShopButton("OptionalVideo","",()=>Game.Videos?.Watch());
             _privacy=ShopButton("AdPrivacy",T("WERBE-DATENSCHUTZ","AD PRIVACY OPTIONS"),()=>Game.Videos?.ShowPrivacy());
@@ -93,13 +97,14 @@ namespace Kamilunavo.PerfectDrop.UI
             Canvas.ForceUpdateCanvases();
             var canvas=_shop.GetComponentInParent<Canvas>();
             // Minimum 52 logical screen points even on short landscape screens.
-            var row=Mathf.Max(130f,52f/canvas.scaleFactor);var gap=16f;
+            var row=Mathf.Max(154f,56f*UiMetrics.PointScale/canvas.scaleFactor);var gap=14f;
             var buttons=System.Array.FindAll(_shopContent.GetComponentsInChildren<Button>(true),button=>button.gameObject.activeSelf);
             _shopContent.sizeDelta=new Vector2(0,buttons.Length*(row+gap)+gap);
             for(var i=0;i<buttons.Length;i++)
             {
                 var rect=(RectTransform)buttons[i].transform;rect.anchorMin=new Vector2(.02f,1);rect.anchorMax=new Vector2(.98f,1);rect.pivot=new Vector2(.5f,1);
                 rect.sizeDelta=new Vector2(0,row);rect.anchoredPosition=new Vector2(0,-gap-i*(row+gap));
+                buttons[i].GetComponentInChildren<Text>().fontSize=29;
             }
         }
     }

@@ -16,6 +16,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private int _width, _height;
         private Rect _division, _area;
         private bool _hadDivision;
+        public Rect CityPane { get; private set; } = new Rect(0,0,1,1);
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
         public bool MapOrStyleOpen => CampaignMenuOpen;
         public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false);
@@ -42,10 +43,10 @@ namespace Kamilunavo.PerfectDrop.UI
                 _stats[i] = UiFactory.Label(card,"Value","",50,new Vector2(.34f,.12f),new Vector2(.95f,.60f),TextAnchor.MiddleLeft,Color.white,FontStyle.Bold);
             }
             _objective = UiFactory.Panel(_safe,"Objective",Navy,new Vector2(.04f,.765f),new Vector2(.96f,.85f));
-            _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.48f),new Vector2(.76f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
-            _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.15f),new Vector2(.74f,.38f),TextAnchor.MiddleLeft,Color.white);
+            _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.48f),new Vector2(.71f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
+            _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.15f),new Vector2(.71f,.38f),TextAnchor.MiddleLeft,Color.white);
             _progress = UiFactory.Progress(_objective,new Vector2(.045f,.04f),new Vector2(.955f,.10f),new Color(.22f,.27f,.35f),Gold);
-            UiFactory.Button(_objective,"Menu",T("MENÜ","MENU"),new Color(.14f,.20f,.29f),Color.white,new Vector2(.79f,.15f),new Vector2(.965f,.93f),OpenSettings);
+            UiFactory.Button(_objective,"Menu",T("MENÜ","MENU"),new Color(.14f,.20f,.29f),Color.white,new Vector2(.75f,.15f),new Vector2(.965f,.93f),OpenSettings);
             _drop = UiFactory.Button(_safe,"Drop",T("ABSETZEN","DROP"),Gold,Navy,new Vector2(.10f,.055f),new Vector2(.90f,.15f),game.Drop);
             _dropRect = (RectTransform)_drop.transform;
             UiFactory.ApplyPillImage(_drop.GetComponent<Image>());
@@ -59,7 +60,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
             _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.77f),new Vector2(.90f,.88f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
             _settingsMap=UiFactory.Button(_popup,"SettingsMap",T("LEVELÜBERSICHT","LEVEL MAP"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.10f,.21f),new Vector2(.90f,.32f),game.GoHome);
-            BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu();
+            BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu(); BuildTutorial();
             foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null || graphic.GetComponent<RectMask2D>() != null;
             _popup.gameObject.SetActive(false);
             Layout(true); Refresh();
@@ -80,6 +81,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void Grade(StackGrade grade)
         {
+            TutorialPlacement(grade);
             _status.text = grade == StackGrade.Perfect ? T("PERFEKT!","PERFECT!") : grade == StackGrade.Good ? T("GUT GESTAPELT","GOOD DROP") : T("DANEBEN","MISSED");
             _hint.text = grade == StackGrade.Perfect ? T("Fläche bleibt erhalten · Serienbonus","Area preserved · streak bonus") : grade == StackGrade.Good ? T("Überstand fällt herunter.","Overhang falls away.") : T("Kein Überlapp. Versuch es nochmal.","No overlap. Try again.");
         }
@@ -129,7 +131,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _daily.interactable = StackSave.CanClaim(Game.Profile);
         }
         private static void SetLabel(Button button, string text) => button.GetComponentInChildren<Text>().text = text;
-        private void Update() { Layout(false); UpdateArcadeHud(); UpdateCommerce(); }
+        private void Update() { Layout(false); UpdateArcadeHud(); UpdateCommerce(); UpdateTutorial(); }
         private void Layout(bool force)
         {
             var hasDivision = ReservedRegionProvider.TryGetDivisionRegion(out var division);
@@ -147,18 +149,28 @@ namespace Kamilunavo.PerfectDrop.UI
             }
             LayoutCampaign(pane); LayoutArcade(pane); LayoutCommerce(pane);
             var screenSafe = Screen.safeArea;
-            WorldPane = new Rect((screenSafe.x+pane.x*screenSafe.width)/Screen.width, (screenSafe.y+pane.y*screenSafe.height)/Screen.height, pane.width*screenSafe.width/Screen.width, pane.height*screenSafe.height/Screen.height);
+            var landscape = Screen.width*pane.width > Screen.height*pane.height*1.2f;
+            var free = StackPresentation.World(landscape);
+            WorldPane=StackPresentation.ToViewport(screenSafe,pane,free,new Vector2(Screen.width,Screen.height));
+            CityPane=StackPresentation.ToViewport(screenSafe,pane,new Rect(.04f,.20f,.92f,.48f),new Vector2(Screen.width,Screen.height));
             Place(_statsRoot,pane,new Rect(.04f,.875f,.92f,.105f));
-            Place(_objective,pane,new Rect(.04f,.76f,.92f,.09f));
-            Place(_dropRect,pane,new Rect(.10f,.05f,.80f,.10f));
+            Place(_objective,pane,new Rect(.04f,.755f,.92f,.11f));
+            Place(_dropRect,pane,StackPresentation.Drop(false));
             Place(_popup,pane,new Rect(.06f,.16f,.88f,.70f));
+            Set((RectTransform)_daily.transform,.10f,.77f,.90f,.88f);
+            Set((RectTransform)_sound.transform,.10f,.63f,.90f,.74f);Set((RectTransform)_haptics.transform,.10f,.49f,.90f,.60f);
+            Set((RectTransform)_motion.transform,.10f,.35f,.90f,.46f);Set((RectTransform)_settingsMap.transform,.10f,.21f,.90f,.32f);Set((RectTransform)_close.transform,.10f,.07f,.90f,.18f);
             var aspect = Screen.width * pane.width / Mathf.Max(1, Screen.height*pane.height);
             if (aspect > 1.2f)
             {
                 Place(_statsRoot,pane,new Rect(.025f,.80f,.55f,.17f));
                 Place(_objective,pane,new Rect(.60f,.77f,.37f,.20f));
-                Place(_dropRect,pane,new Rect(.20f,.07f,.60f,.20f));
-                Place(_popup,pane,new Rect(.05f,.025f,.90f,.95f));
+                Place(_dropRect,pane,StackPresentation.Drop(true));
+                Place(_popup,pane,new Rect(.23f,.035f,.54f,.93f));
+                Set((RectTransform)_daily.transform,.06f,.68f,.94f,.83f);
+                Set((RectTransform)_sound.transform,.06f,.505f,.48f,.655f);Set((RectTransform)_haptics.transform,.52f,.505f,.94f,.655f);
+                Set((RectTransform)_motion.transform,.06f,.33f,.94f,.48f);
+                Set((RectTransform)_settingsMap.transform,.06f,.155f,.48f,.305f);Set((RectTransform)_close.transform,.52f,.155f,.94f,.305f);
             }
         }
         private static void Place(RectTransform rect, Rect pane, Rect slot) => Set(rect,pane.x+slot.x*pane.width,pane.y+slot.y*pane.height,pane.x+slot.xMax*pane.width,pane.y+slot.yMax*pane.height);

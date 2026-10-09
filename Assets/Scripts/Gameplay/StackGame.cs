@@ -183,7 +183,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             if(Profile.RunChallenge){Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);}
             Run = new StackRun(Level.Target,Profile.RunEndless,Vector2.one*Level.Width); _hasStarted=true; LastStars=LastBonus=0; _phase = -Mathf.PI/2; MovingOffset = -Level.Width*1.24f; _nextDrop = 0;
             Hud.HideMenus(); WorldArt.SetChapter(Level.Chapter);
-            SpawnMoving(); Hud.ResetMessage(); Save(); UpdateCamera(true);
+            SpawnMoving(); Hud.ResetMessage(); Save(); UpdateCamera(true); if(!Profile.TutorialComplete)Hud.StartTutorial();
         }
         public void StartLevel(int id)
         {
@@ -266,39 +266,43 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         {
             var top = Run.Top.Center;
             var height = Run.Layers.Count*LayerHeight;
-            // Give the gold slabs volume and keep their overlap surface above
-            // the landscape power controls. Placement rules stay in the X/Z plane.
-            var landscape=Hud!=null && Screen.width*Hud.WorldPane.width>Screen.height*Hud.WorldPane.height*1.2f;
-            var focus = new Vector3(top.x,height-(landscape?1.55f:.7f),top.y);
             var cityView=Hud!=null && Hud.CityOpen;
-            if(cityView)focus=new Vector3((CityDistrict-1)*24,1,42);
-            var yaw = _yaw*Mathf.Deg2Rad;
-            var size = Run.Top.Size;
-            var x = Mathf.Abs(Mathf.Cos(yaw)); var z = Mathf.Abs(Mathf.Sin(yaw));
-            var horizontal = x*size.x*.5f + z*size.y*.5f + Mathf.Max(x*size.x,z*size.y)*1.24f;
-            var depth = z*size.x*.5f + x*size.y*.5f + Mathf.Max(z*size.x,x*size.y)*1.24f;
-            var tan = Mathf.Tan(_camera.fieldOfView*.5f*Mathf.Deg2Rad);
-            var distance = Mathf.Max(17f, horizontal/(tan*_camera.aspect*.82f)+depth+2f);
-            if(cityView)distance=Mathf.Max(76f,12f/(tan*_camera.aspect*.82f)+15f);
-            var desired = focus + new Vector3(Mathf.Sin(yaw),cityView?1f:.65f,-Mathf.Cos(yaw)).normalized*distance;
-            var paneNow = Hud != null ? Hud.WorldPane : new Rect(0,0,1,1);
-            var layoutChanged = !Mathf.Approximately(_cameraAspect,_camera.aspect) || _cameraPane != paneNow;
-            _cameraAspect = _camera.aspect; _cameraPane = paneNow;
-            var needsOutwardFit = Vector3.Distance(_camera.transform.position,focus) < distance;
-            var blend = snap || layoutChanged || needsOutwardFit || GamePreferences.ReducedMotion ? 1f : 1-Mathf.Exp(-7f*Time.deltaTime);
-            _camera.transform.position = Vector3.Lerp(_camera.transform.position,desired,blend);
-            _camera.transform.rotation = Quaternion.Slerp(_camera.transform.rotation,Quaternion.LookRotation(focus-_camera.transform.position),blend);
-            // Keep the full world render while fitting the active stack inside the available pane.
-            _camera.ResetProjectionMatrix();
-            if (Hud != null)
+            var focus = new Vector3(top.x,height-1.1f,top.y);
+            var paneNow=Hud!=null?Hud.WorldPane:new Rect(0,0,1,1);
+            var yaw=_yaw*Mathf.Deg2Rad;
+            var outward=new Vector3(Mathf.Sin(yaw),cityView?1.05f:.78f,-Mathf.Cos(yaw)).normalized;
+            var rotation=Quaternion.LookRotation(-outward);
+            var size=Run.Top.Size;
+            var extent=StackRules.MotionExtent(size,Run.Axis);
+            var bounds=new Bounds(new Vector3(top.x,height-1.1f,top.y),new Vector3(size.x+(Run.Axis==StackAxis.X?extent*2f:0),3.4f,size.y+(Run.Axis==StackAxis.Z?extent*2f:0)));
+            if(cityView)
             {
-                var pane = Hud.WorldPane;
-                var projection = _camera.projectionMatrix;
-                var fit = Mathf.Min(pane.width,pane.height);
-                projection.m00 *= fit; projection.m11 *= fit;
-                projection.m02 = 1f - 2f*pane.center.x;
-                projection.m12 = 1f - 2f*pane.center.y;
-                _camera.projectionMatrix = projection;
+                focus=new Vector3((CityDistrict-1)*24,0,42);
+                bounds=new Bounds(focus+Vector3.up*1.5f,new Vector3(19,12,28));
+                paneNow=Hud.CityPane;
+                focus=bounds.center;
+            }
+            var distance=StackPresentation.FitDistance(bounds,focus,rotation,_camera.fieldOfView,_camera.aspect,paneNow);
+            var desired=focus+outward*distance;
+            var layoutChanged=!Mathf.Approximately(_cameraAspect,_camera.aspect) || _cameraPane!=paneNow;
+            _cameraAspect=_camera.aspect;_cameraPane=paneNow;
+            var needsOutwardFit=Vector3.Distance(_camera.transform.position,focus)<distance;
+            var blend=snap || layoutChanged || needsOutwardFit || GamePreferences.ReducedMotion?1f:1-Mathf.Exp(-7f*Time.deltaTime);
+            _camera.transform.position=Vector3.Lerp(_camera.transform.position,desired,blend);
+            _camera.transform.rotation=rotation;
+            // Shift only the principal point: preserve the metal slabs' proportions.
+            _camera.ResetProjectionMatrix();
+            var projection=_camera.projectionMatrix;
+            projection.m02=1f-2f*paneNow.center.x;projection.m12=1f-2f*paneNow.center.y;
+            _camera.projectionMatrix=projection;
+            // A rapid orbit or a newly placed layer must not ease through a pose
+            // that puts the moving overlap surface behind controls.
+            for(var i=0;i<8;i++)
+            {
+                var corner=bounds.center+Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));
+                var point=_camera.WorldToViewportPoint(corner);
+                if(point.z<=0 || !paneNow.Contains(new Vector2(point.x,point.y)))
+                { _camera.transform.position=desired;break; }
             }
         }
         public void UiClick() => _feedback.PlayJump();

@@ -61,9 +61,17 @@ namespace Kamilunavo.PerfectDrop.UI
         private void LayoutArcade(Rect pane)
         {
             if(_powerRow==null)return;
-            Place(_powerRow,pane,new Rect(.04f,.165f,.92f,.135f));
-            if (Screen.width*pane.width > Screen.height*pane.height*1.2f)
-                Place(_powerRow,pane,new Rect(.12f,.29f,.76f,.20f));
+            var landscape=Screen.width*pane.width>Screen.height*pane.height*1.2f;
+            Place(_powerRow,pane,StackPresentation.Powers(landscape));
+            var info=(RectTransform)_powerInfo.transform.parent;
+            Set(info,0,landscape?.87f:.74f,1,1);
+            for(var i=0;i<4;i++)
+            {
+                var button=i<3?_powerButtons[i]:_risk;
+                if(landscape)Set((RectTransform)button.transform,0,.65f-i*.215f,1,.85f-i*.215f);
+                else Set((RectTransform)button.transform,i*.25f,.03f,i*.25f+.235f,.70f);
+                button.GetComponentInChildren<Text>().fontSize=landscape?26:29;
+            }
             Place(_cityPanel,pane,new Rect(0,0,1,1));
         }
         private void UpdateArcadeHud()
@@ -78,12 +86,13 @@ namespace Kamilunavo.PerfectDrop.UI
                 kind==StackBlockKind.Fragile?T("BRÜCHIG: ÜBERSTAND KOSTET FLÄCHE","FRAGILE: OVERHANG COSTS AREA"):
                 kind==StackBlockKind.Drift?T("DRIFT: TEMPO WECHSELT","DRIFT: SPEED CHANGES"):
                 kind==StackBlockKind.Wind?T("WIND: ACHTE AUF DIE BEWEGUNG","WIND: WATCH THE MOVEMENT"):T("PERFECT LÄDT ENERGIE","PERFECT CHARGES ENERGY");
-            _powerInfo.text=label+" · "+powers.Energy+"/6"+(powers.RepairReady?T(" · RETTUNG BEREIT"," · SAVE READY"):"");
+            _powerInfo.text=T("ENERGIE ","ENERGY ")+powers.Energy+" / 6";
+            if(kind!=StackBlockKind.Standard && !_tutorialActive)_hint.text=label;
             var names=new[]{T("ZEITLUPE","SLOW TIME"),T("ZENTRIEREN","CENTER"),T("RETTEN","SAVE")};
             for(var i=0;i<3;i++)
             {
                 var power=(StackPower)i;var unlocked=StackCampaign.PowerUnlocked(Game.Profile,power);
-                SetLabel(_powerButtons[i],names[i]+"\n"+(unlocked?power==StackPower.Slow && powers.SlowSeconds>0?Mathf.CeilToInt(powers.SlowSeconds)+" s":StackPowers.Cost(power)+T(" ENERGIE"," ENERGY"):T("AB LEVEL ","FROM LEVEL ")+(i==0?3:i==1?5:9)));
+                SetLabel(_powerButtons[i],names[i]+"\n"+(unlocked?power==StackPower.Slow && powers.SlowSeconds>0?Mathf.CeilToInt(powers.SlowSeconds)+" s":StackPowers.Cost(power)+" ◆":T("LEVEL ","LEVEL ")+(i==0?3:i==1?5:9)));
                 _powerButtons[i].interactable=unlocked && !ModalOpen && !Game.Run.Failed && !Game.Run.Completed && powers.Energy>=StackPowers.Cost(power) && !(power==StackPower.Slow && powers.SlowSeconds>0) && !(power==StackPower.Repair && powers.RepairReady);
             }
             SetLabel(_risk,T("RISIKO","RISK")+"\n"+(Game.Profile.UnlockedLevel<6?T("AB LEVEL 6","FROM LEVEL 6"):powers.Risk?T("PERFECT ODER ENDE","PERFECT OR FAIL"):T("2× COINS","2× COINS")));

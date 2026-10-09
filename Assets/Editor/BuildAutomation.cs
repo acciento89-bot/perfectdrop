@@ -75,6 +75,7 @@ public static class BuildAutomation
 
     private static void Build(BuildTarget target, string output, bool development)
     {
+        Kamilunavo.PerfectDrop.Editor.ArcadeValidation.Validate();
         if (target == BuildTarget.iOS)
         {
             Directory.CreateDirectory(output);

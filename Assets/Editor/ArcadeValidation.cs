@@ -34,7 +34,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             var date=DateTime.UtcNow.ToString("yyyy-MM-dd");
             Check(StackCampaign.RecordDaily(profile,day,daily,date)==75,"Daily challenge reward failed.");
             Check(StackCampaign.RecordDaily(profile,day,daily,date)==0,"Daily challenge rewarded twice.");
-            CampaignValidation.Validate();StackValidation.ValidatePlatform();
+            PresentationValidation.Validate();PresentationHudValidation.Validate();CampaignValidation.Validate();StackValidation.ValidatePlatform();
             ReleaseConfigurationValidation.Validate();
             Debug.Log("[PerfectDrop] Arcade powers/special-blocks/risk/city/daily matrix passed.");
         }

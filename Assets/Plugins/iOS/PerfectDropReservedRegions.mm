@@ -129,3 +129,5 @@ extern "C"
         return 0;
     }
 }
+
+extern "C" float PDScreenScale(void) { return (float)UIScreen.mainScreen.scale; }

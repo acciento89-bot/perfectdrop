@@ -20,6 +20,9 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _cloud;
         private static Material _sun;
         private static Material _signal;
+        private static Material _garden,_paving;
+        private static Material Garden => _garden!=null?_garden:(_garden=CreateMaterial("CityGarden",new Color(.13f,.29f,.20f),.05f,.25f));
+        private static Material Paving => _paving!=null?_paving:(_paving=CreateMaterial("CityPaving",new Color(.33f,.38f,.43f),.2f,.4f));
         private static Mesh _beveledBoxMesh;
         private static Mesh _insetFrameMesh;
         private static Cubemap _studioReflection;
@@ -384,29 +387,71 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 var group=new GameObject("CityDistrict"+district);group.transform.SetParent(root.transform,false);
                 var cityParent=group.transform;
                 var origin=new Vector3((district-1)*24,0,0);
-                var platform=CreateStackBlock(cityParent,"District"+district,origin,new Vector3(19,.5f,28),1+district*10);
-                StyleStackBlock(platform,district==0?0:district==1?1:2);
-                AddBeveledBox(cityParent,"DistrictFoundation"+district,origin+Vector3.down*.75f,new Vector3(18.2f,1.2f,27.2f),Platform);
-                AddCube(cityParent,"Walkway"+district,origin+new Vector3(0,.29f,0),new Vector3(1.4f,.025f,24),PlatformInset);
+                AddBeveledBox(cityParent,"DistrictFoundation"+district,origin+Vector3.down*.7f,new Vector3(19,1.4f,28),PlatformInset);
+                AddBeveledBox(cityParent,"CityPaving"+district,origin,new Vector3(18.6f,.12f,27.6f),Paving);
+                AddCube(cityParent,"Boulevard"+district,origin+new Vector3(0,.085f,0),new Vector3(2.4f,.035f,27),PlatformInset);
+                for(var line=0;line<10;line++)AddCube(cityParent,"RoadMark"+line,origin+new Vector3(0,.11f,(line-4.5f)*2.6f),new Vector3(.09f,.015f,1.15f),PlatformTop);
+                for(var side=-1;side<=1;side+=2)
+                {
+                    AddCube(cityParent,"Sidewalk"+side,origin+new Vector3(side*1.45f,.15f,0),new Vector3(.5f,.16f,27),PlatformTop);
+                    AddCube(cityParent,"EdgeLight"+side,origin+new Vector3(side*9.15f,-.22f,0),new Vector3(.04f,.12f,27),district==0?Gold:district==1?Cyan:Window);
+                }
                 for(var slot=0;slot<10;slot++)
                 {
-                    var id=district*10+slot;var point=origin+new Vector3((slot%2==0?-4:4),.35f,(slot/2-2)*5f);
-                    AddBeveledBox(cityParent,"Plot"+(id+1),point,new Vector3(3.5f,.16f,3.5f),PlatformTop);
+                    var id=district*10+slot;var point=origin+new Vector3((slot%2==0?-4.9f:4.9f),.20f,(slot/2-2)*5.2f);
+                    AddBeveledBox(cityParent,"LandscapedPlot"+(id+1),point,new Vector3(5.8f,.15f,4.65f),Garden);
+                    AddBeveledBox(cityParent,"EntryPath"+(id+1),point+new Vector3(slot%2==0?2.15f:-2.15f,.095f,0),new Vector3(1.6f,.025f,.65f),Paving);
+                    for(var tree=0;tree<2;tree++)
+                    {
+                        var treePoint=point+new Vector3(slot%2==0?-2.25f:2.25f,.1f,(tree==0?-1:1)*1.7f);
+                        AddCube(cityParent,"TreeTrunk"+id+"_"+tree,treePoint+Vector3.up*.45f,new Vector3(.12f,.9f,.12f),RunnerHair);
+                        AddBeveledBox(cityParent,"TreeCrown"+id+"_"+tree,treePoint+Vector3.up*1.0f,new Vector3(.7f,.8f,.7f),Garden);
+                    }
                     if(profile.LevelStars[id]==0)continue;
                     var building=new GameObject("CityTower"+(id+1));building.transform.SetParent(cityParent,false);building.transform.localPosition=point;
-                    var floors=3+Kamilunavo.PerfectDrop.Gameplay.StackCampaign.Level(id+1).Target/5;
+                    var floors=4+Kamilunavo.PerfectDrop.Gameplay.StackCampaign.Level(id+1).Target/4;
+                    var accent=district==0?Gold:district==1?Cyan:Window;
+                    var width=slot%3==0?3.2f:2.7f;var depth=slot%3==1?3.5f:2.8f;
+                    AddBeveledBox(building.transform,"StoneLobby",new Vector3(0,.45f,0),new Vector3(width+.4f,.75f,depth+.4f),PlatformTop);
+                    AddCube(building.transform,"LobbyGlass",new Vector3(0,.45f,-depth*.51f),new Vector3(width*.75f,.58f,.035f),Window);
                     for(var floor=0;floor<floors;floor++)
                     {
-                        var piece=CreateStackBlock(building.transform,"CityFloor"+floor,new Vector3(0,.45f+floor*.85f,0),new Vector3(2.7f,.8f,2.7f),id+1);
-                        StyleStackBlock(piece,district==0?0:district==1?1:2);
+                        var setback=floor>floors*.65f && slot%3==0?.75f:1f;
+                        var y=1f+floor*.72f;
+                        AddBeveledBox(building.transform,"CityFloor"+floor,new Vector3(0,y,0),new Vector3(width*setback,.7f,depth*setback),Tower);
+                        AddCube(building.transform,"FacadeWindowsFront"+floor,new Vector3(0,y,-depth*setback*.501f),new Vector3(width*setback*.82f,.40f,.025f),Window);
+                        AddCube(building.transform,"FacadeWindowsSide"+floor,new Vector3(-width*setback*.501f,y,0),new Vector3(.025f,.4f,depth*setback*.82f),Window);
+                        AddCube(building.transform,"ArchitecturalBand"+floor,new Vector3(0,y+.34f,-depth*setback*.51f),new Vector3(width*setback,.035f,.04f),accent);
+                        for(var mullion=-1;mullion<=1;mullion++)AddCube(building.transform,"Mullion"+floor+"_"+mullion,new Vector3(mullion*width*setback*.27f,y,-depth*setback*.515f),new Vector3(.075f,.48f,.035f),Platform);
                     }
-                    AddBeveledBox(building.transform,"RoofCrown",new Vector3(0,floors*.85f+.18f,0),new Vector3(2.35f,.24f,2.35f),PlatformTop);
-                    AddCube(building.transform,"FacadeSignal",new Vector3(-1.36f,floors*.425f,-.65f),new Vector3(.035f,floors*.69f,.16f),district==0?Gold:Window);
-                    for(var star=0;star<profile.LevelStars[id];star++)
-                        AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.5f,floors*.85f+.5f,0),new Vector3(.09f,.8f,.09f),Gold);
+                    var roof=1f+floors*.72f;
+                    AddBeveledBox(building.transform,"RoofCrown",new Vector3(0,roof,0),new Vector3(width*.9f,.3f,depth*.9f),Platform);
+                    AddCube(building.transform,"RoofSignal",new Vector3(0,roof+.17f,0),new Vector3(width*.78f,.025f,depth*.78f),accent);
+                    AddBeveledBox(building.transform,"Penthouse",new Vector3(.2f,roof+.55f,0),new Vector3(width*.5f,.75f,depth*.5f),Tower);
+                    for(var star=0;star<profile.LevelStars[id];star++)AddCube(building.transform,"StarAntenna"+star,new Vector3((star-1)*.4f,roof+1.1f,0),new Vector3(.055f,.65f,.055f),accent);
+                    BakeBuilding(building);
                 }
             }
             return root;
+        }
+        private static void BakeBuilding(GameObject building)
+        {
+            var groups=new Dictionary<Material,List<CombineInstance>>();
+            foreach(var renderer in building.GetComponentsInChildren<MeshRenderer>())
+            {
+                var filter=renderer.GetComponent<MeshFilter>();if(filter==null || filter.sharedMesh==null)continue;
+                var material=renderer.sharedMaterial;
+                if(!groups.TryGetValue(material,out var instances))groups[material]=instances=new List<CombineInstance>();
+                instances.Add(new CombineInstance{mesh=filter.sharedMesh,transform=building.transform.worldToLocalMatrix*filter.transform.localToWorldMatrix});
+                renderer.enabled=false;
+            }
+            var owner=building.AddComponent<CityMeshOwner>();
+            foreach(var pair in groups)
+            {
+                var mesh=new Mesh{name=building.name+"_"+pair.Key.name};mesh.CombineMeshes(pair.Value.ToArray(),true,true);owner.Meshes.Add(mesh);
+                var go=new GameObject("BakedFacade_"+pair.Key.name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(building.transform,false);
+                go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshRenderer>().sharedMaterial=pair.Key;
+            }
         }
         public static void MarkSpecialBlock(GameObject block,Kamilunavo.PerfectDrop.Gameplay.StackBlockKind kind)
         {
