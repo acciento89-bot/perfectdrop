@@ -1,29 +1,60 @@
 {
   "game": "PerfectDrop",
   "repository": "acciento89-bot/perfectdrop",
-  "nativeSourceCommit": "95d76275d8ee5b71ae82a1f60d0c26572aea8250",
-  "internalVersion": "1.0(9)",
+  "nativeSourceCommit": "69c34195b54e0b72b65e687c211bf24a43e56d56",
+  "verifiedRemoteMain": "69c34195b54e0b72b65e687c211bf24a43e56d56",
+  "internalVersion": "1.0(10)",
   "testflight": {
     "appId": "6819872064",
-    "buildId": "91529c26-b976-41bf-b35f-5776c4a99c63",
+    "buildId": "4af6e971-2599-4e48-ab02-5351c3b37e73",
     "version": "1.0",
-    "build": 9,
+    "build": 10,
     "status": "Im Test",
     "group": "Kamilunavo Intern",
     "groupId": "1f1e1ba3-ea2f-4827-86b3-5c74e06ddbc2",
     "testers": 1,
     "notesSaved": true,
     "observedVia": "Authenticated Safari App Store Connect UI",
+    "observedAtUTC": "2026-10-10T18:42:39.833Z",
     "publicRelease": false
   },
-  "ipa": "/Users/piotrkaminski/Developer/KamilunavoDelivery-20261009/outputs/PerfectDrop-1.0-build9-AppStore.ipa",
-  "ipaSHA256": "c0238c85b0292c103b76544c630ba1102a36f0f84bdf621b6edecad1aa8dac88",
-  "android": "/Users/piotrkaminski/Developer/KamilunavoDelivery-20261009/outputs/perfectdrop-build9-central-signed/PerfectDrop-1.0-build9.aab",
-  "androidSHA256": "c26abe449ee588e0780810214cbfec3d520a76e616256eef588931d413d9d223",
+  "ipa": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/PerfectDrop/native-ios/PerfectDrop-1.0-build10-AppStore.ipa",
+  "ipaSHA256": "818f6e1a5da315886c3e7c3a5780e737630832f5da2fd580866cc2eaa31401d7",
+  "android": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/PerfectDrop/native-android/central-signed/PerfectDrop-1.0-build10.aab",
+  "androidSHA256": "cd235d589851825bdf30fbefa4ead8d3fc9501454ef084ba65541525d90f6033",
   "androidPayloadEntries": 570,
-  "signingRun": "37995021514",
-  "unpublishedBackupTag": "perfectdrop-build9-presentation-tutorial",
-  "archiveSHA256": "9e316452fb5a700cea94577da5506e299affeba4eb05c8157c64d8905d970c82",
+  "signingRun": "38076258994",
+  "signingRunURL": "https://github.com/acciento89-bot/perfectdrop/actions/runs/38076258994",
+  "unpublishedBackupTag": "perfectdrop-build10-concept-polish",
+  "archiveSHA256": "a3ca0f541081d3336495880ae0067dc42f6d2636f4579a05fe7a1083a6b55653",
   "archiveFilesByteVerified": 60,
-  "vendorSymbolWarning": "UnityRuntime.framework dSYM UUID392D7A7F-6A4F-3A7A-8788-4089FA96FF38 missing; own framework symbols retained in verified archive"
+  "actualScreens": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/Screens/PerfectDrop-actual.png",
+  "desktopReceipts": [
+    {
+      "file": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/PerfectDrop/runtime-gallery-final/result.txt",
+      "receipt": "PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.",
+      "sha256": "fa0100bf26a82999b94c88186040285e80b7c537cc2c6f7bbcf2765b2962aa73"
+    },
+    {
+      "file": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/PerfectDrop/runtime-styles-final/result.txt",
+      "receipt": "PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.",
+      "sha256": "d44c6da500a5c9431ac691f1e6e8c82f56e81052824fc7299fdbf686f38142c3"
+    },
+    {
+      "file": "/Volumes/SSK SSD/Kamilunavo/Builds/VisualRevision-20261010/PerfectDrop/runtime-arcade-final/result.txt",
+      "receipt": "PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.",
+      "sha256": "b6f2eb24977e07a23a9cb3d0e76d7c4010e8d9bbf6eeb4a37fb548624ffe5a78"
+    }
+  ],
+  "vendorSymbolWarning": "UnityRuntime.framework dSYM missing; app and UnityFramework dSYM retained",
+  "acceptanceLimits": [
+    "Desktop callbacks and PointerEventData do not establish physical iPhone raw multi-touch or thermal/performance acceptance.",
+    "OneMoreFloor full mechanics receipt precedes final decorative canal quarter; final editor/presentation/reload use latest art.",
+    "Rising camera receipt precedes final material/cliff polish; camera/input code unchanged.",
+    "Repair full mechanics receipt precedes final depth-tested decorative font binding; final presentation uses latest binding.",
+    "No genuine provider purchase/reward acceptance or cinematic equivalence claim.",
+    "Rising build 5 retains the camera/input code already in build 4. Desktop touch-event scenarios pass; the reported physical-phone issue is not declared resolved.",
+    "Known vendor UnityRuntime.framework dSYM is missing; app and UnityFramework symbols remain in retained archives.",
+    "Immutable package-generation proofs precede Apple upload; current TestFlight state is recorded separately here and in native-ios/status.json."
+  ]
 }
