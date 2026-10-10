@@ -51,6 +51,7 @@ Shader "Kamilunavo/PerfectDropPanel"
                 float edge=1-smoothstep(.65,1.6,abs(distance+1.5));
                 float gold=step(.48,i.color.r)*step(.25,i.color.g)*step(i.color.b,i.color.g*.7);
                 float height=saturate(i.panel.y);
+                float ivory=step(.78,min(i.color.r,i.color.g))*step(.68,i.color.b)*(1-gold);
                 // Warm bevel, cream reflection and an amber lower face give gold
                 // actions the same finish as the live decks. Dark cards stay cool.
                 float3 navy=c.rgb*lerp(.82,1.12,height)+float3(.018,.029,.05)*pow(height,5);
@@ -58,8 +59,9 @@ Shader "Kamilunavo/PerfectDropPanel"
                 float sheenBand=(height-.78)*10;
                 float sheen=exp2(-sheenBand*sheenBand);
                 metal+=float3(.11,.085,.025)*sheen;
-                c.rgb=lerp(navy,metal,gold);
-                float3 rim=lerp(float3(.30,.40,.57),float3(1,.91,.57),gold);
+                float3 paper=c.rgb*lerp(.97,1.01,height);
+                c.rgb=lerp(lerp(navy,paper,ivory),metal,gold);
+                float3 rim=lerp(lerp(float3(.30,.40,.57),float3(.79,.69,.49),ivory),float3(1,.91,.57),gold);
                 c.rgb=lerp(c.rgb,rim,edge*lerp(.34,.68,gold));
                 c.a*=1-smoothstep(-aa,aa,distance);
                 #ifdef UNITY_UI_CLIP_RECT

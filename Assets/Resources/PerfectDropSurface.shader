@@ -6,6 +6,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         _Color ("Color", Color) = (1,1,1,1)
         _Detail ("Metal surface detail", Range(0,1)) = 0
         _GoldFinish ("Brushed gold finish", Range(0,1)) = 0
+        _BodyFinish ("Lacquer or ceramic detail", Range(0,2)) = 0
+        _BrushFinish ("Fine metal brushing", Range(0,1)) = 0
         _Metallic ("Metallic", Range(0,1)) = 0
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _EmissionColor ("Emission", Color) = (0,0,0,0)
@@ -28,6 +30,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         UNITY_INSTANCING_BUFFER_END(DeckProperties)
         half _Detail;
         half _GoldFinish;
+        half _BodyFinish;
+        half _BrushFinish;
         half _Metallic;
         half _Glossiness;
 
@@ -57,7 +61,18 @@ Shader "Kamilunavo/PerfectDropSurface"
             float3 gold=lerp(float3(.77,.52,.21),float3(1.07,1.04,.85),diagonal)+reflection*float3(.13,.11,.055)+brush;
             // The same UV-bound finish runs across plate faces and bevels.
             // Avoid an emissive orange sheet: reflected light supplies the volume.
-            o.Albedo = tint.rgb * lerp(metal,lerp(.90,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.94+grain*.12)*(1-seam*.16), _Detail);
+            // Smooth brushed shoulders and ceramic/lacquer skins share a neutral
+            // fine finish. Industrial panel seams no longer dominate small slabs.
+            half brushed=sin(uv.y*680+metal.g*2)*.014;
+            float3 cleanMetal=.96+brushed*_BrushFinish+metal.r*.045;
+            // Veining belongs to the actual selected surface, using deck UVs so
+            // it follows moving and cut pieces. No world-space swimming occurs.
+            half vein=smoothstep(.94,.995,abs(sin(uv.x*13+sin(uv.y*8)*1.7+sin((uv.x+uv.y)*5)*.6)));
+            half jade=step(.5,_BodyFinish)*(1-step(1.5,_BodyFinish));
+            half ceramic=step(1.5,_BodyFinish);
+            cleanMetal=lerp(cleanMetal,cleanMetal*.90+vein*.28,jade);
+            cleanMetal=lerp(cleanMetal,1.02-vein*.065,ceramic);
+            o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.97,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
             o.Metallic = _Metallic;
             o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.10+edge*.12));
             o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish*.72, _GoldFinish);

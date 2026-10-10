@@ -12,7 +12,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public int TutorialStep=>_tutorialStep;
         private void BuildTutorial()
         {
-            UiFactory.Button(_home,"Learn",T("SO SPIELST DU","HOW TO PLAY"),new Color(.13f,.2f,.3f),Color.white,Vector2.zero,Vector2.one,()=>
+            UiFactory.Button(_home,"Learn",T("LERNEN","LEARN"),GalleryTheme.Paper,GalleryTheme.Ink,Vector2.zero,Vector2.one,()=>
             {
                 // Replay observes the current live run; no reset or extra rewards.
                 if(!Game.Profile.ResumeActive || Game.Run.Completed || Game.Run.Failed)Game.StartLevel(Game.Profile.UnlockedLevel);

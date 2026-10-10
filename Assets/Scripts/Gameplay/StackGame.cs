@@ -50,11 +50,14 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var key = new GameObject("SunsetKey").AddComponent<Light>();
             key.type = LightType.Directional; key.color = new Color(1f,.72f,.42f); key.intensity = 1.4f;
             key.transform.rotation = Quaternion.Euler(35,-32,0); key.shadows = LightShadows.Soft;
+            key.cullingMask=~(1<<StackSpecimenStudio.Layer);
             var fill = new GameObject("SkyFill").AddComponent<Light>();
             fill.type = LightType.Directional; fill.color = new Color(.35f,.52f,1f); fill.intensity = .55f;
             fill.transform.rotation = Quaternion.Euler(25,145,0);
+            fill.cullingMask=~(1<<StackSpecimenStudio.Layer);
             var cameraObject = new GameObject("StackCamera"); cameraObject.tag = "MainCamera";
             _camera = cameraObject.AddComponent<Camera>(); _camera.allowHDR = true; _camera.fieldOfView = 43; _camera.nearClipPlane = .15f; _camera.farClipPlane = 230;
+            _camera.cullingMask=~(1<<StackSpecimenStudio.Layer);
             cameraObject.AddComponent<AudioListener>(); cameraObject.AddComponent<CinematicGrade>();
             var feedback = new GameObject("StackFeedback",typeof(AudioSource),typeof(FeedbackSystem));
             _feedback = feedback.GetComponent<FeedbackSystem>();
@@ -73,6 +76,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             else _phase = -Mathf.PI/2;
             if(Profile.ResumeActive)Run.RestorePowers(Profile.Powers);
             _pedestal=CreateBlock("Pedestal",Vector2.zero,Vector2.one*4f,-LayerHeight,0);
+            WorldArt.BuildStackDais(_tower);
             for (var i=0;i<Run.Layers.Count;i++) _placed.Add(CreateBlock("Placed_"+(i+1),Run.Layers[i].Center,Run.Layers[i].Size,i*LayerHeight,Run.Count-Run.Layers.Count+i+1));
             SpawnMoving();
             Hud = gameObject.AddComponent<StackHud>(); Hud.Build(this); Hud.ResetMessage();
@@ -268,14 +272,18 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var top = Run.Top.Center;
             var height = Run.Layers.Count*LayerHeight;
             var cityView=Hud!=null && Hud.CityOpen;
-            var focus = new Vector3(top.x,height-1.1f,top.y);
+            // Show the architectural base and earned stack together during short
+            // challenges. Long endless runs still follow the most recent floors.
+            var visibleHeight=Mathf.Min(8f,Mathf.Max(3.4f,height+2.05f));
+            var centerY=height+.6f-visibleHeight*.5f;
+            var focus = new Vector3(top.x,centerY,top.y);
             var paneNow=Hud!=null?Hud.WorldPane:new Rect(0,0,1,1);
             var yaw=_yaw*Mathf.Deg2Rad;
             var outward=new Vector3(Mathf.Sin(yaw),cityView?1.05f:.78f,-Mathf.Cos(yaw)).normalized;
             var rotation=Quaternion.LookRotation(-outward);
             var size=Run.Top.Size;
             var extent=StackRules.MotionExtent(size,Run.Axis);
-            var bounds=new Bounds(new Vector3(top.x,height-1.1f,top.y),new Vector3(size.x+(Run.Axis==StackAxis.X?extent*2f:0),3.4f,size.y+(Run.Axis==StackAxis.Z?extent*2f:0)));
+            var bounds=new Bounds(focus,new Vector3(Mathf.Max(6.5f,size.x+(Run.Axis==StackAxis.X?extent*2f:0)),visibleHeight,Mathf.Max(6.5f,size.y+(Run.Axis==StackAxis.Z?extent*2f:0))));
             if(cityView)
             {
                 focus=new Vector3((CityDistrict-1)*24,0,42);

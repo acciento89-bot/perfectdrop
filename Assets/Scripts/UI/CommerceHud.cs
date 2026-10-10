@@ -14,20 +14,20 @@ namespace Kamilunavo.PerfectDrop.UI
         public bool ShopOpen=>_shop!=null && _shop.gameObject.activeSelf;
         private void BuildCommerceMenu()
         {
-            _shop=UiFactory.Panel(_safe,"PremiumShop",Navy,Vector2.zero,Vector2.one);
-            UiFactory.Label(_shop,"Title",T("EXTRA-DESIGNS","EXTRA DESIGNS"),42,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
-            _shopStatus=UiFactory.Label(_shop,"StoreStatus","",25,new Vector2(.06f,.80f),new Vector2(.94f,.9f),TextAnchor.MiddleLeft,Color.white);
+            _shop=UiFactory.Panel(_safe,"PremiumShop",GalleryTheme.Ivory,Vector2.zero,Vector2.one);
+            UiFactory.Label(_shop,"Title",T("EXTRA-DESIGNS","EXTRA DESIGNS"),42,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,GalleryTheme.Ink,FontStyle.Bold);
+            _shopStatus=UiFactory.Label(_shop,"StoreStatus","",25,new Vector2(.06f,.80f),new Vector2(.94f,.9f),TextAnchor.MiddleLeft,GalleryTheme.Ink);
             var scrollObject=new GameObject("ShopScroll",typeof(RectTransform),typeof(ScrollRect));
             scrollObject.transform.SetParent(_shop,false);Set((RectTransform)scrollObject.transform,.04f,.19f,.96f,.78f);
             _shopScroll=scrollObject.GetComponent<ScrollRect>();_shopScroll.horizontal=false;_shopScroll.movementType=ScrollRect.MovementType.Clamped;
-            _shopViewport=UiFactory.Panel(scrollObject.transform,"ShopViewport",new Color(.025f,.045f,.08f),Vector2.zero,Vector2.one);
+            _shopViewport=UiFactory.Panel(scrollObject.transform,"ShopViewport",GalleryTheme.Ivory,Vector2.zero,Vector2.one);
             _shopViewport.gameObject.AddComponent<RectMask2D>();
             _shopContent=new GameObject("ShopContent",typeof(RectTransform)).GetComponent<RectTransform>();_shopContent.SetParent(_shopViewport,false);
             _shopContent.anchorMin=new Vector2(0,1);_shopContent.anchorMax=Vector2.one;_shopContent.pivot=new Vector2(.5f,1);
             _shopScroll.viewport=_shopViewport;_shopScroll.content=_shopContent;
             _starterBuy=ShopButton("BuyStarter","",()=>Game.Purchases?.Buy(CommerceRules.Starter));
             _collectionBuy=ShopButton("BuyCollection","",()=>Game.Purchases?.Buy(CommerceRules.Collection));
-            _starterBuy.GetComponent<Image>().color=new Color(.24f,.13f,.065f);_collectionBuy.GetComponent<Image>().color=new Color(.19f,.10f,.32f);
+            GalleryTheme.Style(_starterBuy,Navy);GalleryTheme.Style(_collectionBuy,Navy);
             TowerPreviewGraphic.AddStyle(_starterBuy.transform,"StarterSpecimen",4,new Vector2(.02f,.04f),new Vector2(.25f,.96f),4);
             TowerPreviewGraphic.AddStyle(_collectionBuy.transform,"CollectionSpecimen",6,new Vector2(.02f,.04f),new Vector2(.25f,.96f),5);
             foreach(var pack in new[]{_starterBuy,_collectionBuy})Set((RectTransform)pack.transform.Find("Label"),.28f,.10f,.97f,.90f);
@@ -43,12 +43,12 @@ namespace Kamilunavo.PerfectDrop.UI
             _privacy=ShopButton("AdPrivacy",T("WERBE-DATENSCHUTZ","AD PRIVACY OPTIONS"),()=>Game.Videos?.ShowPrivacy());
             _retryPurchases=ShopButton("RetryStore",T("STORE ERNEUT VERBINDEN","RECONNECT STORE"),()=>Game.Purchases?.RetryConnection());
             _restorePurchases=ShopButton("RestorePurchases",T("KÄUFE WIEDERHERSTELLEN","RESTORE PURCHASES"),()=>Game.Purchases?.Restore());
-            UiFactory.Button(_shop,"ShopBack",T("ZURÜCK ZU DESIGNS","BACK TO DESIGNS"),Gold,Navy,new Vector2(.08f,.04f),new Vector2(.92f,.17f),ShowStyles);
-            UiFactory.Button(_styles,"ExtraDesigns",T("EXTRA-DESIGNS / SHOP","EXTRA DESIGNS / SHOP"),new Color(.20f,.13f,.33f),Color.white,new Vector2(.08f,.16f),new Vector2(.92f,.27f),ShowShop);
+            UiFactory.Button(_shop,"ShopBack",T("ZURÜCK ZU DESIGNS","BACK TO DESIGNS"),GalleryTheme.Paper,GalleryTheme.Ink,new Vector2(.08f,.04f),new Vector2(.92f,.17f),ShowStyles);
+            UiFactory.Button(_styles,"ExtraDesigns",T("EXTRA-DESIGNS / SHOP","EXTRA DESIGNS / SHOP"),Navy,Color.white,new Vector2(.08f,.16f),new Vector2(.92f,.27f),ShowShop);
             for(var i=0;i<4;i++)Set((RectTransform)_styleButtons[i].transform,.08f,.66f-i*.125f,.92f,.765f-i*.125f);
             _shop.gameObject.SetActive(false);
         }
-        private Button ShopButton(string name,string title,UnityEngine.Events.UnityAction action)=>UiFactory.Button(_shopContent,name,title,new Color(.13f,.20f,.30f),Color.white,Vector2.zero,Vector2.one,action);
+        private Button ShopButton(string name,string title,UnityEngine.Events.UnityAction action){var button=UiFactory.Button(_shopContent,name,title,GalleryTheme.Paper,GalleryTheme.Ink,Vector2.zero,Vector2.one,action);GalleryTheme.Style(button,GalleryTheme.Paper);return button;}
         public void ShowShop()
         {
             Game.Save();HideMenus();_shop.gameObject.SetActive(true);_shopScroll.verticalNormalizedPosition=1;Refresh();RefreshCommerce();Game.Videos?.Prepare();
@@ -70,7 +70,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var style=i+4;var owned=(Game.Profile.OwnedStyles&(1<<style))!=0;
                 SetLabel(_premiumStyles[i],names[i]+" · "+(Game.Profile.Style==style?T("AKTIV","ACTIVE"):owned?T("AUSWÄHLEN","SELECT"):T("IM PAKET ENTHALTEN","INCLUDED IN PACK")));
-                _premiumStyles[i].GetComponent<Image>().color=Game.Profile.Style==style?new Color(.24f,.18f,.09f):new Color(.045f,.075f,.13f,.98f);
+                GalleryTheme.Style(_premiumStyles[i],Game.Profile.Style==style?Navy:GalleryTheme.Paper);
                 _premiumStyles[i].interactable=owned && !(store?.Busy??false);
             }
             _retryPurchases.gameObject.SetActive(store!=null && !store.Ready);_retryPurchases.interactable=store?.CanRetry==true;
@@ -86,6 +86,7 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             if(_shop==null)return;
             Place(_shop,pane,new Rect(.04f,.02f,.92f,.96f));
+            GalleryTheme.Readable(_shopStatus,13);GalleryTheme.Readable(_shop.Find("Title").GetComponent<Text>(),22);
             LayoutShopRows();
         }
         private void UpdateCommerce()
@@ -104,7 +105,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var rect=(RectTransform)buttons[i].transform;rect.anchorMin=new Vector2(.02f,1);rect.anchorMax=new Vector2(.98f,1);rect.pivot=new Vector2(.5f,1);
                 rect.sizeDelta=new Vector2(0,row);rect.anchoredPosition=new Vector2(0,-gap-i*(row+gap));
-                buttons[i].GetComponentInChildren<Text>().fontSize=29;
+                GalleryTheme.Readable(buttons[i].GetComponentInChildren<Text>(),13);
             }
         }
     }

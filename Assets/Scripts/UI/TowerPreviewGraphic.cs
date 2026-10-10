@@ -3,14 +3,40 @@ using UnityEngine.UI;
 namespace Kamilunavo.PerfectDrop.UI
 {
     /// <summary>Dimensional specimens of the game's metal-and-light slab styles.</summary>
-    public sealed class TowerPreviewGraphic : MaskableGraphic
+    public sealed class TowerPreviewGraphic : RawImage
     {
         public Color Accent=new Color(1,.79f,.16f);
         public Color Body=new Color(.12f,.16f,.23f);
         public Color Plate=new Color(1,.78f,.30f);
         public int Floors=4;
+        private int _style,_cachedStyle=-1,_cachedFloors=-1;
+        private void LateUpdate()
+        {
+            if(!Application.isPlaying)return;
+            var floors=Mathf.Clamp(Floors,1,8);
+            if(_cachedStyle==_style && _cachedFloors==floors)return;
+            ReleaseSpecimen();
+            texture=Kamilunavo.PerfectDrop.Visuals.StackSpecimenStudio.Acquire(_style,floors);
+            _cachedStyle=_style;_cachedFloors=floors;SetVerticesDirty();
+        }
+        protected override void OnDestroy(){ReleaseSpecimen();base.OnDestroy();}
+        private void ReleaseSpecimen()
+        {
+            texture=null;
+            if(_cachedStyle>=0)Kamilunavo.PerfectDrop.Visuals.StackSpecimenStudio.Release(_cachedStyle,_cachedFloors);
+            _cachedStyle=_cachedFloors=-1;
+        }
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
+            if(texture!=null)
+            {
+                mesh.Clear();var bounds=rectTransform.rect;
+                var imageScale=Mathf.Min(bounds.width/texture.width,bounds.height/texture.height);
+                var half=new Vector2(texture.width,texture.height)*imageScale*.5f;var c=bounds.center;
+                mesh.AddVert(c-half,Color.white,new Vector2(0,0));mesh.AddVert(c+new Vector2(-half.x,half.y),Color.white,new Vector2(0,1));
+                mesh.AddVert(c+half,Color.white,new Vector2(1,1));mesh.AddVert(c+new Vector2(half.x,-half.y),Color.white,new Vector2(1,0));
+                mesh.AddTriangle(0,1,2);mesh.AddTriangle(0,2,3);return;
+            }
             mesh.Clear();var r=rectTransform.rect;
             var floors=Mathf.Clamp(Floors,1,8);
             var scale=Mathf.Min(r.width/1.12f,r.height/(.64f+(floors-1)*.145f));
@@ -46,7 +72,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void ApplyStyle(int style)
         {
-            var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(style);Accent=finish.Accent;Body=finish.Body;Plate=finish.Plate;SetVerticesDirty();
+            _style=Mathf.Clamp(style,0,7);var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(_style);Accent=finish.Accent;Body=finish.Body;Plate=finish.Plate;SetVerticesDirty();
         }
         public static TowerPreviewGraphic AddStyle(Transform parent,string name,int style,Vector2 min,Vector2 max,int floors=4)
         {

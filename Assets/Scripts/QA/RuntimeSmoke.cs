@@ -75,13 +75,19 @@ namespace Kamilunavo.PerfectDrop.QA
             Kamilunavo.PerfectDrop.Monetization.CommerceRules.RestoreEntitlement(_game.Profile,Kamilunavo.PerfectDrop.Monetization.CommerceRules.Collection);
             _game.StartLevel(1);float deadline=Time.realtimeSinceStartup+12;while(Mathf.Abs(_game.MovingOffset)>.04f&&Time.realtimeSinceStartup<deadline)yield return null;
             Require(Mathf.Abs(_game.MovingOffset)<=.04f,"Style fixture missed actual placement window.");FindButton("Drop").onClick.Invoke();yield return null;Require(_game.Run.Count==1,"Style fixture has no actual placed slab.");
+            var specimenPixels=new HashSet<int>();
             for(int style=0;style<8;style++)
             {
                 int wallet=_game.Profile.Coins,owned=_game.Profile.OwnedStyles,placed=_game.Run.Count;_game.GoHome();FindButton("Styles").onClick.Invoke();
                 if(style>=4)FindButton("ExtraDesigns").onClick.Invoke();var button=FindButton(style<4?"Style"+style:"PremiumStyle"+style);Require(button.interactable,"Owned style button disabled.");button.onClick.Invoke();
                 Require(_game.Profile.Style==style&&_game.Profile.Coins==wallet&&_game.Profile.OwnedStyles==owned&&_game.Run.Count==placed,"Actual design UI changed economy or placement state.");
                 var preview=button.GetComponentInChildren<TowerPreviewGraphic>();var finish=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(style);Require(preview!=null&&Near(preview.Body,finish.Body)&&Near(preview.Plate,finish.Plate)&&Near(preview.Accent,finish.Accent),"Actual design specimen differs from gameplay palette.");
-                button.onClick.Invoke();Require(_game.Profile.Coins==wallet,"Selecting owned design twice charged coins.");_game.Hud.HideMenus();yield return null;CheckLiveStyle(style);yield return Capture("style-"+style+"-gameplay");
+                button.onClick.Invoke();Require(_game.Profile.Coins==wallet,"Selecting owned design twice charged coins.");
+                yield return null;yield return new WaitForEndOfFrame();
+                Require(preview.texture!=null && preview.texture.name.StartsWith("LiveTowerSpecimen_"+style+"_"),"Style gallery did not render the selected live model.");
+                Require(specimenPixels.Add(SpecimenFingerprint(preview.texture)),"Two actual style renders have identical pixels.");
+                yield return Capture("style-"+style+"-gallery");
+                _game.Hud.HideMenus();yield return null;CheckLiveStyle(style);yield return Capture("style-"+style+"-gameplay");
                 _game.Save();var saved=StackSave.Load();Require(saved.Style==style&&saved.Coins==wallet&&saved.OwnedStyles==owned&&saved.TotalPlaced==placed,"Fresh parsed profile lost selected skin or replayed payment.");
                 yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);_game=FindFirstObjectByType<StackGame>();
                 Require(_game.Profile.Style==style&&_game.Profile.Coins==wallet&&_game.Run.Count==placed,"Scene reload lost skin or changed wallet/tower.");CheckLiveStyle(style);yield return Capture("style-"+style+"-reloaded");
@@ -92,6 +98,19 @@ namespace Kamilunavo.PerfectDrop.QA
             Require(_game.CurrentKind!=StackBlockKind.Standard,"Style fixture did not reach a special moving slab.");var before=PartPaint(GameObject.Find("MovingBlock"),"TopPlate").GetColor("_Color");Require(_game.SelectStyle(2),"Special style switch rejected.");var after=PartPaint(GameObject.Find("MovingBlock"),"TopPlate").GetColor("_Color");Require(Near(before,after),"Changing design erased the active special block cue.");yield return Capture("style-special-cue-retained");
         }
         static bool Near(Color a,Color b)=>Mathf.Abs(a.r-b.r)+Mathf.Abs(a.g-b.g)+Mathf.Abs(a.b-b.b)+Mathf.Abs(a.a-b.a)<.005f;
+        private static int SpecimenFingerprint(Texture texture)
+        {
+            var target=RenderTexture.GetTemporary(texture.width,texture.height,0,RenderTextureFormat.ARGB32);var previous=RenderTexture.active;
+            var readback=new Texture2D(texture.width,texture.height,TextureFormat.RGBA32,false);
+            try
+            {
+                Graphics.Blit(texture,target);RenderTexture.active=target;readback.ReadPixels(new Rect(0,0,target.width,target.height),0,0);readback.Apply();
+                var pixels=readback.GetPixels32();var colored=0;var hash=17;
+                for(var i=0;i<pixels.Length;i+=79){var c=pixels[i];if(c.a>20 && c.r+c.g+c.b>25)colored++;unchecked{hash=hash*31+c.r*65536+c.g*256+c.b;}}
+                Require(colored>30,"Style specimen framebuffer is blank.");return hash;
+            }
+            finally{RenderTexture.active=previous;RenderTexture.ReleaseTemporary(target);Destroy(readback);}
+        }
         static MaterialPropertyBlock PartPaint(GameObject block,string part){var paint=new MaterialPropertyBlock();block.transform.Find(part).GetComponent<Renderer>().GetPropertyBlock(paint);return paint;}
         void CheckLiveStyle(int style)
         {
@@ -337,7 +356,7 @@ namespace Kamilunavo.PerfectDrop.QA
             foreach(var rim in rims)
             {
                 var paint=new MaterialPropertyBlock();rim.GetPropertyBlock(paint);
-                var restored=paint.GetColor("_Color");var expected=new Color(1f,.55f,.06f);
+                var restored=paint.GetColor("_Color");var expected=Kamilunavo.PerfectDrop.Visuals.StackStylePalette.Get(0).Accent;
                 Require(Mathf.Abs(restored.r-expected.r)<.01f && Mathf.Abs(restored.g-expected.g)<.01f && Mathf.Abs(restored.b-expected.b)<.01f,"Revoked style still displayed on placed tower.");
             }
             FindButton("ShopBack").onClick.Invoke();SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);

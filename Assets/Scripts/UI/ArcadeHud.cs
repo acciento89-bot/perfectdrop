@@ -25,17 +25,17 @@ namespace Kamilunavo.PerfectDrop.UI
                 _powerButtons[i]=UiFactory.Button(_powerRow,"Power"+power,"",new Color(.13f,.2f,.3f),Color.white,new Vector2(i*.25f,.03f),new Vector2(i*.25f+.235f,.70f),()=>Game.UsePower(power));
             }
             _risk=UiFactory.Button(_powerRow,"Risk","",new Color(.13f,.2f,.3f),Color.white,new Vector2(.75f,.03f),new Vector2(.985f,.70f),Game.ToggleRisk);
-            UiFactory.Button(_home,"HomeSettings",T("TON / OPTIONEN","SOUND / OPTIONS"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.07f,.22f),new Vector2(.49f,.29f),OpenSettings);
+            UiFactory.Button(_home,"HomeSettings",T("OPTIONEN","OPTIONS"),GalleryTheme.Paper,GalleryTheme.Ink,new Vector2(.07f,.22f),new Vector2(.49f,.29f),OpenSettings);
             Set((RectTransform)_continue.transform,.51f,.22f,.93f,.29f);
             Set((RectTransform)_endless.transform,.07f,.13f,.49f,.20f);
             Set((RectTransform)_home.Find("Styles"),.07f,.04f,.49f,.11f);
-            _challenge=UiFactory.Button(_home,"Challenge","",new Color(.13f,.2f,.3f),Color.white,new Vector2(.51f,.13f),new Vector2(.93f,.20f),Game.StartChallenge);
-            UiFactory.Button(_home,"City",T("MEINE STADT","MY CITY"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.51f,.04f),new Vector2(.93f,.11f),ShowCity);
+            _challenge=UiFactory.Button(_home,"Challenge","",GalleryTheme.Paper,GalleryTheme.Ink,new Vector2(.51f,.13f),new Vector2(.93f,.20f),Game.StartChallenge);
+            UiFactory.Button(_home,"City",T("MEINE STADT","MY CITY"),Navy,Color.white,new Vector2(.51f,.04f),new Vector2(.93f,.11f),ShowCity);
             _cityPanel=UiFactory.Panel(_safe,"CityView",Color.clear,Vector2.zero,Vector2.one);
-            var header=UiFactory.Panel(_cityPanel,"CityHeader",Navy,new Vector2(.03f,.81f),new Vector2(.97f,.98f));
-            UiFactory.Label(header,"Title",T("DEINE STADT WÄCHST","YOUR CITY IS GROWING"),44,new Vector2(.05f,.53f),new Vector2(.95f,.95f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
-            _cityInfo=UiFactory.Label(header,"Progress","",29,new Vector2(.05f,.03f),new Vector2(.95f,.52f),TextAnchor.MiddleCenter,Color.white);
-            UiFactory.Button(_cityPanel,"CityBack",T("ZURÜCK ZU LEVELS","BACK TO LEVELS"),Gold,Navy,new Vector2(.08f,.04f),new Vector2(.92f,.15f),ShowHome);
+            var header=UiFactory.Panel(_cityPanel,"CityHeader",GalleryTheme.Ivory,new Vector2(.03f,.81f),new Vector2(.97f,.98f));
+            UiFactory.Label(header,"Title",T("DEINE STADT WÄCHST","YOUR CITY IS GROWING"),44,new Vector2(.05f,.53f),new Vector2(.95f,.95f),TextAnchor.MiddleCenter,GalleryTheme.Ink,FontStyle.Bold);
+            _cityInfo=UiFactory.Label(header,"Progress","",29,new Vector2(.05f,.03f),new Vector2(.95f,.52f),TextAnchor.MiddleCenter,GalleryTheme.Ink);
+            UiFactory.Button(_cityPanel,"CityBack",T("ZURÜCK ZU LEVELS","BACK TO LEVELS"),GalleryTheme.Ivory,GalleryTheme.Ink,new Vector2(.08f,.04f),new Vector2(.92f,.15f),ShowHome);
             _cityTabs=new Button[3];
             for(var i=0;i<3;i++)
             {
@@ -58,8 +58,7 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<3;i++)
             {
                 var selected=Game.CityDistrict==i;
-                _cityTabs[i].GetComponent<Image>().color=selected?Gold:new Color(.045f,.075f,.13f,.98f);
-                _cityTabs[i].GetComponentInChildren<Text>().color=selected?Navy:Color.white;
+                GalleryTheme.Style(_cityTabs[i],selected?Navy:GalleryTheme.Ivory);
                 SetLabel(_cityTabs[i],T("BEZIRK ","DISTRICT ")+(i+1)+(selected?"  ›":""));
             }
         }
@@ -91,6 +90,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Set((RectTransform)_cityPanel.Find("CityHeader"),.03f,.85f,.97f,.98f);
             for(var i=0;i<3;i++)Set((RectTransform)_cityTabs[i].transform,.04f+i*.31f,.83f-tabHeight,.34f+i*.31f,.83f);
             Set((RectTransform)_cityPanel.Find("CityBack"),.08f,.045f,.92f,.045f+backHeight);
+            foreach(var tab in _cityTabs)GalleryTheme.Readable(tab.GetComponentInChildren<Text>(),13);GalleryTheme.Readable(_cityPanel.Find("CityBack").GetComponentInChildren<Text>(),15);GalleryTheme.Readable(_cityInfo,13);GalleryTheme.Readable(_cityPanel.Find("CityHeader/Title").GetComponent<Text>(),18);
             var cityTitle=(RectTransform)_cityPanel.Find("CityHeader/Title");
             if(landscape){Set(cityTitle,.04f,.12f,.60f,.90f);Set((RectTransform)_cityInfo.transform,.63f,.06f,.97f,.94f);}
             else{Set(cityTitle,.05f,.54f,.95f,.94f);Set((RectTransform)_cityInfo.transform,.05f,.06f,.95f,.49f);}
