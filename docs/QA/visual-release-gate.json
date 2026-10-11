@@ -4,7 +4,7 @@
   "sourceSha256": null,
   "reviewer": "Codex actual rendered image inspection",
   "reviewedAt": "2026-10-11",
-  "reason": "New tower layers and architectural pedestal render in actual gameplay, but the flat blue world and sparse simplified architecture still diverge substantially from the approved cloud/terrace city. The focused menu still uses modern skyline artwork. Functional 66-block runtime and music checks pass; graphical concept acceptance fails.",
+  "reason": "New tower layers and architectural pedestal render in actual gameplay, but the flat blue world and sparse simplified architecture still diverge substantially from the approved cloud/terrace city. The focused menu still uses modern skyline artwork. Functional 66-block runtime and music checks pass; graphical concept acceptance fails. Fresh actual all-eight-style player also passes real selection/render properties and scene/save reload; Jade/Perle images differ visibly. Overall art gate still fails.",
   "criteria": {
     "concept_similarity": "failed",
     "character_or_tower": "pending",
@@ -36,6 +36,17 @@
       }
     ],
     "submenus": [],
-    "variants": []
+    "variants": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicStylesRuntime/style-3-gameplay.png",
+        "sha256": "b2571b8a78189b6678e372805676bde96931332035d5528b258df3724475e5ad",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicStylesRuntime/style-5-gameplay.png",
+        "sha256": "1708bc150de370cd391ea04e090fb48d7f424c925c21fb63bf7a8ffe5d3578ed",
+        "origin": "Unity-render"
+      }
+    ]
   }
 }
