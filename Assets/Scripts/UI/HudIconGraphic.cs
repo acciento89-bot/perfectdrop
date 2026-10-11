@@ -12,7 +12,10 @@ namespace Kamilunavo.PerfectDrop.UI
         Bolt,
         ArrowUp,
         Star,
-        Lock
+        Lock,
+        Clock,
+        Target,
+        Gear
     }
 
     [RequireComponent(typeof(CanvasRenderer))]
@@ -25,6 +28,16 @@ namespace Kamilunavo.PerfectDrop.UI
             vh.Clear();
             switch (IconType)
             {
+                case HudIconType.Gear:
+                    for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32,b=(i+1)*Mathf.PI*2/32;AddThickLine(vh,P(.5f+Mathf.Cos(a)*.26f,.5f+Mathf.Sin(a)*.26f),P(.5f+Mathf.Cos(b)*.26f,.5f+Mathf.Sin(b)*.26f),.10f);}
+                    for(int i=0;i<8;i++){float a=i*Mathf.PI/4;AddThickLine(vh,P(.5f+Mathf.Cos(a)*.26f,.5f+Mathf.Sin(a)*.26f),P(.5f+Mathf.Cos(a)*.43f,.5f+Mathf.Sin(a)*.43f),.10f);}
+                    break;
+                case HudIconType.Clock:
+                case HudIconType.Target:
+                    for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32,b=(i+1)*Mathf.PI*2/32;AddThickLine(vh,P(.5f+Mathf.Cos(a)*.35f,.5f+Mathf.Sin(a)*.35f),P(.5f+Mathf.Cos(b)*.35f,.5f+Mathf.Sin(b)*.35f),.045f);}
+                    if(IconType==HudIconType.Clock){AddThickLine(vh,P(.5f,.5f),P(.5f,.76f),.055f);AddThickLine(vh,P(.5f,.5f),P(.70f,.38f),.055f);}
+                    else{AddThickLine(vh,P(.5f,.08f),P(.5f,.92f),.04f);AddThickLine(vh,P(.08f,.5f),P(.92f,.5f),.04f);}
+                    break;
                 case HudIconType.Star:
                     for (var n = 0; n < 10; n++)
                     {

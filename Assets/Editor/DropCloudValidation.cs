@@ -24,6 +24,30 @@ namespace Kamilunavo.PerfectDrop.Editor
                 for(int theme=0;theme<3;theme++)
                 {
                     WorldArt.SetChapter(theme);material=new Material(RenderSettings.skybox);sky.material=material;
+                    if(theme==0)
+                    {
+                        foreach(float pitch in new[]{25f,0f,-30f})
+                        {
+                            camera.transform.position=Vector3.up*10;camera.transform.rotation=Quaternion.Euler(pitch,35,0);camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,160,120),0,0);pixels.Apply();
+                            var middle=pixels.GetPixel(80,60);Debug.Log("DROP_SKY_DIRECTION pitch="+pitch+" center="+middle.ToString("F3")+" actualRay="+camera.ViewportPointToRay(new Vector3(.5f,.5f,0)).direction.ToString("F3"));
+                            checks++;if(pitch<=0 && middle.b<=middle.r)throw new InvalidOperationException("Gameplay heading samples the cloud underside instead of the original upper blue sky: pitch="+pitch+" color="+middle);
+                            string diagnostic=Environment.GetEnvironmentVariable("DROP_SKY_QA_OUT");if(!string.IsNullOrEmpty(diagnostic)){Directory.CreateDirectory(diagnostic);File.WriteAllBytes(Path.Combine(diagnostic,"sky-direction-"+pitch+".png"),pixels.EncodeToPNG());}
+                        }
+                    }
+                    if(theme==0)
+                    {
+                        // Free orbit must not cross an atan2 branch or a texture edge jump.
+                        camera.fieldOfView=.005f;
+                        foreach(float heading in new[]{180f,0f,90f})
+                        {
+                            camera.transform.rotation=Quaternion.Euler(0,heading-.01f,0);camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,160,120),0,0);pixels.Apply();var before=pixels.GetPixels();
+                            camera.transform.rotation=Quaternion.Euler(0,heading+.01f,0);camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,160,120),0,0);pixels.Apply();var after=pixels.GetPixels();double error=0;
+                            for(int i=0;i<before.Length;i++)error+=(Math.Abs(before[i].r-after[i].r)+Math.Abs(before[i].g-after[i].g)+Math.Abs(before[i].b-after[i].b))/3;
+                            error/=before.Length;checks++;Debug.Log("DROP_SKY_ORBIT heading="+heading+" meanRgbDelta="+error);
+                            if(error>.02)throw new InvalidOperationException("Panorama discontinuity during actual orbit near heading="+heading+" delta="+error);
+                        }
+                        camera.fieldOfView=43;
+                    }
                     foreach(float height in new[]{10f,35f})
                     {
                         camera.transform.position=Vector3.up*height;camera.transform.rotation=Quaternion.Euler(69,30,0);camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,160,120),0,0);pixels.Apply();

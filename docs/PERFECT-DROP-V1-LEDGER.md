@@ -467,3 +467,23 @@ Replace unrelated modern-skyline menu artwork with cached genuine terrace-world 
 Mac build exit0; preview27 incl opposite ambient-probe cold renders/leases/restoration; terrace177143 vertices/14active renderers; cloud12/nav2436/style8/interstitial53/music42. Fresh actual UI and all8 style selection/shader/save/reload suites PASS; runner intentionally terminated only after PASS (exit143).
 
 The sparse historical skyline, repeated luminous windows, simplified vegetation/cloud shapes, lighting, slab proportions and flat menu typography still fail the approved Concept. **Visual gate stays FAILED; no TestFlight.** Exact proof/capture paths and remaining gaps: `docs/GRAPHICS-COMPARISON-20261011.md`.
+
+
+## 2026-10-11 — original authored asset pass and actual Concept evidence
+
+Original rounded lacquer shoulder and turned gold rim profiles; continuous proportional perimeter UVs and geometric face normals on real overhang cuts; cached architectural metal reflection; larger portrait game reservation/lower camera elevation and compact HUD with minimum49point Menu; static authored world cloud billows. Added isolated actual21-drop three-chapter capture mode with accurate desktop/mobile receipts.
+
+Final Mac aggregate/build exit0; authored slab15600checks; compact actual Menu RED44points to GREEN>=49, measured16060checks; cloud12checks. Actual Mac21orderedUI drops/3chapters plus eight actual design/shader/scene/save/reload selections on final cloud build PASS; player terminated only after receipts PASS.
+
+The real slab shoulders improve, but cloud volume, sparse historical skyline, material lighting and flat menu hierarchy still fail the approved Concept. New sky still needs atmospheric polish and mobile GPU measurement. **Visual acceptance stays FAILED. No TestFlight or version bump.** Exact proof/scene-source digests: `docs/GRAPHICS-COMPARISON-20261011.md`; provenance: `docs/ORIGINAL-ASSETS-20261011.md`. User-deleted historical Concept PNG remains unstaged.
+
+
+## 2026-10-11 — complete original Perfect Drop presentation rebuild
+
+Complete Perfect Drop presentation rebuild: real rounded thick slab kit, original metal/mineral/limestone materials, transparent Roman gold title, compact HUD and circular powers, gold pill actions, genuine chapter/hero/style previews, explicit parent Menu and visible Shop. Original open arcades, canal bridges, recessed facades, turned columns, cornices, ribbed domes, planters and 50 buildings/landmarks per chapter in owned batched meshes. Smaller grounded compass dais, separate day/sunset/neon grading, HDR highlight shoulder, depth-normal contact shadows and corrected downward cloud mapping.
+
+Final Unity6000.6.4f1 Mac aggregate/build exit0. Slab15600, measured menu27440, navigation5406, terrace1312165 checks with249137 owned vertices/14 active scenery renderers; cloud18, environment previews46, interstitial53, music42. Actual Mac player:21 ordered UI placements across3 chapters, all8 real design selections/shader/special-cue/wallet/save/reload checks, portrait/landscape/tutorial/parent-menu flows, campaign/powers/risk/daily/city and66-layer endless PASS. Bundle and canonical source hashes match all4 serial receipts. These are engine/desktop functional results, not visual approval or mobile performance.
+
+**Concept acceptance is FAILED; TestFlight remains blocked.** Below approved Concept: sparse visible skyline composition, simplified vegetation and architectural silhouettes, insufficient rich/champagne metal lighting, coarse plate grain, broad stone paving, stretched-looking cloud projection and flatter menu/gallery surfaces. Day/sunset/neon and chosen styles visibly differ, but fidelity to the illustration remains inadequate. Pale secondary gameplay text needs stronger contrast on bright scenery. Physical mobile GPU/thermal/frame-rate/touch, audible music mix and real store/ad-provider acceptance remain unverified.
+
+Exact reviewed source `296655b882bf2d22a5ff850c42aa39bf50812993d3bef5c9f2283fe8df51a2d5`; immutable framebuffers/logs/receipts: `/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf`. Comparison and source review: `docs/GRAPHICS-COMPARISON-20261011.md`; original asset prompts/hashes/license: `docs/ORIGINAL-ASSETS-20261011.md`. Other games were not changed or run during this rebuild. Historical Concept deletion remains unstaged.

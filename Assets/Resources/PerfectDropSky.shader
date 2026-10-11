@@ -2,6 +2,11 @@ Shader "Kamilunavo/PerfectDropSky"
 {
     Properties
     {
+        _CloudPanorama ("Original golden cloud panorama", 2D) = "black" {}
+        _UseCloudPanorama ("World direction cloud asset", Float) = 0
+        _SkyNight ("Night mineral sky grade", Float) = 0
+        _SkyDay ("Cool daylight cloud grade", Float) = 0
+        _SkyGrade ("Chapter sky grade", Color) = (1,1,1,1)
         _BackdropPortrait ("Portrait cloud city", 2D) = "black" {}
         _BackdropLandscape ("Landscape cloud city", 2D) = "black" {}
         _UseBackdrop ("Use authored environment", Float) = 0
@@ -38,7 +43,8 @@ Shader "Kamilunavo/PerfectDropSky"
             float4 _CloudOrigin;
             sampler2D _BackdropPortrait, _BackdropLandscape;
             float4 _BackdropPortrait_TexelSize, _BackdropLandscape_TexelSize;
-            float _UseBackdrop;
+            float _UseBackdrop,_UseCloudPanorama,_SkyNight,_SkyDay;
+            sampler2D _CloudPanorama;float4 _SkyGrade;
 
             struct appdata { float4 vertex : POSITION; };
             struct v2f { float4 pos : SV_POSITION; float3 dir : TEXCOORD0; float4 screen : TEXCOORD1; };
@@ -56,7 +62,21 @@ Shader "Kamilunavo/PerfectDropSky"
             float cloudNoise(float2 p) {float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);return lerp(lerp(hash21(cell),hash21(cell+float2(1,0)),f.x),lerp(hash21(cell+float2(0,1)),hash21(cell+1),f.x),f.y);}
             float cloudBank(float2 p)
             {
-                return cloudNoise(p)*.49 + cloudNoise(p*2.13+7.4)*.25 + cloudNoise(p*4.31-2.6)*.15 + cloudNoise(p*8.71+12.3)*.075 + cloudNoise(p*17.17-4.7)*.035;
+                // Overlapping rounded billows, rather than a smooth noise carpet.
+                // Fixed world cells keep the cloud relief still during reduced motion.
+                float2 cell=floor(p);
+                float billows=0;
+                [unroll] for(int z=-1;z<=1;z++)
+                [unroll] for(int x=-1;x<=1;x++)
+                {
+                    float2 seed=cell+float2(x,z);
+                    float2 center=seed+.5+float2(hash21(seed+13.7),hash21(seed-8.3))*.48-.24;
+                    float radius=.36+hash21(seed+4.2)*.28;
+                    float2 delta=(p-center)/radius;
+                    billows+=exp(-dot(delta,delta)*2.8)*(.7+hash21(seed-21.4)*.3);
+                }
+                float detail=cloudNoise(p*6.3+4.7)*.07+cloudNoise(p*13.1-2.6)*.025;
+                return saturate(billows*.78+detail);
             }
             fixed4 frag(v2f i) : SV_Target
             {
@@ -70,6 +90,31 @@ Shader "Kamilunavo/PerfectDropSky"
                     return portrait ? tex2D(_BackdropPortrait, uv) : tex2D(_BackdropLandscape, uv);
                 }
                 float3 d = normalize(i.dir);
+                if(_UseCloudPanorama>.5)
+                {
+                    // Spherical world-direction sampling preserves camera orbit.
+                    // This asset contains only sky/clouds; all buildings remain meshes.
+                    // Two mirrored cycles per orbit are continuous at both the atan2 branch
+                    // and the unmatched edges of the original flat sky texture.
+                    float phase=atan2(d.x,d.z)*.636619772;
+                    float panoramaU=1-abs(frac(phase*.5)*2-1);
+                    // Keep downward rays inside the cloud bank: the former .65
+                    // latitude scale clamped every steep ray to one texture row,
+                    // stretching that row into vertical stripes on high towers.
+                    float2 uv=float2(panoramaU,clamp(asin(clamp(d.y,-1,1))*.35+.80,.001,.999));
+                    float3 sky=tex2D(_CloudPanorama,uv).rgb;
+                    // Regrade the original cloud asset into daylight without
+                    // replacing its billows or introducing a screen-space image.
+                    if(_SkyDay>.5)
+                    {
+                        float warm=saturate((sky.r-sky.b)*3.5);
+                        float luminance=dot(sky,float3(.22,.71,.07));
+                        float3 daylight=lerp(float3(.30,.48,.71),float3(.96,.96,.90),smoothstep(.18,.85,luminance));
+                        sky=lerp(sky,daylight,warm*.92);
+                    }
+                    if(_SkyNight>.5){float luminance=dot(sky,float3(.22,.71,.07));sky=lerp(float3(.035,.028,.14),float3(.40,.24,.66),luminance);}
+                    return fixed4(sky*_SkyGrade.rgb,1);
+                }
                 float y = d.y;
                 float horizon = saturate(1.0 - abs(y) * 4.5);
                 float upper = saturate(y * 1.6 + 0.15);
@@ -94,23 +139,24 @@ Shader "Kamilunavo/PerfectDropSky"
                 // relief has parallax when the camera rises or the player orbits.
                 // No fullscreen city photograph, transparent shell or animation.
                 float below=1-smoothstep(-.24,-.015,d.y);
+                if(below>0)
+                {
                 float3 eye=_WorldSpaceCameraPos-_CloudOrigin.xyz;
                 float distance=min(360,max(1,eye.y+12)/max(.035,-d.y));
-                float2 bankUV=(eye.xz+d.xz*distance)*.027;
-                float elevation=cloudBank(bankUV)*4.8;
-                distance=min(360,max(1,eye.y+12-elevation)/max(.035,-d.y));
-                bankUV=(eye.xz+d.xz*distance)*.027;
+                float2 bankUV=(eye.xz+d.xz*distance)*.045;
                 float bank=cloudBank(bankUV);
                 float dx=cloudBank(bankUV+float2(.035,0))-bank;
                 float dz=cloudBank(bankUV+float2(0,.035))-bank;
-                float3 cloudNormal=normalize(float3(-dx*5,1,-dz*5));
+                float3 cloudNormal=normalize(float3(-dx*12,1,-dz*12));
                 float lighting=saturate(dot(cloudNormal,normalize(float3(_SunDirection.x,.65,_SunDirection.z))));
-                float crest=smoothstep(.22,.62,bank);
-                float3 bankColor=lerp(lerp(_BottomColor.rgb,_CloudColor.rgb,.40),_CloudColor.rgb,crest);
-                bankColor*=.89+lighting*.13;
+                float crest=smoothstep(.08,.65,bank);
+                float3 shadow=lerp(_MidColor.rgb,_CloudColor.rgb,.36);
+                float3 bankColor=lerp(shadow,_CloudColor.rgb,crest);
+                bankColor*=.88+lighting*.14;
                 bankColor+=_SunColor.rgb*pow(saturate(bank),3)*.045;
                 bankColor=lerp(bankColor,_HorizonColor.rgb*.84,smoothstep(100,360,distance)*.65);
                 c=lerp(c,bankColor,below);
+                }
                 return fixed4(c, 1);
             }
             ENDCG

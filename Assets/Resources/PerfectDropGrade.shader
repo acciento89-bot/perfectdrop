@@ -4,6 +4,7 @@ Shader "Kamilunavo/PerfectDropGrade"
     {
         _MainTex ("Source", 2D) = "white" {}
         _BloomTex ("Soft emissive light",2D) = "black" {}
+        _OcclusionTex ("Architectural contact shadows",2D) = "white" {}
         _Vignette ("Vignette", Range(0,1)) = 0.32
         _Saturation ("Saturation", Range(0,2)) = 1.10
         _Contrast ("Contrast", Range(0.5,2)) = 1.08
@@ -23,6 +24,7 @@ Shader "Kamilunavo/PerfectDropGrade"
 
             sampler2D _MainTex;
             sampler2D _BloomTex;
+            sampler2D _OcclusionTex;
             float _Vignette;
             float _Saturation;
             float _Contrast;
@@ -31,7 +33,9 @@ Shader "Kamilunavo/PerfectDropGrade"
             half4 frag(v2f_img i) : SV_Target
             {
                 half4 src = tex2D(_MainTex, i.uv);
-                float3 c = src.rgb + tex2D(_BloomTex,i.uv).rgb*.55;
+                // Contact shadows darken real opaque geometry; bloom is added after
+                // occlusion so practical gold and window lights keep their energy.
+                float3 c = src.rgb * tex2D(_OcclusionTex,i.uv).r + tex2D(_BloomTex,i.uv).rgb*.55;
 
                 float luminance = dot(c, float3(0.2126, 0.7152, 0.0722));
                 c = lerp(luminance.xxx, c, _Saturation);
@@ -42,8 +46,10 @@ Shader "Kamilunavo/PerfectDropGrade"
                 float vignette = saturate(1.0 - dot(centered, centered) * _Vignette * 0.62);
                 c *= lerp(0.78, 1.0, vignette);
 
-                // Keep emissive gold/cyan highlights vivid without blowing out UI/world detail.
-                c = c / (1.0 + max(c - 1.0, 0.0) * 0.35);
+                // Preserve bright metal gradients instead of clipping every HDR highlight to1.
+                // The shoulder leaves dark and middle values unchanged.
+                float3 highlight=max(c-.72,0);
+                c=min(c,.72)+highlight/(1+highlight/.28);
                 return half4(saturate(c), src.a);
             }
             ENDCG

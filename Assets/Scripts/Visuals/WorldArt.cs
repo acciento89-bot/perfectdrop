@@ -88,7 +88,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             chapter=Mathf.Clamp(chapter,0,2);ActiveChapter=chapter;TerraceArtOwner.SelectChapter(chapter);
             if(_skyMaterial==null)return;
             ConfigureTerraceSky(_skyMaterial,chapter);
-            RenderSettings.ambientSkyColor=chapter==2?new Color(.35f,.43f,.66f):chapter==0?new Color(.57f,.65f,.81f):new Color(.47f,.48f,.67f);
+            RenderSettings.ambientSkyColor=chapter==2?new Color(.35f,.43f,.66f):chapter==0?new Color(.43f,.48f,.58f):new Color(.47f,.48f,.67f);
         }
 
         public static Material CreateTerracePreviewSky(int chapter,Vector3 origin)
@@ -105,6 +105,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
             if(portrait!=null)material.SetTexture("_BackdropPortrait",portrait);
             if(landscape!=null)material.SetTexture("_BackdropLandscape",landscape);
             material.SetFloat("_UseBackdrop",0);
+            var clouds=Resources.Load<Texture2D>("Art/AuthoredGoldenCloudPanorama");material.SetTexture("_CloudPanorama",clouds);material.SetFloat("_UseCloudPanorama",clouds!=null?1:0);
+            material.SetFloat("_SkyNight",chapter==2?1:0);material.SetFloat("_SkyDay",chapter==0?1:0);material.SetColor("_SkyGrade",chapter==2?Color.white:chapter==1?new Color(1,.82f,.75f):Color.white);
             material.SetColor("_TopColor",chapter==0?new Color(.15f,.38f,.66f):chapter==1?new Color(.095f,.16f,.32f):new Color(.025f,.04f,.105f));
             material.SetColor("_MidColor",chapter==0?new Color(.53f,.69f,.83f):chapter==1?new Color(.43f,.40f,.56f):new Color(.13f,.21f,.36f));
             material.SetColor("_HorizonColor",chapter==0?new Color(.98f,.83f,.62f):chapter==1?new Color(1,.55f,.26f):new Color(.35f,.43f,.63f));
@@ -388,9 +390,10 @@ namespace Kamilunavo.PerfectDrop.Visuals
             root.transform.SetParent(parent, false);
             root.transform.localPosition = position;
             var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,size.y*.01f,0),new Vector3(size.x,size.y*.88f,size.z), Platform);
+            body.GetComponent<MeshFilter>().sharedMesh=SlabMeshKit.Body;
             var tint = new MaterialPropertyBlock();
             tint.SetColor("_Color", StackStylePalette.Get(0).Body);
-            tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));
+            tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));tint.SetFloat("_MineralSeed",level*.071f);
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
             AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.46f,0),new Vector3(size.x*.94f,size.y*.08f,size.z*.94f),PlatformInset);
             // A metallic gold inset and a dark shoulder mirror the app icon.
@@ -398,7 +401,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
             AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.502f,0), new Vector3(size.x*.84f,size.y*.035f,size.z*.84f), GoldPlate);
             // A continuous band replaces the corresponding body slice. It stays
             // inside the logical footprint even after a very narrow overhang cut.
-            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.445f,0),new Vector3(size.x,size.y*.075f,size.z),Gold);
+            var band=AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.445f,0),new Vector3(size.x,size.y*.075f,size.z),Gold);
+            band.GetComponent<MeshFilter>().sharedMesh=SlabMeshKit.Rim;
             AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.465f,0),new Vector3(size.x,size.y*.07f,size.z),Platform);
             var inset=new GameObject("GoldInset",typeof(MeshFilter),typeof(MeshRenderer));
             inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.524f,0);
@@ -411,14 +415,22 @@ namespace Kamilunavo.PerfectDrop.Visuals
         public static GameObject BuildStackDais(Transform parent)
         {
             var root=new GameObject("ArchitecturalDais");root.transform.SetParent(parent,false);
-            root.transform.localPosition=Vector3.down*((Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight-.52f)*1.5f);
-            if(_daisStone==null)_daisStone=CreateMaterial("IvoryDais",new Color(.74f,.68f,.55f),.15f,.52f);
-            AddPrimitive(PrimitiveType.Cylinder,root.transform,"StoneDrum",new Vector3(0,-1.03f,0),new Vector3(6.35f,.18f,6.35f),_daisStone);
-            AddPrimitive(PrimitiveType.Cylinder,root.transform,"NavyDrum",new Vector3(0,-1.27f,0),new Vector3(5.85f,.13f,5.85f),PlatformInset);
+            // The stone drum meets the physical base below the placed y=0 slab.
+            root.transform.localPosition=Vector3.up*(.842f-Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*1.5f);
+            if(_daisStone==null){_daisStone=CreateMaterial("IvoryDais",new Color(.74f,.68f,.55f),.15f,.52f);_daisStone.SetFloat("_StoneFinish",1);_daisStone.SetTexture("_StoneAlbedo",Resources.Load<Texture2D>("Art/AuthoredIvoryLimestone"));}
+            AddPrimitive(PrimitiveType.Cylinder,root.transform,"StoneDrum",new Vector3(0,-1.03f,0),new Vector3(8.4f,.18f,8.4f),_daisStone);
+            AddPrimitive(PrimitiveType.Cylinder,root.transform,"NavyDrum",new Vector3(0,-1.27f,0),new Vector3(8.0f,.13f,8.0f),PlatformInset);
             var inlay=new GameObject("CompassInlay",typeof(MeshFilter),typeof(MeshRenderer));inlay.transform.SetParent(root.transform,false);inlay.transform.localPosition=new Vector3(0,-.842f,0);
             if(_daisInlayMesh==null)_daisInlayMesh=BuildDaisInlay();
             inlay.GetComponent<MeshFilter>().sharedMesh=_daisInlayMesh;inlay.GetComponent<MeshRenderer>().sharedMaterial=GoldPlate;
             TerraceArtGeometry.Build(root.transform);
+            // Only the near pedestal contracts; the skyline and cloud world retain
+            // their physical distances and the slab's landing footprint is unchanged.
+            foreach(var name in new[]{"StoneDrum","NavyDrum","CompassInlay","TerraceFoundation","TerraceForecourt","TerraceForecourtGarden","TerracePedestalBrass"})
+            {
+                var part=root.transform.Find(name);
+                part.localScale=Vector3.Scale(part.localScale,new Vector3(.85f,1,.85f));
+            }
             return root;
         }
         private static Mesh BuildDaisInlay()
@@ -431,18 +443,35 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 if(Vector3.Cross(b-a,c-a).y>0)triangles.AddRange(new[]{first,first+1,first+2,first,first+2,first+3});
                 else triangles.AddRange(new[]{first,first+2,first+1,first,first+3,first+2});
             }
-            Vector3 Radial(float angle,float radius)=>new Vector3(Mathf.Sin(angle)*radius,0,Mathf.Cos(angle)*radius);
+            Vector3 Radial(float angle,float radius)=>new Vector3(Mathf.Sin(angle)*radius*1.30f,0,Mathf.Cos(angle)*radius*1.30f);
             foreach(var radius in new[]{2.18f,2.94f,3.10f})for(var segment=0;segment<64;segment++)
             {
                 var a=segment*Mathf.PI/32;var b=(segment+1)*Mathf.PI/32;
-                Quad(Radial(a,radius),Radial(b,radius),Radial(b,radius+.028f),Radial(a,radius+.028f));
+                Quad(Radial(a,radius),Radial(b,radius),Radial(b,radius+(radius>3?.07f:.028f)),Radial(a,radius+(radius>3?.07f:.028f)));
             }
             for(var ray=0;ray<16;ray++)
             {
+                if((ray&1)==0)continue; // These directions use the solid rose petals.
                 var angle=ray*Mathf.PI/8;var along=Radial(angle,1);var cross=new Vector3(along.z,0,-along.x)*.015f;
-                Quad(along*2.20f-cross,along*2.93f-cross,along*2.93f+cross,along*2.20f+cross);
+                Quad(along*2.218f-cross,along*2.93f-cross,along*2.93f+cross,along*2.218f+cross);
             }
-            var mesh=new Mesh{name="GoldCompassInlay",hideFlags=HideFlags.HideAndDontSave};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uv);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+            // Original split compass petals and 64 engraved minute ticks occupy
+            // only the open annulus, preserving a clear physical stack footprint.
+            for(var ray=0;ray<8;ray++)
+            {
+                float angle=ray*Mathf.PI/4;
+                var inner=Radial(angle,2.218f);var tip=Radial(angle,(ray&1)==0?2.89f:2.73f);
+                var left=Radial(angle-.140f,2.43f);var right=Radial(angle+.140f,2.43f);
+                Quad(inner,left,tip,right);
+            }
+            for(var tick=0;tick<64;tick++)
+            {
+                float angle=tick*Mathf.PI/32;
+                float start=tick%8==0?2.980f:3.035f;
+                var along=Radial(angle,1);var cross=new Vector3(along.z,0,-along.x)*.010f;
+                Quad(along*start-cross,along*3.087f-cross,along*3.087f+cross,along*start+cross);
+            }
+            var mesh=new Mesh{name="AuthoredGoldCompassRose",hideFlags=HideFlags.HideAndDontSave};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uv);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
 
         public static GameObject BuildPlayerCity(Transform parent,StackProfile profile)
@@ -687,7 +716,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 }
                 else if(renderer.name.StartsWith("Gold"))
                 {
-                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.24f);
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.24f);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.72f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
                 }
                 else continue;
                 renderer.SetPropertyBlock(paint);
@@ -753,14 +782,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 for(var i=1;i<inner.Length-1;i++)triangles.AddRange(side==0?new[]{start,start+i+1,start+i}:new[]{start,start+i,start+i+1});
             }
             var mesh=new Mesh{name="PerfectDropBeveledBox",hideFlags=HideFlags.HideAndDontSave};
-            mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uvs);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+            mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uvs);mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
         }
 
         private static Mesh BuildInsetFrame() => TerraceArtGeometry.RoundedInset();
 
         private static Cubemap BuildStudioReflection()
         {
-            const int size=32;
+            const int size=64;
             var map=new Cubemap(size,TextureFormat.RGBAHalf,true){name="CloudCityMetalReflection",hideFlags=HideFlags.HideAndDontSave};
             var sun=new Vector3(-.55f,.4f,.7f).normalized;
             for(var face=0;face<6;face++)
@@ -771,11 +800,19 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     var u=(x+.5f)/size*2-1;var v=(y+.5f)/size*2-1;
                     var dir=face switch {0=>new Vector3(1,-v,-u),1=>new Vector3(-1,-v,u),2=>new Vector3(u,1,v),3=>new Vector3(u,-1,-v),4=>new Vector3(u,-v,1),_=>new Vector3(-u,-v,-1)};
                     dir.Normalize();
-                    var sky=Color.Lerp(new Color(.24f,.19f,.29f),new Color(.53f,.65f,.9f),Mathf.Clamp01(dir.y*.6f+.45f));
+                    // Reflected lower architecture is warm stone, rather than
+                    // near-black void that erases every side of a metallic slab.
+                    var sky=Color.Lerp(new Color(.30f,.27f,.23f),new Color(.77f,.73f,.62f),Mathf.SmoothStep(0,1,dir.y*.9f+.4f));
                     var glow=Mathf.Pow(Mathf.Max(0,Vector3.Dot(dir,sun)),12);
-                    var softbox=Mathf.Pow(Mathf.Clamp01(Vector3.Dot(dir,new Vector3(.6f,.45f,-.7f).normalized)),34);
-                    var archShadow=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(dir.y+.12f)*6),3)*.18f;
-                    pixels[y*size+x]=sky*(1-archShadow)+new Color(1.1f,.64f,.26f)*glow+new Color(.95f,1.05f,1.2f)*softbox;
+                    // Original architectural reflection: dark arcade recesses, warm window
+                    // openings and cool sky. Built once, without runtime probes.
+                    var softbox=Mathf.Pow(Mathf.Clamp01(Vector3.Dot(dir,new Vector3(.5f,.45f,.73f).normalized)),92);
+                    float angle=Mathf.Atan2(dir.z,dir.x);
+                    var window=Mathf.Pow(Mathf.Max(0,Mathf.Cos(angle*5)),18)*Mathf.Exp(-Mathf.Pow((dir.y-.12f)*5,2));
+                    var archShadow=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(dir.y+.12f)*6),3)*.26f;
+                    float ribbonAngle=Mathf.Atan2(Mathf.Sin(angle+.95f),Mathf.Cos(angle+.95f));
+                    var warmRibbon=Mathf.Exp(-ribbonAngle*ribbonAngle*9)*Mathf.Exp(-Mathf.Pow((dir.y+.25f)*1.3f,2));
+                    pixels[y*size+x]=sky*(1-archShadow)+new Color(2.4f,1.38f,.62f)*glow+new Color(1.9f,1.65f,1.20f)*softbox+new Color(.9f,.64f,.35f)*window+new Color(2.2f,1.55f,.85f)*warmRibbon;
                 }
                 map.SetPixels(pixels,(CubemapFace)face);
             }
@@ -822,11 +859,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
             material.name = name;
             material.hideFlags = HideFlags.HideAndDontSave;
             material.enableInstancing = true;
+            if(name=="Platform"){var mineral=Resources.Load<Texture2D>("Art/AuthoredMineralAtlas");material.SetTexture("_MineralAtlas",mineral);material.SetFloat("_UseMineralAtlas",mineral!=null?1:0);}
             if(name=="Platform" || name=="PlatformTop" || name=="Skyline" || name=="GoldPlate")
             {
-                var texture=Resources.Load<Texture2D>("Art/GunmetalPanels");
+                var texture=Resources.Load<Texture2D>(name=="Platform"||name=="GoldPlate"?"Art/AuthoredBrushedMetalAlbedo":"Art/GunmetalPanels");
+                if(name=="Platform"&&texture==null)throw new System.InvalidOperationException("Original brushed shoulder surface is missing.");
                 if(texture!=null)material.SetTexture("_MainTex",texture);
             }
+            if(name=="Platform")material.SetFloat("_MicroRelief",1);
 
             if (material.HasProperty("_Color")) material.SetColor("_Color", color);
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);

@@ -22,7 +22,9 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<3;i++)
             {
                 var power=(StackPower)i;
-                _powerButtons[i]=UiFactory.Button(_powerRow,"Power"+power,"",new Color(.13f,.2f,.3f),Color.white,new Vector2(i*.25f,.03f),new Vector2(i*.25f+.235f,.70f),()=>Game.UsePower(power));
+                _powerButtons[i]=UiFactory.Button(_powerRow,"Power"+power,"",Navy,GalleryTheme.Text,new Vector2(i*.25f,.03f),new Vector2(i*.25f+.235f,.70f),()=>Game.UsePower(power));
+                UiFactory.ApplyCircularImage(_powerButtons[i].GetComponent<Image>());
+                UiFactory.Icon(_powerButtons[i].transform,"AbilityIcon",i==0?HudIconType.Clock:i==1?HudIconType.Target:HudIconType.Floors,new Color(.62f,.83f,1),new Vector2(.24f,.32f),new Vector2(.76f,.86f));
             }
             _risk=UiFactory.Button(_powerRow,"Risk","",new Color(.13f,.2f,.3f),Color.white,new Vector2(.75f,.03f),new Vector2(.985f,.70f),Game.ToggleRisk);
             UiFactory.Button(_home,"HomeSettings",T("OPTIONEN","OPTIONS"),GalleryTheme.Card,GalleryTheme.Text,new Vector2(.07f,.22f),new Vector2(.49f,.29f),OpenSettings);
@@ -71,17 +73,20 @@ namespace Kamilunavo.PerfectDrop.UI
         private void LayoutArcade(Rect pane)
         {
             if(_powerRow==null)return;
-            var landscape=Screen.width*pane.width>Screen.height*pane.height*1.2f;
+            var landscape=_safe.rect.width*pane.width>_safe.rect.height*pane.height*1.2f;
             Place(_powerRow,pane,StackPresentation.Powers(landscape));
             var info=(RectTransform)_powerInfo.transform.parent;
-            Set(info,0,landscape?.87f:.74f,1,1);
-            for(var i=0;i<4;i++)
+            Set(info,0,1,1,1);info.pivot=new Vector2(.5f,0);info.sizeDelta=new Vector2(0,14*UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor));info.anchoredPosition=Vector2.zero;info.GetComponent<Image>().color=Color.clear;info.GetComponent<Image>().material=null;GalleryTheme.Readable(_powerInfo,11);
+            Canvas.ForceUpdateCanvases();
+            float unit=UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor),target=UiMetrics.TargetSize(_safe,49);
+            float diameter=Mathf.Max(target,Mathf.Min(_powerRow.rect.width/3.4f,_powerRow.rect.height*.80f));
+            for(var i=0;i<3;i++)
             {
-                var button=i<3?_powerButtons[i]:_risk;
-                if(landscape)Set((RectTransform)button.transform,0,.65f-i*.215f,1,.85f-i*.215f);
-                else Set((RectTransform)button.transform,i*.25f,.03f,i*.25f+.235f,.70f);
-                button.GetComponentInChildren<Text>().fontSize=landscape?26:29;
+                var button=_powerButtons[i];var rect=(RectTransform)button.transform;
+                rect.anchorMin=rect.anchorMax=new Vector2((i+.5f)/3,.40f);rect.pivot=new Vector2(.5f,.5f);rect.sizeDelta=new Vector2(diameter,diameter);rect.anchoredPosition=Vector2.zero;Set((RectTransform)button.transform.Find("Label"),.08f,.02f,.92f,.30f);
+                GalleryTheme.Style(button,Navy);GalleryTheme.Readable(button.GetComponentInChildren<Text>(),landscape?12:11);
             }
+            _risk.transform.SetParent(_safe,false);
             Place(_cityPanel,pane,new Rect(0,0,1,1));
             Canvas.ForceUpdateCanvases();
             var cityHeight=Mathf.Max(1,_cityPanel.rect.height);
@@ -99,6 +104,7 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             if(_powerRow==null || Game.Run==null)return;
             _powerRow.gameObject.SetActive(!ModalOpen && !Game.Run.Completed && !Game.Run.Failed);
+            _risk.gameObject.SetActive(_powerRow.gameObject.activeSelf);
             var powers=Game.Run.Powers;
             var signature=powers.Energy+Mathf.CeilToInt(powers.SlowSeconds)*10+(powers.RepairReady?100:0)+(powers.Risk?200:0)+(int)Game.CurrentKind*1000+Game.Profile.UnlockedLevel*10000+(ModalOpen?1000000:0);
             if(signature==_powerSignature)return;_powerSignature=signature;
@@ -113,7 +119,7 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<3;i++)
             {
                 var power=(StackPower)i;var unlocked=StackCampaign.PowerUnlocked(Game.Profile,power);
-                SetLabel(_powerButtons[i],names[i]+"\n"+(unlocked?power==StackPower.Slow && powers.SlowSeconds>0?Mathf.CeilToInt(powers.SlowSeconds)+" s":StackPowers.Cost(power)+" ◆":T("LEVEL ","LEVEL ")+(i==0?3:i==1?5:9)));
+                SetLabel(_powerButtons[i],(unlocked?power==StackPower.Slow && powers.SlowSeconds>0?Mathf.CeilToInt(powers.SlowSeconds)+" s":StackPowers.Cost(power)+" ◆":T("LEVEL ","LEVEL ")+(i==0?3:i==1?5:9)));
                 _powerButtons[i].interactable=unlocked && !ModalOpen && !Game.Run.Failed && !Game.Run.Completed && powers.Energy>=StackPowers.Cost(power) && !(power==StackPower.Slow && powers.SlowSeconds>0) && !(power==StackPower.Repair && powers.RepairReady);
             }
             SetLabel(_risk,T("RISIKO","RISK")+"\n"+(Game.Profile.UnlockedLevel<6?T("AB LEVEL 6","FROM LEVEL 6"):powers.Risk?T("PERFECT ODER ENDE","PERFECT OR FAIL"):T("2× COINS","2× COINS")));

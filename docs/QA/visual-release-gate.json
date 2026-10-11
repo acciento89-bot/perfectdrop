@@ -1,17 +1,17 @@
 {
   "game": "Perfect Drop",
   "status": "failed",
-  "sourceSha256": "f968babe5b169af62f7af4d85b0d67bed45e3da53a436f370e5c66ea440a9c81",
-  "reviewer": "Codex actual rendered image inspection against unchanged Oct10 approved board",
+  "sourceSha256": "296655b882bf2d22a5ff850c42aa39bf50812993d3bef5c9f2283fe8df51a2d5",
+  "reviewer": "Codex actual Unity-rendered image review against unchanged approved Oct10 Concept",
   "reviewedAt": "2026-10-11",
-  "reason": "The sparse historical skyline, repeated luminous windows, simplified vegetation/cloud shapes, lighting, slab proportions and flat menu typography still fail the approved Concept. Mac build exit0; preview27 incl opposite ambient-probe cold renders/leases/restoration; terrace177143 vertices/14active renderers; cloud12/nav2436/style8/interstitial53/music42. Fresh actual UI and all8 style selection/shader/save/reload suites PASS; runner intentionally terminated only after PASS (exit143).",
+  "reason": "Below approved Concept: sparse visible skyline composition, simplified vegetation and architectural silhouettes, insufficient rich/champagne metal lighting, coarse plate grain, broad stone paving, stretched-looking cloud projection and flatter menu/gallery surfaces. Day/sunset/neon and chosen styles visibly differ, but fidelity to the illustration remains inadequate. Pale secondary gameplay text needs stronger contrast on bright scenery. Physical mobile GPU/thermal/frame-rate/touch, audible music mix and real store/ad-provider acceptance remain unverified.",
   "criteria": {
     "concept_similarity": "failed",
-    "character_or_tower": "pending",
-    "world_variants": "pending",
-    "menu_identity": "pending",
-    "submenu_navigation": "pending",
-    "readability": "pending"
+    "character_or_tower": "failed",
+    "world_variants": "passed",
+    "menu_identity": "failed",
+    "submenu_navigation": "passed",
+    "readability": "failed"
   },
   "evidence": {
     "concept": [
@@ -23,71 +23,57 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/focused-landing.png",
-        "sha256": "c04ce8162bb133fc82d2c734bfe28812a1049ac104b19e122e7a6a2968bdcf3a",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-menu.png",
+        "sha256": "d6ebe1acdeeedf0438b33f26516cde4ac0db87bd44d872e028f2f71b6664e156",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/tutorial-stack.png",
-        "sha256": "10db28bf6db88b322a766d9cd209569d8c6b9abe860a5c659377ff48c21628ca",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-gameplay-chapter-0.png",
+        "sha256": "fa39f823219ddf64c2f5eb9fa57bbe86fc32deeb4e7baf8dce0bd956de4a5db5",
         "origin": "Unity-render"
       }
     ],
     "submenus": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/styles.png",
-        "sha256": "7324cbbd0dd6f9eaf60d7fb3d3653068081dfd3fd4a1565d5b5495dc268cf5d6",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-designs.png",
+        "sha256": "3e40697154ab3015e41f3ad4fb456f5cbc38c4f25e44fd88fcff1bfb7f01e063",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/shop-offline-portrait.png",
-        "sha256": "fff7f5949ef608bebab34f7a01676c7dc81ccbc34c4dce5831d0acd1bfc6d8d4",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/presentation/settings-430.png",
+        "sha256": "4fd8678dbd00385f0a49a3865d12b55ade3f4891e03d460c2dc94a092103ff3e",
         "origin": "Unity-render"
       }
     ],
     "variants": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-0-gameplay.png",
-        "sha256": "f521b2fac249f72216faf0e0cc9e8d39b8e485d3bd7517370baff2eb0c4af30c",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-gameplay-chapter-0.png",
+        "sha256": "fa39f823219ddf64c2f5eb9fa57bbe86fc32deeb4e7baf8dce0bd956de4a5db5",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-1-gameplay.png",
-        "sha256": "3e743d63289d91aec10c762d24d4fcfcc6a392de201f67c7245d7b2d8aa3d381",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-gameplay-chapter-1.png",
+        "sha256": "e66f9c4b2818ef8dcb5897c46b473032f82876fc7b795b074e85d7deca094350",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-2-gameplay.png",
-        "sha256": "19d49bb1fb754a91dbcf0723e8b2c36cd98e8c926fef90e0bcba3bb4fe3d11bd",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-3-gameplay.png",
-        "sha256": "3b8f75ab882920facca4bf413caf0537ce2dfe9d6af9e30c42925cec3e13b970",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-4-gameplay.png",
-        "sha256": "41531da01bb4938bc601cb84ee0b6aff42d5a6e41e0fd56c82e257d94a77bf0d",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-5-gameplay.png",
-        "sha256": "ae7cedce4db4949b7a668ffa1abbae88207f924ab617b4e65d79e244c4cdf92a",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-6-gameplay.png",
-        "sha256": "ba058ea0692239ca72a156017df93ebc93226b78881864444d763b7b3651f771",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-7-gameplay.png",
-        "sha256": "fcfa3817e1db37b70c1d1c969a21847f3a2862bf471327c898f875f40bf1d9a5",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/concept/concept-gameplay-chapter-2.png",
+        "sha256": "170a2eded26c3c0301bc0f354059b29077658ce91870bbf86cc0a128cfe25a95",
         "origin": "Unity-render"
       }
     ]
+  },
+  "functionalValidation": "Final Unity6000.6.4f1 Mac aggregate/build exit0. Slab15600, measured menu27440, navigation5406, terrace1312165 checks with249137 owned vertices/14 active scenery renderers; cloud18, environment previews46, interstitial53, music42. Actual Mac player:21 ordered UI placements across3 chapters, all8 real design selections/shader/special-cue/wallet/save/reload checks, portrait/landscape/tutorial/parent-menu flows, campaign/powers/risk/daily/city and66-layer endless PASS. Bundle and canonical source hashes match all4 serial receipts. These are engine/desktop functional results, not visual approval or mobile performance.",
+  "runtimeReceipt": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/complete-rebuild-run-receipts.json",
+    "sha256": "44427291beb6291336d81a1665e67227d72fa1c95e6a2bcc222521de21a1a2ef",
+    "origin": "actual-Mac-player-receipts"
+  },
+  "buildLog": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-296655b882bf/build-complete-rebuild.log",
+    "sha256": "d3379b90814ebef9630601db36a4caa56b0c50620463b696f0743fdea68d1ff7",
+    "origin": "Unity-build-log"
   }
 }

@@ -7,7 +7,7 @@ namespace Kamilunavo.PerfectDrop.UI
     public sealed partial class StackHud : MonoBehaviour
     {
         public StackGame Game;
-        private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup;
+        private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup, _menuRect;
         private Text[] _stats;
         private Text _status, _hint, _popupTitle, _popupBody;
         private Image _progress;
@@ -47,9 +47,11 @@ namespace Kamilunavo.PerfectDrop.UI
             _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.48f),new Vector2(.71f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
             _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.15f),new Vector2(.71f,.38f),TextAnchor.MiddleLeft,Color.white);
             _progress = UiFactory.Progress(_objective,new Vector2(.045f,.04f),new Vector2(.955f,.10f),new Color(.22f,.27f,.35f),Gold);
-            UiFactory.Button(_objective,"Menu",T("MENÜ","MENU"),new Color(.14f,.20f,.29f),Color.white,new Vector2(.75f,.15f),new Vector2(.965f,.93f),OpenSettings);
+            _menuRect=(RectTransform)UiFactory.Button(_statsRoot,"Menu","Ⅱ",Navy,Gold,Vector2.zero,Vector2.one,OpenSettings).transform;
+            UiFactory.ApplyCircularImage(_menuRect.GetComponent<Image>());
+            _objective.GetComponent<Image>().color=Color.clear;_objective.GetComponent<Image>().material=null;
             _drop = UiFactory.Button(_safe,"Drop",T("ABSETZEN","DROP"),Gold,Navy,new Vector2(.10f,.055f),new Vector2(.90f,.15f),game.Drop);
-            _dropRect = (RectTransform)_drop.transform;
+            _dropRect = (RectTransform)_drop.transform;_drop.GetComponentInChildren<Text>().font=UiFactory.SerifFont;_drop.GetComponentInChildren<Text>().fontStyle=FontStyle.Normal;_status.font=UiFactory.SerifFont;_status.fontStyle=FontStyle.Normal;UiFactory.AddOutline(_status,new Color(.02f,.015f,.01f,.65f),1);
             UiFactory.ApplyPillImage(_drop.GetComponent<Image>());
             _popup = UiFactory.Panel(_safe,"ContextPanel",Navy,new Vector2(.07f,.23f),new Vector2(.93f,.75f));
             _popupTitle = UiFactory.Label(_popup,"Title","",45,new Vector2(.07f,.79f),new Vector2(.93f,.96f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
@@ -73,7 +75,7 @@ namespace Kamilunavo.PerfectDrop.UI
             var gameplayVisible=!CampaignMenuOpen && !CityOpen;
             Game.SetStackVisible(gameplayVisible);
             _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);
-            _stats[0].text = Game.Run.Count.ToString() + (Game.Run.Endless?"":"/"+Game.Run.Target);
+            _stats[0].text = T("STAPEL ","STACK ")+Game.Run.Count.ToString() + (Game.Run.Endless?"":" / "+Game.Run.Target);
             _stats[1].text = (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best).ToString();
             _stats[2].text = "x" + Game.Run.Streak;
             _stats[3].text = Game.Profile.Coins.ToString();
@@ -159,9 +161,7 @@ namespace Kamilunavo.PerfectDrop.UI
             var free = StackPresentation.World(landscape);
             WorldPane=StackPresentation.ToViewport(screenSafe,pane,free,new Vector2(Screen.width,Screen.height));
             CityPane=StackPresentation.ToViewport(screenSafe,pane,new Rect(.04f,.20f,.92f,.48f),new Vector2(Screen.width,Screen.height));
-            Place(_statsRoot,pane,new Rect(.04f,.875f,.92f,.105f));
-            Place(_objective,pane,new Rect(.04f,.755f,.92f,.11f));
-            Place(_dropRect,pane,StackPresentation.Drop(false));
+            Place(_dropRect,pane,new Rect(.075f,.045f,.735f,.10f));
             Place(_popup,pane,new Rect(.06f,.16f,.88f,.70f));
             Set((RectTransform)_daily.transform,.10f,.77f,.90f,.88f);
             Set((RectTransform)_sound.transform,.10f,.63f,.90f,.74f);Set((RectTransform)_haptics.transform,.10f,.49f,.90f,.60f);
@@ -169,8 +169,6 @@ namespace Kamilunavo.PerfectDrop.UI
             var aspect = Screen.width * pane.width / Mathf.Max(1, Screen.height*pane.height);
             if (aspect > 1.2f)
             {
-                Place(_statsRoot,pane,new Rect(.025f,.80f,.55f,.17f));
-                Place(_objective,pane,new Rect(.60f,.77f,.37f,.20f));
                 Place(_dropRect,pane,StackPresentation.Drop(true));
                 Place(_popup,pane,new Rect(.23f,.035f,.54f,.93f));
                 Set((RectTransform)_daily.transform,.06f,.68f,.94f,.83f);
@@ -178,7 +176,44 @@ namespace Kamilunavo.PerfectDrop.UI
                 Set((RectTransform)_motion.transform,.06f,.33f,.94f,.48f);
                 Set((RectTransform)_settingsMap.transform,.06f,.155f,.48f,.305f);Set((RectTransform)_close.transform,.52f,.155f,.94f,.305f);
             }
+            LayoutGameplayHeader(pane,landscape);
             if(_sound.gameObject.activeSelf)LayoutMusicSettings(pane);
+        }
+        private void LayoutGameplayHeader(Rect pane,bool landscape)
+        {
+            Place(_statsRoot,pane,landscape?new Rect(.025f,.76f,.95f,.20f):new Rect(.035f,.91f,.93f,.065f));
+            Place(_objective,pane,landscape?new Rect(.43f,.66f,.54f,.12f):new Rect(.37f,.75f,.58f,.12f));
+            _objective.GetComponent<Image>().color=Color.clear;
+            float target=UiMetrics.TargetSize(_safe,49);
+            _menuRect.anchorMin=_menuRect.anchorMax=new Vector2(0,.5f);_menuRect.pivot=new Vector2(0,.5f);
+            _menuRect.sizeDelta=new Vector2(target,target);_menuRect.anchoredPosition=Vector2.zero;
+            var pause=_menuRect.GetComponent<Button>();GalleryTheme.Style(pause,Navy);
+            pause.GetComponentInChildren<Text>().color=Gold;GalleryTheme.Readable(pause.GetComponentInChildren<Text>(),25);
+            for(int i=0;i<4;i++)_stats[i].transform.parent.gameObject.SetActive(i==0||i==3);
+            var stage=(RectTransform)_stats[0].transform.parent;var wallet=(RectTransform)_stats[3].transform.parent;
+            Set(stage,.30f,.10f,.70f,.91f);Set(wallet,.76f,.16f,1,.88f);
+            foreach(var card in new[]{stage,wallet}){card.GetComponent<Image>().material=null;UiFactory.ApplyPillImage(card.GetComponent<Image>());GalleryFrameGraphic.Apply(card,Gold);card.GetComponent<Image>().color=Navy;}
+            stage.Find("Icon").gameObject.SetActive(false);stage.Find("Heading").gameObject.SetActive(false);
+            wallet.Find("Heading").gameObject.SetActive(false);
+            Set((RectTransform)_stats[0].transform,.04f,.04f,.96f,.96f);_stats[0].alignment=TextAnchor.MiddleCenter;_stats[0].font=UiFactory.SerifFont;_stats[0].fontStyle=FontStyle.Normal;GalleryTheme.Readable(_stats[0],16);
+            Set((RectTransform)_stats[3].transform,.28f,.08f,.96f,.92f);GalleryTheme.Readable(_stats[3],18);
+            Set((RectTransform)wallet.Find("Icon"),.06f,.16f,.27f,.84f);
+            Set((RectTransform)_status.transform,.02f,.52f,.98f,.98f);_status.alignment=TextAnchor.MiddleRight;_status.color=new Color(.98f,.85f,.45f);GalleryTheme.Readable(_status,30);
+            Set((RectTransform)_hint.transform,.02f,.05f,.98f,.48f);_hint.alignment=TextAnchor.MiddleRight;GalleryTheme.Readable(_hint,12);
+            var track=(RectTransform)_progress.transform.parent;
+            track.SetParent(stage,false);Set(track,.10f,.025f,.90f,.075f);
+            // Reserve Risk at its final size before assigning the remaining drop width.
+            float usedW=_safe.rect.width*pane.width,usedH=_safe.rect.height*pane.height;
+            var risk=(RectTransform)_risk.transform;float bottom=landscape?.045f:.045f;
+            float actionH=Mathf.Max(UiMetrics.TargetSize(_safe,54),usedH*(landscape?.27f:.10f));
+            float center=pane.y+bottom*pane.height+actionH/_safe.rect.height*.5f;
+            risk.anchorMin=risk.anchorMax=new Vector2(pane.x+pane.width*.965f,center);risk.pivot=new Vector2(1,.5f);risk.sizeDelta=new Vector2(target,actionH);risk.anchoredPosition=Vector2.zero;
+            float dropX=landscape?.33f:.075f;
+            _dropRect.anchorMin=_dropRect.anchorMax=new Vector2(pane.x+pane.width*dropX,center);_dropRect.pivot=new Vector2(0,.5f);_dropRect.sizeDelta=new Vector2(Mathf.Max(target,usedW*(.965f-dropX)-target-4*UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor)),actionH);_dropRect.anchoredPosition=Vector2.zero;
+            GalleryTheme.Style(_drop,Gold);GalleryTheme.Readable(_drop.GetComponentInChildren<Text>(),24);
+            GalleryTheme.Style(_risk,Navy);GalleryTheme.Readable(_risk.GetComponentInChildren<Text>(),10);
+
+
         }
         // A separate music control adds one row; short panes use pairs to retain full logical targets.
         private void LayoutMusicSettings(Rect pane)

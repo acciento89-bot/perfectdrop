@@ -2,12 +2,17 @@ Shader "Kamilunavo/PerfectDropSurface"
 {
     Properties
     {
+        _StoneAlbedo ("Original ivory limestone", 2D) = "white" {}
+        _MineralAtlas ("Original jade / pearl color atlas", 2D) = "white" {}
+        _MineralSeed ("Owned layer stone variation", Float) = 0
+        _UseMineralAtlas ("Use original mineral asset", Float) = 0
         _MainTex ("Metal albedo", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
         _Detail ("Metal surface detail", Range(0,1)) = 0
         _GoldFinish ("Brushed gold finish", Range(0,1)) = 0
         _BodyFinish ("Lacquer or ceramic detail", Range(0,2)) = 0
         _BrushFinish ("Fine metal brushing", Range(0,1)) = 0
+        _MicroRelief ("Original brushed metal relief", Range(0,1)) = 0
         _StoneFinish ("Cut stone and mortar", Range(0,1)) = 0
         _WaterFinish ("Canal ripples", Range(0,1)) = 0
         _Metallic ("Metallic", Range(0,1)) = 0
@@ -25,7 +30,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         #pragma target 3.0
         #pragma multi_compile_instancing
 
-        sampler2D _MainTex;
+        sampler2D _MainTex,_MineralAtlas,_StoneAlbedo;half _UseMineralAtlas,_MineralSeed;
+        float4 _MainTex_TexelSize;
         UNITY_INSTANCING_BUFFER_START(DeckProperties)
             UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
             UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionColor)
@@ -34,6 +40,7 @@ Shader "Kamilunavo/PerfectDropSurface"
         half _GoldFinish;
         half _BodyFinish;
         half _BrushFinish;
+        half _MicroRelief;
         half _StoneFinish;
         half _WaterFinish;
         half _Metallic;
@@ -45,6 +52,7 @@ Shader "Kamilunavo/PerfectDropSurface"
             float3 worldPos;
             float3 worldNormal;
             float2 uv_MainTex;
+            INTERNAL_DATA
         };
 
         void surf(Input IN, inout SurfaceOutputStandard o)
@@ -63,7 +71,7 @@ Shader "Kamilunavo/PerfectDropSurface"
             half reflection=exp2(-reflectionBand*reflectionBand);
             half brush=sin(uv.y*920+metal.g*8)*.008;
             half edge=smoothstep(.44,.485,max(abs(uv.x-.5),abs(uv.y-.5)));
-            float3 gold=lerp(float3(.77,.52,.21),float3(1.07,1.04,.85),diagonal)+reflection*float3(.13,.11,.055)+brush;
+            float3 gold=lerp(float3(.51,.28,.075),float3(1.02,.83,.43),diagonal)+reflection*float3(.23,.18,.075)+brush;
             // The same UV-bound finish runs across plate faces and bevels.
             // Avoid an emissive orange sheet: reflected light supplies the volume.
             // Smooth brushed shoulders and ceramic/lacquer skins share a neutral
@@ -77,8 +85,19 @@ Shader "Kamilunavo/PerfectDropSurface"
             half ceramic=step(1.5,_BodyFinish);
             cleanMetal=lerp(cleanMetal,cleanMetal*.90+vein*.28,jade);
             cleanMetal=lerp(cleanMetal,1.02-vein*.065,ceramic);
+            // The original surface tile supplies grain to actual shoulder faces.
+            // Relief uses linear sample differences, without platform normal packing.
+            half reliefWeight=_MicroRelief*(1-jade)*(1-ceramic);
+            half reliefX=metal.r,reliefY=metal.r;
+            if(reliefWeight>.01)
+            {
+                reliefX=tex2D(_MainTex,uv+float2(_MainTex_TexelSize.x,0)).r;
+                reliefY=tex2D(_MainTex,uv+float2(0,_MainTex_TexelSize.y)).r;
+            }
+            o.Normal=normalize(half3((metal.r-reliefX)*1.8*reliefWeight,(metal.r-reliefY)*1.8*reliefWeight,1));
+            cleanMetal*=lerp(1,.80+metal.r*.85,reliefWeight);
             o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.97,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
-            float3 an=abs(IN.worldNormal);
+            float3 an=abs(WorldNormalVector(IN,float3(0,0,1)));
             float2 stoneUV=an.y>.7?IN.worldPos.xz:an.x>an.z?IN.worldPos.zy:IN.worldPos.xy;
             float course=floor(stoneUV.y*1.55);
             float2 stoneCell=float2(stoneUV.x*1.18+frac(course*.5)*.5,stoneUV.y*1.55);
@@ -86,12 +105,22 @@ Shader "Kamilunavo/PerfectDropSurface"
             half joint=1-smoothstep(.014,.039,min(edgeDistance.x,edgeDistance.y));
             half quarry=frac(sin(dot(floor(stoneCell),float2(31.13,71.29)))*13758.5453);
             half stonePore=frac(sin(dot(floor(stoneUV*110),float2(19.1,47.7)))*41758.3453);
-            o.Albedo*=lerp(1,(.88+quarry*.15+stonePore*.035)*(1-joint*.14),_StoneFinish);
+            if(_StoneFinish>.5)
+            {
+                float3 limestone=tex2D(_StoneAlbedo,stoneUV*.22).rgb;
+                o.Albedo*=(.58+limestone*.57)*(.94+quarry*.10+stonePore*.025)*(1-joint*.14);
+            }
             half ripple=sin(IN.worldPos.x*3.9+sin(IN.worldPos.z*2.8))*sin(IN.worldPos.z*4.3+IN.worldPos.x*.3);
             o.Albedo*=lerp(1,.91+ripple*.12,_WaterFinish);
+            if(_UseMineralAtlas>.5 && (jade>.5 || ceramic>.5))
+            {
+                float2 atlasUV=float2(frac(uv.x*4)*.48+.01+ceramic*.5,frac(uv.y*.21+_MineralSeed)*.98+.01);
+                float3 mineral=tex2D(_MineralAtlas,atlasUV).rgb;
+                o.Albedo=lerp(tint.rgb*mineral,tint.rgb*mineral/float3(.12,.35,.22),jade);
+            }
             o.Occlusion=1-joint*.12*_StoneFinish;
             o.Metallic = _Metallic;
-            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.055+edge*.06)-_WaterFinish*abs(ripple)*.10);
+            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.055+edge*.06)-_WaterFinish*abs(ripple)*.10-reliefWeight*(1-metal.r)*.045);
             o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish*.72, _GoldFinish);
             o.Alpha = tint.a;
         }

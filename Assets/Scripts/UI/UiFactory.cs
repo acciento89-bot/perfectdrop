@@ -7,11 +7,25 @@ namespace Kamilunavo.PerfectDrop.UI
     public static class UiFactory
     {
         private static Font _font;
-        private static Font _boldFont;
+        private static Font _boldFont,_serifFont;
+        public static Font SerifFont=>_serifFont!=null?_serifFont:(_serifFont=Resources.Load<Font>("Fonts/Cinzel-Regular")??DefaultFont);
         private static Sprite _roundedSprite;
         private static Sprite _circleSprite;
         private static Sprite _pillSprite;
         private static Material _panelMaterial;
+        private static Material _goldActionMaterial;
+        public static Material GoldActionMaterial
+        {
+            get
+            {
+                if(_goldActionMaterial!=null)return _goldActionMaterial;
+                var shader=Resources.Load<Shader>("PerfectDropPanel");if(shader==null)return null;
+                _goldActionMaterial=new Material(shader){name="PerfectDropGoldAction",hideFlags=HideFlags.HideAndDontSave};
+                _goldActionMaterial.SetFloat("_PillRound",1);
+                _goldActionMaterial.SetTexture("_MetalGrain",Resources.Load<Texture2D>("Art/AuthoredBrushedMetalAlbedo"));
+                return _goldActionMaterial;
+            }
+        }
 
         public static Font DefaultFont => _font != null ? _font : (_font = Resources.Load<Font>("Fonts/Barlow-Regular") ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
         private static Font BoldFont => _boldFont != null ? _boldFont : (_boldFont = Resources.Load<Font>("Fonts/Barlow-Bold") ?? DefaultFont);
@@ -205,7 +219,7 @@ namespace Kamilunavo.PerfectDrop.UI
 
             var border = sliced ? new Vector4(radius + 2f, radius + 2f, radius + 2f, radius + 2f) : Vector4.zero;
             var sprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, border);
-            sprite.name = texture.name + "Sprite";
+            sprite.name = (sliced&&size==64?"KamilunavoPillMask":texture.name)+"Sprite";
             sprite.hideFlags = HideFlags.HideAndDontSave;
             return sprite;
         }

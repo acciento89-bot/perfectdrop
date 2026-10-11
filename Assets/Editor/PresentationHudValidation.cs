@@ -58,6 +58,18 @@ namespace Kamilunavo.PerfectDrop.Editor
                                 }
                             }
                         }
+                        hud.HideMenus();
+                        typeof(StackHud).GetMethod("LayoutGameplayHeader",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(hud,new object[]{new Rect(0,0,1,1),points.x>points.y*1.2f});
+                        Canvas.ForceUpdateCanvases();
+                        foreach(var button in canvas.GetComponentsInChildren<Button>())
+                        {
+                            if(!button.isActiveAndEnabled||!(button.name=="Menu"||button.name=="Drop"||button.name=="Risk"||button.name.StartsWith("Power")))continue;
+                            var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
+                            Check(rect.width/3>=48-.01f&&rect.height/3>=48-.01f,"Compact gameplay target too small "+points+" "+button.name+" "+rect);checks++;
+                            var safeBounds=UiMetrics.ScreenRect(safe);Check(rect.xMin>=safeBounds.xMin-.5f&&rect.xMax<=safeBounds.xMax+.5f&&rect.yMin>=safeBounds.yMin-.5f&&rect.yMax<=safeBounds.yMax+.5f,"Gameplay target outside safe pane "+points+" "+button.name);checks++;
+                            foreach(var other in canvas.GetComponentsInChildren<Button>()){if(other==button||!other.isActiveAndEnabled||!(other.name=="Menu"||other.name=="Drop"||other.name=="Risk"||other.name.StartsWith("Power")))continue;var b=UiMetrics.ScreenRect((RectTransform)other.transform);Check(Mathf.Min(rect.xMax,b.xMax)-Mathf.Max(rect.xMin,b.xMin)<=.5f||Mathf.Min(rect.yMax,b.yMax)-Mathf.Max(rect.yMin,b.yMin)<=.5f,"Gameplay targets overlap "+points+" "+button.name+" / "+other.name);checks++;}
+                        }
+                        hud.ShowHome();
                         // A locked card must stay legible over the sunlit cloud background.
                         // Unity's default disabled tint halves alpha as well as brightness.
                         foreach(var button in canvas.GetComponentsInChildren<Button>())

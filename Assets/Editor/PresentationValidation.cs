@@ -16,7 +16,7 @@ namespace Kamilunavo.PerfectDrop.Editor
                 Check(!pane.Overlaps(StackPresentation.Drop(landscape)),"Drop obstructs gameplay reservation.");checks++;
                 foreach(var yaw in new[]{-180f,-90f,-35f,0f,90f,180f})foreach(var height in new[]{0f,2f,15.6f,33.28f})
                 {
-                    var outward=new Vector3(Mathf.Sin(yaw*Mathf.Deg2Rad),.78f,-Mathf.Cos(yaw*Mathf.Deg2Rad)).normalized;
+                    var outward=new Vector3(Mathf.Sin(yaw*Mathf.Deg2Rad),StackPresentation.GameplayElevation,-Mathf.Cos(yaw*Mathf.Deg2Rad)).normalized;
                     var rotation=Quaternion.LookRotation(-outward);
                     var focus=new Vector3(0,height-1.1f,0);var bounds=new Bounds(focus,new Vector3(12,3.4f,12));
                     var distance=StackPresentation.FitDistance(bounds,focus,rotation,43,aspect,pane);

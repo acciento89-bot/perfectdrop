@@ -4,9 +4,10 @@ namespace Kamilunavo.PerfectDrop.UI
     /// <summary>Geometry reservations are independent of camera motion and stack height.</summary>
     public static class StackPresentation
     {
-        public static Rect World(bool landscape) => landscape ? new Rect(.22f,.245f,.735f,.49f) : new Rect(.045f,.32f,.91f,.41f);
-        public static Rect Powers(bool landscape) => landscape ? new Rect(.025f,.055f,.165f,.695f) : new Rect(.04f,.165f,.92f,.135f);
-        public static Rect Drop(bool landscape) => landscape ? new Rect(.25f,.035f,.63f,.165f) : new Rect(.10f,.045f,.80f,.10f);
+        public const float GameplayElevation=.62f;
+        public static Rect World(bool landscape) => landscape ? new Rect(.025f,.35f,.95f,.38f) : new Rect(.04f,.255f,.92f,.615f);
+        public static Rect Powers(bool landscape) => landscape ? new Rect(.025f,.045f,.29f,.27f) : new Rect(.07f,.165f,.86f,.085f);
+        public static Rect Drop(bool landscape) => landscape ? new Rect(.33f,.045f,.55f,.27f) : new Rect(.10f,.045f,.80f,.10f);
         public static Rect ToViewport(Rect safe,Rect usable,Rect slot,Vector2 resolution) => new Rect((safe.x+(usable.x+slot.x*usable.width)*safe.width)/resolution.x,(safe.y+(usable.y+slot.y*usable.height)*safe.height)/resolution.y,slot.width*usable.width*safe.width/resolution.x,slot.height*usable.height*safe.height/resolution.y);
         public static float FitDistance(Bounds bounds, Vector3 focus, Quaternion rotation, float fov, float aspect, Rect pane)
         {

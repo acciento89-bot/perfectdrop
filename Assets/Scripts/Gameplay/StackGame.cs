@@ -10,7 +10,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 {
     public sealed class StackGame : MonoBehaviour
     {
-        public const float LayerHeight = .84f;
+        public const float LayerHeight = 1.0f;
         public StackRun Run { get; private set; }
         public StackProfile Profile { get; private set; }
         public StackHud Hud { get; private set; }
@@ -50,11 +50,11 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             RenderSettings.fogColor = new Color(.34f,.38f,.56f);
             RenderSettings.fogDensity = .005f;
             var key = new GameObject("SunsetKey").AddComponent<Light>();
-            key.type = LightType.Directional; key.color = new Color(1f,.72f,.42f); key.intensity = 1.4f;
+            key.type = LightType.Directional; key.color = new Color(1f,.72f,.42f); key.intensity = 1.12f;
             key.transform.rotation = Quaternion.Euler(35,-32,0); key.shadows = LightShadows.Soft;
             key.cullingMask=~(1<<StackSpecimenStudio.Layer);
             var fill = new GameObject("SkyFill").AddComponent<Light>();
-            fill.type = LightType.Directional; fill.color = new Color(.35f,.52f,1f); fill.intensity = .55f;
+            fill.type = LightType.Directional; fill.color = new Color(.35f,.52f,1f); fill.intensity = .34f;
             fill.transform.rotation = Quaternion.Euler(25,145,0);
             fill.cullingMask=~(1<<StackSpecimenStudio.Layer);
             var cameraObject = new GameObject("StackCamera"); cameraObject.tag = "MainCamera";
@@ -284,16 +284,17 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var cityView=Hud!=null && Hud.CityOpen;
             // Show the architectural base and earned stack together during short
             // challenges. Long endless runs still follow the most recent floors.
-            var visibleHeight=Mathf.Min(8f,Mathf.Max(3.4f,height+2.05f));
+            var visibleHeight=Mathf.Min(10f,Mathf.Max(3.4f,height+2.05f));
             var centerY=height+.6f-visibleHeight*.5f;
             var focus = new Vector3(top.x,centerY,top.y);
             var paneNow=Hud!=null?Hud.WorldPane:new Rect(0,0,1,1);
             var yaw=_yaw*Mathf.Deg2Rad;
-            var outward=new Vector3(Mathf.Sin(yaw),cityView?1.05f:.78f,-Mathf.Cos(yaw)).normalized;
+            var outward=new Vector3(Mathf.Sin(yaw),cityView?1.05f:StackPresentation.GameplayElevation,-Mathf.Cos(yaw)).normalized;
             var rotation=Quaternion.LookRotation(-outward);
             var size=Run.Top.Size;
-            var extent=StackRules.MotionExtent(size,Run.Axis);
-            var bounds=new Bounds(focus,new Vector3(Mathf.Max(6.5f,size.x+(Run.Axis==StackAxis.X?extent*2f:0)),visibleHeight,Mathf.Max(6.5f,size.y+(Run.Axis==StackAxis.Z?extent*2f:0))));
+            // Keep the landing architecture prominent. Incoming slabs enter from the
+            // screen edge; the complete alignment surface remains inside the pane.
+            var bounds=new Bounds(focus,new Vector3(Mathf.Max(6.5f,size.x+2.5f),visibleHeight,Mathf.Max(6.5f,size.y+2.5f)));
             if(cityView)
             {
                 focus=new Vector3((CityDistrict-1)*24,0,42);

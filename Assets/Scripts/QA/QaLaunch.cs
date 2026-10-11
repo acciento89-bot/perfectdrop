@@ -20,7 +20,7 @@ namespace Kamilunavo.PerfectDrop.QA
             {
                 "stack" => "-qaSmoke", "arcade" => "-qaArcade",
                 "arcade-ui" => "-qaArcadeUI", "city" => "-qaCity",
-                "styles" => "-qaStyles", "presentation" => "-qaPresentation", "soak" => "-qaRenderSoak", _ => null
+                "concept" => "-qaConcept", "styles" => "-qaStyles", "presentation" => "-qaPresentation", "soak" => "-qaRenderSoak", _ => null
             };
             if (flag == null) return _arguments = arguments.ToArray();
             var blocked = Environment.GetEnvironmentVariable("PERFECTDROP_QA_BLOCKED_BUTTON") == "1";

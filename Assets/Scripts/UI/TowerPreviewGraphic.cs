@@ -13,7 +13,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void LateUpdate()
         {
             if(!Application.isPlaying)return;
-            var floors=Mathf.Clamp(Floors,1,8);
+            var floors=Mathf.Clamp(Floors,1,16);
             if(_cachedStyle==_style && _cachedFloors==floors)return;
             ReleaseSpecimen();
             texture=Kamilunavo.PerfectDrop.Visuals.StackSpecimenStudio.Acquire(_style,floors);
@@ -38,7 +38,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 mesh.AddTriangle(0,1,2);mesh.AddTriangle(0,2,3);return;
             }
             mesh.Clear();var r=rectTransform.rect;
-            var floors=Mathf.Clamp(Floors,1,8);
+            var floors=Mathf.Clamp(Floors,1,16);
             var scale=Mathf.Min(r.width/1.12f,r.height/(.64f+(floors-1)*.145f));
             var center=r.center+Vector2.down*((floors-1)*.145f*.5f-.015f)*scale;
             var dark=Color.Lerp(Body,new Color(.025f,.04f,.075f),.56f);

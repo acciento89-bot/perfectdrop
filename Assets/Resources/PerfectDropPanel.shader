@@ -4,6 +4,8 @@ Shader "Kamilunavo/PerfectDropPanel"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
+        _MetalGrain ("Original brushed metal grain",2D) = "gray" {}
+        _PillRound ("Full action rounding",Float) = 0
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -32,6 +34,7 @@ Shader "Kamilunavo/PerfectDropPanel"
             struct V { float4 vertex:POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; float4 panel:TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
             struct F { float4 vertex:SV_POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; float4 panel:TEXCOORD1; float4 world:TEXCOORD2; UNITY_VERTEX_OUTPUT_STEREO };
             sampler2D _MainTex;
+            sampler2D _MetalGrain;float _PillRound;
             fixed4 _Color, _TextureSampleAdd;
             float4 _ClipRect;
             F vert(V v)
@@ -44,7 +47,7 @@ Shader "Kamilunavo/PerfectDropPanel"
             {
                 fixed4 c=(tex2D(_MainTex,i.uv)+_TextureSampleAdd)*i.color;
                 float2 size=max(i.panel.zw,1), localPoint=(i.panel.xy-.5)*size;
-                float radius=min(28,min(size.x,size.y)*.24);
+                float radius=lerp(min(28,min(size.x,size.y)*.24),min(size.x,size.y)*.5,_PillRound);
                 float2 q=abs(localPoint)-(size*.5-radius);
                 float distance=length(max(q,0))+min(max(q.x,q.y),0)-radius;
                 float aa=max(.7,fwidth(distance));
@@ -55,10 +58,12 @@ Shader "Kamilunavo/PerfectDropPanel"
                 // Warm bevel, cream reflection and an amber lower face give gold
                 // actions the same finish as the live decks. Dark cards stay cool.
                 float3 navy=c.rgb*lerp(.82,1.12,height)+float3(.018,.029,.05)*pow(height,5);
-                float3 metal=c.rgb*lerp(float3(.94,.69,.29),float3(1.04,1.11,1.5),height);
+                float grain=tex2D(_MetalGrain,i.panel.xy*float2(2,1)).r;
+                float3 metal=float3(1,.80,.34)*lerp(.88,1.06,height)*i.color.r;
                 float sheenBand=(height-.78)*10;
                 float sheen=exp2(-sheenBand*sheenBand);
                 metal+=float3(.11,.085,.025)*sheen;
+                metal*=.98+grain*.04;
                 float3 paper=c.rgb*lerp(.97,1.01,height);
                 c.rgb=lerp(lerp(navy,paper,ivory),metal,gold);
                 float3 rim=lerp(lerp(float3(.30,.40,.57),float3(.79,.69,.49),ivory),float3(1,.91,.57),gold);

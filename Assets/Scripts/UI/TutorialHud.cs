@@ -18,7 +18,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 if(!Game.Profile.ResumeActive || Game.Run.Completed || Game.Run.Failed)Game.StartLevel(Game.Profile.UnlockedLevel);
                 StartTutorial();
             });
-            _tutorialSkip=UiFactory.Button(_objective,"SkipGuide",T("FERTIG","DONE"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.75f,.15f),new Vector2(.965f,.93f),EndTutorial);
+            _tutorialSkip=UiFactory.Button(_statsRoot,"SkipGuide",T("FERTIG","DONE"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.75f,.15f),new Vector2(.965f,.93f),EndTutorial);
             _tutorialSkip.gameObject.SetActive(false);
         }
         public void StartTutorial()
@@ -28,7 +28,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void EndTutorial()
         {
             _tutorialActive=false;Game.Profile.TutorialComplete=true;Game.Save();
-            _tutorialSkip.gameObject.SetActive(false);_objective.Find("Menu").gameObject.SetActive(true);ResetMessage();
+            _tutorialSkip.gameObject.SetActive(false);_menuRect.gameObject.SetActive(true);ResetMessage();
         }
         private void TutorialPlacement(StackGrade grade)
         {
@@ -41,7 +41,8 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             if(_tutorialSkip==null)return;
             _tutorialSkip.gameObject.SetActive(_tutorialActive && !ModalOpen);
-            _objective.Find("Menu").gameObject.SetActive(!_tutorialActive);
+            var skip=(RectTransform)_tutorialSkip.transform;skip.anchorMin=_menuRect.anchorMin;skip.anchorMax=_menuRect.anchorMax;skip.pivot=_menuRect.pivot;skip.sizeDelta=_menuRect.sizeDelta;skip.anchoredPosition=_menuRect.anchoredPosition;GalleryTheme.Readable(_tutorialSkip.GetComponentInChildren<Text>(),11);
+            _menuRect.gameObject.SetActive(!_tutorialActive);
             if(!_tutorialActive || ModalOpen)return;
             _status.text=T("SO GEHT'S · ","HOW TO PLAY · ")+(_tutorialStep+1)+" / 3";
             _hint.text=_tutorialStep==0?T("Überlapp abwarten → ABSETZEN tippen.","Wait for overlap → tap DROP."):
