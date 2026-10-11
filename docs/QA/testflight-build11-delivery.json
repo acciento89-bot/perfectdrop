@@ -1,0 +1,49 @@
+{
+  "verifiedAt": "2026-10-11T20:42:19.991455+00:00",
+  "sourceSha256": "abf63890abb36028b825c08883fb0c4631f5fff59328bb1e02ed0c96a3c54cb5",
+  "bundle": "com.kamilunavo.perfectdrop",
+  "version": "1.0",
+  "build": "11",
+  "signature": "codesign deep strict PASS; Apple Distribution teamTKG684N5GL",
+  "getTaskAllow": false,
+  "qaRunnerExcluded": true,
+  "ipa": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/SignedExport/PerfectDrop.ipa",
+  "ipaSha256": "091975d2780538786b2f81f1dacb9b938be78cdb7b0e652919304fd75e7c1db1",
+  "sourceCommit": "93033df",
+  "uploadedAt": "2026-10-11T20:50:41.545890+00:00",
+  "upload": "Xcode Organizer TestFlight Internal Only, successful completion confirmed in actual UI",
+  "appleStatus": "Im Test",
+  "warning": "Vendor UnityRuntime.framework dSYM missing; upload completed with warning. Game/UnityFramework symbols retained.",
+  "cliAttempt": "Export upload rejected by account providerId lookup; GUI upload of same reviewed archive succeeded",
+  "deliveryVerifiedAt": "2026-10-11T21:01:55.847269+00:00",
+  "appleBuildId": "7d2ca7a3-35cb-4179-bfea-ee8e1360a3d4",
+  "internalGroup": "Kamilunavo Intern",
+  "groupId": "1f1e1ba3-ea2f-4827-86b3-5c74e06ddbc2",
+  "testerCount": 1,
+  "germanTestNotesSaved": true,
+  "compliance": "None of the listed custom/industry algorithms; source uses Apple operating-system encryption; saved in actual ASC questionnaire",
+  "publicAppReviewSubmitted": false,
+  "productionAdsActivated": false,
+  "deliveryEvidence": [
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/apple-build11-details.txt",
+      "sha256": "ff45975a27bb4140660ec6c4bb9bf911a68544caf18098df1bad58a95696d832"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/apple-build11-details.jpeg",
+      "sha256": "c0ae1fbfb5cf5af9cd3869900fb23dcbf2ebb60ac55759f56a5f2f759bb265db"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/apple-build11-im-test.txt",
+      "sha256": "1cdd0faa632d74b1a30628e9d8de8544768ea65f84924b380bb9b33b05fc1577"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/apple-build11-im-test.jpeg",
+      "sha256": "cae4c603c66d025368f7d01ee251d63a8f58bb832023e05f4d608692eef10b6f"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/testflight-what-to-test-de.txt",
+      "sha256": "ff0e4bb01ffced959d86d9dec4a432bea2c8986519fa6e09386bd7b41f4847a5"
+    }
+  ]
+}
