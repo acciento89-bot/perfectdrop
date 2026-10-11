@@ -458,3 +458,12 @@ Fresh final-style actual Mac player PASS: all8 real UI design selections change 
 New source adds a visible direct Shop, permanent separate Remove Ads nonconsumable bit4 (Germany EUR1.99 requested catalog target; actual store metadata only), premium purchase and Restore before long lists. Forced interstitials are considered only at safe genuinely successful result boundaries after at least3 successful completions and at least180 seconds since session start/last actual fullscreen ad. Tutorials, driving/repair/active play, background, other native providers and unavailable ads are excluded; no deferred show. Voluntary rewarded videos remain optional and delay subsequent forced advertising. Purchase persistence/idempotency/partial-catalog revocation protection and parent Back are preserved. QA disables native SDK requests including Store reconnect/purchase/restore; privacy invalidates cached forced ads and generations.
 
 New engine fixture: `Kamilunavo.PerfectDrop.Editor.DropInterstitialValidation.Validate`. Independent source review findings were corrected before fresh root validation. Exact final validation/build/runtime receipt lives under `/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Commerce-verified-evidence.json`; it distinguishes engine/player success from unrun real-device/store/graphics gates. Catalog creation/price, live units, actual device sandbox purchase/restore/refund and UMP/SDK lifecycle remain pending. All4 visual concept gates remain FAILED; no TestFlight upload or version increment.
+
+
+## 2026-10-11 — actual Concept comparison and graphics refinement
+
+Replace unrelated modern-skyline menu artwork with cached genuine terrace-world renders; deterministic chapter lighting/probe snapshot, closer architecture, all-side windows/cornices, mineral surfaces, bounded owned 3D cloud relief and stronger metal reflections.
+
+Mac build exit0; preview27 incl opposite ambient-probe cold renders/leases/restoration; terrace177143 vertices/14active renderers; cloud12/nav2436/style8/interstitial53/music42. Fresh actual UI and all8 style selection/shader/save/reload suites PASS; runner intentionally terminated only after PASS (exit143).
+
+The sparse historical skyline, repeated luminous windows, simplified vegetation/cloud shapes, lighting, slab proportions and flat menu typography still fail the approved Concept. **Visual gate stays FAILED; no TestFlight.** Exact proof/capture paths and remaining gaps: `docs/GRAPHICS-COMPARISON-20261011.md`.

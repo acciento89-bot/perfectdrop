@@ -87,20 +87,31 @@ namespace Kamilunavo.PerfectDrop.Visuals
         {
             chapter=Mathf.Clamp(chapter,0,2);ActiveChapter=chapter;TerraceArtOwner.SelectChapter(chapter);
             if(_skyMaterial==null)return;
+            ConfigureTerraceSky(_skyMaterial,chapter);
+            RenderSettings.ambientSkyColor=chapter==2?new Color(.35f,.43f,.66f):chapter==0?new Color(.57f,.65f,.81f):new Color(.47f,.48f,.67f);
+        }
+
+        public static Material CreateTerracePreviewSky(int chapter,Vector3 origin)
+        {
+            var shader=Resources.Load<Shader>("PerfectDropSky");
+            var material=new Material(shader){name="OwnedTerracePreviewSky",hideFlags=HideFlags.HideAndDontSave};
+            ConfigureTerraceSky(material,Mathf.Clamp(chapter,0,2));material.SetVector("_CloudOrigin",origin);return material;
+        }
+        private static void ConfigureTerraceSky(Material material,int chapter)
+        {
             var stem=chapter==0?"CloudCityDay":chapter==2?"CloudCityNight":"CloudCity";
             var portrait=Resources.Load<Texture2D>("Art/"+stem+"Portrait")??Resources.Load<Texture2D>("Art/CloudCityPortrait");
             var landscape=Resources.Load<Texture2D>("Art/"+stem+"Landscape")??Resources.Load<Texture2D>("Art/CloudCityLandscape");
-            if(portrait!=null)_skyMaterial.SetTexture("_BackdropPortrait",portrait);
-            if(landscape!=null)_skyMaterial.SetTexture("_BackdropLandscape",landscape);
-            _skyMaterial.SetFloat("_UseBackdrop",0);
-            _skyMaterial.SetColor("_TopColor",chapter==0?new Color(.15f,.38f,.66f):chapter==1?new Color(.095f,.16f,.32f):new Color(.025f,.04f,.105f));
-            _skyMaterial.SetColor("_MidColor",chapter==0?new Color(.53f,.69f,.83f):chapter==1?new Color(.43f,.40f,.56f):new Color(.13f,.21f,.36f));
-            _skyMaterial.SetColor("_HorizonColor",chapter==0?new Color(.98f,.83f,.62f):chapter==1?new Color(1,.55f,.26f):new Color(.35f,.43f,.63f));
-            _skyMaterial.SetColor("_BottomColor",chapter==0?new Color(.44f,.58f,.68f):chapter==1?new Color(.40f,.31f,.40f):new Color(.12f,.18f,.29f));
-            _skyMaterial.SetColor("_SunColor",chapter==2?new Color(.64f,.78f,1f):new Color(1.2f,.81f,.43f));
-            _skyMaterial.SetVector("_SunDirection",chapter==2?new Vector4(-.58f,.29f,.68f,0):new Vector4(.72f,.085f,.65f,0));
-            _skyMaterial.SetColor("_CloudColor",chapter==0?new Color(.94f,.94f,.88f):chapter==1?new Color(.78f,.59f,.57f):new Color(.29f,.36f,.51f));
-            RenderSettings.ambientSkyColor=chapter==2?new Color(.35f,.43f,.66f):chapter==0?new Color(.57f,.65f,.81f):new Color(.47f,.48f,.67f);
+            if(portrait!=null)material.SetTexture("_BackdropPortrait",portrait);
+            if(landscape!=null)material.SetTexture("_BackdropLandscape",landscape);
+            material.SetFloat("_UseBackdrop",0);
+            material.SetColor("_TopColor",chapter==0?new Color(.15f,.38f,.66f):chapter==1?new Color(.095f,.16f,.32f):new Color(.025f,.04f,.105f));
+            material.SetColor("_MidColor",chapter==0?new Color(.53f,.69f,.83f):chapter==1?new Color(.43f,.40f,.56f):new Color(.13f,.21f,.36f));
+            material.SetColor("_HorizonColor",chapter==0?new Color(.98f,.83f,.62f):chapter==1?new Color(1,.55f,.26f):new Color(.35f,.43f,.63f));
+            material.SetColor("_BottomColor",chapter==0?new Color(.44f,.58f,.68f):chapter==1?new Color(.40f,.31f,.40f):new Color(.12f,.18f,.29f));
+            material.SetColor("_SunColor",chapter==2?new Color(.64f,.78f,1f):new Color(1.2f,.81f,.43f));
+            material.SetVector("_SunDirection",chapter==2?new Vector4(-.58f,.29f,.68f,0):new Vector4(.72f,.085f,.65f,0));
+            material.SetColor("_CloudColor",chapter==0?new Color(.94f,.94f,.88f):chapter==1?new Color(.88f,.74f,.70f):new Color(.39f,.47f,.64f));
         }
 
         public static void DecoratePlatform(Transform platform, int index)
@@ -762,7 +773,9 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     dir.Normalize();
                     var sky=Color.Lerp(new Color(.24f,.19f,.29f),new Color(.53f,.65f,.9f),Mathf.Clamp01(dir.y*.6f+.45f));
                     var glow=Mathf.Pow(Mathf.Max(0,Vector3.Dot(dir,sun)),12);
-                    pixels[y*size+x]=sky+new Color(1.1f,.64f,.26f)*glow;
+                    var softbox=Mathf.Pow(Mathf.Clamp01(Vector3.Dot(dir,new Vector3(.6f,.45f,-.7f).normalized)),34);
+                    var archShadow=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(dir.y+.12f)*6),3)*.18f;
+                    pixels[y*size+x]=sky*(1-archShadow)+new Color(1.1f,.64f,.26f)*glow+new Color(.95f,1.05f,1.2f)*softbox;
                 }
                 map.SetPixels(pixels,(CubemapFace)face);
             }
@@ -822,6 +835,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             if (material.HasProperty("_BrushFinish")) material.SetFloat("_BrushFinish", name == "Platform" || name == "PlatformTop" || name == "GoldPlate" ? 1f : 0f);
             if (material.HasProperty("_GoldFinish")) material.SetFloat("_GoldFinish", name == "GoldPlate" ? 1f : 0f);
             if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
+            if(name=="IvoryDais")material.SetFloat("_StoneFinish",1);
             if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
 
             if (emission.HasValue && material.HasProperty("_EmissionColor"))

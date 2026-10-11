@@ -96,7 +96,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Kamilunavo.PerfectDrop.Visuals.WorldArt.SetChapter(_chapter);
             var stars=0;foreach(var score in Game.Profile.LevelStars)stars+=score;
             _home.Find("HeroTower").GetComponent<TowerPreviewGraphic>().ApplyStyle(Game.Profile.Style);_heroGoal.text="Level "+Game.Profile.UnlockedLevel+" · "+StackCampaign.Level(Game.Profile.UnlockedLevel).Target+T(" Blöcke"," blocks");
-            var family="CloudCityNight";_heroArt.texture=Resources.Load<Texture2D>("Art/"+family+"Portrait");GalleryTheme.Crop(_heroArt);
+            _heroArt.GetComponent<TerracePreviewLease>().Apply(_chapter,true);GalleryTheme.Crop(_heroArt);
             _homeInfo.text=stars+" / 90 "+T("STERNE","STARS")+" · "+Game.Profile.Coins+" COINS";
             for(var i=0;i<3;i++)
             { _chapters[i].interactable=Game.Profile.UnlockedLevel>i*10;GalleryTheme.Style(_chapters[i],i==_chapter?Navy:GalleryTheme.Card); }

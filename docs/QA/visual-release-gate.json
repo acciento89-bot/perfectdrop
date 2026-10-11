@@ -1,10 +1,10 @@
 {
   "game": "Perfect Drop",
   "status": "failed",
-  "sourceSha256": null,
-  "reviewer": "Codex actual rendered image inspection",
+  "sourceSha256": "f968babe5b169af62f7af4d85b0d67bed45e3da53a436f370e5c66ea440a9c81",
+  "reviewer": "Codex actual rendered image inspection against unchanged Oct10 approved board",
   "reviewedAt": "2026-10-11",
-  "reason": "Actual player now renders clouds below the horizon and the new Shop/Back flow passes, but clouds remain soft/flat and sparse architecture, tower finish and modern skyline menu artwork still differ materially from the approved terrace-city concept. Functional and music validation do not satisfy art acceptance. No TestFlight release.",
+  "reason": "The sparse historical skyline, repeated luminous windows, simplified vegetation/cloud shapes, lighting, slab proportions and flat menu typography still fail the approved Concept. Mac build exit0; preview27 incl opposite ambient-probe cold renders/leases/restoration; terrace177143 vertices/14active renderers; cloud12/nav2436/style8/interstitial53/music42. Fresh actual UI and all8 style selection/shader/save/reload suites PASS; runner intentionally terminated only after PASS (exit143).",
   "criteria": {
     "concept_similarity": "failed",
     "character_or_tower": "pending",
@@ -23,39 +23,69 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/focused-landing.png",
-        "sha256": "9b65733685a7fb8990d9d496285a08bccb1b3754d54476b4ede964812ef8db1f",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/focused-landing.png",
+        "sha256": "c04ce8162bb133fc82d2c734bfe28812a1049ac104b19e122e7a6a2968bdcf3a",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/tutorial-stack.png",
-        "sha256": "9648e5a5b8fc87d91f2cc6bc7e900f56f368668dd53fa187e0404bac82c4cd92",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/tutorial-stack.png",
+        "sha256": "10db28bf6db88b322a766d9cd209569d8c6b9abe860a5c659377ff48c21628ca",
         "origin": "Unity-render"
       }
     ],
     "submenus": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/shop-offline-portrait.png",
-        "sha256": "f2c404db59ef1e04fd96caa0d51ba333c5834c0b3b79ffd539fa86dd2861e827",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/styles.png",
+        "sha256": "7324cbbd0dd6f9eaf60d7fb3d3653068081dfd3fd4a1565d5b5495dc268cf5d6",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/shop-offline-landscape.png",
-        "sha256": "daee0835ae33fcfbb28eb7947bbb7cea30ad3145e9a5b8228e4d441bd7d351ea",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/RuntimeFinal/shop-offline-portrait.png",
+        "sha256": "fff7f5949ef608bebab34f7a01676c7dc81ccbc34c4dce5831d0acd1bfc6d8d4",
         "origin": "Unity-render"
       }
     ],
     "variants": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicStylesRuntime/style-3-gameplay.png",
-        "sha256": "b2571b8a78189b6678e372805676bde96931332035d5528b258df3724475e5ad",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-0-gameplay.png",
+        "sha256": "f521b2fac249f72216faf0e0cc9e8d39b8e485d3bd7517370baff2eb0c4af30c",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicStylesRuntime/style-5-gameplay.png",
-        "sha256": "1708bc150de370cd391ea04e090fb48d7f424c925c21fb63bf7a8ffe5d3578ed",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-1-gameplay.png",
+        "sha256": "3e743d63289d91aec10c762d24d4fcfcc6a392de201f67c7245d7b2d8aa3d381",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-2-gameplay.png",
+        "sha256": "19d49bb1fb754a91dbcf0723e8b2c36cd98e8c926fef90e0bcba3bb4fe3d11bd",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-3-gameplay.png",
+        "sha256": "3b8f75ab882920facca4bf413caf0537ce2dfe9d6af9e30c42925cec3e13b970",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-4-gameplay.png",
+        "sha256": "41531da01bb4938bc601cb84ee0b6aff42d5a6e41e0fd56c82e257d94a77bf0d",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-5-gameplay.png",
+        "sha256": "ae7cedce4db4949b7a668ffa1abbae88207f924ab617b4e65d79e244c4cdf92a",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-6-gameplay.png",
+        "sha256": "ba058ea0692239ca72a156017df93ebc93226b78881864444d763b7b3651f771",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/StylesFinal/style-7-gameplay.png",
+        "sha256": "fcfa3817e1db37b70c1d1c969a21847f3a2862bf471327c898f875f40bf1d9a5",
         "origin": "Unity-render"
       }
     ]

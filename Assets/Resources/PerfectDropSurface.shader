@@ -8,6 +8,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         _GoldFinish ("Brushed gold finish", Range(0,1)) = 0
         _BodyFinish ("Lacquer or ceramic detail", Range(0,2)) = 0
         _BrushFinish ("Fine metal brushing", Range(0,1)) = 0
+        _StoneFinish ("Cut stone and mortar", Range(0,1)) = 0
+        _WaterFinish ("Canal ripples", Range(0,1)) = 0
         _Metallic ("Metallic", Range(0,1)) = 0
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _EmissionColor ("Emission", Color) = (0,0,0,0)
@@ -32,6 +34,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         half _GoldFinish;
         half _BodyFinish;
         half _BrushFinish;
+        half _StoneFinish;
+        half _WaterFinish;
         half _Metallic;
         half _Glossiness;
 
@@ -39,6 +43,7 @@ Shader "Kamilunavo/PerfectDropSurface"
         struct Input
         {
             float3 worldPos;
+            float3 worldNormal;
             float2 uv_MainTex;
         };
 
@@ -73,8 +78,20 @@ Shader "Kamilunavo/PerfectDropSurface"
             cleanMetal=lerp(cleanMetal,cleanMetal*.90+vein*.28,jade);
             cleanMetal=lerp(cleanMetal,1.02-vein*.065,ceramic);
             o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.97,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
+            float3 an=abs(IN.worldNormal);
+            float2 stoneUV=an.y>.7?IN.worldPos.xz:an.x>an.z?IN.worldPos.zy:IN.worldPos.xy;
+            float course=floor(stoneUV.y*1.55);
+            float2 stoneCell=float2(stoneUV.x*1.18+frac(course*.5)*.5,stoneUV.y*1.55);
+            float2 edgeDistance=min(frac(stoneCell),1-frac(stoneCell));
+            half joint=1-smoothstep(.014,.039,min(edgeDistance.x,edgeDistance.y));
+            half quarry=frac(sin(dot(floor(stoneCell),float2(31.13,71.29)))*13758.5453);
+            half stonePore=frac(sin(dot(floor(stoneUV*110),float2(19.1,47.7)))*41758.3453);
+            o.Albedo*=lerp(1,(.88+quarry*.15+stonePore*.035)*(1-joint*.14),_StoneFinish);
+            half ripple=sin(IN.worldPos.x*3.9+sin(IN.worldPos.z*2.8))*sin(IN.worldPos.z*4.3+IN.worldPos.x*.3);
+            o.Albedo*=lerp(1,.91+ripple*.12,_WaterFinish);
+            o.Occlusion=1-joint*.12*_StoneFinish;
             o.Metallic = _Metallic;
-            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.10+edge*.12));
+            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.055+edge*.06)-_WaterFinish*abs(ripple)*.10);
             o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish*.72, _GoldFinish);
             o.Alpha = tint.a;
         }

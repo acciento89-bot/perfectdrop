@@ -12,6 +12,7 @@ Shader "Kamilunavo/PerfectDropSky"
         _CloudColor ("Cloud reflected light", Color) = (0.94,0.85,0.74,1)
         _SunColor ("Sun", Color) = (1.4,0.8,0.30,1)
         _SunDirection ("Sun Direction", Vector) = (0.72,0.05,0.65,0)
+        _CloudOrigin ("Cloud world origin", Vector) = (0,0,0,0)
     }
 
     SubShader
@@ -34,6 +35,7 @@ Shader "Kamilunavo/PerfectDropSky"
             fixed4 _SunColor;
             fixed4 _CloudColor;
             float4 _SunDirection;
+            float4 _CloudOrigin;
             sampler2D _BackdropPortrait, _BackdropLandscape;
             float4 _BackdropPortrait_TexelSize, _BackdropLandscape_TexelSize;
             float _UseBackdrop;
@@ -54,7 +56,7 @@ Shader "Kamilunavo/PerfectDropSky"
             float cloudNoise(float2 p) {float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);return lerp(lerp(hash21(cell),hash21(cell+float2(1,0)),f.x),lerp(hash21(cell+float2(0,1)),hash21(cell+1),f.x),f.y);}
             float cloudBank(float2 p)
             {
-                return cloudNoise(p)*.64 + cloudNoise(p*2.13+7.4)*.26 + cloudNoise(p*4.31-2.6)*.10;
+                return cloudNoise(p)*.49 + cloudNoise(p*2.13+7.4)*.25 + cloudNoise(p*4.31-2.6)*.15 + cloudNoise(p*8.71+12.3)*.075 + cloudNoise(p*17.17-4.7)*.035;
             }
             fixed4 frag(v2f i) : SV_Target
             {
@@ -92,13 +94,21 @@ Shader "Kamilunavo/PerfectDropSky"
                 // relief has parallax when the camera rises or the player orbits.
                 // No fullscreen city photograph, transparent shell or animation.
                 float below=1-smoothstep(-.24,-.015,d.y);
-                float distance=min(360,max(1,_WorldSpaceCameraPos.y+12)/max(.035,-d.y));
-                float2 bankUV=(_WorldSpaceCameraPos.xz+d.xz*distance)*.11;
+                float3 eye=_WorldSpaceCameraPos-_CloudOrigin.xyz;
+                float distance=min(360,max(1,eye.y+12)/max(.035,-d.y));
+                float2 bankUV=(eye.xz+d.xz*distance)*.027;
+                float elevation=cloudBank(bankUV)*4.8;
+                distance=min(360,max(1,eye.y+12-elevation)/max(.035,-d.y));
+                bankUV=(eye.xz+d.xz*distance)*.027;
                 float bank=cloudBank(bankUV);
-                float relief=clamp(cloudBank(bankUV+float2(.11,.07))-bank,-.06,.06);
-                float crest=smoothstep(.24,.78,bank);
-                float3 bankColor=lerp(_BottomColor.rgb*.72,_CloudColor.rgb*1.10,crest);
-                bankColor+=relief*1.2 + _SunColor.rgb*pow(saturate(bank),4)*.09;
+                float dx=cloudBank(bankUV+float2(.035,0))-bank;
+                float dz=cloudBank(bankUV+float2(0,.035))-bank;
+                float3 cloudNormal=normalize(float3(-dx*5,1,-dz*5));
+                float lighting=saturate(dot(cloudNormal,normalize(float3(_SunDirection.x,.65,_SunDirection.z))));
+                float crest=smoothstep(.22,.62,bank);
+                float3 bankColor=lerp(lerp(_BottomColor.rgb,_CloudColor.rgb,.40),_CloudColor.rgb,crest);
+                bankColor*=.89+lighting*.13;
+                bankColor+=_SunColor.rgb*pow(saturate(bank),3)*.045;
                 bankColor=lerp(bankColor,_HorizonColor.rgb*.84,smoothstep(100,360,distance)*.65);
                 c=lerp(c,bankColor,below);
                 return fixed4(c, 1);
