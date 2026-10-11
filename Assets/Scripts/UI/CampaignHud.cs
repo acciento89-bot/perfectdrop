@@ -24,6 +24,7 @@ namespace Kamilunavo.PerfectDrop.UI
             TowerPreviewGraphic.AddStyle(_home,"HeroTower",0,Vector2.zero,Vector2.one,6);
             _campaignNavigation=UiFactory.Button(_home,"CampaignNavigation",T("KAPITEL & LEVELS","CHAPTERS & LEVELS"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowCampaign);
             _campaignBack=UiFactory.Button(_home,"CampaignBack",T("‹ MENÜ","‹ HOME"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowHome);
+            UiFactory.Button(_home,"DirectShop",T("SHOP","SHOP"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowShop);
             UiFactory.Label(_home,"Tagline",T("DEIN TIMING. DEINE SKYLINE.","YOUR TIMING. YOUR SKYLINE."),23,Vector2.zero,Vector2.one,TextAnchor.MiddleLeft,GalleryTheme.Text,FontStyle.Bold);
             UiFactory.Panel(_home,"MapFooter",GalleryTheme.Night,Vector2.zero,Vector2.one);
             UiFactory.Label(_home,"Title","PERFECT DROP",49,Vector2.zero,Vector2.one,TextAnchor.MiddleLeft,GalleryTheme.Text,FontStyle.Bold);
@@ -83,11 +84,12 @@ namespace Kamilunavo.PerfectDrop.UI
             _home.gameObject.SetActive(false);_styles.gameObject.SetActive(false);_popup.gameObject.SetActive(false);HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f); Refresh();
         }
+        public bool HomeOpen=>_home!=null&&_home.gameObject.activeSelf;
         public void ShowHome()
         {
-            if(MenuNavigationLocked)return;_campaignOpen=false;_settingsReturnsHome=false;HideMenus();_home.gameObject.SetActive(true);RefreshHome();Refresh();LayoutCampaign(_campaignPane);
+            if(MenuNavigationLocked)return;_campaignOpen=false;_settingsReturnsHome=false;HideMenus();_home.gameObject.SetActive(true);RefreshHome();Refresh();LayoutCampaign(_campaignPane);Game.Videos?.Prepare();
         }
-        private bool MenuNavigationLocked=>(Game.Purchases?.IsPresenting??false)||(Game.Videos?.IsPresenting??false);
+        private bool MenuNavigationLocked=>(Game.Purchases?.IsPresenting??false)||(Game.Videos?.IsPresenting??false)||(Game.Interstitials?.IsPresenting??false);
         private void ShowCampaign(){if(MenuNavigationLocked)return;_campaignOpen=true;_levelScroll.verticalNormalizedPosition=1;RefreshHome();LayoutCampaign(_campaignPane);}
         private void RefreshHome()
         {
@@ -143,7 +145,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _home.GetComponent<Image>().color=GalleryTheme.Night;_home.GetComponent<Image>().material=null;header.GetComponent<Image>().material=null;footer.GetComponent<Image>().material=null;footer.SetAsFirstSibling();
             float playY=_campaignOpen?h-8:h-play-8;_continue.gameObject.SetActive(!_campaignOpen);Position((RectTransform)_continue.transform,margin,playY,w-margin*2,play);GalleryTheme.Style(_continue,Gold);
             _home.Find("Tagline").gameObject.SetActive(false);_heroGallery.gameObject.SetActive(!_campaignOpen);_home.Find("HeroTower").gameObject.SetActive(!_campaignOpen);_home.Find("HeroGoalPlate").gameObject.SetActive(!_campaignOpen);_heroGoal.gameObject.SetActive(!_campaignOpen);_campaignNavigation.gameObject.SetActive(!_campaignOpen);_campaignBack.gameObject.SetActive(_campaignOpen);gallery.gameObject.SetActive(_campaignOpen);
-            foreach(var chapter in _chapters)chapter.gameObject.SetActive(_campaignOpen);_endless.gameObject.SetActive(_campaignOpen);_challenge.gameObject.SetActive(_campaignOpen);_home.Find("Styles").gameObject.SetActive(!_campaignOpen);_home.Find("City").gameObject.SetActive(!_campaignOpen);_home.Find("HomeSettings").gameObject.SetActive(!_campaignOpen);_home.Find("Learn").gameObject.SetActive(!_campaignOpen);
+            foreach(var chapter in _chapters)chapter.gameObject.SetActive(_campaignOpen);_endless.gameObject.SetActive(_campaignOpen);_challenge.gameObject.SetActive(_campaignOpen);_home.Find("Styles").gameObject.SetActive(!_campaignOpen);_home.Find("City").gameObject.SetActive(!_campaignOpen);_home.Find("HomeSettings").gameObject.SetActive(!_campaignOpen);_home.Find("Learn").gameObject.SetActive(!_campaignOpen);_home.Find("DirectShop").gameObject.SetActive(!_campaignOpen);
             Position(header,0,0,w,70);Position(title,margin,8,w-margin*2,32);Position(progress,margin,43,w-margin*2,22);title.GetComponent<Text>().text=_campaignOpen?T("KAPITEL & LEVELS","CHAPTERS & LEVELS"):"PERFECT DROP";
             if(!_campaignOpen)
             {
@@ -154,7 +156,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 if(h<240&&landscape){Position(title,margin,6,heroW,30);Position(progress,margin,38,heroW,24);_heroGoal.gameObject.SetActive(false);_home.Find("HeroGoalPlate").gameObject.SetActive(false);}
                 Position(footer,navX,navY-5,navW,h-navY);float cell=(navW-gap*2)/3;var main=new[]{_campaignNavigation,_home.Find("Styles").GetComponent<Button>(),_home.Find("City").GetComponent<Button>()};
                 for(int i=0;i<3;i++){Position((RectTransform)main[i].transform,navX+i*(cell+gap),navY,cell,row);GalleryTheme.Style(main[i],GalleryTheme.Card);}
-                float secondary=(navW-gap)/2;var options=_home.Find("HomeSettings").GetComponent<Button>();var learn=_home.Find("Learn").GetComponent<Button>();Position((RectTransform)options.transform,navX,navY+row+gap,secondary,row);Position((RectTransform)learn.transform,navX+secondary+gap,navY+row+gap,secondary,row);GalleryTheme.Style(options,GalleryTheme.Card);GalleryTheme.Style(learn,GalleryTheme.Card);SetLabel(learn,T("TIMING ÜBEN","TIMING PRACTICE"));
+                float secondary=(navW-gap*2)/3;var options=_home.Find("HomeSettings").GetComponent<Button>();var learn=_home.Find("Learn").GetComponent<Button>();var shop=_home.Find("DirectShop").GetComponent<Button>();Position((RectTransform)shop.transform,navX,navY+row+gap,secondary,row);Position((RectTransform)options.transform,navX+secondary+gap,navY+row+gap,secondary,row);Position((RectTransform)learn.transform,navX+2*(secondary+gap),navY+row+gap,secondary,row);GalleryTheme.Style(shop,GalleryTheme.Card);GalleryTheme.Style(options,GalleryTheme.Card);GalleryTheme.Style(learn,GalleryTheme.Card);SetLabel(learn,T("TUTORIAL","TUTORIAL"));
                 SetLabel(_campaignNavigation,T("LEVELS","LEVELS"));SetLabel(main[1],T("DESIGNS","DESIGNS"));SetLabel(main[2],T("MEINE STADT","MY CITY"));
             }
             else

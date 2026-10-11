@@ -52,6 +52,10 @@ Shader "Kamilunavo/PerfectDropSky"
 
             float hash21(float2 p) { float3 p3=frac(float3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return frac((p3.x+p3.y)*p3.z); }
             float cloudNoise(float2 p) {float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);return lerp(lerp(hash21(cell),hash21(cell+float2(1,0)),f.x),lerp(hash21(cell+float2(0,1)),hash21(cell+1),f.x),f.y);}
+            float cloudBank(float2 p)
+            {
+                return cloudNoise(p)*.64 + cloudNoise(p*2.13+7.4)*.26 + cloudNoise(p*4.31-2.6)*.10;
+            }
             fixed4 frag(v2f i) : SV_Target
             {
                 if (_UseBackdrop > .5)
@@ -83,6 +87,20 @@ Shader "Kamilunavo/PerfectDropSky"
                 float density=cloudNoise(cloudUV)*.62+cloudNoise(cloudUV*2.17+4.2)*.26+cloudNoise(cloudUV*4.1-1.8)*.12;
                 float veil=smoothstep(.53,.76,density)*smoothstep(-.30,-.04,d.y)*(1-smoothstep(.45,.85,d.y));
                 c=lerp(c,_CloudColor.rgb+sunGlow*.22,veil*.72);
+                // The elevated stack camera looks below the horizon. Project a
+                // static cloud bank below the terrace into world space, so its
+                // relief has parallax when the camera rises or the player orbits.
+                // No fullscreen city photograph, transparent shell or animation.
+                float below=1-smoothstep(-.24,-.015,d.y);
+                float distance=min(360,max(1,_WorldSpaceCameraPos.y+12)/max(.035,-d.y));
+                float2 bankUV=(_WorldSpaceCameraPos.xz+d.xz*distance)*.11;
+                float bank=cloudBank(bankUV);
+                float relief=clamp(cloudBank(bankUV+float2(.11,.07))-bank,-.06,.06);
+                float crest=smoothstep(.24,.78,bank);
+                float3 bankColor=lerp(_BottomColor.rgb*.72,_CloudColor.rgb*1.10,crest);
+                bankColor+=relief*1.2 + _SunColor.rgb*pow(saturate(bank),4)*.09;
+                bankColor=lerp(bankColor,_HorizonColor.rgb*.84,smoothstep(100,360,distance)*.65);
+                c=lerp(c,bankColor,below);
                 return fixed4(c, 1);
             }
             ENDCG

@@ -19,7 +19,8 @@ namespace Kamilunavo.PerfectDrop.UI
         public Rect CityPane { get; private set; } = new Rect(0,0,1,1);
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
         public bool MapOrStyleOpen => CampaignMenuOpen;
-        public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false);
+        public bool ResultOpen=>_popup!=null&&_popup.gameObject.activeSelf&&Game.Run.Completed;
+        public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false) || (Game.Interstitials?.IsPresenting??false);
         private static Color Navy => new(0.035f, 0.065f, 0.12f, 1f);
         private static Color Gold => new(1f, 0.79f, 0.16f);
         public static string T(string de, string en) => GameText.German ? de : en;
@@ -53,7 +54,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _popup = UiFactory.Panel(_safe,"ContextPanel",Navy,new Vector2(.07f,.23f),new Vector2(.93f,.75f));
             _popupTitle = UiFactory.Label(_popup,"Title","",45,new Vector2(.07f,.79f),new Vector2(.93f,.96f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
             _popupBody = UiFactory.Label(_popup,"Body","",29,new Vector2(.07f,.58f),new Vector2(.93f,.79f),TextAnchor.MiddleCenter,Color.white);
-            _retry = UiFactory.Button(_popup,"Retry",T("NOCHMAL","PLAY AGAIN"),Gold,Navy,new Vector2(.10f,.13f),new Vector2(.90f,.31f),()=> { Close(); Game.NewRun(); });
+            _retry = UiFactory.Button(_popup,"Retry",T("NOCHMAL","PLAY AGAIN"),Gold,Navy,new Vector2(.10f,.13f),new Vector2(.90f,.31f),()=> { if(MenuNavigationLocked)return;Close(); Game.NewRun(); });
             _close = UiFactory.Button(_popup,"Close",T("WEITER","RESUME"),Gold,Navy,new Vector2(.10f,.07f),new Vector2(.90f,.18f),Close);
             _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { if(MenuNavigationLocked)return;GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
             _music = UiFactory.Button(_popup,"Music","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { if(MenuNavigationLocked)return;GamePreferences.MusicEnabled = !GamePreferences.MusicEnabled; UpdateSettings(); });

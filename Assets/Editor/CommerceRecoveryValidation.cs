@@ -35,7 +35,7 @@ namespace Kamilunavo.PerfectDrop.Editor
    var root=new GameObject("CommerceRecoveryProbe");Canvas canvas=null;var previous=StackSave.QaKey;StackSave.QaKey="kamilunavo.perfectdrop.qa.commerce-recovery";
    try
    {
-    var game=root.AddComponent<StackGame>();Set(game,"Profile",new StackProfile());Set(game,"Run",new StackRun());Set(game,"Level",StackCampaign.Level(1));
+    var game=root.AddComponent<StackGame>();Set(game,"Profile",new StackProfile{TutorialComplete=true});Set(game,"Run",new StackRun());Set(game,"Level",StackCampaign.Level(1));
     var hud=root.AddComponent<StackHud>();Set(game,"Hud",hud);hud.Build(game);canvas=hud.GetComponentInChildren<Canvas>();
     var safe=(RectTransform)typeof(StackHud).GetField("_safe",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(hud);canvas=safe.GetComponentInParent<Canvas>();
     var store=root.AddComponent<StorePurchases>();Set(game,"Purchases",store);store.Initialize(game);

@@ -9,7 +9,19 @@ namespace Kamilunavo.PerfectDrop.Monetization
     {
         private StoreController _store;
         private readonly StoreReconnectGate _reconnect=new();
-        public bool CanRetry=>Application.isMobilePlatform&&!Ready&&!Busy&&!IsPresenting&&_reconnect.CanBegin(Time.realtimeSinceStartupAsDouble);
+        private bool _restoring;
+        private static bool QaNetworkDisabled
+        {
+            get
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                return !string.IsNullOrEmpty(StackSave.QaKey);
+#else
+                return false;
+#endif
+            }
+        }
+        public bool CanRetry=>!QaNetworkDisabled && !OtherProviderPresenting && Application.isMobilePlatform&&!Ready&&!Busy&&!IsPresenting&&_reconnect.CanBegin(Time.realtimeSinceStartupAsDouble);
         public void RetryConnection(){if(CanRetry)Connect();}
         private StackGame _game;
         private readonly HashSet<string> _fetched=new();
@@ -31,7 +43,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         }
         private async void Connect()
         {
-            if(Ready||Busy||!_reconnect.TryBegin(Time.realtimeSinceStartupAsDouble))return;
+            if(QaNetworkDisabled||Ready||Busy||!_reconnect.TryBegin(Time.realtimeSinceStartupAsDouble))return;
             Busy=true;SetStatus(T("Store wird verbunden …","Connecting to store …"));
             try
             {
@@ -48,18 +60,20 @@ namespace Kamilunavo.PerfectDrop.Monetization
                 // Own pending-order handling also covers restoration, without double dispatch.
                 _store.ProcessPendingOrdersOnPurchasesFetched(false);}
                 await _store.Connect();
-                if(this==null)return;
+                if(this==null||QaNetworkDisabled)return;
                 if(_store.GetConnectionState()!=ConnectionState.Connected){Unavailable(T("Store gerade nicht erreichbar","Store currently unavailable"));return;}
                 _store.FetchProductsWithNoRetries(new List<ProductDefinition>{
                     new(CommerceRules.Starter,ProductType.NonConsumable),
-                    new(CommerceRules.Collection,ProductType.NonConsumable)});
+                    new(CommerceRules.Collection,ProductType.NonConsumable),
+                    new(CommerceRules.RemoveAds,ProductType.NonConsumable)});
             }
             catch(Exception){if(this!=null)Unavailable(T("Store gerade nicht erreichbar","Store currently unavailable"));}
             finally{_reconnect.EndAttempt();}
         }
         public string Price(string id)=>_store?.GetProductById(id)?.metadata?.localizedPriceString??"";
-        public bool Owned(string id)=>_game!=null && (_game.Profile.Commerce.Entitlements&(id==CommerceRules.Starter?1:id==CommerceRules.Collection?2:0))!=0;
-        public bool CanBuy(string id)=>Ready && !Busy && !_deferred.Contains(id) && !Owned(id) && CommerceRules.KnownProduct(id) &&
+        public bool Owned(string id)=>_game!=null && (_game.Profile.Commerce.Entitlements&CommerceRules.ProductBit(id))!=0;
+        private bool OtherProviderPresenting=>(_game?.Videos?.IsPresenting??false)||(_game?.Interstitials?.IsPresenting??false);
+        public bool CanBuy(string id)=>!QaNetworkDisabled && !OtherProviderPresenting && Ready && !Busy && !_deferred.Contains(id) && !Owned(id) && CommerceRules.KnownProduct(id) &&
             _store?.GetProductById(id)?.availableToPurchase==true && !string.IsNullOrWhiteSpace(Price(id));
         public void Buy(string id)
         {
@@ -69,13 +83,19 @@ namespace Kamilunavo.PerfectDrop.Monetization
         }
         public void Restore()
         {
-            if(_store==null || !Ready || Busy)return;
-            Busy=true;SetStatus(T("Käufe werden wiederhergestellt …","Restoring purchases …"));
-            _store.RestoreTransactions((ok,_)=>
+            if(QaNetworkDisabled || _store==null || !Ready || Busy || OtherProviderPresenting)return;
+            PresentRestore(_store.RestoreTransactions);
+        }
+        private void PresentRestore(Action<Action<bool,string>> restore)
+        {
+            _game.Save();_restoring=true;Busy=true;IsPresenting=true;SetStatus(T("Käufe werden wiederhergestellt …","Restoring purchases …"));
+            try{restore((ok,_)=>
             {
                 if(this==null)return;
+                _restoring=false;IsPresenting=false;
                 if(!ok){Busy=false;SetStatus(T("Wiederherstellung nicht verfügbar","Restore unavailable"));}
-            });
+                else Changed?.Invoke();
+            });}catch(Exception){_restoring=false;Busy=false;SetStatus(T("Wiederherstellung nicht verfügbar","Restore unavailable"));}
         }
         private void ProductsFetched(List<Product> products)
         {
@@ -105,7 +125,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
             try
             {
                 // A partial catalog response is not evidence that another owned product was revoked.
-                if(!pendingFailure && _fetched.Contains(CommerceRules.Starter) && _fetched.Contains(CommerceRules.Collection))CommerceRules.ReconcileEntitlements(_game.Profile,active);
+                if(!pendingFailure && _fetched.Contains(CommerceRules.Starter) && _fetched.Contains(CommerceRules.Collection) && _fetched.Contains(CommerceRules.RemoveAds))CommerceRules.ReconcileEntitlements(_game.Profile,active);
                 StackSave.Save(_game.Profile);
                 Busy=false;SetStatus(pendingFailure?T("Kauf noch offen – später wiederherstellen","Purchase pending – restore later"):_deferred.Count>0?T("Ein Kauf wartet auf Freigabe","A purchase is awaiting approval"):T("Shop bereit","Shop ready"));
                 _game.RefreshProfileStyle();_game.Hud.Refresh();
@@ -132,7 +152,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         {
             if(Fulfill(order)){Busy=false;SetStatus(T("Kauf freigeschaltet","Purchase unlocked"));}
         }
-        private void Confirmed(Order order){Busy=false;IsPresenting=false;if(order is FailedOrder)SetStatus(T("Kaufbestätigung noch offen – später wiederherstellen","Purchase confirmation pending – restore later"));else Changed?.Invoke();}
+        private void Confirmed(Order order){Busy=false;IsPresenting=_restoring;if(order is FailedOrder)SetStatus(T("Kaufbestätigung noch offen – später wiederherstellen","Purchase confirmation pending – restore later"));else Changed?.Invoke();}
         private void Failed(FailedOrder order){Busy=false;SetStatus(order.FailureReason==PurchaseFailureReason.UserCancelled?T("Kauf abgebrochen","Purchase cancelled"):T("Kauf nicht abgeschlossen","Purchase not completed"));}
         private void Deferred(DeferredOrder order)
         {
@@ -143,7 +163,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         private void ProductsFailed(ProductFetchFailed failure)=>Unavailable(T("Shop gerade nicht verfügbar","Shop currently unavailable"));
         private void PurchasesFailed(PurchasesFetchFailureDescription failure){Busy=false;SetStatus(T("Käufe konnten nicht geladen werden","Purchases could not be loaded"));}
         private void Unavailable(string message){_reconnect.Failed(Time.realtimeSinceStartupAsDouble);Ready=false;Busy=false;SetStatus(message);}
-        private void SetStatus(string message){if(!Busy)IsPresenting=false;Status=message;Changed?.Invoke();}
+        private void SetStatus(string message){if(!Busy&&!_restoring)IsPresenting=false;Status=message;Changed?.Invoke();}
         private void OnDestroy()
         {
             if(_store==null)return;

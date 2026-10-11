@@ -8,6 +8,8 @@ namespace Kamilunavo.PerfectDrop.UI
         private RectTransform _shop, _shopViewport, _shopContent;
         private ScrollRect _shopScroll;
         private Text _shopStatus;
+        private Button _removeAds;
+        private bool _shopReturnsStyles;
         private Button _starterBuy, _collectionBuy, _restorePurchases, _retryPurchases, _video, _privacy;
         private int _shopSecond=-1;
         private Button[] _premiumStyles;
@@ -15,7 +17,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void BuildCommerceMenu()
         {
             _shop=UiFactory.Panel(_safe,"PremiumShop",GalleryTheme.Night,Vector2.zero,Vector2.one);
-            UiFactory.Label(_shop,"Title",T("EXTRA-DESIGNS","EXTRA DESIGNS"),42,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,GalleryTheme.Text,FontStyle.Bold);
+            UiFactory.Label(_shop,"Title",T("SHOP & PREMIUM","SHOP & PREMIUM"),42,new Vector2(.06f,.90f),new Vector2(.94f,.98f),TextAnchor.MiddleLeft,GalleryTheme.Text,FontStyle.Bold);
             _shopStatus=UiFactory.Label(_shop,"StoreStatus","",25,new Vector2(.06f,.80f),new Vector2(.94f,.9f),TextAnchor.MiddleLeft,GalleryTheme.Text);
             var scrollObject=new GameObject("ShopScroll",typeof(RectTransform),typeof(ScrollRect));
             scrollObject.transform.SetParent(_shop,false);Set((RectTransform)scrollObject.transform,.04f,.19f,.96f,.78f);
@@ -25,6 +27,8 @@ namespace Kamilunavo.PerfectDrop.UI
             _shopContent=new GameObject("ShopContent",typeof(RectTransform)).GetComponent<RectTransform>();_shopContent.SetParent(_shopViewport,false);
             _shopContent.anchorMin=new Vector2(0,1);_shopContent.anchorMax=Vector2.one;_shopContent.pivot=new Vector2(.5f,1);
             _shopScroll.viewport=_shopViewport;_shopScroll.content=_shopContent;
+            _removeAds=ShopButton("RemoveAds","",()=>Game.Purchases?.Buy(CommerceRules.RemoveAds));
+            _restorePurchases=ShopButton("RestorePurchases",T("KÄUFE WIEDERHERSTELLEN","RESTORE PURCHASES"),()=>Game.Purchases?.Restore());
             _starterBuy=ShopButton("BuyStarter","",()=>Game.Purchases?.Buy(CommerceRules.Starter));
             _collectionBuy=ShopButton("BuyCollection","",()=>Game.Purchases?.Buy(CommerceRules.Collection));
             GalleryTheme.Style(_starterBuy,Navy);GalleryTheme.Style(_collectionBuy,Navy);
@@ -42,8 +46,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _video=ShopButton("OptionalVideo","",()=>Game.Videos?.Watch());
             _privacy=ShopButton("AdPrivacy",T("WERBE-DATENSCHUTZ","AD PRIVACY OPTIONS"),()=>Game.Videos?.ShowPrivacy());
             _retryPurchases=ShopButton("RetryStore",T("STORE ERNEUT VERBINDEN","RECONNECT STORE"),()=>Game.Purchases?.RetryConnection());
-            _restorePurchases=ShopButton("RestorePurchases",T("KÄUFE WIEDERHERSTELLEN","RESTORE PURCHASES"),()=>Game.Purchases?.Restore());
-            UiFactory.Button(_shop,"ShopBack",T("ZURÜCK ZU DESIGNS","BACK TO DESIGNS"),GalleryTheme.Card,GalleryTheme.Text,new Vector2(.08f,.04f),new Vector2(.92f,.17f),ShowStyles);
+            UiFactory.Button(_shop,"ShopBack",T("ZURÜCK ZU DESIGNS","BACK TO DESIGNS"),GalleryTheme.Card,GalleryTheme.Text,new Vector2(.08f,.04f),new Vector2(.92f,.17f),()=>{if(MenuNavigationLocked)return;if(_shopReturnsStyles)ShowStyles();else ShowHome();});
             UiFactory.Button(_styles,"ExtraDesigns",T("EXTRA-DESIGNS / SHOP","EXTRA DESIGNS / SHOP"),Navy,Color.white,new Vector2(.08f,.16f),new Vector2(.92f,.27f),ShowShop);
             for(var i=0;i<4;i++)Set((RectTransform)_styleButtons[i].transform,.08f,.66f-i*.125f,.92f,.765f-i*.125f);
             _shop.gameObject.SetActive(false);
@@ -51,7 +54,8 @@ namespace Kamilunavo.PerfectDrop.UI
         private Button ShopButton(string name,string title,UnityEngine.Events.UnityAction action){var button=UiFactory.Button(_shopContent,name,title,GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,()=>{if(!MenuNavigationLocked)action();});GalleryTheme.Style(button,GalleryTheme.Card);return button;}
         public void ShowShop()
         {
-            if(MenuNavigationLocked)return;Game.Save();HideMenus();_shop.gameObject.SetActive(true);_shopScroll.verticalNormalizedPosition=1;Refresh();RefreshCommerce();Game.Videos?.Prepare();
+            if(MenuNavigationLocked)return;_shopReturnsStyles=_styles!=null&&_styles.gameObject.activeSelf;Game.Save();HideMenus();_shop.gameObject.SetActive(true);
+            SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));_shopScroll.verticalNormalizedPosition=1;Refresh();RefreshCommerce();Game.Videos?.Prepare();
         }
         public void RefreshCommerce()
         {
@@ -63,6 +67,7 @@ namespace Kamilunavo.PerfectDrop.UI
             SetLabel(_video,T("FREIWILLIGES VIDEO · +50 COINS","OPTIONAL VIDEO · +50 COINS")+"\n"+(remaining==0?T("MORGEN WIEDER","COME BACK TOMORROW"):wait>0?wait+" s":videos?.Status??T("GERADE NICHT VERFÜGBAR","CURRENTLY UNAVAILABLE")));
             _privacy.gameObject.SetActive(videos?.PrivacyRequired==true);_privacy.interactable=videos!=null && !videos.IsPresenting;
             _shopStatus.text=Game.Profile.Coins+" COINS\n"+(store?.Status??T("Store wird vorbereitet …","Preparing store …"));
+            PurchaseLabel(_removeAds,CommerceRules.RemoveAds,T("WERBUNG ENTFERNEN · DAUERHAFT","REMOVE ADS · PERMANENT")+"\n"+T("Keine Zwischenanzeigen · Videos freiwillig","No interstitial ads · optional videos"));
             PurchaseLabel(_starterBuy,CommerceRules.Starter,T("STARTER · KUPFER + 500 COINS","STARTER · COPPER + 500 COINS"));
             PurchaseLabel(_collectionBuy,CommerceRules.Collection,T("NEON-KOLLEKTION · 3 DESIGNS","NEON COLLECTION · 3 DESIGNS"));
             var names=new[]{T("KUPFER","COPPER"),T("PERLE","PEARL"),T("VIOLETT","VIOLET"),T("SOLAR","SOLAR")};
@@ -101,11 +106,11 @@ namespace Kamilunavo.PerfectDrop.UI
             // Minimum 52 logical screen points even on short landscape screens.
             var unit=UiMetrics.PointScale/Mathf.Max(.001f,canvas.scaleFactor);var gap=8f*unit;
             var buttons=System.Array.FindAll(_shopContent.GetComponentsInChildren<Button>(true),button=>button.gameObject.activeSelf);
-            float contentHeight=gap;foreach(var button in buttons)contentHeight+=(button.GetComponentInChildren<TowerPreviewGraphic>()!=null?80:56)*unit+gap;_shopContent.sizeDelta=new Vector2(0,contentHeight);float y=gap;
+            float contentHeight=gap;foreach(var button in buttons)contentHeight+=(button==_removeAds?80:button.GetComponentInChildren<TowerPreviewGraphic>()!=null?72:56)*unit+gap;_shopContent.sizeDelta=new Vector2(0,contentHeight);float y=gap;
             for(var i=0;i<buttons.Length;i++)
             {
                 var rect=(RectTransform)buttons[i].transform;rect.anchorMin=new Vector2(.02f,1);rect.anchorMax=new Vector2(.98f,1);rect.pivot=new Vector2(.5f,1);
-                float row=(buttons[i].GetComponentInChildren<TowerPreviewGraphic>()!=null?80:56)*unit;rect.sizeDelta=new Vector2(0,row);rect.anchoredPosition=new Vector2(0,-y);y+=row+gap;
+                float row=(buttons[i]==_removeAds?80:buttons[i].GetComponentInChildren<TowerPreviewGraphic>()!=null?72:56)*unit;rect.sizeDelta=new Vector2(0,row);rect.anchoredPosition=new Vector2(0,-y);y+=row+gap;
                 GalleryTheme.Readable(buttons[i].GetComponentInChildren<Text>(),13);
             }
         }

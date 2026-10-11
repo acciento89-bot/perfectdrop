@@ -4,7 +4,7 @@
   "sourceSha256": null,
   "reviewer": "Codex actual rendered image inspection",
   "reviewedAt": "2026-10-11",
-  "reason": "New tower layers and architectural pedestal render in actual gameplay, but the flat blue world and sparse simplified architecture still diverge substantially from the approved cloud/terrace city. The focused menu still uses modern skyline artwork. Functional 66-block runtime and music checks pass; graphical concept acceptance fails. Fresh actual all-eight-style player also passes real selection/render properties and scene/save reload; Jade/Perle images differ visibly. Overall art gate still fails.",
+  "reason": "Actual player now renders clouds below the horizon and the new Shop/Back flow passes, but clouds remain soft/flat and sparse architecture, tower finish and modern skyline menu artwork still differ materially from the approved terrace-city concept. Functional and music validation do not satisfy art acceptance. No TestFlight release.",
   "criteria": {
     "concept_similarity": "failed",
     "character_or_tower": "pending",
@@ -23,19 +23,30 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicRuntime/focused-landing.png",
-        "sha256": "2edd37ca4cd2edfc3c788c415293ccbe75757483fb17d2a209cff8bd201c3ac2",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/focused-landing.png",
+        "sha256": "9b65733685a7fb8990d9d496285a08bccb1b3754d54476b4ede964812ef8db1f",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicRuntime/tutorial-stack.png",
-        "sha256": "01a1490c068eaf4c223652b4b2ddaa7ca03c463607af4b3801b00d151e9dd32f",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/tutorial-stack.png",
+        "sha256": "9648e5a5b8fc87d91f2cc6bc7e900f56f368668dd53fa187e0404bac82c4cd92",
         "origin": "Unity-render"
       }
     ],
-    "submenus": [],
+    "submenus": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/shop-offline-portrait.png",
+        "sha256": "f2c404db59ef1e04fd96caa0d51ba333c5834c0b3b79ffd539fa86dd2861e827",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/CommerceFinalRuntime/shop-offline-landscape.png",
+        "sha256": "daee0835ae33fcfbb28eb7947bbb7cea30ad3145e9a5b8228e4d441bd7d351ea",
+        "origin": "Unity-render"
+      }
+    ],
     "variants": [
       {
         "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicStylesRuntime/style-3-gameplay.png",

@@ -14,12 +14,15 @@ namespace Kamilunavo.PerfectDrop.Monetization
     {
         public const string Starter="com.kamilunavo.perfectdrop.starter";
         public const string Collection="com.kamilunavo.perfectdrop.neoncollection";
-        public static bool KnownProduct(string id)=>id==Starter || id==Collection;
+        public const string RemoveAds="com.kamilunavo.perfectdrop.removeads";
+        public static int ProductBit(string id)=>id==Starter?1:id==Collection?2:id==RemoveAds?4:0;
+        public static bool KnownProduct(string id)=>ProductBit(id)!=0;
+        public static bool AdsRemoved(StackProfile profile)=>((profile?.Commerce?.Entitlements??0)&4)!=0;
         public static int PremiumStyles(int entitlements)=>((entitlements&1)!=0?16:0)|((entitlements&2)!=0?224:0);
         public static void Normalize(StackProfile profile)
         {
             profile.Commerce??=new CommerceProfile();
-            profile.Commerce.Entitlements&=3;
+            profile.Commerce.Entitlements&=7;
             profile.Commerce.FulfilledTransactions??=new List<string>();
             profile.OwnedStyles=(profile.OwnedStyles&15)|1|PremiumStyles(profile.Commerce.Entitlements);
             profile.Style=Mathf.Clamp(profile.Style,0,7);
@@ -40,7 +43,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
                     profile.Commerce.StarterCreditClaimed=true;
                 }
             }
-            else profile.Commerce.Entitlements|=2;
+            else profile.Commerce.Entitlements|=ProductBit(productId);
             profile.Commerce.FulfilledTransactions.Add(marker);
             Normalize(profile);return true;
         }
@@ -48,7 +51,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         {
             if(!KnownProduct(productId))return false;
             Normalize(profile);var before=profile.Commerce.Entitlements;
-            profile.Commerce.Entitlements|=productId==Starter?1:2;
+            profile.Commerce.Entitlements|=ProductBit(productId);
             // Confirmed restoration restores cosmetics, never starter currency.
             if(productId==Starter)profile.Commerce.StarterCreditClaimed=true;
             Normalize(profile);return before!=profile.Commerce.Entitlements;
@@ -56,7 +59,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
         public static void ReconcileEntitlements(StackProfile profile,IEnumerable<string> activeProductIds)
         {
             var mask=0;
-            foreach(var id in activeProductIds)mask|=id==Starter?1:id==Collection?2:0;
+            foreach(var id in activeProductIds)mask|=ProductBit(id);
             Normalize(profile);profile.Commerce.Entitlements=mask;
             if((mask&1)!=0)profile.Commerce.StarterCreditClaimed=true;
             Normalize(profile);

@@ -37,6 +37,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private int _width, _height;
         private bool _paused;
         private float _nextDrop;
+        private string _runToken=Guid.NewGuid().ToString("N");
+        public Monetization.InterstitialAds Interstitials {get;private set;}
 
         public void Initialize()
         {
@@ -85,6 +87,8 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             Purchases=gameObject.AddComponent<Monetization.StorePurchases>();
             Purchases.Changed+=Hud.RefreshCommerce;Purchases.Initialize(this);
             Videos=gameObject.AddComponent<Monetization.RewardedVideos>();Videos.Changed+=Hud.RefreshCommerce;Videos.Initialize(this);
+            Interstitials=gameObject.AddComponent<Monetization.InterstitialAds>();Interstitials.Initialize(this);
+            if(Hud.HomeOpen)Videos.Prepare();
         }
 
         private void Update()
@@ -178,9 +182,14 @@ namespace Kamilunavo.PerfectDrop.Gameplay
                 if(!Profile.RunChallenge && LastBonus>0)RebuildCity(); _feedback.PlayComplete(); Hud.Terminal(true); }
             else { _phase = -Mathf.PI/2; SpawnMoving(); }
             Save(); Hud.Refresh();
+            if(Run.Completed)Videos?.Prepare();
+            if(Run.Completed)Interstitials?.Completed(_runToken,!Profile.TutorialComplete||Hud.TutorialActive,!Profile.RunEndless&&(!Profile.RunChallenge||LastBonus>0));
         }
+        private bool NativePresentationActive => Purchases?.IsPresenting==true || Videos?.IsPresenting==true || Interstitials?.IsPresenting==true;
         public void NewRun()
         {
+            if(NativePresentationActive)return;
+            _runToken=Guid.NewGuid().ToString("N");
             foreach (var block in _placed) if (block != null) Destroy(block);
             _placed.Clear();
             if (_moving != null) Destroy(_moving.gameObject);
@@ -191,16 +200,17 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         }
         public void StartLevel(int id)
         {
-            if(id<1 || id>Profile.UnlockedLevel) return;
+            if(NativePresentationActive || id<1 || id>Profile.UnlockedLevel) return;
             Profile.RunChallenge=false; Profile.RunEndless=false; Profile.RunLevel=id; Level=StackCampaign.Level(id); NewRun();
         }
         public void StartEndless()
         {
-            if(!StackCampaign.EndlessUnlocked(Profile)) return;
+            if(NativePresentationActive || !StackCampaign.EndlessUnlocked(Profile)) return;
             Profile.RunChallenge=false; Profile.RunEndless=true; Level=StackCampaign.Level(1); NewRun();
         }
         public void StartChallenge()
         {
+            if(NativePresentationActive)return;
             Profile.RunChallenge=true;Profile.RunEndless=false;
             Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);NewRun();
         }
