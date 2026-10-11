@@ -18,6 +18,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private bool _hadDivision;
         public Rect CityPane { get; private set; } = new Rect(0,0,1,1);
         public Rect WorldPane { get; private set; } = new Rect(0,0,1,1);
+        public bool LandscapeLayout { get; private set; }
         public bool MapOrStyleOpen => CampaignMenuOpen;
         public bool ResultOpen=>_popup!=null&&_popup.gameObject.activeSelf&&Game.Run.Completed;
         public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false) || (Game.Interstitials?.IsPresenting??false);
@@ -51,7 +52,7 @@ namespace Kamilunavo.PerfectDrop.UI
             UiFactory.ApplyCircularImage(_menuRect.GetComponent<Image>());
             _objective.GetComponent<Image>().color=Color.clear;_objective.GetComponent<Image>().material=null;
             _drop = UiFactory.Button(_safe,"Drop",T("ABSETZEN","DROP"),Gold,Navy,new Vector2(.10f,.055f),new Vector2(.90f,.15f),game.Drop);
-            _dropRect = (RectTransform)_drop.transform;_drop.GetComponentInChildren<Text>().font=UiFactory.SerifFont;_drop.GetComponentInChildren<Text>().fontStyle=FontStyle.Normal;_status.font=UiFactory.SerifFont;_status.fontStyle=FontStyle.Normal;UiFactory.AddOutline(_status,new Color(.02f,.015f,.01f,.65f),1);
+            _dropRect = (RectTransform)_drop.transform;_drop.GetComponentInChildren<Text>().font=UiFactory.SerifFont;_drop.GetComponentInChildren<Text>().fontStyle=FontStyle.Normal;_status.font=UiFactory.SerifFont;_status.fontStyle=FontStyle.Normal;UiFactory.AddOutline(_status,new Color(.02f,.015f,.01f,.65f),1);UiFactory.AddOutline(_hint,new Color(.01f,.02f,.04f,.95f),1.5f);
             UiFactory.ApplyPillImage(_drop.GetComponent<Image>());
             _popup = UiFactory.Panel(_safe,"ContextPanel",Navy,new Vector2(.07f,.23f),new Vector2(.93f,.75f));
             _popupTitle = UiFactory.Label(_popup,"Title","",45,new Vector2(.07f,.79f),new Vector2(.93f,.96f),TextAnchor.MiddleCenter,Gold,FontStyle.Bold);
@@ -158,7 +159,10 @@ namespace Kamilunavo.PerfectDrop.UI
             LayoutCampaign(pane); LayoutArcade(pane); LayoutCommerce(pane);
             var screenSafe = Screen.safeArea;
             var landscape = Screen.width*pane.width > Screen.height*pane.height*1.2f;
+            LandscapeLayout=landscape;
             var free = StackPresentation.World(landscape);
+            float gameplayHeight=_safe.rect.height*pane.height,gameplayTarget=UiMetrics.TargetSize(_safe,49);
+            if(landscape && gameplayHeight<gameplayTarget*7.4f)free=new Rect(.025f,.15f,.68f,Mathf.Max(.20f,1-(gameplayTarget+14)/gameplayHeight-.15f));
             WorldPane=StackPresentation.ToViewport(screenSafe,pane,free,new Vector2(Screen.width,Screen.height));
             CityPane=StackPresentation.ToViewport(screenSafe,pane,new Rect(.04f,.20f,.92f,.48f),new Vector2(Screen.width,Screen.height));
             Place(_dropRect,pane,new Rect(.075f,.045f,.735f,.10f));
@@ -181,9 +185,13 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         private void LayoutGameplayHeader(Rect pane,bool landscape)
         {
-            Place(_statsRoot,pane,landscape?new Rect(.025f,.76f,.95f,.20f):new Rect(.035f,.91f,.93f,.065f));
-            Place(_objective,pane,landscape?new Rect(.43f,.66f,.54f,.12f):new Rect(.37f,.75f,.58f,.12f));
+            float availableHeight=_safe.rect.height*pane.height,controlTarget=UiMetrics.TargetSize(_safe,49);
+            float pointUnit=UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor);
+            bool shortLandscape=landscape && availableHeight<controlTarget*7.4f;
+            Place(_statsRoot,pane,shortLandscape?new Rect(.025f,1-(controlTarget+7)/availableHeight,.68f,controlTarget/availableHeight):landscape?new Rect(.025f,.885f,.95f,.08f):new Rect(.035f,.91f,.93f,.065f));
+            Place(_objective,pane,shortLandscape?new Rect(.025f,.015f,.68f,.12f):landscape?new Rect(.75f,.72f,.225f,60*pointUnit/availableHeight):new Rect(.37f,.75f,.58f,.12f));
             _objective.GetComponent<Image>().color=Color.clear;
+            _hint.gameObject.SetActive(!shortLandscape);
             float target=UiMetrics.TargetSize(_safe,49);
             _menuRect.anchorMin=_menuRect.anchorMax=new Vector2(0,.5f);_menuRect.pivot=new Vector2(0,.5f);
             _menuRect.sizeDelta=new Vector2(target,target);_menuRect.anchoredPosition=Vector2.zero;
@@ -198,19 +206,29 @@ namespace Kamilunavo.PerfectDrop.UI
             Set((RectTransform)_stats[0].transform,.04f,.04f,.96f,.96f);_stats[0].alignment=TextAnchor.MiddleCenter;_stats[0].font=UiFactory.SerifFont;_stats[0].fontStyle=FontStyle.Normal;GalleryTheme.Readable(_stats[0],16);
             Set((RectTransform)_stats[3].transform,.28f,.08f,.96f,.92f);GalleryTheme.Readable(_stats[3],18);
             Set((RectTransform)wallet.Find("Icon"),.06f,.16f,.27f,.84f);
-            Set((RectTransform)_status.transform,.02f,.52f,.98f,.98f);_status.alignment=TextAnchor.MiddleRight;_status.color=new Color(.98f,.85f,.45f);GalleryTheme.Readable(_status,30);
-            Set((RectTransform)_hint.transform,.02f,.05f,.98f,.48f);_hint.alignment=TextAnchor.MiddleRight;GalleryTheme.Readable(_hint,12);
+            Set((RectTransform)_status.transform,.02f,shortLandscape?0:landscape?.55f:.52f,.98f,shortLandscape?1:.98f);_status.alignment=TextAnchor.MiddleRight;_status.color=new Color(.98f,.85f,.45f);GalleryTheme.Readable(_status,landscape?20:30);
+            Set((RectTransform)_hint.transform,.02f,landscape?0:.05f,.98f,landscape?.52f:.48f);_hint.alignment=TextAnchor.MiddleRight;GalleryTheme.Readable(_hint,12);
             var track=(RectTransform)_progress.transform.parent;
             track.SetParent(stage,false);Set(track,.10f,.025f,.90f,.075f);
             // Reserve Risk at its final size before assigning the remaining drop width.
             float usedW=_safe.rect.width*pane.width,usedH=_safe.rect.height*pane.height;
-            var risk=(RectTransform)_risk.transform;float bottom=landscape?.045f:.045f;
-            float actionH=Mathf.Max(UiMetrics.TargetSize(_safe,54),usedH*(landscape?.27f:.10f));
-            float center=pane.y+bottom*pane.height+actionH/_safe.rect.height*.5f;
-            risk.anchorMin=risk.anchorMax=new Vector2(pane.x+pane.width*.965f,center);risk.pivot=new Vector2(1,.5f);risk.sizeDelta=new Vector2(target,actionH);risk.anchoredPosition=Vector2.zero;
-            float dropX=landscape?.33f:.075f;
-            _dropRect.anchorMin=_dropRect.anchorMax=new Vector2(pane.x+pane.width*dropX,center);_dropRect.pivot=new Vector2(0,.5f);_dropRect.sizeDelta=new Vector2(Mathf.Max(target,usedW*(.965f-dropX)-target-4*UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor)),actionH);_dropRect.anchoredPosition=Vector2.zero;
-            GalleryTheme.Style(_drop,Gold);GalleryTheme.Readable(_drop.GetComponentInChildren<Text>(),24);
+            var risk=(RectTransform)_risk.transform;
+            if(landscape)
+            {
+                Place(_dropRect,pane,shortLandscape?new Rect(.75f,.04f,.225f,target/usedH):StackPresentation.Drop(true));
+                _dropRect.sizeDelta=new Vector2(0,shortLandscape?0:Mathf.Max(0,target-_safe.rect.height*pane.height*.15f));
+                Place(risk,pane,new Rect(.75f,.245f,.225f,.14f));
+                risk.sizeDelta=new Vector2(0,Mathf.Max(0,target-_safe.rect.height*pane.height*.14f));
+                if(shortLandscape){float railBottom=.04f+(target+6)/usedH,railHeight=(target*2+6)/usedH;risk.anchorMin=risk.anchorMax=new Vector2(pane.x+pane.width*.91875f,pane.y+pane.height*(railBottom+railHeight*.25f));risk.pivot=new Vector2(.5f,.5f);risk.sizeDelta=new Vector2(target,target);risk.anchoredPosition=Vector2.zero;}
+            }
+            else
+            {
+                float actionH=Mathf.Max(UiMetrics.TargetSize(_safe,54),usedH*.10f);
+                float center=pane.y+.045f*pane.height+actionH/_safe.rect.height*.5f;
+                risk.anchorMin=risk.anchorMax=new Vector2(pane.x+pane.width*.965f,center);risk.pivot=new Vector2(1,.5f);risk.sizeDelta=new Vector2(target,actionH);risk.anchoredPosition=Vector2.zero;
+                _dropRect.anchorMin=_dropRect.anchorMax=new Vector2(pane.x+pane.width*.075f,center);_dropRect.pivot=new Vector2(0,.5f);_dropRect.sizeDelta=new Vector2(Mathf.Max(target,usedW*(.965f-.075f)-target-4*UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor)),actionH);_dropRect.anchoredPosition=Vector2.zero;
+            }
+            GalleryTheme.Style(_drop,Gold);GalleryTheme.Readable(_drop.GetComponentInChildren<Text>(),landscape?18:24);
             GalleryTheme.Style(_risk,Navy);GalleryTheme.Readable(_risk.GetComponentInChildren<Text>(),10);
 
 

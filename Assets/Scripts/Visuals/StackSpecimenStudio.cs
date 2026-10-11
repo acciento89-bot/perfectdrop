@@ -80,8 +80,22 @@ namespace Kamilunavo.PerfectDrop.Visuals
             hall.rotation=Quaternion.LookRotation(-camera.transform.forward,camera.transform.up);
             var owner=hall.gameObject.AddComponent<TerraceArtOwner>();var geometry=new TerraceArtGeometry.Buffer();
             geometry.Arch(Vector3.zero,5.2f,6.5f,4,.55f,.85f,32);
-            foreach(int side in new[]{-1,1}){geometry.Lathe(new Vector3(side*5.45f,0,0),new[]{0f,.22f,.40f,3.6f,3.9f,4.12f},new[]{.60f,.60f,.40f,.40f,.55f,.55f},12);geometry.Box(new Vector3(side*5.45f,.15f,0),new Vector3(1.45f,.30f,1.30f));}
+            geometry.Arch(new Vector3(0,0,.47f),5.18f,6.48f,4,.16f,.12f,32);
+            geometry.Arch(new Vector3(0,0,.42f),5.65f,6.95f,4,.19f,.17f,32);
+            var gilt=new TerraceArtGeometry.Buffer();
+            foreach(int side in new[]{-1,1})
+            {
+                var at=new Vector3(side*5.45f,0,0);
+                geometry.Lathe(at,new[]{0f,.12f,.24f,.40f,3.6f,3.77f,3.90f,4.12f},new[]{.68f,.68f,.52f,.40f,.40f,.51f,.56f,.56f},20);
+                geometry.Box(at+Vector3.up*.15f,new Vector3(1.45f,.30f,1.30f));
+                for(int flute=0;flute<12;flute++){float angle=flute*Mathf.PI/6;geometry.Lathe(at+new Vector3(Mathf.Cos(angle)*.37f,.45f,Mathf.Sin(angle)*.37f),new[]{0f,3.06f},new[]{.045f,.045f},6);}
+                gilt.Ring(at+Vector3.up*.26f,.55f,.045f,32);gilt.Ring(at+Vector3.up*3.82f,.54f,.045f,32);
+            }
+            // Raised cartouche and radial stone bosses ornament the real portal.
+            geometry.Lathe(new Vector3(0,10.62f,.24f),new[]{0f,.22f,.42f,.68f},new[]{.52f,.55f,.37f,.07f},16);
+            gilt.Arch(new Vector3(0,0,.56f),5.31f,6.61f,4,.035f,.05f,32);
             var material=new Material(Resources.Load<Shader>("PerfectDropSurface")){name="OwnedShowroomIvory",color=new Color(.84f,.78f,.66f)};material.SetFloat("_StoneFinish",1);material.SetTexture("_StoneAlbedo",Resources.Load<Texture2D>("Art/AuthoredIvoryLimestone"));material.SetFloat("_Glossiness",.25f);owner.Own(material);geometry.Upload(hall,"AuthoredShowroomColonnade",material,owner);
+            var gold=new Material(Resources.Load<Shader>("PerfectDropSurface")){name="OwnedShowroomGilding",color=new Color(.94f,.76f,.40f)};gold.SetFloat("_Metallic",.75f);gold.SetFloat("_Glossiness",.78f);owner.Own(gold);gilt.Upload(hall,"AuthoredShowroomGiltMoldings",gold,owner);
         }
 
         public static Texture2D Acquire(int style,int floors)
@@ -111,7 +125,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.cullingMask=1<<Layer;camera.allowHDR=true;camera.nearClipPlane=.05f;camera.farClipPlane=50;
             cameraObject.AddComponent<CinematicGrade>();
-            bool column=floors>=8;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.25f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
+            bool column=floors>=8;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.55f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
             var target=root.transform.position+Vector3.up*(floors-1)*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.5f;
             camera.transform.position=target+new Vector3(-6,column?3.5f:5,-8);
             camera.transform.LookAt(target);
@@ -127,6 +141,13 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 var block=WorldArt.CreateStackBlock(root.transform,"SpecimenLayer"+i,new Vector3(0,i*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,0),new Vector3(width,Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,width),i);
                 WorldArt.StyleStackBlock(block,style);
                 foreach(var t in block.GetComponentsInChildren<Transform>())t.gameObject.layer=Layer;
+            }
+            if(column)
+            {
+                var owner=root.AddComponent<TerraceArtOwner>();var plinth=new TerraceArtGeometry.Buffer();
+                plinth.Lathe(Vector3.zero,new[]{-.84f,-.76f,-.69f,-.58f,-.52f},new[]{1.31f,1.31f,1.20f,1.20f,1.14f},32);
+                var marble=new Material(Resources.Load<Shader>("PerfectDropSurface")){name="OwnedSpecimenMarblePlinth",color=new Color(.84f,.80f,.70f)};marble.SetFloat("_StoneFinish",1);marble.SetTexture("_StoneAlbedo",Resources.Load<Texture2D>("Art/AuthoredIvoryLimestone"));marble.SetFloat("_Glossiness",.63f);owner.Own(marble);plinth.Upload(root.transform,"AuthoredSpecimenStoneFoot",marble,owner);
+                root.transform.Find("AuthoredSpecimenStoneFoot").gameObject.layer=Layer;
             }
             var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf)?RenderTextureFormat.ARGBHalf:RenderTextureFormat.ARGB32;
             var render=RenderTexture.GetTemporary(column?320:256,column?914:320,24,format,RenderTextureReadWrite.Default,4);

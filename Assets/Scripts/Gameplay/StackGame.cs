@@ -50,7 +50,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             RenderSettings.fogColor = new Color(.34f,.38f,.56f);
             RenderSettings.fogDensity = .005f;
             var key = new GameObject("SunsetKey").AddComponent<Light>();
-            key.type = LightType.Directional; key.color = new Color(1f,.72f,.42f); key.intensity = 1.12f;
+            key.type = LightType.Directional; key.color = new Color(1f,.89f,.69f); key.intensity = 1.12f;
             key.transform.rotation = Quaternion.Euler(35,-32,0); key.shadows = LightShadows.Soft;
             key.cullingMask=~(1<<StackSpecimenStudio.Layer);
             var fill = new GameObject("SkyFill").AddComponent<Light>();
@@ -284,10 +284,13 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             var cityView=Hud!=null && Hud.CityOpen;
             // Show the architectural base and earned stack together during short
             // challenges. Long endless runs still follow the most recent floors.
-            var visibleHeight=Mathf.Min(10f,Mathf.Max(3.4f,height+2.05f));
+            var paneNow=Hud!=null?Hud.WorldPane:new Rect(0,0,1,1);
+            bool landscape=Hud!=null && Hud.LandscapeLayout;
+            // Landscape follows a fixed five-floor window: placement scale no longer
+            // shrinks as the stack grows. Lower floors leave the view naturally.
+            var visibleHeight=landscape?5.2f:Mathf.Min(10f,Mathf.Max(3.4f,height+2.05f));
             var centerY=height+.6f-visibleHeight*.5f;
             var focus = new Vector3(top.x,centerY,top.y);
-            var paneNow=Hud!=null?Hud.WorldPane:new Rect(0,0,1,1);
             var yaw=_yaw*Mathf.Deg2Rad;
             var outward=new Vector3(Mathf.Sin(yaw),cityView?1.05f:StackPresentation.GameplayElevation,-Mathf.Cos(yaw)).normalized;
             var rotation=Quaternion.LookRotation(-outward);

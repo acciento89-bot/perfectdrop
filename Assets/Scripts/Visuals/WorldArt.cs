@@ -412,14 +412,27 @@ namespace Kamilunavo.PerfectDrop.Visuals
             return root;
         }
 
+        private static Material _daisCompass;private static Mesh _daisCompassMesh;
         public static GameObject BuildStackDais(Transform parent)
         {
             var root=new GameObject("ArchitecturalDais");root.transform.SetParent(parent,false);
             // The stone drum meets the physical base below the placed y=0 slab.
             root.transform.localPosition=Vector3.up*(.842f-Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*1.5f);
             if(_daisStone==null){_daisStone=CreateMaterial("IvoryDais",new Color(.74f,.68f,.55f),.15f,.52f);_daisStone.SetFloat("_StoneFinish",1);_daisStone.SetTexture("_StoneAlbedo",Resources.Load<Texture2D>("Art/AuthoredIvoryLimestone"));}
-            AddPrimitive(PrimitiveType.Cylinder,root.transform,"StoneDrum",new Vector3(0,-1.03f,0),new Vector3(8.4f,.18f,8.4f),_daisStone);
-            AddPrimitive(PrimitiveType.Cylinder,root.transform,"NavyDrum",new Vector3(0,-1.27f,0),new Vector3(8.0f,.13f,8.0f),PlatformInset);
+            // Cylinder.fbx has a unit radius (unlike CreatePrimitive's half-unit
+            // cylinder). Keep its actual rim aligned with the authored foundation.
+            AddPrimitive(PrimitiveType.Cylinder,root.transform,"StoneDrum",new Vector3(0,-1.03f,0),new Vector3(4.2f,.18f,4.2f),_daisStone);
+            if(_daisCompass==null){_daisCompass=CreateMaterial("AuthoredCompassDeck",Color.white,.68f,.72f);_daisCompass.mainTexture=Resources.Load<Texture2D>("Art/AuthoredCompassInlay");_daisCompass.SetFloat("_DecorFinish",1);}
+            var compassDrum=AddPrimitive(PrimitiveType.Cylinder,root.transform,"NavyDrum",new Vector3(0,-.973f,0),new Vector3(4.0f,.13f,4.0f),_daisCompass);
+            if(_daisCompassMesh==null)
+            {
+                _daisCompassMesh=Object.Instantiate(compassDrum.GetComponent<MeshFilter>().sharedMesh);_daisCompassMesh.name="PerfectDropPlanarCompassDrum";_daisCompassMesh.hideFlags=HideFlags.HideAndDontSave;
+                var uv=_daisCompassMesh.uv;var positions=_daisCompassMesh.vertices;var normals=_daisCompassMesh.normals;
+                var bounds=_daisCompassMesh.bounds;
+                for(int i=0;i<uv.Length;i++)if(Mathf.Abs(normals[i].y)>.5f)uv[i]=new Vector2((positions[i].x-bounds.min.x)/bounds.size.x,(positions[i].z-bounds.min.z)/bounds.size.z);
+                _daisCompassMesh.uv=uv;
+            }
+            compassDrum.GetComponent<MeshFilter>().sharedMesh=_daisCompassMesh;
             var inlay=new GameObject("CompassInlay",typeof(MeshFilter),typeof(MeshRenderer));inlay.transform.SetParent(root.transform,false);inlay.transform.localPosition=new Vector3(0,-.842f,0);
             if(_daisInlayMesh==null)_daisInlayMesh=BuildDaisInlay();
             inlay.GetComponent<MeshFilter>().sharedMesh=_daisInlayMesh;inlay.GetComponent<MeshRenderer>().sharedMaterial=GoldPlate;

@@ -16,7 +16,8 @@ namespace Kamilunavo.PerfectDrop.Editor
             Application.logMessageReceived+=handler;
             try
             {
-                foreach(var points in new[]{new Vector2(375,627),new Vector2(430,850),new Vector2(627,355),new Vector2(850,394),new Vector2(190,627)})
+                foreach(var points in new[]{new Vector2(375,627),new Vector2(430,850),new Vector2(627,355),new Vector2(850,394),new Vector2(190,627),new Vector2(627,190),new Vector2(850,190),new Vector2(627,333),new Vector2(627,349),new Vector2(627,226)})
+                foreach(float pixelDensity in new[]{3f,1f})
                 {
                     var root=new GameObject("PresentationHudProbe");Canvas canvas=null;
                     try
@@ -26,9 +27,10 @@ namespace Kamilunavo.PerfectDrop.Editor
                         Field(game,"<Profile>k__BackingField",profile);Field(game,"<Run>k__BackingField",new StackRun());Field(game,"<Level>k__BackingField",StackCampaign.Level(1));
                         var hud=root.AddComponent<StackHud>();Field(game,"<Hud>k__BackingField",hud);hud.Build(game);hud.ShowHome();
                         var safe=(RectTransform)typeof(StackHud).GetField("_safe",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(hud);canvas=safe.GetComponentInParent<Canvas>();
-                        canvas.GetComponent<CanvasScaler>().enabled=false;canvas.scaleFactor=3;UiMetrics.QaPointScale=3;safe.GetComponent<SafeAreaFitter>().enabled=false;
-                        safe.anchorMin=safe.anchorMax=new Vector2(.5f,.5f);safe.sizeDelta=points;
-                        // Canvas units become physical pixels at scale3, while points are safe rect units.
+                        canvas.GetComponent<CanvasScaler>().enabled=false;canvas.scaleFactor=pixelDensity==3?3:.375f;UiMetrics.QaPointScale=pixelDensity;safe.GetComponent<SafeAreaFitter>().enabled=false;
+                        safe.anchorMin=safe.anchorMax=new Vector2(.5f,.5f);safe.sizeDelta=points*(pixelDensity/canvas.scaleFactor);
+                        // Also test a fractional desktop Canvas scale: logical text rows must
+                        // be converted to Canvas units, just like touch target dimensions.
                         typeof(StackHud).GetMethod("LayoutCampaign",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(hud,new object[]{new Rect(0,0,1,1)});
                         typeof(StackHud).GetMethod("LayoutArcade",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(hud,new object[]{new Rect(0,0,1,1)});
                         Canvas.ForceUpdateCanvases();
@@ -36,14 +38,14 @@ namespace Kamilunavo.PerfectDrop.Editor
                         {
                             if(!button.isActiveAndEnabled)continue;
                             var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
-                            Check(rect.width/3>=48-.01f && rect.height/3>=48-.01f,"Compact primary target too small "+points+" "+button.name+" "+rect);checks++;
+                            Check(rect.width/pixelDensity>=48-.01f && rect.height/pixelDensity>=48-.01f,"Compact primary target too small "+points+" "+button.name+" "+rect);checks++;
                         }
                         foreach(var graphic in canvas.GetComponentsInChildren<Graphic>(true)){Check(graphic.GetComponent<CanvasRenderer>()!=null,"Missing graphic renderer "+graphic.name);checks++;}
                         foreach(var button in canvas.GetComponentsInChildren<Button>(true))
                         {
                             if(!button.name.StartsWith("CityDistrict") && button.name!="CityBack")continue;
                             var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
-                            Check(rect.width/3>=48-.01f && rect.height/3>=48-.01f,"City target too small "+points+" "+button.name+" "+rect);checks++;
+                            Check(rect.width/pixelDensity>=48-.01f && rect.height/pixelDensity>=48-.01f,"City target too small "+points+" "+button.name+" "+rect);checks++;
                         }
                         foreach(var specimen in canvas.GetComponentsInChildren<TowerPreviewGraphic>(true))
                         {
@@ -65,9 +67,16 @@ namespace Kamilunavo.PerfectDrop.Editor
                         {
                             if(!button.isActiveAndEnabled||!(button.name=="Menu"||button.name=="Drop"||button.name=="Risk"||button.name.StartsWith("Power")))continue;
                             var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
-                            Check(rect.width/3>=48-.01f&&rect.height/3>=48-.01f,"Compact gameplay target too small "+points+" "+button.name+" "+rect);checks++;
+                            Check(rect.width/pixelDensity>=48-.01f&&rect.height/pixelDensity>=48-.01f,"Compact gameplay target too small "+points+" "+button.name+" "+rect);checks++;
                             var safeBounds=UiMetrics.ScreenRect(safe);Check(rect.xMin>=safeBounds.xMin-.5f&&rect.xMax<=safeBounds.xMax+.5f&&rect.yMin>=safeBounds.yMin-.5f&&rect.yMax<=safeBounds.yMax+.5f,"Gameplay target outside safe pane "+points+" "+button.name);checks++;
                             foreach(var other in canvas.GetComponentsInChildren<Button>()){if(other==button||!other.isActiveAndEnabled||!(other.name=="Menu"||other.name=="Drop"||other.name=="Risk"||other.name.StartsWith("Power")))continue;var b=UiMetrics.ScreenRect((RectTransform)other.transform);Check(Mathf.Min(rect.xMax,b.xMax)-Mathf.Max(rect.xMin,b.xMin)<=.5f||Mathf.Min(rect.yMax,b.yMax)-Mathf.Max(rect.yMin,b.yMin)<=.5f,"Gameplay targets overlap "+points+" "+button.name+" / "+other.name);checks++;}
+                        }
+                        foreach(string sentence in new[]{"PERFEKT!","LEVEL30","Fläche bleibt erhalten · Serienbonus","WIND: ACHTE AUF DIE BEWEGUNG"})
+                        {
+                            bool feedback=sentence=="PERFEKT!"||sentence=="LEVEL30";
+                            var label=safe.Find(feedback?"Objective/Status":"Objective/Hint").GetComponent<Text>();if(!label.gameObject.activeInHierarchy)continue;
+                            label.text=sentence;var generator=new TextGenerator();generator.Populate(label.text,label.GetGenerationSettings(label.rectTransform.rect.size));
+                            Check(generator.characterCountVisible>=label.text.Length,"Actual gameplay feedback clipped "+points+" "+sentence+" visible="+generator.characterCountVisible+" rect="+label.rectTransform.rect.size);checks++;
                         }
                         hud.ShowHome();
                         // A locked card must stay legible over the sunlit cloud background.

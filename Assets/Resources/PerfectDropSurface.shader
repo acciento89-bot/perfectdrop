@@ -14,6 +14,7 @@ Shader "Kamilunavo/PerfectDropSurface"
         _BrushFinish ("Fine metal brushing", Range(0,1)) = 0
         _MicroRelief ("Original brushed metal relief", Range(0,1)) = 0
         _StoneFinish ("Cut stone and mortar", Range(0,1)) = 0
+        _DecorFinish ("Original engraved compass albedo",Range(0,1))=0
         _WaterFinish ("Canal ripples", Range(0,1)) = 0
         _Metallic ("Metallic", Range(0,1)) = 0
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -37,7 +38,7 @@ Shader "Kamilunavo/PerfectDropSurface"
             UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionColor)
         UNITY_INSTANCING_BUFFER_END(DeckProperties)
         half _Detail;
-        half _GoldFinish;
+        half _GoldFinish;half _DecorFinish;
         half _BodyFinish;
         half _BrushFinish;
         half _MicroRelief;
@@ -69,14 +70,14 @@ Shader "Kamilunavo/PerfectDropSurface"
             half finish=lerp(.66,1.08,diagonal);
             half reflectionBand=(diagonal-.66)*8;
             half reflection=exp2(-reflectionBand*reflectionBand);
-            half brush=sin(uv.y*920+metal.g*8)*.008;
+            half brush=sin(uv.y*920+metal.g*8)*.004*saturate(1-fwidth(uv.y)*920*.35);
             half edge=smoothstep(.44,.485,max(abs(uv.x-.5),abs(uv.y-.5)));
             float3 gold=lerp(float3(.51,.28,.075),float3(1.02,.83,.43),diagonal)+reflection*float3(.23,.18,.075)+brush;
             // The same UV-bound finish runs across plate faces and bevels.
             // Avoid an emissive orange sheet: reflected light supplies the volume.
             // Smooth brushed shoulders and ceramic/lacquer skins share a neutral
             // fine finish. Industrial panel seams no longer dominate small slabs.
-            half brushed=sin(uv.y*680+metal.g*2)*.026+sin(uv.y*1710+uv.x*3)*.005;
+            half brushed=sin(uv.y*680+metal.g*2)*.012*saturate(1-fwidth(uv.y)*680*.35)+sin(uv.y*1710+uv.x*3)*.003*saturate(1-fwidth(uv.y)*1710*.35);
             float3 cleanMetal=.96+(brushed+reflection*.13)*_BrushFinish+metal.r*.045;
             // Veining belongs to the actual selected surface, using deck UVs so
             // it follows moving and cut pieces. No world-space swimming occurs.
@@ -96,7 +97,9 @@ Shader "Kamilunavo/PerfectDropSurface"
             }
             o.Normal=normalize(half3((metal.r-reliefX)*1.8*reliefWeight,(metal.r-reliefY)*1.8*reliefWeight,1));
             cleanMetal*=lerp(1,.80+metal.r*.85,reliefWeight);
-            o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.97,1.02,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
+            // Polished gold keeps a continuous reflected highlight. The shoulder
+            // tile's large tonal grains must not turn the plate into hammered foil.
+            o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.996,1.004,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
             float3 an=abs(WorldNormalVector(IN,float3(0,0,1)));
             float2 stoneUV=an.y>.7?IN.worldPos.xz:an.x>an.z?IN.worldPos.zy:IN.worldPos.xy;
             float course=floor(stoneUV.y*1.55);
@@ -118,9 +121,10 @@ Shader "Kamilunavo/PerfectDropSurface"
                 float3 mineral=tex2D(_MineralAtlas,atlasUV).rgb;
                 o.Albedo=lerp(tint.rgb*mineral,tint.rgb*mineral/float3(.12,.35,.22),jade);
             }
+            o.Albedo=lerp(o.Albedo,lerp(float3(.035,.045,.065),metal*tint.rgb,step(.5,an.y)),_DecorFinish);
             o.Occlusion=1-joint*.12*_StoneFinish;
-            o.Metallic = _Metallic;
-            o.Smoothness = saturate(_Glossiness - _GoldFinish*((1-metal.r)*.055+edge*.06)-_WaterFinish*abs(ripple)*.10-reliefWeight*(1-metal.r)*.045);
+            o.Metallic = lerp(_Metallic,saturate((metal.r-metal.b)*2+.1),_DecorFinish);
+            o.Smoothness = saturate(_Glossiness - _GoldFinish*(.012+edge*.015)-_WaterFinish*abs(ripple)*.10-reliefWeight*(1-metal.r)*.045);
             o.Emission = UNITY_ACCESS_INSTANCED_PROP(DeckProperties, _EmissionColor).rgb * lerp(1, finish*.72, _GoldFinish);
             o.Alpha = tint.a;
         }

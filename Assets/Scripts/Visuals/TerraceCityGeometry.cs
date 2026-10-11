@@ -20,7 +20,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     float angle = (i + ring * .47f) * 360 / count;
                     float a = angle * Mathf.Deg2Rad;
                     float r = radius + Mathf.Sin(i * 2.13f) * 1.1f;
-                    var at = new Vector3(Mathf.Cos(a) * r, -7.5f, Mathf.Sin(a) * r);
+                    var at = new Vector3(Mathf.Cos(a) * r, ring==0?-7.5f:-14f, Mathf.Sin(a) * r);
                     float height = ring == 0 ? 3.6f + (i % 4) * .65f : 7.8f + (i % 5) * 1.3f;
                     if(chapter == 1) height *= ring == 0 ? .94f : .90f;
                     House(theme, chapter, stone, roof, gold, light, at, 270 - angle,
@@ -31,17 +31,17 @@ namespace Kamilunavo.PerfectDrop.Visuals
             {
                 float angle = i * 60 + 15;
                 float a = angle * Mathf.Deg2Rad;
-                var at = new Vector3(Mathf.Cos(a) * 57, -7.8f, Mathf.Sin(a) * 57);
+                var at = new Vector3(Mathf.Cos(a) * 57, -12f, Mathf.Sin(a) * 57);
                 Landmark(theme, chapter, stone, roof, gold, light, at, 270 - angle,
-                    (18 + (i % 3) * 4.1f) * (chapter == 1 ? .57f : .63f), i);
+                    (18 + (i % 3) * 4.1f) * (chapter == 1 ? .35f : .40f), i);
             }
             // A third, deliberately inexpensive skyline band gives the city
             // depth behind the detailed arcades instead of six isolated towers.
             // All faces remain in the existing chapter batches.
-            for(int i=0;i<12;i++)
+            for(int i=0;i<3;i++)
             {
                 Marker(theme,"DistantCityHouse");
-                float angle=i*30+8, a=angle*Mathf.Deg2Rad;
+                float angle=i*120+8, a=angle*Mathf.Deg2Rad;
                 float height=12+(i%5)*2.8f, width=4.6f+(i%3)*.7f;
                 var s=new Buffer();var r=new Buffer();var l=new Buffer();
                 s.SolidAbove(new Vector3(0,height*.5f,0),new Vector3(width,height,width*.8f));
@@ -55,13 +55,13 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     var p=new Vector3(side*width*.24f,height*.71f,width*.401f);
                     l.Quad(p+new Vector3(-.23f,-.9f,0),p+new Vector3(.23f,-.9f,0),p+new Vector3(.23f,.9f,0),p+new Vector3(-.23f,.9f,0),Vector3.forward);
                 }
-                var at=new Vector3(Mathf.Cos(a)*74,-10.8f,Mathf.Sin(a)*74);
+                var at=new Vector3(Mathf.Cos(a)*74,-23f,Mathf.Sin(a)*74);
                 stone.Append(s,at,270-angle);roof.Append(r,at,270-angle);light.Append(l,at,270-angle);
             }
             // Real amber glass inside the already-owned near terrace lanterns.
             for (int side = -1; side <= 1; side += 2)
                 for (int end = -1; end <= 1; end += 2)
-                    light.Box(new Vector3(side * 2.55f, -.96f, end * 2.55f),
+                    light.Box(new Vector3(side * TerraceArtGeometry.NearLanternOffset*.85f, TerraceArtGeometry.NearLanternBaseY+2.24f-TerraceArtGeometry.WorldOffsetY, end * TerraceArtGeometry.NearLanternOffset*.85f),
                         new Vector3(.2465f, .37f, .2465f));
         }
 

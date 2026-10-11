@@ -75,15 +75,18 @@ namespace Kamilunavo.PerfectDrop.UI
             if(_powerRow==null)return;
             var landscape=_safe.rect.width*pane.width>_safe.rect.height*pane.height*1.2f;
             Place(_powerRow,pane,StackPresentation.Powers(landscape));
+            float paneHeight=_safe.rect.height*pane.height,targetSize=UiMetrics.TargetSize(_safe,49);
+            bool shortLandscape=landscape && paneHeight<targetSize*7.4f;
+            if(shortLandscape)Place(_powerRow,pane,new Rect(.75f,.04f+(targetSize+6)/paneHeight,.225f,(targetSize*2+6)/paneHeight));
             var info=(RectTransform)_powerInfo.transform.parent;
             Set(info,0,1,1,1);info.pivot=new Vector2(.5f,0);info.sizeDelta=new Vector2(0,14*UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor));info.anchoredPosition=Vector2.zero;info.GetComponent<Image>().color=Color.clear;info.GetComponent<Image>().material=null;GalleryTheme.Readable(_powerInfo,11);
             Canvas.ForceUpdateCanvases();
             float unit=UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor),target=UiMetrics.TargetSize(_safe,49);
-            float diameter=Mathf.Max(target,Mathf.Min(_powerRow.rect.width/3.4f,_powerRow.rect.height*.80f));
+            float diameter=shortLandscape?target:Mathf.Max(target,landscape?Mathf.Min(_powerRow.rect.width*.43f,_powerRow.rect.height*.45f):Mathf.Min(_powerRow.rect.width/3.4f,_powerRow.rect.height*.80f));
             for(var i=0;i<3;i++)
             {
                 var button=_powerButtons[i];var rect=(RectTransform)button.transform;
-                rect.anchorMin=rect.anchorMax=new Vector2((i+.5f)/3,.40f);rect.pivot=new Vector2(.5f,.5f);rect.sizeDelta=new Vector2(diameter,diameter);rect.anchoredPosition=Vector2.zero;Set((RectTransform)button.transform.Find("Label"),.08f,.02f,.92f,.30f);
+                rect.anchorMin=rect.anchorMax=landscape?new Vector2(i==1?.75f:.25f,i<2?.75f:.25f):new Vector2((i+.5f)/3,.40f);rect.pivot=new Vector2(.5f,.5f);rect.sizeDelta=new Vector2(diameter,diameter);rect.anchoredPosition=Vector2.zero;Set((RectTransform)button.transform.Find("Label"),.08f,.02f,.92f,.30f);
                 GalleryTheme.Style(button,Navy);GalleryTheme.Readable(button.GetComponentInChildren<Text>(),landscape?12:11);
             }
             _risk.transform.SetParent(_safe,false);

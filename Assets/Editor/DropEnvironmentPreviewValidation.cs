@@ -12,7 +12,7 @@ namespace Kamilunavo.PerfectDrop.Editor {
    var sky=RenderSettings.skybox;var reflection=RenderSettings.customReflectionTexture;int chapter=WorldArt.ActiveChapter;
    var probe=RenderSettings.ambientProbe;var mode=RenderSettings.defaultReflectionMode;var ambient=RenderSettings.ambientMode;var intensity=RenderSettings.reflectionIntensity;var top=RenderSettings.ambientSkyColor;var equator=RenderSettings.ambientEquatorColor;var bottom=RenderSettings.ambientGroundColor;
    var hashes=new System.Collections.Generic.HashSet<long>();int checks=0;
-   try{WorldArt.ApplySkybox();checks+=VerifyColdPreviewLighting();checks+=VerifyHeroOwnership();checks+=VerifyHeroGrounding();
+   try{WorldArt.ApplySkybox();checks+=VerifyColdPreviewLighting();checks+=VerifyHeroOwnership();checks+=VerifyHeroGrounding();checks+=VerifySpecimenMargins();
     for(int theme=0;theme<3;theme++){
      int previousUsers=StackSpecimenStudio.EnvironmentUsers(theme,true);int leases=0;try{var image=(Texture2D)acquire.Invoke(null,new object[]{theme,true});leases++;var again=(Texture2D)acquire.Invoke(null,new object[]{theme,true});leases++;
      if(image!=again||image.width<400||image.height<600)throw new InvalidOperationException("Preview is not a cached detailed actual render");checks++;
@@ -28,6 +28,14 @@ namespace Kamilunavo.PerfectDrop.Editor {
     if(WorldArt.ActiveChapter!=chapter)throw new InvalidOperationException("Menu preview changed live chapter authority");checks++;
    }finally{WorldArt.SetChapter(chapter);RenderSettings.skybox=sky;RenderSettings.customReflectionTexture=reflection;RenderSettings.defaultReflectionMode=mode;RenderSettings.reflectionIntensity=intensity;RenderSettings.ambientMode=ambient;RenderSettings.ambientSkyColor=top;RenderSettings.ambientEquatorColor=equator;RenderSettings.ambientGroundColor=bottom;RenderSettings.ambientProbe=probe;}
    Debug.Log("DROP_ENVIRONMENT_PREVIEW_PASS checks="+checks);
+  }
+  static int VerifySpecimenMargins(){int checks=0;
+   foreach(int style in new[]{0,3,5}){var image=StackSpecimenStudio.Acquire(style,9);var target=RenderTexture.GetTemporary(image.width,image.height,0,RenderTextureFormat.ARGB32);var old=RenderTexture.active;var read=new Texture2D(image.width,image.height,TextureFormat.RGBA32,false);
+    try{Graphics.Blit(image,target);RenderTexture.active=target;read.ReadPixels(new Rect(0,0,image.width,image.height),0,0);read.Apply();var colors=read.GetPixels32();int occupied=0;
+     for(int x=0;x<image.width;x++)if(colors[x].a>20||colors[(image.height-1)*image.width+x].a>20)occupied++;
+     if(occupied>0)throw new InvalidOperationException("Actual nine-floor specimen cuts off its marble foot or crown at the framebuffer edge");checks++;
+    }finally{RenderTexture.active=old;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.DestroyImmediate(read);StackSpecimenStudio.Release(style,9);}
+   }return checks;
   }
   static int VerifyHeroGrounding(){
    var build=typeof(StackSpecimenStudio).GetMethod("BuildHeroTower",BindingFlags.NonPublic|BindingFlags.Static);

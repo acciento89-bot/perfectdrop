@@ -403,13 +403,16 @@ namespace Kamilunavo.PerfectDrop.QA
             FindButton("Risk").onClick.Invoke();FindButton("Drop").onClick.Invoke();
             Require(_game.Run.Count==5 && !_game.Run.Failed && _game.Run.Top.Size==area && !_game.Run.Powers.RepairReady,"Repair did not save actual risky miss.");
             yield return Capture("repair-save");_game.GoHome();FindButton("CampaignNavigation").onClick.Invoke();FindButton("Endless").onClick.Invoke();
+            SetReviewResolution(956,440,false);yield return new WaitForSecondsRealtime(.8f);float landscapeWidth=0;
             for(var block=1;block<=66;block++)
             {
+                Debug.Log($"DROP_ENDLESS_PROGRESS block={block} offset={_game.MovingOffset} modal={_game.Hud.ModalOpen} failed={_game.Run.Failed} completed={_game.Run.Completed} sim={Time.time} real={Time.realtimeSinceStartup}");
                 var until=Time.realtimeSinceStartup+30;
                 while(Mathf.Abs(_game.MovingOffset)>.06f && Time.realtimeSinceStartup<until)yield return null;
-                Require(Mathf.Abs(_game.MovingOffset)<=.06f,"Endless placement window missed.");
+                Require(Mathf.Abs(_game.MovingOffset)<=.06f,$"Endless placement window missed: floor={block}, offset={_game.MovingOffset}, modal={_game.Hud.ModalOpen}, failed={_game.Run.Failed}, completed={_game.Run.Completed}, focused={Application.isFocused}, simTime={Time.time}, realTime={Time.realtimeSinceStartup}.");
                 FindButton("Drop").onClick.Invoke();Require(_game.Run.Count==block && !_game.Run.Completed,"Endless count/completion incorrect.");
                 yield return new WaitForSeconds(.1f);
+                if(block==8||block==30||block==66){yield return new WaitForSecondsRealtime(.2f);CheckFraming();float width=LandingPixelWidth();Require(width>=Screen.height*.30f,"Landscape landing surface too small for accurate stacking: "+width);if(block==8)landscapeWidth=width;else Require(width>=landscapeWidth*.94f,"Landscape camera shrinks an unchanged landing surface as more floors are placed.");yield return Capture("landscape-stack-"+block);}
             }
             Require(_game.Run.Layers.Count==64,"Endless retained unbounded geometry.");yield return Capture("endless-66");
             _game.Save();yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);
@@ -419,6 +422,12 @@ namespace Kamilunavo.PerfectDrop.QA
             _game.StartLevel(6);FindButton("Risk").onClick.Invoke();yield return new WaitForSeconds(.1f);FindButton("Drop").onClick.Invoke();
             Require(_game.Run.Failed,"Risk bad placement did not fail.");yield return Capture("risk-fail");
             FindButton("Retry").onClick.Invoke();Require(_game.Run.Count==0 && !_game.Run.Failed,"Arcade retry failed.");
+        }
+        private float LandingPixelWidth()
+        {
+            var top=_game.Run.Top;float min=float.PositiveInfinity,max=float.NegativeInfinity;
+            foreach(int x in new[]{-1,1})foreach(int z in new[]{-1,1}){var p=Camera.main.WorldToScreenPoint(new Vector3(top.Center.x+x*top.Size.x*.5f,_game.Run.Layers.Count*StackGame.LayerHeight,top.Center.y+z*top.Size.y*.5f));min=Mathf.Min(min,p.x);max=Mathf.Max(max,p.x);}
+            return max-min;
         }
         private void CheckFraming()
         {

@@ -12,6 +12,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             foreach(var aspect in new[]{.461f,.5625f,1.333f,2.171f})
             {
                 var landscape=aspect>1.2f;var pane=StackPresentation.World(landscape);
+                if(landscape){Check(pane.height>=.75f,"Landscape controls force the alignment surface into a short strip.");checks++;}
                 Check(!pane.Overlaps(StackPresentation.Powers(landscape)),"Powers obstruct gameplay reservation.");checks++;
                 Check(!pane.Overlaps(StackPresentation.Drop(landscape)),"Drop obstructs gameplay reservation.");checks++;
                 foreach(var yaw in new[]{-180f,-90f,-35f,0f,90f,180f})foreach(var height in new[]{0f,2f,15.6f,33.28f})
