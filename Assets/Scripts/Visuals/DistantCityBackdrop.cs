@@ -52,6 +52,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             // conservative culling bound also covers the supported endless run.
             mesh.bounds=new Bounds(Vector3.zero,Vector3.one*100000);owner.Own(mesh);
             var material=new Material(shader){name="TerraceDistantMatte"+chapter};material.mainTexture=texture;material.SetTexture("_CloudTex",Resources.Load<Texture2D>("Art/AuthoredGoldenCloudPanorama"));material.SetFloat("_Night",chapter==2?1:0);material.SetFloat("_Day",chapter==0?1:0);owner.Own(material);
+            material.SetVector("_CloudOrigin",theme.position-Vector3.up*TerraceArtGeometry.WorldOffsetY);
             var node=new GameObject("DistantCityCyclorama",typeof(MeshFilter),typeof(MeshRenderer));node.transform.SetParent(theme,false);
             node.GetComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=node.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;

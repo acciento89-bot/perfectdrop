@@ -725,11 +725,11 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 else if(renderer.name=="TopPlate")
                 {
                     paint.SetColor("_Color",finish.Plate);paint.SetColor("_EmissionColor",finish.Plate*.075f);
-                    paint.SetFloat("_GoldFinish",finish.GoldFinish);paint.SetFloat("_Metallic",.62f);paint.SetFloat("_Glossiness",.76f);
+                    paint.SetFloat("_GoldFinish",finish.GoldFinish);paint.SetFloat("_Metallic",.72f);paint.SetFloat("_Glossiness",.88f);
                 }
                 else if(renderer.name.StartsWith("Gold"))
                 {
-                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.24f);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.72f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.18f);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.84f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
                 }
                 else continue;
                 renderer.SetPropertyBlock(paint);
@@ -825,7 +825,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
                     var archShadow=Mathf.Pow(Mathf.Clamp01(1-Mathf.Abs(dir.y+.12f)*6),3)*.26f;
                     float ribbonAngle=Mathf.Atan2(Mathf.Sin(angle+.95f),Mathf.Cos(angle+.95f));
                     var warmRibbon=Mathf.Exp(-ribbonAngle*ribbonAngle*9)*Mathf.Exp(-Mathf.Pow((dir.y+.25f)*1.3f,2));
-                    pixels[y*size+x]=sky*(1-archShadow)+new Color(2.4f,1.38f,.62f)*glow+new Color(1.9f,1.65f,1.20f)*softbox+new Color(.9f,.64f,.35f)*window+new Color(2.2f,1.55f,.85f)*warmRibbon;
+                    var coolRim=Mathf.Pow(Mathf.Max(0,Vector3.Dot(dir,new Vector3(-.72f,.18f,-.67f).normalized)),32);
+                    pixels[y*size+x]=sky*(1-archShadow)+new Color(2.4f,1.65f,.92f)*glow+new Color(3.1f,2.85f,2.25f)*softbox+new Color(.9f,.64f,.35f)*window+new Color(2.6f,2.15f,1.45f)*warmRibbon+new Color(.65f,.86f,1.10f)*coolRim;
                 }
                 map.SetPixels(pixels,(CubemapFace)face);
             }

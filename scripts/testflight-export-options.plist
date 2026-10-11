@@ -11,6 +11,8 @@
     <key>teamID</key>
     <string>TKG684N5GL</string>
     <key>manageAppVersionAndBuildNumber</key>
+    <false/>
+    <key>testFlightInternalTestingOnly</key>
     <true/>
     <key>uploadSymbols</key>
     <true/>

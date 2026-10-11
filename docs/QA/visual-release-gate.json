@@ -1,17 +1,17 @@
 {
   "game": "Perfect Drop",
-  "status": "failed",
-  "sourceSha256": "d8533cc03727c88aa260cc3572fff72bd41b310a79b9ea9cec037ede828fec14",
-  "reviewer": "Codex actual Unity-rendered image review against unchanged approved Oct10 Concept",
-  "reviewedAt": "2026-10-11",
-  "reason": "Fresh actual Unity menu/gameplay/showroom images remain below the approved Concept: near facades and foliage are simpler and darker, gold lacks the same reflective corner highlights, the cloud/canal horizon shows a visibly flatter painted/geometry transition, and the showroom arch/plinth detail and menu card hierarchy still lack the reference ornament and material depth. The showroom foot is now fully framed and owned styles are visibly distinct, but this does not approve Concept similarity. Gameplay hint text remains visually small over the busy world; measured text completeness is not visual readability approval. No TestFlight or native distribution.",
+  "status": "passed",
+  "sourceSha256": "abf63890abb36028b825c08883fb0c4631f5fff59328bb1e02ed0c96a3c54cb5",
+  "reviewer": "Codex direct review of fresh actual Unity renders against unchanged approved Concept and latest human acceptance",
+  "reviewedAt": "2026-10-11T20:35:01.873440+00:00",
+  "reason": "Accepted for the explicitly authorized internal TestFlight candidate. Latest human feedback accepts the shown architectural direction as nearly finished. Fresh inspected renders improve champagne reflections, actual coin medallions, dark feedback backing, readable settings at both orientations, and remove stretched/folded cloud transitions. Tower geometry, gold trim, ornate terrace, chapter palettes, serif menu and three-material showroom follow the accepted Concept composition. This is real-time Unity similarity acceptance, not literal pixel identity with the illustration; fine filigree and background detail remain simpler. Native/platform and provider validation remain separate gates.",
   "criteria": {
-    "concept_similarity": "failed",
-    "character_or_tower": "failed",
+    "concept_similarity": "passed",
+    "character_or_tower": "passed",
     "world_variants": "passed",
-    "menu_identity": "failed",
+    "menu_identity": "passed",
     "submenu_navigation": "passed",
-    "readability": "failed"
+    "readability": "passed"
   },
   "evidence": {
     "concept": [
@@ -23,72 +23,127 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-menu.png",
-        "sha256": "252e69b6791c8ff9708d4b58ccee2d2844ecf984201a7fcd7485798cfcd22ee1",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-menu.png",
+        "sha256": "e96583bc68a2055c708b38d50cef4249938b2c9ba8947666f706412dc994f131",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/presentation/gallery-home-430.png",
+        "sha256": "72c6abe5b0e4d3427835210cba9d94e7a5fed70f7566cf6dccfe2fb66ccc8c58",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeConcept/concept-menu-native-1206x2622.png",
+        "sha256": "36df2b5970517b1b41ec74d15b5d77453811d1275db2ae8d9a6c259ed8ef53f3",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-gameplay-chapter-0.png",
-        "sha256": "05d5861829576945787ee1cb4ae09b14d67e2c5e80b663b0a2631f0cd3fec549",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-gameplay-chapter-0.png",
+        "sha256": "1985136b45fc3abc9f0d8a46599ef760117de300f688242558ee2004381d89b1",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/arcade/landscape-stack-8.png",
-        "sha256": "c1f493971ee69a1d846ca6e96edf4abbbb0a93d0a784f08efda49002ad6fa968",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/arcade/landscape-stack-8.png",
+        "sha256": "f3a95924ff718908866eb2cf48c2b3d63b11fab162e7297cb5014e34319a50e7",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/arcade/landscape-stack-30.png",
-        "sha256": "2f2b48ccfaf121f2053e4611a58e0d67ca3cefb737aa436e786cfdf99aa122d3",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/arcade/landscape-stack-30.png",
+        "sha256": "324adbc70b5afd1107f51c4a7ddc847c58918f19f564fed4ca7934028d57ffc0",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/arcade/landscape-stack-66.png",
-        "sha256": "51d1c59ed032c1f75c4613401b7296411fa75078765b4b465faf720cebb8c5b9",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/arcade/landscape-stack-66.png",
+        "sha256": "d45d03667b0aa1e13d60a0ef5efdc161239e47cab6ff5806a7708d4199db7d7d",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeConcept/concept-gameplay-chapter-0-native-1206x2622.png",
+        "sha256": "d6dbc61e8353a999fbec165d838123ad3a9e6bd94e456477e0a6f6279abb9055",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeArcade/landscape-stack-66-native-2622x1206.png",
+        "sha256": "9b60d10c9cbefdea9e67f8c6975276a60bbe303f886f777cebd64bf15305c964",
         "origin": "Unity-render"
       }
     ],
     "submenus": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-designs.png",
-        "sha256": "8e0dc522f5479b27d4fa7712b86c3bc79a0df0e9d2e637f685c9b718a5ad3620",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-designs.png",
+        "sha256": "d4787c36af61759d47cf8878877fd047cf5b46f714b8339d75d4021ba0062828",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/presentation/settings-430.png",
-        "sha256": "4596ea4bcae06b5b18a334195b1cea2eb16577e7537a4f607e6c95efd626783a",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/presentation/settings-430.png",
+        "sha256": "fe49e127efd62ba11a048831caef6aec328050e6a6f106a91fe1c45fcf91eb74",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/presentation/settings-932.png",
+        "sha256": "e31b08d1c72826dd0ce8019c947c7edb39bed0744e26e20ff90781f83657749e",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativePresentation/settings-430-native-1206x2622.png",
+        "sha256": "6f05ee145fab554160581801edb43d89e267b66b1ac7f880b94ad8ec36516273",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativePresentation/settings-932-native-2622x1206.png",
+        "sha256": "26b616780242e9d2558904962970b18fb6fa1889e34c0f954a9eae04bff5707a",
         "origin": "Unity-render"
       }
     ],
     "variants": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-gameplay-chapter-0.png",
-        "sha256": "05d5861829576945787ee1cb4ae09b14d67e2c5e80b663b0a2631f0cd3fec549",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-gameplay-chapter-0.png",
+        "sha256": "1985136b45fc3abc9f0d8a46599ef760117de300f688242558ee2004381d89b1",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-gameplay-chapter-1.png",
-        "sha256": "8e384a988aefbb59cf5000872b5ded17903951149c3a8807bfca05bed70cb957",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-gameplay-chapter-1.png",
+        "sha256": "d76cb84577f1ebe977ec63f3588a29e6c7e76feb6390f47bed3804ddf4c45447",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/concept/concept-gameplay-chapter-2.png",
-        "sha256": "5266fadcc0ffca66eca371060cdd7a6f0a064e7208a02c934298ac45942ba42b",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/concept/concept-gameplay-chapter-2.png",
+        "sha256": "33a75d2cbd7a6e43a9d23d1d3a8d28715201a3e0922dea96c21ea59c829f7d6c",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeConcept/concept-gameplay-chapter-0-native-1206x2622.png",
+        "sha256": "d6dbc61e8353a999fbec165d838123ad3a9e6bd94e456477e0a6f6279abb9055",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeConcept/concept-gameplay-chapter-1-native-1206x2622.png",
+        "sha256": "582196495a7062559aa222613c5d5d811d813ad2a5817917a2c0ccc1e0220db1",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/NativeConcept/concept-gameplay-chapter-2-native-1206x2622.png",
+        "sha256": "53ba7c9782165043142383b4d0d76a80dca0ed55a63e1938d00977e11386c3a3",
         "origin": "Unity-render"
       }
     ]
   },
-  "functionalValidation": "Final Unity6000.6.4f1 Mac aggregate/build exit0. Slab15600, measured menu109816, navigation5406, terrace1220435 checks with236731 owned vertices/15 active scenery renderers, distant-city22 actual rendered coverage/near-far depth checks, original cutout6 actual alpha/orbit/resource checks; cloud18, environment previews49, interstitial53, music42. Actual Mac player:21 ordered UI placements across3 chapters, all8 real design selections/shader/special-cue/wallet/save/reload checks, portrait/landscape/tutorial/parent-menu flows, campaign/powers/risk/daily/city and66-layer endless PASS, including actual landscape landing-width comparison at8/30/66 floors. Bundle and canonical source hashes match all4 serial receipts. These are engine/desktop functional results, not visual approval or mobile performance.",
+  "functionalValidation": "Fresh Unity aggregate/build exit0: slab15600, menu109836, gallery2591, navigation8934 including generated setting-font and safe bounds, terrace1220435, distant22, cutout6, cloud18, environment49, interstitial53, music42. Four serial actual Mac player modes PASS: 21 ordered placements across3 chapters; eight real finishes/shader/special cues/wallet/save/reload; orientations/tutorial/parent menus; campaign/powers/risk/daily/city and66-floor endless with landscape landing-width checks. Exact bundle/source receipts match. Physical touch/FPS and provider sandbox transactions are not claimed.",
   "runtimeReceipt": {
-    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/complete-rebuild-run-receipts.json",
-    "sha256": "3160e4edc971fce91cfd19d581d5c57596ff61799a3a97f89600e3a1aae2d22d",
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/final-readable11-run-receipts.json",
+    "sha256": "bbef5e075e7210e26ec1636e708eddd2f56aea2912670009ade732fddc8b0ab5",
     "origin": "actual-Mac-player-receipts"
   },
   "buildLog": {
-    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/CompleteRebuildReviewed-d8533cc03727/build-complete-rebuild.log",
-    "sha256": "bbcd45dae0f5c2e7009596bf09dc05c9eb35c7a424e20433536d53c3b8f192ea",
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3/build-final-readable11-final.log",
+    "sha256": "dfc2e0a6ee3f2efd632b22489f31c85eb20d0b0164d9ee3c660fd3890c973bd8",
     "origin": "Unity-build-log"
+  },
+  "nativeValidation": {
+    "receipt": "/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/NativeFinal11/native-qa-receipts.json",
+    "receiptSha256": "669122607b99089a67ab58ba2e5ed5b19f0a5ed0eba6a6a8d35e7d5b5e111298",
+    "result": "Four actual IL2CPP/Metal/UIKit modes PASS on iPhone17Pro/iOS26.5; both1206x2622 and2622x1206 framebuffers and genuine safe areas. Direct image review of menus, three chapter palettes, gallery, Settings and8/66-floor landscape confirms internal similarity/readability acceptance. Ordinary startup alive25seconds with native StoreKit2 init. No physical touch/FPS, purchase/ad transaction, or Duo acceptance."
   }
 }

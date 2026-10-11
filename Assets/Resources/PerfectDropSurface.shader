@@ -72,7 +72,9 @@ Shader "Kamilunavo/PerfectDropSurface"
             half reflection=exp2(-reflectionBand*reflectionBand);
             half brush=sin(uv.y*920+metal.g*8)*.004*saturate(1-fwidth(uv.y)*920*.35);
             half edge=smoothstep(.44,.485,max(abs(uv.x-.5),abs(uv.y-.5)));
-            float3 gold=lerp(float3(.51,.28,.075),float3(1.02,.83,.43),diagonal)+reflection*float3(.23,.18,.075)+brush;
+            // Champagne reflectance leaves room for a cream specular highlight;
+            // the real environment reflection supplies view-dependent glints.
+            float3 gold=lerp(float3(.70,.43,.17),float3(1.02,.92,.66),diagonal)+reflection*float3(.15,.14,.10)+brush;
             // The same UV-bound finish runs across plate faces and bevels.
             // Avoid an emissive orange sheet: reflected light supplies the volume.
             // Smooth brushed shoulders and ceramic/lacquer skins share a neutral

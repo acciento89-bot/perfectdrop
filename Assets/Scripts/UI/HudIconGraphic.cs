@@ -15,7 +15,8 @@ namespace Kamilunavo.PerfectDrop.UI
         Lock,
         Clock,
         Target,
-        Gear
+        Gear,
+        Coin
     }
 
     [RequireComponent(typeof(CanvasRenderer))]
@@ -28,6 +29,15 @@ namespace Kamilunavo.PerfectDrop.UI
             vh.Clear();
             switch (IconType)
             {
+                case HudIconType.Coin:
+                    for(int i=0;i<32;i++)
+                    {
+                        float a=i*Mathf.PI*2/32,b=(i+1)*Mathf.PI*2/32;
+                        AddThickLine(vh,P(.5f+Mathf.Cos(a)*.37f,.5f+Mathf.Sin(a)*.37f),P(.5f+Mathf.Cos(b)*.37f,.5f+Mathf.Sin(b)*.37f),.09f);
+                        AddThickLine(vh,P(.5f+Mathf.Cos(a)*.23f,.5f+Mathf.Sin(a)*.23f),P(.5f+Mathf.Cos(b)*.23f,.5f+Mathf.Sin(b)*.23f),.025f);
+                    }
+                    AddThickLine(vh,P(.5f,.34f),P(.5f,.66f),.075f);
+                    break;
                 case HudIconType.Gear:
                     for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32,b=(i+1)*Mathf.PI*2/32;AddThickLine(vh,P(.5f+Mathf.Cos(a)*.26f,.5f+Mathf.Sin(a)*.26f),P(.5f+Mathf.Cos(b)*.26f,.5f+Mathf.Sin(b)*.26f),.10f);}
                     for(int i=0;i<8;i++){float a=i*Mathf.PI/4;AddThickLine(vh,P(.5f+Mathf.Cos(a)*.26f,.5f+Mathf.Sin(a)*.26f),P(.5f+Mathf.Cos(a)*.43f,.5f+Mathf.Sin(a)*.43f),.10f);}

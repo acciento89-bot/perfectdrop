@@ -102,7 +102,22 @@ Shader "Kamilunavo/PerfectDropSky"
                     // latitude scale clamped every steep ray to one texture row,
                     // stretching that row into vertical stripes on high towers.
                     float2 uv=float2(panoramaU,clamp(asin(clamp(d.y,-1,1))*.35+.80,.001,.999));
+                    // Below the city, a latitude strip stretches a few painted
+                    // rows across the whole foreground. Sample the cloud bank
+                    // on a world-anchored horizontal plane instead.
                     float3 sky=tex2D(_CloudPanorama,uv).rgb;
+                    if(d.y<-.20)
+                    {
+                        float3 eye=_WorldSpaceCameraPos-_CloudOrigin.xyz;
+                        float distance=max(1,eye.y+28)/max(.12,-d.y);
+                        // Equal source texel density: the panorama is 2:1 and
+                        // only its lower .38 V range contains cloud billows.
+                        float2 bank=1-abs(frac((eye.xz+d.xz*distance)*float2(.018,.09473684))*2-1);
+                        float2 bankUV=float2(bank.x,.025+bank.y*.38);
+                        // Blend radiance, not unrelated UV projections. UV
+                        // interpolation folds/stretches the photograph at the seam.
+                        sky=lerp(sky,tex2D(_CloudPanorama,bankUV).rgb,1-smoothstep(-.52,-.20,d.y));
+                    }
                     // Regrade the original cloud asset into daylight without
                     // replacing its billows or introducing a screen-space image.
                     if(_SkyDay>.5)

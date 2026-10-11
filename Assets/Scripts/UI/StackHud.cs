@@ -7,7 +7,7 @@ namespace Kamilunavo.PerfectDrop.UI
     public sealed partial class StackHud : MonoBehaviour
     {
         public StackGame Game;
-        private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup, _menuRect;
+        private RectTransform _safe, _statsRoot, _objective, _dropRect, _popup, _menuRect, _hintPlate;
         private Text[] _stats;
         private Text _status, _hint, _popupTitle, _popupBody;
         private Image _progress;
@@ -34,7 +34,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _safe.gameObject.AddComponent<SafeAreaFitter>();
             _statsRoot = UiFactory.Panel(_safe, "Stats", Color.clear, new Vector2(.04f,.87f), new Vector2(.96f,.98f));
             _stats = new Text[4];
-            var types = new[] { HudIconType.Floors, HudIconType.Crown, HudIconType.Flame, HudIconType.Diamond };
+            var types = new[] { HudIconType.Floors, HudIconType.Crown, HudIconType.Flame, HudIconType.Coin };
             var statNames=new[]{T("STAPEL","STACK"),T("BESTE","BEST"),T("SERIE","STREAK"),"COINS"};
             for (var i = 0; i < 4; i++)
             {
@@ -47,6 +47,9 @@ namespace Kamilunavo.PerfectDrop.UI
             _objective = UiFactory.Panel(_safe,"Objective",Navy,new Vector2(.04f,.765f),new Vector2(.96f,.85f));
             _status = UiFactory.Label(_objective,"Status","PERFECT DROP",35,new Vector2(.045f,.48f),new Vector2(.71f,.94f),TextAnchor.MiddleLeft,Gold,FontStyle.Bold);
             _hint = UiFactory.Label(_objective,"Hint",T("Stapele 30 Blöcke. Tippe zum Absetzen.","Stack 30 blocks. Tap to drop."),24,new Vector2(.045f,.15f),new Vector2(.71f,.38f),TextAnchor.MiddleLeft,Color.white);
+            _hintPlate=UiFactory.Panel(_objective,"HintPlate",new Color(.035f,.065f,.12f,.90f),Vector2.zero,Vector2.one);
+            _hintPlate.GetComponent<Image>().material=null;UiFactory.ApplyPillImage(_hintPlate.GetComponent<Image>());
+            _hintPlate.SetSiblingIndex(_hint.transform.GetSiblingIndex());
             _progress = UiFactory.Progress(_objective,new Vector2(.045f,.04f),new Vector2(.955f,.10f),new Color(.22f,.27f,.35f),Gold);
             _menuRect=(RectTransform)UiFactory.Button(_statsRoot,"Menu","Ⅱ",Navy,Gold,Vector2.zero,Vector2.one,OpenSettings).transform;
             UiFactory.ApplyCircularImage(_menuRect.GetComponent<Image>());
@@ -192,6 +195,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Place(_objective,pane,shortLandscape?new Rect(.025f,.015f,.68f,.12f):landscape?new Rect(.75f,.72f,.225f,60*pointUnit/availableHeight):new Rect(.37f,.75f,.58f,.12f));
             _objective.GetComponent<Image>().color=Color.clear;
             _hint.gameObject.SetActive(!shortLandscape);
+            _hintPlate.gameObject.SetActive(!shortLandscape);
             float target=UiMetrics.TargetSize(_safe,49);
             _menuRect.anchorMin=_menuRect.anchorMax=new Vector2(0,.5f);_menuRect.pivot=new Vector2(0,.5f);
             _menuRect.sizeDelta=new Vector2(target,target);_menuRect.anchoredPosition=Vector2.zero;
@@ -207,7 +211,8 @@ namespace Kamilunavo.PerfectDrop.UI
             Set((RectTransform)_stats[3].transform,.28f,.08f,.96f,.92f);GalleryTheme.Readable(_stats[3],18);
             Set((RectTransform)wallet.Find("Icon"),.06f,.16f,.27f,.84f);
             Set((RectTransform)_status.transform,.02f,shortLandscape?0:landscape?.55f:.52f,.98f,shortLandscape?1:.98f);_status.alignment=TextAnchor.MiddleRight;_status.color=new Color(.98f,.85f,.45f);GalleryTheme.Readable(_status,landscape?20:30);
-            Set((RectTransform)_hint.transform,.02f,landscape?0:.05f,.98f,landscape?.52f:.48f);_hint.alignment=TextAnchor.MiddleRight;GalleryTheme.Readable(_hint,12);
+            Set(_hintPlate,0,landscape?0:.02f,1,landscape?.52f:.50f);
+            Set((RectTransform)_hint.transform,.055f,landscape?.025f:.065f,.945f,landscape?.495f:.455f);_hint.alignment=TextAnchor.MiddleCenter;GalleryTheme.Readable(_hint,landscape?12:14);
             var track=(RectTransform)_progress.transform.parent;
             track.SetParent(stage,false);Set(track,.10f,.025f,.90f,.075f);
             // Reserve Risk at its final size before assigning the remaining drop width.
@@ -236,13 +241,17 @@ namespace Kamilunavo.PerfectDrop.UI
         // A separate music control adds one row; short panes use pairs to retain full logical targets.
         private void LayoutMusicSettings(Rect pane)
         {
-            Canvas.ForceUpdateCanvases();float availableW=_safe.rect.width*pane.width,availableH=_safe.rect.height*pane.height,target=UiMetrics.TargetSize(_safe,49),gap=6,pad=12,header=50;
-            bool pairs=availableH<7*(target+gap)+header+pad*2&&availableW>=target*2+pad*2+gap;int rows=pairs?4:7;float w=Mathf.Min(540,availableW-24),h=Mathf.Min(availableH-24,header+rows*(target+gap)+pad);
+            Canvas.ForceUpdateCanvases();float unit=UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor);
+            float availableW=_safe.rect.width*pane.width,availableH=_safe.rect.height*pane.height,target=UiMetrics.TargetSize(_safe,49),gap=6*unit,pad=12*unit,header=50*unit;
+            bool pairs=availableH<7*(target+gap)+header+pad*2&&availableW>=target*2+pad*2+gap;
+            bool compact=availableH<4*(target+gap)+header+pad*2&&availableW>=target*3+pad*2+gap*2;
+            if(compact){gap=2*unit;pad=4*unit;header=24*unit;}
+            int rows=compact?3:pairs?4:7;float w=Mathf.Min(540*unit,availableW-pad*2),h=Mathf.Min(availableH-pad*2,header+rows*(target+gap)+pad);
             _popup.anchorMin=_popup.anchorMax=new Vector2(pane.x,pane.y+pane.height);_popup.pivot=new Vector2(0,1);_popup.anchoredPosition=new Vector2((availableW-w)/2,-(availableH-h)/2);_popup.sizeDelta=new Vector2(w,h);
             void At(RectTransform r,float x,float y,float width,float height){r.anchorMin=r.anchorMax=new Vector2(0,1);r.pivot=new Vector2(0,1);r.anchoredPosition=new Vector2(x,-y);r.sizeDelta=new Vector2(width,height);}
-            At((RectTransform)_popupTitle.transform,pad,8,w-pad*2,34);_popupTitle.fontSize=_popupTitle.resizeTextMaxSize=24;
+            At((RectTransform)_popupTitle.transform,pad,(compact?2:8)*unit,w-pad*2,(compact?20:34)*unit);GalleryTheme.Readable(_popupTitle,compact?18:24);
             var controls=new[]{_daily,_sound,_music,_haptics,_motion,_settingsMap,_close};float inner=w-pad*2;
-            for(int i=0;i<controls.Length;i++){int row=pairs?(i==0?0:(i+1)/2):i,col=pairs&&i>0?(i-1)%2:0;float bw=pairs&&i>0?(inner-gap)/2:inner;At((RectTransform)controls[i].transform,pad+col*(bw+gap),header+row*(target+gap),bw,target);var label=controls[i].GetComponentInChildren<Text>();label.fontSize=label.resizeTextMaxSize=18;}
+            for(int i=0;i<controls.Length;i++){int row=compact?i/3:pairs?(i==0?0:(i+1)/2):i,col=compact?i%3:pairs&&i>0?(i-1)%2:0;float bw=compact?(inner-gap*2)/3:pairs&&i>0?(inner-gap)/2:inner;At((RectTransform)controls[i].transform,pad+col*(bw+gap),header+row*(target+gap),bw,target);GalleryTheme.Readable(controls[i].GetComponentInChildren<Text>(),compact?14:16);}
         }
         private static void Place(RectTransform rect, Rect pane, Rect slot) => Set(rect,pane.x+slot.x*pane.width,pane.y+slot.y*pane.height,pane.x+slot.xMax*pane.width,pane.y+slot.yMax*pane.height);
         private static void Set(RectTransform rect,float x,float y,float xmax,float ymax)

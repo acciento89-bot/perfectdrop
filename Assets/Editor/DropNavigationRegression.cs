@@ -23,7 +23,7 @@ namespace Kamilunavo.PerfectDrop.Editor
    int secondaryActions=0;foreach(var action in map.GetComponentsInChildren<Button>())if(!action.name.StartsWith("Chapter"))secondaryActions++;Check(secondaryActions<=7,points+" landing keeps compact navigation alongside chapter selection");CheckControls(map,safe,points,"landing");CheckIdentityText(map,points);var landingActions=map.GetComponentsInChildren<Button>();for(int a=0;a<landingActions.Length;a++)for(int b=a+1;b<landingActions.Length;b++){var first=UiMetrics.ScreenRect((RectTransform)landingActions[a].transform);var second=UiMetrics.ScreenRect((RectTransform)landingActions[b].transform);Check(Mathf.Min(first.xMax,second.xMax)-Mathf.Max(first.xMin,second.xMin)<=.5f||Mathf.Min(first.yMax,second.yMax)-Mathf.Max(first.yMin,second.yMin)<=.5f,points+" landing touch choices do not overlap: "+landingActions[a].name+" / "+landingActions[b].name);}var tower=map.Find("HeroTower").GetComponent<TowerPreviewGraphic>();var palette=StackStylePalette.Get(3);Check(tower.Body==palette.Body&&tower.Plate==palette.Plate,points+" selected style binds actual specimen");
    navigation.GetComponent<Button>().onClick.Invoke();Canvas.ForceUpdateCanvases();var scroll=map.Find("LevelGalleryScroll").GetComponent<ScrollRect>();Check(scroll.gameObject.activeInHierarchy&&scroll.content.childCount==10,points+" campaign opens all chapter levels");Check(!map.Find("HeroTower").gameObject.activeInHierarchy,points+" campaign gives level choices their own space");CheckControls(map,safe,points,"campaign");scroll.verticalNormalizedPosition=1;Canvas.ForceUpdateCanvases();Check(Inside(UiMetrics.ScreenRect(scroll.viewport),UiMetrics.ScreenRect((RectTransform)scroll.content.Find("LevelSlot0"))),points+" first campaign level completely visible");scroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();Check(Inside(UiMetrics.ScreenRect(scroll.viewport),UiMetrics.ScreenRect((RectTransform)scroll.content.Find("LevelSlot9"))),points+" last campaign level completely reachable");
    safe.sizeDelta=new Vector2(points.y,points.x);Layout(hud);Check(scroll.gameObject.activeInHierarchy,points+" orientation retains campaign screen");map.Find("CampaignBack").GetComponent<Button>().onClick.Invoke();Check(!scroll.gameObject.activeInHierarchy&&map.Find("HeroTower").gameObject.activeInHierarchy,points+" back restores focused landing");Canvas.ForceUpdateCanvases();CheckControls(map,safe,new Vector2(points.y,points.x),"rotated landing");CheckIdentityText(map,new Vector2(points.y,points.x));
-   map.Find("Styles").GetComponent<Button>().onClick.Invoke();Check(safe.Find("StyleShop").gameObject.activeInHierarchy&&hud.ModalOpen,points+" designs open separate paused gallery");Canvas.ForceUpdateCanvases();CheckIdentityText((RectTransform)safe.Find("StyleShop"),new Vector2(points.y,points.x));safe.sizeDelta=points;Layout(hud);Canvas.ForceUpdateCanvases();CheckIdentityText((RectTransform)safe.Find("StyleShop"),points);safe.Find("StyleShop/Back").GetComponent<Button>().onClick.Invoke();Check(map.gameObject.activeInHierarchy&&!scroll.gameObject.activeInHierarchy&&hud.ModalOpen,points+" design back restores landing without resuming gameplay");Check(profile.Style==3&&profile.Coins==357&&profile.OwnedStyles==255&&profile.UnlockedLevel==21,points+" navigation preserves selected design, ownership, wallet and progression");
+   map.Find("Styles").GetComponent<Button>().onClick.Invoke();Check(safe.Find("StyleShop").gameObject.activeInHierarchy&&hud.ModalOpen,points+" designs open separate paused gallery");Canvas.ForceUpdateCanvases();CheckIdentityText((RectTransform)safe.Find("StyleShop"),new Vector2(points.y,points.x));safe.sizeDelta=points;Layout(hud);Canvas.ForceUpdateCanvases();CheckIdentityText((RectTransform)safe.Find("StyleShop"),points);safe.Find("StyleShop/Back").GetComponent<Button>().onClick.Invoke();Check(map.gameObject.activeInHierarchy&&!scroll.gameObject.activeInHierarchy&&hud.ModalOpen,points+" design back restores landing without resuming gameplay");Check(profile.Style==3&&profile.Coins==357&&profile.OwnedStyles==255&&profile.UnlockedLevel==21,points+" navigation preserves selected design, ownership, wallet and progression");CheckSettings(hud,safe,points);
   }finally{if(canvas!=null)UnityEngine.Object.DestroyImmediate(canvas.gameObject);UnityEngine.Object.DestroyImmediate(root);UiMetrics.QaPointScale=null;}}
   static void CheckIdentityText(RectTransform screen,Vector2 points)
   {
@@ -36,6 +36,34 @@ namespace Kamilunavo.PerfectDrop.Editor
    }
   }
   static void Layout(StackHud hud)=>typeof(StackHud).GetMethod("LayoutCampaign",Private).Invoke(hud,new object[]{new Rect(0,0,1,1)});
+  static void CheckSettings(StackHud hud,RectTransform safe,Vector2 points)
+  {
+   var popup=(RectTransform)typeof(StackHud).GetField("_popup",Private).GetValue(hud);popup.gameObject.SetActive(true);
+   // The settings branch hides Retry; avoid saving a synthetic editor profile.
+   ((Button)typeof(StackHud).GetField("_retry",Private).GetValue(hud)).gameObject.SetActive(false);
+   typeof(StackHud).GetMethod("UpdateSettings",Private).Invoke(hud,null);
+   foreach(var density in new[]{new Vector2(1,1),new Vector2(.375f,3)})
+   {
+    var canvas=safe.GetComponentInParent<Canvas>();canvas.scaleFactor=density.x;UiMetrics.QaPointScale=density.y;float unit=density.y/density.x;
+    foreach(var shape in new[]{points,new Vector2(points.y,points.x),new Vector2(734,190)})
+    {
+     safe.sizeDelta=shape*unit;Canvas.ForceUpdateCanvases();typeof(StackHud).GetMethod("LayoutMusicSettings",Private).Invoke(hud,new object[]{new Rect(0,0,1,1)});Canvas.ForceUpdateCanvases();
+     var bounds=UiMetrics.ScreenRect(safe);var buttons=popup.GetComponentsInChildren<Button>();
+     foreach(var button in buttons)
+     {
+      var rect=UiMetrics.ScreenRect((RectTransform)button.transform);
+      Check(Inside(bounds,rect),shape+" settings target is entirely inside safe pane: "+button.name);
+      Check(rect.width/density.y>=48.99f&&rect.height/density.y>=48.99f,shape+" settings keeps49-point touch targets: "+button.name);
+      var text=button.GetComponentInChildren<Text>();var generator=new TextGenerator();generator.Populate(text.text,text.GetGenerationSettings(text.rectTransform.rect.size));
+      Check(generator.characterCountVisible>=text.text.Length,shape+" settings text is complete: "+text.text);
+      // TextGenerator already applies its generation scale factor to this size.
+      Check(generator.fontSizeUsedForBestFit/density.y>=13.9f,shape+" actual settings font remains >=14 logical points: "+text.text+" points="+generator.fontSizeUsedForBestFit/density.y);
+     }
+     for(int a=0;a<buttons.Length;a++)for(int b=a+1;b<buttons.Length;b++){var x=UiMetrics.ScreenRect((RectTransform)buttons[a].transform);var y=UiMetrics.ScreenRect((RectTransform)buttons[b].transform);Check(Mathf.Min(x.xMax,y.xMax)-Mathf.Max(x.xMin,y.xMin)<=.5f||Mathf.Min(x.yMax,y.yMax)-Mathf.Max(x.yMin,y.yMin)<=.5f,shape+" settings targets do not overlap");}
+    }
+   }
+   popup.gameObject.SetActive(false);
+  }
   static void CheckControls(RectTransform map,RectTransform safe,Vector2 size,string page){var bounds=UiMetrics.ScreenRect(safe);foreach(var b in map.GetComponentsInChildren<Button>()){var r=UiMetrics.ScreenRect((RectTransform)b.transform);foreach(Transform sibling in map){var cover=sibling.GetComponent<Image>();if(cover!=null&&cover.color.a>.98f&&sibling.gameObject.activeInHierarchy&&sibling.GetSiblingIndex()>b.transform.GetSiblingIndex()&&b.transform.parent==map)Check(!UiMetrics.ScreenRect((RectTransform)sibling).Contains(r.center),size+" "+page+" visible control is not painted over by "+sibling.name+": "+b.name);}Check(r.width/3>=48.99f&&r.height/3>=48.99f,size+" "+page+" >=49 logical point target "+b.name);if(!b.name.StartsWith("LevelSlot"))Check(Inside(bounds,r),size+" "+page+" fixed control inside safe pane "+b.name);foreach(var state in new[]{b.colors.normalColor,b.colors.highlightedColor,b.colors.pressedColor,b.colors.selectedColor,b.colors.disabledColor})foreach(var text in b.GetComponentsInChildren<Text>())Check(GalleryTheme.Contrast(text.color,b.GetComponent<Image>().color*state*b.colors.colorMultiplier)>=4.5f,size+" "+page+" all-state contrast "+b.name);}}
  }
 }

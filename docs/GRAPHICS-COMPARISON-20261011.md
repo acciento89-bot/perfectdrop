@@ -1,3 +1,13 @@
+# Perfect Drop final accepted polish — 2026-10-11
+
+The latest human review accepts the shown direction as nearly finished and authorizes final polish followed by TestFlight. Fresh actual-render review for source `abf63890abb36028b825c08883fb0c4631f5fff59328bb1e02ed0c96a3c54cb5` passes for that internal candidate. Stronger champagne reflections, coin medallions, backed readable feedback, corrected world-cloud projection and readable portrait/landscape Settings have been directly inspected. Menu, actual three-chapter gameplay and three-material gallery preserve the accepted architectural Concept composition. Fine filigree remains simpler than the illustration; this is not literal pixel identity or mobile performance acceptance.
+
+Immutable exact-source evidence: `/Volumes/SSK SSD/Kamilunavo/Builds/GraphicsRefinement-20261011/Drop/FinalPolishReviewed-abf63890abb3`. All four serial Mac modes PASS. Navigation8934 includes generated Settings font/readability and logical target checks. Root inspected actual menus, day/sunset/neon gameplay, designs and portrait/landscape Settings; 8/30/66-floor scale is retained. Current comparison: `/Volumes/SSK SSD/Kamilunavo/Artifacts/GraphicsComparison-20261011/perfect-drop-vergleich-final11.png`; scaling/cropping only. `docs/QA/visual-release-gate.json` binds current review to exact files/source. Native simulator/archive/Apple delivery results are recorded in the canonical ledger and Native QA; those separate gates are not inferred from these Mac images.
+
+The prior failed review below is historical and its immutable captures remain preserved. It was superseded by the current human acceptance plus freshly rendered and inspected polish, not relabelled as a pass.
+
+---
+
 # Perfect Drop complete visual rebuild — 2026-10-11
 
 **Visual acceptance remains FAILED. No TestFlight upload, version bump or native distribution.** Perfect Drop is the sole active game; the other three projects are parked.
