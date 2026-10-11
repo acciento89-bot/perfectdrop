@@ -7,6 +7,8 @@ if [ "${CONFIRM_TESTFLIGHT_UPLOAD:-}" != "YES" ]; then
 fi
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+python3 "$ROOT/scripts/verify-visual-release.py"
+
 XCODE_PROJECT="${1:-/private/tmp/PerfectDrop-iOS}"
 ARCHIVE_PATH="${2:-/private/tmp/PerfectDrop-TestFlight.xcarchive}"
 EXPORT_PLIST="$ROOT/scripts/testflight-export-options.plist"
