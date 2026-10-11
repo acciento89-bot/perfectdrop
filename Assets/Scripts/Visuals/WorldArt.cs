@@ -39,7 +39,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static Material _skyMaterial;
         public static int ActiveChapter { get; private set; }
 
-        public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.15f, 0.19f, 0.28f), 0.48f, 0.46f));
+        public static Material Platform => _platform != null ? _platform : (_platform = CreateMaterial("Platform", new Color(0.15f, 0.19f, 0.28f), 0.68f, 0.72f));
         public static Material PlatformTop => _platformTop != null ? _platformTop : (_platformTop = CreateMaterial("PlatformTop", new Color(0.55f, 0.62f, 0.73f), 0.38f, 0.53f));
         public static Material PlatformInset => _platformInset != null ? _platformInset : (_platformInset = CreateMaterial("PlatformInset", new Color(0.018f, 0.025f, 0.040f), 0.35f, 0.22f));
         public static Material Gold => _gold != null ? _gold : (_gold = CreateMaterial("SignalGold", new Color(1f, 0.48f, 0.035f), 0.24f, 0.76f, new Color(1.85f, 0.58f, 0.035f)));
@@ -69,7 +69,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             {
                 material.SetTexture("_BackdropPortrait", portrait);
                 material.SetTexture("_BackdropLandscape", landscape != null ? landscape : portrait);
-                material.SetFloat("_UseBackdrop", 1);
+                material.SetFloat("_UseBackdrop", 0);
             }
             // A small cached studio reflection gives live metal the warm/cool lighting
             // of the authored cloud city without a per-frame reflection probe.
@@ -85,14 +85,22 @@ namespace Kamilunavo.PerfectDrop.Visuals
 
         public static void SetChapter(int chapter)
         {
+            chapter=Mathf.Clamp(chapter,0,2);ActiveChapter=chapter;TerraceArtOwner.SelectChapter(chapter);
             if(_skyMaterial==null)return;
-            chapter=Mathf.Clamp(chapter,0,2);ActiveChapter=chapter;
             var stem=chapter==0?"CloudCityDay":chapter==2?"CloudCityNight":"CloudCity";
             var portrait=Resources.Load<Texture2D>("Art/"+stem+"Portrait")??Resources.Load<Texture2D>("Art/CloudCityPortrait");
             var landscape=Resources.Load<Texture2D>("Art/"+stem+"Landscape")??Resources.Load<Texture2D>("Art/CloudCityLandscape");
             if(portrait!=null)_skyMaterial.SetTexture("_BackdropPortrait",portrait);
             if(landscape!=null)_skyMaterial.SetTexture("_BackdropLandscape",landscape);
-            RenderSettings.ambientSkyColor=chapter==2?new Color(.30f,.38f,.63f):chapter==0?new Color(.52f,.62f,.82f):new Color(.40f,.48f,.68f);
+            _skyMaterial.SetFloat("_UseBackdrop",0);
+            _skyMaterial.SetColor("_TopColor",chapter==0?new Color(.15f,.38f,.66f):chapter==1?new Color(.095f,.16f,.32f):new Color(.025f,.04f,.105f));
+            _skyMaterial.SetColor("_MidColor",chapter==0?new Color(.53f,.69f,.83f):chapter==1?new Color(.43f,.40f,.56f):new Color(.13f,.21f,.36f));
+            _skyMaterial.SetColor("_HorizonColor",chapter==0?new Color(.98f,.83f,.62f):chapter==1?new Color(1,.55f,.26f):new Color(.35f,.43f,.63f));
+            _skyMaterial.SetColor("_BottomColor",chapter==0?new Color(.44f,.58f,.68f):chapter==1?new Color(.40f,.31f,.40f):new Color(.12f,.18f,.29f));
+            _skyMaterial.SetColor("_SunColor",chapter==2?new Color(.64f,.78f,1f):new Color(1.2f,.81f,.43f));
+            _skyMaterial.SetVector("_SunDirection",chapter==2?new Vector4(-.58f,.29f,.68f,0):new Vector4(.72f,.085f,.65f,0));
+            _skyMaterial.SetColor("_CloudColor",chapter==0?new Color(.94f,.94f,.88f):chapter==1?new Color(.78f,.59f,.57f):new Color(.29f,.36f,.51f));
+            RenderSettings.ambientSkyColor=chapter==2?new Color(.35f,.43f,.66f):chapter==0?new Color(.57f,.65f,.81f):new Color(.47f,.48f,.67f);
         }
 
         public static void DecoratePlatform(Transform platform, int index)
@@ -368,21 +376,21 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             root.transform.localPosition = position;
-            var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,size.y*.025f,0),new Vector3(size.x,size.y*.79f,size.z), Platform);
+            var body = AddBeveledBox(root.transform, "MetalDeck", new Vector3(0,size.y*.01f,0),new Vector3(size.x,size.y*.88f,size.z), Platform);
             var tint = new MaterialPropertyBlock();
             tint.SetColor("_Color", StackStylePalette.Get(0).Body);
             tint.SetColor("_DeckBaseColor",tint.GetColor("_Color"));
             body.GetComponent<Renderer>().SetPropertyBlock(tint);
-            AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.44f,0),new Vector3(size.x*.91f,size.y*.12f,size.z*.91f),PlatformInset);
+            AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.46f,0),new Vector3(size.x*.94f,size.y*.08f,size.z*.94f),PlatformInset);
             // A metallic gold inset and a dark shoulder mirror the app icon.
             // All parts scale with the actual retained/cut footprint, including slivers.
-            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.508f,0), new Vector3(size.x*.77f,size.y*.032f,size.z*.77f), GoldPlate);
+            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.502f,0), new Vector3(size.x*.84f,size.y*.035f,size.z*.84f), GoldPlate);
             // A continuous band replaces the corresponding body slice. It stays
             // inside the logical footprint even after a very narrow overhang cut.
-            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.43f,0),new Vector3(size.x,size.y*.14f,size.z),Gold);
-            AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.455f,0),new Vector3(size.x,size.y*.09f,size.z),Platform);
+            AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.445f,0),new Vector3(size.x,size.y*.075f,size.z),Gold);
+            AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.465f,0),new Vector3(size.x,size.y*.07f,size.z),Platform);
             var inset=new GameObject("GoldInset",typeof(MeshFilter),typeof(MeshRenderer));
-            inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.538f,0);
+            inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.524f,0);
             inset.transform.localScale=new Vector3(size.x,.012f,size.z);
             if(_insetFrameMesh==null)_insetFrameMesh=BuildInsetFrame();
             inset.GetComponent<MeshFilter>().sharedMesh=_insetFrameMesh;inset.GetComponent<MeshRenderer>().sharedMaterial=Gold;
@@ -392,12 +400,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
         public static GameObject BuildStackDais(Transform parent)
         {
             var root=new GameObject("ArchitecturalDais");root.transform.SetParent(parent,false);
+            root.transform.localPosition=Vector3.down*((Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight-.52f)*1.5f);
             if(_daisStone==null)_daisStone=CreateMaterial("IvoryDais",new Color(.74f,.68f,.55f),.15f,.52f);
             AddPrimitive(PrimitiveType.Cylinder,root.transform,"StoneDrum",new Vector3(0,-1.03f,0),new Vector3(6.35f,.18f,6.35f),_daisStone);
             AddPrimitive(PrimitiveType.Cylinder,root.transform,"NavyDrum",new Vector3(0,-1.27f,0),new Vector3(5.85f,.13f,5.85f),PlatformInset);
             var inlay=new GameObject("CompassInlay",typeof(MeshFilter),typeof(MeshRenderer));inlay.transform.SetParent(root.transform,false);inlay.transform.localPosition=new Vector3(0,-.842f,0);
             if(_daisInlayMesh==null)_daisInlayMesh=BuildDaisInlay();
             inlay.GetComponent<MeshFilter>().sharedMesh=_daisInlayMesh;inlay.GetComponent<MeshRenderer>().sharedMaterial=GoldPlate;
+            TerraceArtGeometry.Build(root.transform);
             return root;
         }
         private static Mesh BuildDaisInlay()
@@ -666,7 +676,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 }
                 else if(renderer.name.StartsWith("Gold"))
                 {
-                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*1.85f);
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.24f);
                 }
                 else continue;
                 renderer.SetPropertyBlock(paint);
@@ -735,14 +745,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.SetUVs(0,uvs);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
 
-        private static Mesh BuildInsetFrame()
-        {
-            var cube=Resources.GetBuiltinResource<Mesh>("Cube.fbx");
-            var parts=new CombineInstance[4];
-            var points=new[]{new Vector3(0,0,-.392f),new Vector3(0,0,.392f),new Vector3(-.392f,0,0),new Vector3(.392f,0,0)};
-            for(var i=0;i<4;i++)parts[i]=new CombineInstance{mesh=cube,transform=Matrix4x4.TRS(points[i],Quaternion.identity,i<2?new Vector3(.796f,1,.012f):new Vector3(.012f,1,.796f))};
-            var mesh=new Mesh{name="DeckInsetFrame",hideFlags=HideFlags.HideAndDontSave};mesh.CombineMeshes(parts,true,true);return mesh;
-        }
+        private static Mesh BuildInsetFrame() => TerraceArtGeometry.RoundedInset();
 
         private static Cubemap BuildStudioReflection()
         {

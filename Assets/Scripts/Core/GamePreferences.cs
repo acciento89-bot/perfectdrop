@@ -4,6 +4,7 @@ namespace Kamilunavo.PerfectDrop
 {
     public static class GamePreferences
     {
+        private const string MusicKey = "perfectdrop.settings.music";
         private const string AudioKey = "perfectdrop.settings.audio";
         private const string HapticsKey = "perfectdrop.settings.haptics";
         private const string ReducedMotionKey = "perfectdrop.settings.reducedMotion";
@@ -12,6 +13,12 @@ namespace Kamilunavo.PerfectDrop
         {
             get => PlayerPrefs.GetInt(AudioKey, 1) != 0;
             set => SetBool(AudioKey, value);
+        }
+
+        public static bool MusicEnabled
+        {
+            get => PlayerPrefs.GetInt(MusicKey, 1) != 0;
+            set => SetBool(MusicKey, value);
         }
 
         public static bool HapticsEnabled

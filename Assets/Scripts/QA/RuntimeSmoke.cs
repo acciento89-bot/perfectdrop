@@ -143,9 +143,9 @@ namespace Kamilunavo.PerfectDrop.QA
             foreach(var pose in new[]{new Vector2Int(430,932),new Vector2Int(932,430)})
             {
                 SetReviewResolution(pose.x,pose.y,false);yield return new WaitForSecondsRealtime(.8f);
-                _game.Hud.ShowHome();yield return Capture("gallery-home-"+pose.x);
+                _game.Hud.ShowHome();yield return Capture("gallery-home-"+pose.x);FindButton("CampaignNavigation").onClick.Invoke();yield return Capture("campaign-menu-"+pose.x);
                 GameObject.Find("LevelGalleryScroll").GetComponent<ScrollRect>().verticalNormalizedPosition=0;yield return new WaitForSecondsRealtime(.2f);yield return Capture("gallery-last-levels-"+pose.x);
-                FindButton("Styles").onClick.Invoke();yield return Capture("gallery-styles-"+pose.x);
+                FindButton("CampaignBack").onClick.Invoke();FindButton("Styles").onClick.Invoke();yield return Capture("gallery-styles-"+pose.x);
                 FindButton("ExtraDesigns").onClick.Invoke();yield return Capture("gallery-shop-"+pose.x);
                 var scroll=GameObject.Find("ShopScroll").GetComponent<ScrollRect>();scroll.verticalNormalizedPosition=0;
                 yield return new WaitForSecondsRealtime(.2f);yield return Capture("gallery-shop-bottom-"+pose.x);
@@ -259,7 +259,7 @@ namespace Kamilunavo.PerfectDrop.QA
         {
             yield return new WaitForSecondsRealtime(1);
             _game=FindFirstObjectByType<StackGame>();
-            Require(GameObject.Find("LevelMap")!=null,"Campaign did not open its map.");
+            Require(GameObject.Find("LevelMap")!=null,"Campaign did not open its landing.");yield return Capture("focused-landing");FindButton("CampaignNavigation").onClick.Invoke();
             Require(FindButton("LevelSlot0").interactable && !FindButton("LevelSlot1").interactable,"Fresh level locks incorrect.");
             yield return Capture("level-map");
             SetReviewResolution(800,600,false);yield return new WaitForSecondsRealtime(.5f);yield return Capture("map-landscape");
@@ -283,14 +283,14 @@ namespace Kamilunavo.PerfectDrop.QA
             yield return Capture("first-clear");
             FindButton("Next").onClick.Invoke();Require(_game.Level.Id==2 && _game.Run.Count==0,"Next level failed.");
             // Seed advanced unlocks only in this isolated QA profile to exercise later systems efficiently.
-            _game.Profile.UnlockedLevel=21;_game.GoHome();FindButton("LevelSlot5").onClick.Invoke();
+            _game.Profile.UnlockedLevel=21;_game.GoHome();FindButton("CampaignNavigation").onClick.Invoke();FindButton("LevelSlot5").onClick.Invoke();
             for(var block=1;block<=_game.Run.Target;block++)
             {
                 if(block==4)
                 {
-                    _game.GoHome();FindButton("Chapter2").onClick.Invoke();
+                    _game.GoHome();FindButton("CampaignNavigation").onClick.Invoke();FindButton("Chapter2").onClick.Invoke();
                     Require(Kamilunavo.PerfectDrop.Visuals.WorldArt.ActiveChapter==2,"Chapter preview backdrop did not change.");
-                    FindButton("Continue").onClick.Invoke();
+                    FindButton("CampaignBack").onClick.Invoke();FindButton("Continue").onClick.Invoke();
                     Require(Kamilunavo.PerfectDrop.Visuals.WorldArt.ActiveChapter==(_game.Level.Id-1)/10 && _game.Run.Count==3,"Continue did not restore the active run's chapter.");
                     Require(_game.Run.Powers.Energy==3,"Combo energy did not charge.");
                     FindButton("PowerCenter").onClick.Invoke();
@@ -360,7 +360,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 Require(Mathf.Abs(restored.r-expected.r)<.01f && Mathf.Abs(restored.g-expected.g)<.01f && Mathf.Abs(restored.b-expected.b)<.01f,"Revoked style still displayed on placed tower.");
             }
             FindButton("ShopBack").onClick.Invoke();SetReviewResolution(540,960,false);yield return new WaitForSecondsRealtime(.5f);
-            FindButton("Back").onClick.Invoke();if(_uiOnly)yield break;FindButton("Challenge").onClick.Invoke();
+            FindButton("Back").onClick.Invoke();if(_uiOnly)yield break;FindButton("CampaignNavigation").onClick.Invoke();FindButton("Challenge").onClick.Invoke();
             for(var block=1;block<=_game.Run.Target;block++)
             {
                 var until=Time.realtimeSinceStartup+30;
@@ -380,7 +380,7 @@ namespace Kamilunavo.PerfectDrop.QA
             var area=_game.Run.Top.Size;FindButton("PowerRepair").onClick.Invoke();Require(_game.Run.Powers.RepairReady,"Repair did not arm.");
             FindButton("Risk").onClick.Invoke();FindButton("Drop").onClick.Invoke();
             Require(_game.Run.Count==5 && !_game.Run.Failed && _game.Run.Top.Size==area && !_game.Run.Powers.RepairReady,"Repair did not save actual risky miss.");
-            yield return Capture("repair-save");_game.GoHome();FindButton("Endless").onClick.Invoke();
+            yield return Capture("repair-save");_game.GoHome();FindButton("CampaignNavigation").onClick.Invoke();FindButton("Endless").onClick.Invoke();
             for(var block=1;block<=66;block++)
             {
                 var until=Time.realtimeSinceStartup+30;

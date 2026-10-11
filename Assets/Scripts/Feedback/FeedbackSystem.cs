@@ -7,15 +7,13 @@ namespace Kamilunavo.PerfectDrop.Feedback
     public sealed class FeedbackSystem : MonoBehaviour
     {
         private AudioSource _source;
-        private AudioSource _ambienceSource;
+        private Audio.MusicPlayer _music;
         private AudioClip _jump;
         private AudioClip _perfect;
         private AudioClip _good;
         private AudioClip _safe;
         private AudioClip _recovery;
         private AudioClip _complete;
-        private AudioClip _ambience;
-        private bool _lastAudioEnabled;
 
         private void Awake()
         {
@@ -24,11 +22,9 @@ namespace Kamilunavo.PerfectDrop.Feedback
             _source.spatialBlend = 0f;
             _source.volume = 0.72f;
 
-            _ambienceSource = gameObject.AddComponent<AudioSource>();
-            _ambienceSource.playOnAwake = false;
-            _ambienceSource.spatialBlend = 0f;
-            _ambienceSource.loop = true;
-            _ambienceSource.volume = 0.14f;
+            _music = GetComponent<Audio.MusicPlayer>();
+            if (_music == null) _music = gameObject.AddComponent<Audio.MusicPlayer>();
+            _music.Initialize("Audio/DropTerraces", () => GamePreferences.AudioEnabled, () => GamePreferences.MusicEnabled);
 
             _jump = Tone("Jump", 410f, 650f, 0.10f, 0.32f);
             _perfect = Tone("Perfect", 690f, 1040f, 0.18f, 0.42f);
@@ -36,26 +32,11 @@ namespace Kamilunavo.PerfectDrop.Feedback
             _safe = Tone("Safe", 360f, 420f, 0.11f, 0.22f);
             _recovery = Tone("Recovery", 230f, 150f, 0.17f, 0.24f);
             _complete = Tone("Complete", 520f, 1180f, 0.34f, 0.46f);
-            _ambience = Ambience("CloudCityAmbience", 8f);
-            _ambienceSource.clip = _ambience;
-            _lastAudioEnabled = GamePreferences.AudioEnabled;
-            if (_lastAudioEnabled) _ambienceSource.Play();
         }
 
         private void Update()
         {
-            var enabled = GamePreferences.AudioEnabled;
-            if (enabled == _lastAudioEnabled) return;
-            _lastAudioEnabled = enabled;
-            if (_ambienceSource == null) return;
-            if (enabled)
-            {
-                if (!_ambienceSource.isPlaying) _ambienceSource.Play();
-            }
-            else
-            {
-                _ambienceSource.Pause();
-            }
+            if (_source != null) _source.mute = !GamePreferences.AudioEnabled;
         }
 
         public void PlayJump()
@@ -122,26 +103,12 @@ namespace Kamilunavo.PerfectDrop.Feedback
             clip.SetData(data, 0);
             return clip;
         }
-        private static AudioClip Ambience(string name, float duration)
+        private void OnDestroy()
         {
-            const int sampleRate = 22050;
-            var samples = Mathf.Max(1, Mathf.CeilToInt(duration * sampleRate));
-            var data = new float[samples];
-
-            for (var i = 0; i < samples; i++)
-            {
-                var t = i / (float)sampleRate;
-                var breathe = 0.72f + Mathf.Sin(t * Mathf.PI * 0.25f) * 0.12f;
-                var low = Mathf.Sin(t * Mathf.PI * 2f * 55f) * 0.16f;
-                var mid = Mathf.Sin(t * Mathf.PI * 2f * 82.5f) * 0.10f;
-                var high = Mathf.Sin(t * Mathf.PI * 2f * 110f) * 0.055f;
-                var shimmer = Mathf.Sin(t * Mathf.PI * 2f * 220f) * (0.018f + 0.012f * Mathf.Sin(t * Mathf.PI * 0.5f));
-                data[i] = (low + mid + high + shimmer) * breathe;
-            }
-
-            var clip = AudioClip.Create(name, samples, 1, sampleRate, false);
-            clip.SetData(data, 0);
-            return clip;
+            if (_source != null) _source.Stop();
+            // These six short cues were synthesized here; imported music is shared.
+            foreach (var clip in new[] { _jump, _perfect, _good, _safe, _recovery, _complete })
+                if (clip != null) { if (Application.isPlaying) Destroy(clip); else DestroyImmediate(clip); }
         }
 
     }

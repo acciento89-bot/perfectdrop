@@ -107,7 +107,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 Button("City").onClick.Invoke();Button("CityDistrict2").onClick.Invoke();_mode=phase==2?"city-max-portrait":"city-max-landscape";
             }
             else
-            {Screen.SetResolution(540,960,false);_game.Hud.ShowHome();Button("Chapter2").onClick.Invoke();_mode="chapter3-map";}
+            {Screen.SetResolution(540,960,false);_game.Hud.ShowHome();Button("CampaignNavigation").onClick.Invoke();Button("Chapter2").onClick.Invoke();_mode="chapter3-map";}
             yield return null;
         }
         private static Button Button(string name)

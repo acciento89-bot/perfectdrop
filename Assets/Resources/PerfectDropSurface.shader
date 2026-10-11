@@ -63,8 +63,8 @@ Shader "Kamilunavo/PerfectDropSurface"
             // Avoid an emissive orange sheet: reflected light supplies the volume.
             // Smooth brushed shoulders and ceramic/lacquer skins share a neutral
             // fine finish. Industrial panel seams no longer dominate small slabs.
-            half brushed=sin(uv.y*680+metal.g*2)*.014;
-            float3 cleanMetal=.96+brushed*_BrushFinish+metal.r*.045;
+            half brushed=sin(uv.y*680+metal.g*2)*.026+sin(uv.y*1710+uv.x*3)*.005;
+            float3 cleanMetal=.96+(brushed+reflection*.13)*_BrushFinish+metal.r*.045;
             // Veining belongs to the actual selected surface, using deck UVs so
             // it follows moving and cut pieces. No world-space swimming occurs.
             half vein=smoothstep(.94,.995,abs(sin(uv.x*13+sin(uv.y*8)*1.7+sin((uv.x+uv.y)*5)*.6)));

@@ -11,7 +11,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private Text[] _stats;
         private Text _status, _hint, _popupTitle, _popupBody;
         private Image _progress;
-        private Button _drop, _retry, _close, _daily, _sound, _haptics, _motion, _settingsMap;
+        private Button _drop, _retry, _close, _daily, _sound, _music, _haptics, _motion, _settingsMap;
         private bool _settingsReturnsHome;
         private int _width, _height;
         private Rect _division, _area;
@@ -55,9 +55,10 @@ namespace Kamilunavo.PerfectDrop.UI
             _popupBody = UiFactory.Label(_popup,"Body","",29,new Vector2(.07f,.58f),new Vector2(.93f,.79f),TextAnchor.MiddleCenter,Color.white);
             _retry = UiFactory.Button(_popup,"Retry",T("NOCHMAL","PLAY AGAIN"),Gold,Navy,new Vector2(.10f,.13f),new Vector2(.90f,.31f),()=> { Close(); Game.NewRun(); });
             _close = UiFactory.Button(_popup,"Close",T("WEITER","RESUME"),Gold,Navy,new Vector2(.10f,.07f),new Vector2(.90f,.18f),Close);
-            _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
-            _haptics = UiFactory.Button(_popup,"Haptics","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.49f),new Vector2(.90f,.60f),()=> { GamePreferences.HapticsEnabled = !GamePreferences.HapticsEnabled; UpdateSettings(); });
-            _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
+            _sound = UiFactory.Button(_popup,"Sound","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { if(MenuNavigationLocked)return;GamePreferences.AudioEnabled = !GamePreferences.AudioEnabled; UpdateSettings(); });
+            _music = UiFactory.Button(_popup,"Music","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.63f),new Vector2(.90f,.74f),()=> { if(MenuNavigationLocked)return;GamePreferences.MusicEnabled = !GamePreferences.MusicEnabled; UpdateSettings(); });
+            _haptics = UiFactory.Button(_popup,"Haptics","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.49f),new Vector2(.90f,.60f),()=> { if(MenuNavigationLocked)return;GamePreferences.HapticsEnabled = !GamePreferences.HapticsEnabled; UpdateSettings(); });
+            _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { if(MenuNavigationLocked)return;GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
             _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.77f),new Vector2(.90f,.88f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
             _settingsMap=UiFactory.Button(_popup,"SettingsMap",T("LEVELÜBERSICHT","LEVEL MAP"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.10f,.21f),new Vector2(.90f,.32f),game.GoHome);
             BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu(); BuildTutorial();
@@ -93,7 +94,8 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void Terminal(bool won)
         {
-            Controls(false);
+            Controls(false); Layout(true);
+            _popupTitle.fontSize=_popupTitle.resizeTextMaxSize=45;
             _retry.gameObject.SetActive(true);
             _popupTitle.text = won ? Game.Profile.RunChallenge?T("CHALLENGE GESCHAFFT!","CHALLENGE COMPLETE!"):T("LEVEL "+Game.Level.Id+" GESCHAFFT!","LEVEL "+Game.Level.Id+" COMPLETE!") : T("DANEBEN!","MISSED!");
             _popupBody.gameObject.SetActive(true);
@@ -103,16 +105,18 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void OpenSettings()
         {
+            if(MenuNavigationLocked)return;
             if (!CampaignMenuOpen && (Game.Run.Failed || Game.Run.Completed)) return;
             _settingsReturnsHome=CampaignMenuOpen;
             HideMenus(); Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
             _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
             // Settings title and daily control occupy separate rows.
             Set((RectTransform)_popupTitle.transform,.07f,.885f,.93f,.99f);
-            UpdateSettings(); _popup.gameObject.SetActive(true); Refresh(); Game.Save();
+            UpdateSettings(); _popup.gameObject.SetActive(true); Layout(true); Refresh(); Game.Save();
         }
         public void Close()
         {
+            if(MenuNavigationLocked)return;
             Game.UiClick(); _popup.gameObject.SetActive(false); HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f);
             if(_settingsReturnsHome){_settingsReturnsHome=false;ShowHome();}
@@ -120,11 +124,12 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         private void Controls(bool settings)
         {
-            foreach (var button in new[] { _close, _sound, _haptics, _motion, _daily, _settingsMap }) button.gameObject.SetActive(settings);
+            foreach (var button in new[] { _close, _sound, _music, _haptics, _motion, _daily, _settingsMap }) button.gameObject.SetActive(settings);
         }
         private void UpdateSettings()
         {
             SetLabel(_sound, T("TON","SOUND") + ": " + GameText.ToggleValue(GamePreferences.AudioEnabled));
+            SetLabel(_music, T("MUSIK","MUSIC") + ": " + GameText.ToggleValue(GamePreferences.MusicEnabled));
             SetLabel(_haptics, T("HAPTIK","HAPTICS") + ": " + GameText.ToggleValue(GamePreferences.HapticsEnabled));
             SetLabel(_motion, T("WENIGER BEWEGUNG","REDUCED MOTION") + ": " + GameText.ToggleValue(GamePreferences.ReducedMotion));
             SetLabel(_daily, StackSave.CanClaim(Game.Profile) ? T("TÄGLICH +25 COINS HOLEN","CLAIM DAILY +25 COINS") : T("HEUTE BEREITS GEHOLT","DAILY CLAIMED"));
@@ -172,6 +177,18 @@ namespace Kamilunavo.PerfectDrop.UI
                 Set((RectTransform)_motion.transform,.06f,.33f,.94f,.48f);
                 Set((RectTransform)_settingsMap.transform,.06f,.155f,.48f,.305f);Set((RectTransform)_close.transform,.52f,.155f,.94f,.305f);
             }
+            if(_sound.gameObject.activeSelf)LayoutMusicSettings(pane);
+        }
+        // A separate music control adds one row; short panes use pairs to retain full logical targets.
+        private void LayoutMusicSettings(Rect pane)
+        {
+            Canvas.ForceUpdateCanvases();float availableW=_safe.rect.width*pane.width,availableH=_safe.rect.height*pane.height,target=UiMetrics.TargetSize(_safe,49),gap=6,pad=12,header=50;
+            bool pairs=availableH<7*(target+gap)+header+pad*2&&availableW>=target*2+pad*2+gap;int rows=pairs?4:7;float w=Mathf.Min(540,availableW-24),h=Mathf.Min(availableH-24,header+rows*(target+gap)+pad);
+            _popup.anchorMin=_popup.anchorMax=new Vector2(pane.x,pane.y+pane.height);_popup.pivot=new Vector2(0,1);_popup.anchoredPosition=new Vector2((availableW-w)/2,-(availableH-h)/2);_popup.sizeDelta=new Vector2(w,h);
+            void At(RectTransform r,float x,float y,float width,float height){r.anchorMin=r.anchorMax=new Vector2(0,1);r.pivot=new Vector2(0,1);r.anchoredPosition=new Vector2(x,-y);r.sizeDelta=new Vector2(width,height);}
+            At((RectTransform)_popupTitle.transform,pad,8,w-pad*2,34);_popupTitle.fontSize=_popupTitle.resizeTextMaxSize=24;
+            var controls=new[]{_daily,_sound,_music,_haptics,_motion,_settingsMap,_close};float inner=w-pad*2;
+            for(int i=0;i<controls.Length;i++){int row=pairs?(i==0?0:(i+1)/2):i,col=pairs&&i>0?(i-1)%2:0;float bw=pairs&&i>0?(inner-gap)/2:inner;At((RectTransform)controls[i].transform,pad+col*(bw+gap),header+row*(target+gap),bw,target);var label=controls[i].GetComponentInChildren<Text>();label.fontSize=label.resizeTextMaxSize=18;}
         }
         private static void Place(RectTransform rect, Rect pane, Rect slot) => Set(rect,pane.x+slot.x*pane.width,pane.y+slot.y*pane.height,pane.x+slot.xMax*pane.width,pane.y+slot.yMax*pane.height);
         private static void Set(RectTransform rect,float x,float y,float xmax,float ymax)

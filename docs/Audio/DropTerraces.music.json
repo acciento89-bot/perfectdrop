@@ -1,0 +1,601 @@
+{
+  "title": "Brass Gardens Above the Canal",
+  "game": "drop",
+  "bpm": 72,
+  "bars": 8,
+  "meter": "4/4",
+  "tonality": "E-flat major",
+  "sample_rate": 22050,
+  "channels": 2,
+  "frames": 588000,
+  "duration": 26.666666666666668,
+  "pcm_bytes": 2352000,
+  "peak": 0.699981689453125,
+  "rms": 0.10862859750621565,
+  "dc": 2.0033648224914968e-08,
+  "seam": 0.002532958984375,
+  "seam_slope": 0.00091552734375,
+  "window_rms_min": 0.04314661537520376,
+  "window_rms_max": 0.1760029710391326,
+  "events": 72,
+  "original_score": [
+    {
+      "beat": -0.18,
+      "pitch": 58,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": -0.145,
+      "pitch": 62,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": -0.11,
+      "pitch": 65,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 0.5,
+      "pitch": 70,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 1.5,
+      "pitch": 62,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 2.75,
+      "pitch": 65,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 0,
+      "pitch": 51,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 0,
+      "pitch": 75,
+      "duration": 1.2,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 2.5,
+      "pitch": 77,
+      "duration": 0.8,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 3.82,
+      "pitch": 55,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": 3.855,
+      "pitch": 58,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": 3.89,
+      "pitch": 63,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 4.5,
+      "pitch": 67,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 5.5,
+      "pitch": 58,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 6.75,
+      "pitch": 63,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 4,
+      "pitch": 48,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 4.75,
+      "pitch": 79,
+      "duration": 1.1,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 7,
+      "pitch": 77,
+      "duration": 0.7,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 7.82,
+      "pitch": 56,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": 7.855,
+      "pitch": 60,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": 7.89,
+      "pitch": 63,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 8.5,
+      "pitch": 68,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 9.5,
+      "pitch": 60,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 10.75,
+      "pitch": 63,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 8,
+      "pitch": 44,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 8.25,
+      "pitch": 75,
+      "duration": 1.4,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 10.75,
+      "pitch": 72,
+      "duration": 0.8,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 11.82,
+      "pitch": 58,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": -0.55
+    },
+    {
+      "beat": 11.855,
+      "pitch": 60,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": 0.0
+    },
+    {
+      "beat": 11.89,
+      "pitch": 65,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": 0.55
+    },
+    {
+      "beat": 12.5,
+      "pitch": 70,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": -0.25
+    },
+    {
+      "beat": 13.5,
+      "pitch": 60,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": -0.25
+    },
+    {
+      "beat": 14.75,
+      "pitch": 65,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": 0.3
+    },
+    {
+      "beat": 12,
+      "pitch": 46,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 13,
+      "pitch": 70,
+      "duration": 1.1,
+      "instrument": "mallet",
+      "gain": 0.09839999999999999,
+      "pan": 0.1
+    },
+    {
+      "beat": 15,
+      "pitch": 74,
+      "duration": 0.65,
+      "instrument": "mallet",
+      "gain": 0.09839999999999999,
+      "pan": 0.1
+    },
+    {
+      "beat": 15.82,
+      "pitch": 55,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": 15.855,
+      "pitch": 58,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": 15.89,
+      "pitch": 63,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 16.5,
+      "pitch": 67,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 17.5,
+      "pitch": 58,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 18.75,
+      "pitch": 63,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 16,
+      "pitch": 43,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 16.5,
+      "pitch": 75,
+      "duration": 1.25,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 18.5,
+      "pitch": 79,
+      "duration": 0.8,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 19.82,
+      "pitch": 56,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": 19.855,
+      "pitch": 60,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": 19.89,
+      "pitch": 63,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 20.5,
+      "pitch": 68,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 21.5,
+      "pitch": 60,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 22.75,
+      "pitch": 63,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 20,
+      "pitch": 41,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 20.75,
+      "pitch": 80,
+      "duration": 1.25,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 23,
+      "pitch": 79,
+      "duration": 0.65,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 23.82,
+      "pitch": 56,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": -0.55
+    },
+    {
+      "beat": 23.855,
+      "pitch": 60,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.0
+    },
+    {
+      "beat": 23.89,
+      "pitch": 67,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.037,
+      "pan": 0.55
+    },
+    {
+      "beat": 24.5,
+      "pitch": 68,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 25.5,
+      "pitch": 60,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": -0.25
+    },
+    {
+      "beat": 26.75,
+      "pitch": 67,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.13,
+      "pan": 0.3
+    },
+    {
+      "beat": 24,
+      "pitch": 44,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 24.25,
+      "pitch": 77,
+      "duration": 1.1,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 26,
+      "pitch": 75,
+      "duration": 1,
+      "instrument": "mallet",
+      "gain": 0.12,
+      "pan": 0.1
+    },
+    {
+      "beat": 27.82,
+      "pitch": 58,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": -0.55
+    },
+    {
+      "beat": 27.855,
+      "pitch": 63,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": 0.0
+    },
+    {
+      "beat": 27.89,
+      "pitch": 65,
+      "duration": 3.65,
+      "instrument": "pad",
+      "gain": 0.030339999999999995,
+      "pan": 0.55
+    },
+    {
+      "beat": 28.5,
+      "pitch": 70,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": -0.25
+    },
+    {
+      "beat": 29.5,
+      "pitch": 63,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": -0.25
+    },
+    {
+      "beat": 30.75,
+      "pitch": 65,
+      "duration": 0.9,
+      "instrument": "mallet",
+      "gain": 0.1066,
+      "pan": 0.3
+    },
+    {
+      "beat": 28,
+      "pitch": 46,
+      "duration": 2.9,
+      "instrument": "bass",
+      "gain": 0.1,
+      "pan": 0
+    },
+    {
+      "beat": 28.75,
+      "pitch": 74,
+      "duration": 1.1,
+      "instrument": "mallet",
+      "gain": 0.09839999999999999,
+      "pan": 0.1
+    },
+    {
+      "beat": 30.75,
+      "pitch": 70,
+      "duration": 0.7,
+      "instrument": "mallet",
+      "gain": 0.09839999999999999,
+      "pan": 0.1
+    }
+  ],
+  "sha256": "1544e0a4b603e512b4843f5f7ca7ab863bdfc2b0875f1050c1e9ee3f500c8e01",
+  "composer_sha256": "2f9952e87747c0daba987857f5f0fe731dab2130b4b90a8fae9405479c7b40c3"
+}

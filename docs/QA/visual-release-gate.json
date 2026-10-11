@@ -4,7 +4,7 @@
   "sourceSha256": null,
   "reviewer": "Codex actual rendered image inspection",
   "reviewedAt": "2026-10-11",
-  "reason": "Rendered home has hidden chapter navigation and slab/cloud skyline still differs from approved architectural tower concept. Correction source requires fresh render.",
+  "reason": "New tower layers and architectural pedestal render in actual gameplay, but the flat blue world and sparse simplified architecture still diverge substantially from the approved cloud/terrace city. The focused menu still uses modern skyline artwork. Functional 66-block runtime and music checks pass; graphical concept acceptance fails.",
   "criteria": {
     "concept_similarity": "failed",
     "character_or_tower": "pending",
@@ -23,15 +23,15 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/DropRuntime/focused-landing.png",
-        "sha256": "5564ab2c08857c49f89fa98955513421b716937c154bf6f0455a92314b9c96a4",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicRuntime/focused-landing.png",
+        "sha256": "2edd37ca4cd2edfc3c788c415293ccbe75757483fb17d2a209cff8bd201c3ac2",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/DropRuntime/first-clear.png",
-        "sha256": "2229d11be3d7baf41eb0aaf727a37c83ff82ebb8cf8402cdcb0c0fcc7536b7a2",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/RisingExpansion-20261011/Drop/MusicRuntime/tutorial-stack.png",
+        "sha256": "01a1490c068eaf4c223652b4b2ddaa7ca03c463607af4b3801b00d151e9dd32f",
         "origin": "Unity-render"
       }
     ],

@@ -9,6 +9,7 @@ Shader "Kamilunavo/PerfectDropSky"
         _MidColor ("Mid", Color) = (0.23,0.34,0.62,1)
         _HorizonColor ("Horizon", Color) = (1.0,0.43,0.18,1)
         _BottomColor ("Bottom", Color) = (0.08,0.11,0.20,1)
+        _CloudColor ("Cloud reflected light", Color) = (0.94,0.85,0.74,1)
         _SunColor ("Sun", Color) = (1.4,0.8,0.30,1)
         _SunDirection ("Sun Direction", Vector) = (0.72,0.05,0.65,0)
     }
@@ -31,6 +32,7 @@ Shader "Kamilunavo/PerfectDropSky"
             fixed4 _HorizonColor;
             fixed4 _BottomColor;
             fixed4 _SunColor;
+            fixed4 _CloudColor;
             float4 _SunDirection;
             sampler2D _BackdropPortrait, _BackdropLandscape;
             float4 _BackdropPortrait_TexelSize, _BackdropLandscape_TexelSize;
@@ -48,6 +50,8 @@ Shader "Kamilunavo/PerfectDropSky"
                 return o;
             }
 
+            float hash21(float2 p) { float3 p3=frac(float3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return frac((p3.x+p3.y)*p3.z); }
+            float cloudNoise(float2 p) {float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);return lerp(lerp(hash21(cell),hash21(cell+float2(1,0)),f.x),lerp(hash21(cell+float2(0,1)),hash21(cell+1),f.x),f.y);}
             fixed4 frag(v2f i) : SV_Target
             {
                 if (_UseBackdrop > .5)
@@ -73,6 +77,12 @@ Shader "Kamilunavo/PerfectDropSky"
                 float sunCore = pow(sunDot, 520.0);
                 float sunGlow = pow(sunDot, 26.0) * 0.34;
                 c += _SunColor.rgb * (sunCore * 1.6 + sunGlow);
+                // Static angular cloud volume belongs to the world view. The real
+                // canal/arcades provide depth; no skyscraper wallpaper is sampled.
+                float2 cloudUV=d.xz/max(.18,d.y+.64)*2.3;
+                float density=cloudNoise(cloudUV)*.62+cloudNoise(cloudUV*2.17+4.2)*.26+cloudNoise(cloudUV*4.1-1.8)*.12;
+                float veil=smoothstep(.53,.76,density)*smoothstep(-.30,-.04,d.y)*(1-smoothstep(.45,.85,d.y));
+                c=lerp(c,_CloudColor.rgb+sunGlow*.22,veil*.72);
                 return fixed4(c, 1);
             }
             ENDCG

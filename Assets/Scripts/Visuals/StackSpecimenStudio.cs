@@ -37,8 +37,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var camera=cameraObject.GetComponent<Camera>();camera.enabled=false;camera.orthographic=true;
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.cullingMask=1<<Layer;camera.allowHDR=false;camera.nearClipPlane=.05f;camera.farClipPlane=50;
-            camera.aspect=.8f;camera.orthographicSize=2.85f+Mathf.Max(0,floors-4)*.16f;
-            var target=root.transform.position+Vector3.up*(floors-1)*.26f;
+            camera.aspect=.8f;camera.orthographicSize=Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
+            var target=root.transform.position+Vector3.up*(floors-1)*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.5f;
             camera.transform.position=target+new Vector3(-6,5,-8);
             camera.transform.LookAt(target);
             var lightObject=new GameObject("SpecimenSoftbox",typeof(Light));lightObject.transform.SetParent(root.transform,false);
@@ -50,7 +50,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 // The same six-renderer block, shared rounded mesh and shader used
                 // in play; a slight architectural setback helps the hero read.
                 var width=3.5f-i*.085f;
-                var block=WorldArt.CreateStackBlock(root.transform,"SpecimenLayer"+i,new Vector3(0,i*.52f,0),new Vector3(width,.52f,width),i);
+                var block=WorldArt.CreateStackBlock(root.transform,"SpecimenLayer"+i,new Vector3(0,i*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,0),new Vector3(width,Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,width),i);
                 WorldArt.StyleStackBlock(block,style);
                 foreach(var t in block.GetComponentsInChildren<Transform>())t.gameObject.layer=Layer;
             }

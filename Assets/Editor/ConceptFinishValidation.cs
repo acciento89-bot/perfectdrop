@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using Kamilunavo.PerfectDrop.Visuals;
+using Kamilunavo.PerfectDrop.Gameplay;
 namespace Kamilunavo.PerfectDrop.Editor
 {
     public static class ConceptFinishValidation
@@ -16,7 +17,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             {
                 foreach(var width in new[]{3.6f,.035f})
                 {
-                    var b=WorldArt.CreateStackBlock(parent.transform,"IconBlock",Vector3.zero,new Vector3(width,.52f,3.6f),1);
+                    var b=WorldArt.CreateStackBlock(parent.transform,"IconBlock",Vector3.zero,new Vector3(width,StackGame.LayerHeight,3.6f),1);
                     Check(b.transform.Find("TopPlate").localScale.x/width>=.75f,"Icon plate must occupy a broad inset, not a small orange center.");
                     var mesh=b.transform.Find("MetalDeck").GetComponent<MeshFilter>().sharedMesh;
                     Check(b.transform.Find("MetalDeck").GetComponent<Renderer>().sharedMaterial.GetFloat("_BrushFinish")==1,"Metal shoulder lost its fine brush finish.");

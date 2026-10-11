@@ -10,7 +10,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
 {
     public sealed class StackGame : MonoBehaviour
     {
-        public const float LayerHeight = .52f;
+        public const float LayerHeight = .84f;
         public StackRun Run { get; private set; }
         public StackProfile Profile { get; private set; }
         public StackHud Hud { get; private set; }

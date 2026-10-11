@@ -25,17 +25,17 @@ namespace Kamilunavo.PerfectDrop.UI
                 _powerButtons[i]=UiFactory.Button(_powerRow,"Power"+power,"",new Color(.13f,.2f,.3f),Color.white,new Vector2(i*.25f,.03f),new Vector2(i*.25f+.235f,.70f),()=>Game.UsePower(power));
             }
             _risk=UiFactory.Button(_powerRow,"Risk","",new Color(.13f,.2f,.3f),Color.white,new Vector2(.75f,.03f),new Vector2(.985f,.70f),Game.ToggleRisk);
-            UiFactory.Button(_home,"HomeSettings",T("OPTIONEN","OPTIONS"),GalleryTheme.Paper,GalleryTheme.Ink,new Vector2(.07f,.22f),new Vector2(.49f,.29f),OpenSettings);
+            UiFactory.Button(_home,"HomeSettings",T("OPTIONEN","OPTIONS"),GalleryTheme.Card,GalleryTheme.Text,new Vector2(.07f,.22f),new Vector2(.49f,.29f),OpenSettings);
             Set((RectTransform)_continue.transform,.51f,.22f,.93f,.29f);
             Set((RectTransform)_endless.transform,.07f,.13f,.49f,.20f);
             Set((RectTransform)_home.Find("Styles"),.07f,.04f,.49f,.11f);
-            _challenge=UiFactory.Button(_home,"Challenge","",GalleryTheme.Paper,GalleryTheme.Ink,new Vector2(.51f,.13f),new Vector2(.93f,.20f),Game.StartChallenge);
+            _challenge=UiFactory.Button(_home,"Challenge","",GalleryTheme.Card,GalleryTheme.Text,new Vector2(.51f,.13f),new Vector2(.93f,.20f),()=>{if(!MenuNavigationLocked)Game.StartChallenge();});
             UiFactory.Button(_home,"City",T("MEINE STADT","MY CITY"),Navy,Color.white,new Vector2(.51f,.04f),new Vector2(.93f,.11f),ShowCity);
             _cityPanel=UiFactory.Panel(_safe,"CityView",Color.clear,Vector2.zero,Vector2.one);
-            var header=UiFactory.Panel(_cityPanel,"CityHeader",GalleryTheme.Ivory,new Vector2(.03f,.81f),new Vector2(.97f,.98f));
-            UiFactory.Label(header,"Title",T("DEINE STADT WÄCHST","YOUR CITY IS GROWING"),44,new Vector2(.05f,.53f),new Vector2(.95f,.95f),TextAnchor.MiddleCenter,GalleryTheme.Ink,FontStyle.Bold);
-            _cityInfo=UiFactory.Label(header,"Progress","",29,new Vector2(.05f,.03f),new Vector2(.95f,.52f),TextAnchor.MiddleCenter,GalleryTheme.Ink);
-            UiFactory.Button(_cityPanel,"CityBack",T("ZURÜCK ZU LEVELS","BACK TO LEVELS"),GalleryTheme.Ivory,GalleryTheme.Ink,new Vector2(.08f,.04f),new Vector2(.92f,.15f),ShowHome);
+            var header=UiFactory.Panel(_cityPanel,"CityHeader",GalleryTheme.Night,new Vector2(.03f,.81f),new Vector2(.97f,.98f));
+            UiFactory.Label(header,"Title",T("DEINE STADT WÄCHST","YOUR CITY IS GROWING"),44,new Vector2(.05f,.53f),new Vector2(.95f,.95f),TextAnchor.MiddleCenter,GalleryTheme.Text,FontStyle.Bold);
+            _cityInfo=UiFactory.Label(header,"Progress","",29,new Vector2(.05f,.03f),new Vector2(.95f,.52f),TextAnchor.MiddleCenter,GalleryTheme.Text);
+            UiFactory.Button(_cityPanel,"CityBack",T("ZURÜCK ZU LEVELS","BACK TO LEVELS"),GalleryTheme.Night,GalleryTheme.Text,new Vector2(.08f,.04f),new Vector2(.92f,.15f),ShowHome);
             _cityTabs=new Button[3];
             for(var i=0;i<3;i++)
             {
@@ -47,7 +47,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void HideArcadeMenus() { if(_cityPanel!=null)_cityPanel.gameObject.SetActive(false);Game.SetCityView(false); }
         private void ShowCity()
         {
-            Game.Save();HideMenus();_cityPanel.gameObject.SetActive(true);Game.SetCityView(true);
+            if(MenuNavigationLocked)return;Game.Save();HideMenus();_cityPanel.gameObject.SetActive(true);Game.SetCityView(true);
             _cityInfo.text=StackCampaign.Buildings(Game.Profile)+" / 30 "+T("TÜRME","TOWERS")+"\n"+T("Neue Bezirke: Level 11 und 21","New districts: levels 11 and 21");
             for(var i=0;i<3;i++)_cityTabs[i].interactable=Game.Profile.UnlockedLevel>=i*10+1;
             RefreshCityTabs();
@@ -58,7 +58,7 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<3;i++)
             {
                 var selected=Game.CityDistrict==i;
-                GalleryTheme.Style(_cityTabs[i],selected?Navy:GalleryTheme.Ivory);
+                GalleryTheme.Style(_cityTabs[i],selected?Navy:GalleryTheme.Card);
                 SetLabel(_cityTabs[i],T("BEZIRK ","DISTRICT ")+(i+1)+(selected?"  ›":""));
             }
         }
