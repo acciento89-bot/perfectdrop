@@ -12,6 +12,7 @@ namespace Kamilunavo.PerfectDrop.UI
   {
    bool gold=surface==Gold;var image=button.GetComponent<Image>();image.color=surface;
    image.material=gold?UiFactory.GoldActionMaterial:null;if(gold){if(!ConceptGoldSkin.Apply(image))UiFactory.ApplyPillImage(image);}else{var skin=image.GetComponent<ConceptGoldSkin>();if(skin!=null){skin.enabled=false;UiFactory.ApplyRoundedImage(image);var panel=image.GetComponent<PanelSkin>();if(panel!=null)panel.enabled=true;}}
+   if(!gold&&(button.name.StartsWith("Chapter")||button.name=="Styles"||(button.name.Length==6&&button.name.StartsWith("Style")&&char.IsDigit(button.name[5]))||button.name=="City"))ConceptCardSkin.Apply(image,surface);
    GalleryFrameGraphic.Apply(button.transform,gold?Ivory:Color.Lerp(Gold,Ink,surface==Ink?.25f:.62f));
    var elevation=button.GetComponent<Shadow>();if(elevation!=null){elevation.enabled=gold;elevation.effectColor=new Color(.13f,.075f,.015f,.50f);elevation.effectDistance=new Vector2(0,-2);}
    var states=button.colors;states.normalColor=Color.white;states.highlightedColor=new Color(.98f,.98f,.98f,1);states.selectedColor=states.highlightedColor;states.pressedColor=new Color(.93f,.93f,.93f,1);states.disabledColor=new Color(.90f,.90f,.90f,1);states.colorMultiplier=1;button.colors=states;

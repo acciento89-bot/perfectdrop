@@ -1,0 +1,38 @@
+[
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/NavyCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-9ed53872-34af-41d5-a10a-740e3ad55662.png",
+    "sha256": "1f2741a682bf3af941f4dff784005ca054263ebc586edbd747be2dc2b9e29dcd",
+    "origin": "built-in imagegen; unmodified production asset, not gameplay evidence"
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/IvoryCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-a25235cf-096b-471d-bea9-a25c155bfa96.png",
+    "sha256": "7569b31e89994f15e2f8d7bf24e31bf7ec67bc812f78c59b891a3365b5eb1cfd",
+    "origin": "built-in imagegen; unmodified production asset, not gameplay evidence"
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/PearlCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-2a145bee-990c-4412-9797-74c001686266.png",
+    "sha256": "3dd629ce87bd405216b2e552ed3872a4e5f39a85c62bbda82442300e56da6cdc",
+    "origin": "built-in imagegen; unmodified production asset, not gameplay evidence"
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/JadeCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-5e12867f-923b-403a-87f3-4b4184c4152f.png",
+    "sha256": "e85bbf8f389c1e782f6a05c83e94a04b88a77dbf67419dc67b52a69b7d46bf55",
+    "origin": "built-in imagegen; unmodified production asset, not gameplay evidence"
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/SelectedFrame.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-68638f76-57dd-497d-9901-10c9833b5d3e.png",
+    "sha256": "613530109dcacd48aef83e7d313b187a37d56b2b3cbdb372c5909fccee23e18b",
+    "origin": "built-in imagegen; unmodified production asset, not gameplay evidence"
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV3/DesignNavigation.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-b0106d77-3d1d-4351-a88a-3f40bb3bc79b.png",
+    "sha256": "a0fde3d83c505e8f671de5ed7cfb8abb092fb7135c2f0e9f3fdccfbf26eca0c1",
+    "origin": "built-in imagegen; unmodified navigation illustration, not gameplay evidence"
+  }
+]

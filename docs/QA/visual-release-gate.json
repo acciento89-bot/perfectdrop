@@ -101,8 +101,8 @@
     "origin": "comparison of unchanged reference and actual renders"
   },
   "pendingCandidate": {
-    "sourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
-    "report": "docs/QA/drop-concept-v2-20261013.json",
-    "status": "Not graphically released; no new TestFlight upload."
+    "sourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+    "report": "docs/QA/drop-concept-v3-20261013.json",
+    "status": "Original menu/design pass rendered and tested; not graphically released for TestFlight."
   }
 }

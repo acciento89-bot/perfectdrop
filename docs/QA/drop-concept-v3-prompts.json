@@ -1,0 +1,29 @@
+{
+  "tool": "built-in imagegen",
+  "assets": [
+    {
+      "asset": "NavyCard",
+      "prompt": "Use case: ui-mockup. Asset type: production Unity 9-slice card surface for Perfect Drop, NOT a mockup. Reference image is style reference only: its elegant dark glass cards and fine warm metallic edges. Generate ONE empty portrait rounded rectangle card, aspect about 1:2, tightly framed, almost filling the canvas with 2% transparent outer margin. Deep navy glass face #0A111C to #142035, subtle soft glass reflection near upper edge, fine champagne bronze border, softly rounded corners, tasteful small edge highlights. Center calm, dark and fully opaque, no grain or ornament inside. All visual polish concentrated at edge so a 9-sliced central region can stretch under real 3D towers. Actual transparent background outside the card. NO towers, photos, characters, text, letters, icons, UI layout, other panels or surrounding scene. Premium understated craftsmanship, smooth antialiasing, straight symmetric edges. Return only this original raster UI asset."
+    },
+    {
+      "asset": "IvoryCard",
+      "prompt": "Use case: ui-mockup. Asset type: original Unity 9-slice card background, production asset for Perfect Drop. Style reference: approved board's cream world cards below the tower. Generate ONE empty rounded rectangular portrait card about 1:2, tight composition with 2% transparent outer padding. Warm ivory porcelain #F4EAD4 with a very subtle parchment gradient, gently embossed champagne/beige edge, tiny soft outside shadow, refined rounded corners, smooth antialiasing. Almost flat face, calm and fully opaque, no texture noise and no center highlights. Actual transparency only outside rounded card. No text, labels, towers, scenes, icons, photos, additional objects, watermark, UI layout or phone. Edge proportions suitable for 9-slicing into landscape navigation cards and rectangular world cards; premium understated mobile game craftsmanship."
+    },
+    {
+      "asset": "PearlCard",
+      "prompt": "Use case: ui-mockup. Asset type: production Unity 9-slice card surface for Perfect Drop's Pearl tower design. Reference image is style reference only: the charcoal slate glass card behind the ivory tower at right. Generate ONE empty portrait rounded rectangle about 1:2, tightly framed with 2% actual transparent outside padding. Sophisticated dark pearl/slate glass face, #36414A in center, #46515A near top, almost opaque calm charcoal gray, fine pale champagne rim, slight soft glass reflection near upper edge, polished smooth corners. Face must be dark enough for white serif headings with good readability, NOT white marble or ivory. Border elegant and thinner than primary button. No text, letters, objects, towers, photo, scene, icons, symbols, other panels or watermark. Minimal subtle sheen, uniform stretchable center for 9-slicing, professional mobile game UI asset."
+    },
+    {
+      "asset": "JadeCard",
+      "prompt": "Use case: ui-mockup. Asset type: original production Unity 9-slice card surface for Perfect Drop's Jade design. Style reference: selected emerald glass card behind the jade tower in the approved board. Generate ONE empty tall portrait rounded rectangle about 1:2, tightly framed with 2% transparent outside padding. Face is very dark emerald glass, #062B26 center to #0C3830 upper area, calm almost opaque center, soft subtle glossy upper reflection. Refined narrow champagne gold edge, smooth consistent rounded corners, small warm metallic bevel highlight, no gaudy bloom. Actual transparent background only outside card, fully opaque interior. No labels, text, letters, tower, world, foliage, icons, objects, photos, watermark or UI layout. Stretchable plain center for 9-slicing, premium mobile UI craftsmanship. Preserve gold border's warm gold hue; face emerald, never turquoise or neon green."
+    },
+    {
+      "asset": "SelectedFrame",
+      "prompt": "Use case: ui-mockup. Asset type: original transparent selected-card outline sprite for Unity 9-slicing, Perfect Drop. Style reference: the thin luminous champagne gold outline around the active Jade card and active chapter in the approved Concept. Generate ONE empty tall portrait rounded rectangle outline about 1:2, centered, tight 3% margin. Only a narrow polished warm gold rim with a cream specular hairline and extremely soft tiny exterior glow. Whole center MUST be transparent, whole exterior MUST be transparent. No filled interior, no glass, background, texture in center, text, letters, symbols, objects, pictures, UI layout or watermark. Straight parallel edges, symmetric rounded corners, refined premium gold frame, warm gold, not neon yellow. Production scalable frame asset."
+    },
+    {
+      "asset": "DesignNavigation",
+      "prompt": "Use case: stylized-concept. Asset type: original transparent navigation thumbnail for Perfect Drop's Designs menu button; an illustration, not a gameplay screenshot. Reference image is style reference: the little gold/navy stacked architectural blocks in the menu's Designs button at lower left. Create a compact elegant cluster of three small stacks of chunky rounded square navy metal blocks with champagne gold inset tops and polished gold lower rims, different heights, three-quarter view, arrangement readable as a small app menu icon. Premium realistic stylized 3D product render, rich navy and warm gold, finely brushed metal, soft grounded contact shadow. Transparent background, tightly framed with a small safe margin; no world, no sky, no podium, no button, no lettering, labels, coin, logos, character or watermark. Warm key light, clear distinct volumetric faces, avoid flat 2D outlines or neon strips."
+    }
+  ]
+}

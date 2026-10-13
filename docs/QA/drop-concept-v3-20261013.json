@@ -1,0 +1,225 @@
+{
+  "recordedAt": "2026-10-13T18:18:38.654956+00:00",
+  "canonicalSourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+  "baseCommit": "0f86862",
+  "nativeEditorVersion": "6000.6.4f1",
+  "editorLog": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/editor-native.log",
+    "sha256": "de45d96e616a69231d51737e49bee39042216a8387f4a8f5dc7e370f9a95d99f"
+  },
+  "runtime": {
+    "concept": {
+      "mode": "concept",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "820d142693e0c39d8e1f88653d317543e85b07859f792e428799d3e12c66b652",
+      "wholeBundleSha256": "a17b01d8c0fbedb9b91f615c4b0f51e7651b476c1484dea8b1bd3a587bf9eab8",
+      "canonicalSourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaConcept",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Concept",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-concept.log"
+      ],
+      "pid": 60483,
+      "elapsedSeconds": 70.2,
+      "receipt": "PASS: 21 actual ordered UI drops (7 per chapter), genuine meshes/finishes, reserved camera area and visible-button raycasts; isolated QA profile. No visual acceptance implied.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-concept.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Concept"
+    },
+    "styles": {
+      "mode": "styles",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "820d142693e0c39d8e1f88653d317543e85b07859f792e428799d3e12c66b652",
+      "wholeBundleSha256": "a17b01d8c0fbedb9b91f615c4b0f51e7651b476c1484dea8b1bd3a587bf9eab8",
+      "canonicalSourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaStyles",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Styles",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-styles.log"
+      ],
+      "pid": 60520,
+      "elapsedSeconds": 28.1,
+      "receipt": "PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-styles.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Styles"
+    },
+    "presentation": {
+      "mode": "presentation",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "820d142693e0c39d8e1f88653d317543e85b07859f792e428799d3e12c66b652",
+      "wholeBundleSha256": "a17b01d8c0fbedb9b91f615c4b0f51e7651b476c1484dea8b1bd3a587bf9eab8",
+      "canonicalSourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaPresentation",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Presentation",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-presentation.log"
+      ],
+      "pid": 60541,
+      "elapsedSeconds": 44.1,
+      "receipt": "PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-presentation.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Presentation"
+    },
+    "arcade": {
+      "mode": "arcade",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "820d142693e0c39d8e1f88653d317543e85b07859f792e428799d3e12c66b652",
+      "wholeBundleSha256": "a17b01d8c0fbedb9b91f615c4b0f51e7651b476c1484dea8b1bd3a587bf9eab8",
+      "canonicalSourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/PerfectDrop-ConceptV3.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaArcade",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Arcade",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-arcade.log"
+      ],
+      "pid": 60554,
+      "elapsedSeconds": 150.4,
+      "receipt": "PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-v2-arcade.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Arcade"
+    }
+  },
+  "originalRasterAssets": "docs/QA/drop-concept-v3-assets.json",
+  "exactImagegenPrompts": "docs/QA/drop-concept-v3-prompts.json",
+  "nativeModelAssets": [
+    {
+      "path": "Assets/Resources/Art/ConceptV3/Plinth-0.prefab",
+      "sha256": "b6ddf59a989a54c06b82db598c269e1dfd58faf9c80c83f0c73f60c3eed93c93",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    },
+    {
+      "path": "Assets/Art/ConceptV3/Plinth-0.asset",
+      "sha256": "669dfd6ef7c4a9e41888c766802f22e82e420ed6df6016230d151199bfdd8ea4",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    },
+    {
+      "path": "Assets/Resources/Art/ConceptV3/Plinth-3.prefab",
+      "sha256": "6eecdaec3d6938a6484c85437cd5aa8d163f3a48b66ea7b7b099ce251002c275",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    },
+    {
+      "path": "Assets/Art/ConceptV3/Plinth-3.asset",
+      "sha256": "6d1e076494c14edfccd1473be779f89d86ae921bcfeef2988e5d13f748b199a1",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    },
+    {
+      "path": "Assets/Resources/Art/ConceptV3/Plinth-5.prefab",
+      "sha256": "fb81eaabfc47ea647d9e3fece394ab35a2f10fea8a20e47000238d345e19e8b9",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    },
+    {
+      "path": "Assets/Art/ConceptV3/Plinth-5.asset",
+      "sha256": "7903304da6ef457784c90fbc47d7ee73d19514101959e0d3f6cf682d08f2ce94",
+      "origin": "native Unity authored editable 3D geometry/material assets"
+    }
+  ],
+  "evidence": {
+    "menu": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Concept/concept-menu-sunset.png",
+        "sha256": "68a3eb7d9d24c5394737b5f2796a143dc61e9a99aaef0171b3cd03f70606cafa",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Presentation/gallery-home-932.png",
+        "sha256": "dcb5366337c9dcd004255286093d8524e529b8b2777e4b41ab022f9f631b2353",
+        "origin": "Unity-render"
+      }
+    ],
+    "designs": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Styles/style-3-gallery.png",
+        "sha256": "6dabfd1eeddade25095a1fcf082563f4c13c464caae145583eda441b346dad84",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Styles/style-5-gallery.png",
+        "sha256": "349dc7c6d7df6e46540803247d6b31c385ee3868349d5a49c68fdbeb8469f554",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Concept/concept-designs-sunset.png",
+        "sha256": "5ed9acab91b1e94d0f1602ade091f9406cadda7116a8f34937500e0d587dba71",
+        "origin": "Unity-render"
+      }
+    ],
+    "settings": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Presentation/settings-430.png",
+        "sha256": "f3ff4f458cac65efa525f73aded5b269278600841696c4e6d57c8c09e082d218",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Presentation/settings-932.png",
+        "sha256": "c28d41bfbc041a960509f5cf286c2fecfadd227ff2ea5c2e1443a466ef2da1e0",
+        "origin": "Unity-render"
+      }
+    ],
+    "gameplay": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Concept/concept-gameplay-sunset-navy.png",
+        "sha256": "1d7ec641cc0c93481df7bc8b4afea1486bf5ee151941e8eb387582fb2f06d6d1",
+        "origin": "Unity-render"
+      }
+    ],
+    "landscape": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Arcade/landscape-stack-8.png",
+        "sha256": "2c46df76371ef675af63dd766b641e4bc9320231f88436a63c4d02bc69799fd6",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Arcade/landscape-stack-30.png",
+        "sha256": "3347e355cc61d57f4b45cb68313dc87ab088c04978a49d8b432cb8ea38b97055",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/ConceptV3Arcade/landscape-stack-66.png",
+        "sha256": "b55e02a63dd4ca8b24ad18dda99800da284a8429e7d240fcee373ccfb9e1203a",
+        "origin": "Unity-render"
+      }
+    ]
+  },
+  "comparisons": [
+    "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-unity-menue.png",
+    "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV3-20261013/concept-unity-designs.png"
+  ],
+  "review": "Read-only recheck has no important findings; concrete render/build/interaction evidence is separate.",
+  "visualScope": "Coordinated original Menu/Design surfaces, selection indication, typography placement/navigation images, compact design Back/coin-Shop context and real sculpted display plinths. Existing gameplay footprint and physics unchanged.",
+  "releaseStatus": "Previous failed graphical gate not lifted; native desktop evidence is not an iOS/phone/production-provider release approval.",
+  "remaining": "Foreground architecture and gold metal reflections still differ from illustration. No numerical similarity percentage is asserted."
+}

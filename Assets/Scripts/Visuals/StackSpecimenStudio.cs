@@ -127,7 +127,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.cullingMask=1<<Layer;camera.allowHDR=true;camera.nearClipPlane=.05f;camera.farClipPlane=50;
             cameraObject.AddComponent<CinematicGrade>();
-            bool column=floors>=8;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.55f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
+            bool column=floors>=8;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.66f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
             var target=root.transform.position+Vector3.up*(floors-1)*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.5f;
             camera.transform.position=target+new Vector3(-6,column?3.5f:5,-8);
             camera.transform.LookAt(target);
@@ -145,13 +145,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 WorldArt.StyleStackBlock(block,style);
                 foreach(var t in block.GetComponentsInChildren<Transform>())t.gameObject.layer=Layer;
             }
-            if(column)
-            {
-                var owner=root.AddComponent<TerraceArtOwner>();var plinth=new TerraceArtGeometry.Buffer();
-                plinth.Lathe(Vector3.zero,new[]{-.84f,-.76f,-.69f,-.58f,-.52f},new[]{1.31f,1.31f,1.20f,1.20f,1.14f},32);
-                var marble=new Material(Resources.Load<Shader>("PerfectDropSurface")){name="OwnedSpecimenMarblePlinth",color=new Color(.84f,.80f,.70f)};marble.SetFloat("_StoneFinish",1);marble.SetTexture("_StoneAlbedo",Resources.Load<Texture2D>("Art/AuthoredIvoryLimestone"));marble.SetFloat("_Glossiness",.63f);owner.Own(marble);plinth.Upload(root.transform,"AuthoredSpecimenStoneFoot",marble,owner);
-                root.transform.Find("AuthoredSpecimenStoneFoot").gameObject.layer=Layer;
-            }
+            if(column)SpecimenPlinthArt.Build(root.transform,style);
             var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf)?RenderTextureFormat.ARGBHalf:RenderTextureFormat.ARGB32;
             var render=RenderTexture.GetTemporary(column?320:256,column?914:320,24,format,RenderTextureReadWrite.Default,4);
             var previous=RenderTexture.active;
