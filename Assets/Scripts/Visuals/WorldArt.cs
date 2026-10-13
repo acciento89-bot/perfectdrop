@@ -886,12 +886,13 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 if(name=="Platform"&&texture==null)throw new System.InvalidOperationException("Original brushed shoulder surface is missing.");
                 if(texture!=null)material.SetTexture("_MainTex",texture);
             }
-            if(name=="Platform")material.SetFloat("_MicroRelief",1);
+            if(name=="Platform"||name=="PlatformTop"){var navy=Resources.Load<Texture2D>("Art/ConceptV2/NavySatinAlbedo");if(navy!=null){material.SetTexture("_MainTex",navy);material.SetFloat("_OwnedNavy",1);}material.SetFloat("_MicroRelief",1);}
+            if(name=="GoldPlate"||name=="SignalGold"){var gold=Resources.Load<Texture2D>("Art/ConceptV2/ChampagneGoldAlbedo");if(gold!=null){material.SetTexture("_GoldAlbedo",gold);material.SetFloat("_OwnedGold",1);}}
 
             if (material.HasProperty("_Color")) material.SetColor("_Color", color);
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
-            if (material.HasProperty("_Detail")) material.SetFloat("_Detail", name == "PlatformTop" ? 1f : 0f);
+            if (material.HasProperty("_Detail")) material.SetFloat("_Detail", 0f);
             if (material.HasProperty("_BrushFinish")) material.SetFloat("_BrushFinish", name == "Platform" || name == "PlatformTop" || name == "GoldPlate" ? 1f : 0f);
             if (material.HasProperty("_GoldFinish")) material.SetFloat("_GoldFinish", name == "GoldPlate" ? 1f : 0f);
             if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);

@@ -11,7 +11,7 @@ namespace Kamilunavo.PerfectDrop.UI
   public static void Style(Button button,Color surface)
   {
    bool gold=surface==Gold;var image=button.GetComponent<Image>();image.color=surface;
-   image.material=gold?UiFactory.GoldActionMaterial:null;if(gold)UiFactory.ApplyPillImage(image);
+   image.material=gold?UiFactory.GoldActionMaterial:null;if(gold){if(!ConceptGoldSkin.Apply(image))UiFactory.ApplyPillImage(image);}else{var skin=image.GetComponent<ConceptGoldSkin>();if(skin!=null){skin.enabled=false;UiFactory.ApplyRoundedImage(image);var panel=image.GetComponent<PanelSkin>();if(panel!=null)panel.enabled=true;}}
    GalleryFrameGraphic.Apply(button.transform,gold?Ivory:Color.Lerp(Gold,Ink,surface==Ink?.25f:.62f));
    var elevation=button.GetComponent<Shadow>();if(elevation!=null){elevation.enabled=gold;elevation.effectColor=new Color(.13f,.075f,.015f,.50f);elevation.effectDistance=new Vector2(0,-2);}
    var states=button.colors;states.normalColor=Color.white;states.highlightedColor=new Color(.98f,.98f,.98f,1);states.selectedColor=states.highlightedColor;states.pressedColor=new Color(.93f,.93f,.93f,1);states.disabledColor=new Color(.90f,.90f,.90f,1);states.colorMultiplier=1;button.colors=states;
@@ -20,7 +20,7 @@ namespace Kamilunavo.PerfectDrop.UI
   }
 
   // Actual owned one-shot scenery renders share gameplay architecture and chapter finishes.
-  public static RawImage Art(Transform parent,string name,int chapter,Vector2 min,Vector2 max,bool portrait=false){var go=new GameObject(name,typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage));go.transform.SetParent(parent,false);var rect=(RectTransform)go.transform;rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=rect.offsetMax=Vector2.zero;var image=go.GetComponent<RawImage>();go.AddComponent<TerracePreviewLease>().Apply(chapter,portrait);image.raycastTarget=false;return image;}
+  public static RawImage Art(Transform parent,string name,int chapter,Vector2 min,Vector2 max,bool portrait=false,bool menuAsset=false){var go=new GameObject(name,typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage));go.transform.SetParent(parent,false);var rect=(RectTransform)go.transform;rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=rect.offsetMax=Vector2.zero;var image=go.GetComponent<RawImage>();var asset=menuAsset?Resources.Load<Texture2D>("Art/ConceptV2/"+new[]{"WolkenwerkCard","AbendturmCard","NeonstadtCard"}[Mathf.Clamp(chapter,0,2)]):null;if(asset!=null)image.texture=asset;else go.AddComponent<TerracePreviewLease>().Apply(chapter,portrait);image.raycastTarget=false;return image;}
   public static void Readable(Text text,float points=13){var canvas=text.GetComponentInParent<Canvas>();float unit=UiMetrics.PointScale/Mathf.Max(.001f,canvas.scaleFactor);text.fontSize=Mathf.RoundToInt(points*unit);text.resizeTextMaxSize=text.fontSize;text.resizeTextMinSize=Mathf.RoundToInt(Mathf.Min(points,10.5f)*unit);}
   public static void Crop(RawImage image){if(image==null||image.texture==null)return;float rectAspect=image.rectTransform.rect.width/Mathf.Max(1,image.rectTransform.rect.height),sourceAspect=(float)image.texture.width/image.texture.height;image.uvRect=rectAspect<sourceAspect?new Rect((1-rectAspect/sourceAspect)*.5f,0,rectAspect/sourceAspect,1):new Rect(0,(1-sourceAspect/rectAspect)*.5f,1,sourceAspect/rectAspect);}
  }

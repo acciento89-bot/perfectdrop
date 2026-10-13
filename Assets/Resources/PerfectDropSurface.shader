@@ -7,6 +7,9 @@ Shader "Kamilunavo/PerfectDropSurface"
         _MineralSeed ("Owned layer stone variation", Float) = 0
         _UseMineralAtlas ("Use original mineral asset", Float) = 0
         _MainTex ("Metal albedo", 2D) = "white" {}
+        _OwnedNavy ("Original navy satin material",Float)=0
+        _OwnedGold ("Original gold base color",Float)=0
+        _GoldAlbedo ("Original champagne gold asset",2D)="white"{}
         _Color ("Color", Color) = (1,1,1,1)
         _Detail ("Metal surface detail", Range(0,1)) = 0
         _GoldFinish ("Brushed gold finish", Range(0,1)) = 0
@@ -31,7 +34,7 @@ Shader "Kamilunavo/PerfectDropSurface"
         #pragma target 3.0
         #pragma multi_compile_instancing
 
-        sampler2D _MainTex,_MineralAtlas,_StoneAlbedo;half _UseMineralAtlas,_MineralSeed;
+        sampler2D _MainTex,_MineralAtlas,_StoneAlbedo,_GoldAlbedo;half _OwnedNavy,_OwnedGold;half _UseMineralAtlas,_MineralSeed;
         float4 _MainTex_TexelSize;
         UNITY_INSTANCING_BUFFER_START(DeckProperties)
             UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
@@ -81,6 +84,7 @@ Shader "Kamilunavo/PerfectDropSurface"
             // fine finish. Industrial panel seams no longer dominate small slabs.
             half brushed=sin(uv.y*680+metal.g*2)*.012*saturate(1-fwidth(uv.y)*680*.35)+sin(uv.y*1710+uv.x*3)*.003*saturate(1-fwidth(uv.y)*1710*.35);
             float3 cleanMetal=.96+(brushed+reflection*.13)*_BrushFinish+metal.r*.045;
+            cleanMetal=lerp(cleanMetal,clamp(dot(metal,float3(.2126,.7152,.0722))/.027,.88,1.10),_OwnedNavy);
             // Veining belongs to the actual selected surface, using deck UVs so
             // it follows moving and cut pieces. No world-space swimming occurs.
             half vein=smoothstep(.94,.995,abs(sin(uv.x*13+sin(uv.y*8)*1.7+sin((uv.x+uv.y)*5)*.6)));
@@ -102,6 +106,8 @@ Shader "Kamilunavo/PerfectDropSurface"
             // Polished gold keeps a continuous reflected highlight. The shoulder
             // tile's large tonal grains must not turn the plate into hammered foil.
             o.Albedo = tint.rgb * lerp(cleanMetal,lerp(.996,1.004,metal.r)*gold,_GoldFinish) * lerp(1, (.98+grain*.03)*(1-seam*.025), _Detail);
+            float3 ownedGold=tex2D(_GoldAlbedo,uv).rgb;
+            o.Albedo=lerp(o.Albedo,ownedGold*lerp(float3(1,1,1),tint.rgb/float3(.97,.80,.40),.25),_OwnedGold*saturate(_GoldFinish));
             float3 an=abs(WorldNormalVector(IN,float3(0,0,1)));
             float2 stoneUV=an.y>.7?IN.worldPos.xz:an.x>an.z?IN.worldPos.zy:IN.worldPos.xy;
             float course=floor(stoneUV.y*1.55);

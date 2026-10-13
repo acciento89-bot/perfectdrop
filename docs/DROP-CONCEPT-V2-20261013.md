@@ -1,0 +1,12 @@
+# Human-directed complete Concept correction
+
+The shown October13 PerfectDrop comparison was rejected by the human as worse. GateFAILED supersedes internal acceptance. Existing functional menu isolation, parent return, styles/economy/save and fixed5floor landscape framing remain. Do not move to another game until this visual correction is handled; RisingSteps has only been read.
+
+The approved October10 three-view board remains the specification, not a new mockup. Own production assets are created with built-in imagegen and copied unmodified intoAssets/Resources/Art/ConceptV2: gold9slice primary button, independent fine gold/navy PBR albedos, distinct daytime/sunset/neon rectangular world thumbnails. Menu artwork is intentionally menu artwork, never called actual gameplay. Shader/real shared mesh integration and actual mobile layout must be rendered in Unity.
+
+Coordinated batch: slimmer profiled navy metal shoulders and calmer continuous gold trim, authentic original material maps with real light response, progressively stepped grounded menu specimen matching reference proportions (active perfect-placement footprint remains unchanged), smaller properly framed hero tower instead of a giant rectangular wall, card spacing/image/name/star hierarchy matching the Concept, actual glossy9slice actions and no flat procedural yellow substitute, own gold coin medallion. Preserve typography/safe areas/48point targets and earlier correct submenu/navigation. NativeMacEditor asset import/setup, strongest aggregate/build, actual plain design/game/menu/landscape evidence. No measured percentage claim, no newTestFlight while rejected.
+
+Source outputs and prompts are recorded with built-in tool origin/hashes in the adjacent asset receipt; originals remain in ~/.codex/generated_images. NoCLI/APIkey fallback or sourceimage pixel painting.
+
+
+Native integration / recheck record: `docs/QA/drop-concept-v2-20261013.json`. Gold ownership transitions, saved per-floor mineral variation and duplicated frames were exercised before and after their actual fixes; original defect evidence stays in DropConceptV2Final native Editor log. Final original spotlight illuminates actual preview meshes and is destroyed with the one-shot owner. Compact corner controls and readable coin header remain separate from larger lower navigation. The human's FAILED release gate is preserved; remaining graphical differences are explicitly recorded instead of asserting a similarity percentage.

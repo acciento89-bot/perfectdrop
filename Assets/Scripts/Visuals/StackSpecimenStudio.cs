@@ -40,13 +40,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
             cameraObject.AddComponent<CinematicGrade>();
             var sky=WorldArt.CreateTerracePreviewSky(chapter,root.transform.position);cameraObject.GetComponent<Skybox>().material=sky;
             int width=heroStyle>=0?(portrait?768:960):portrait?512:768,height=heroStyle>=0?(portrait?1152:480):portrait?768:512;camera.aspect=(float)width/height;
-            camera.transform.position=root.transform.position+(heroStyle>=0?new Vector3(-10,10,-17):new Vector3(-11,12,-19));camera.transform.LookAt(root.transform.position+(heroStyle>=0?new Vector3(0,0,0):new Vector3(0,3,6)));
+            camera.transform.position=root.transform.position+(heroStyle>=0?new Vector3(-12,11,-23):new Vector3(-11,12,-19));camera.transform.LookAt(root.transform.position+(heroStyle>=0?new Vector3(0,portrait?-2:0,0):new Vector3(0,3,6)));
             if(heroStyle>=0&&!portrait)camera.transform.position+=camera.transform.right*8;
             if(heroStyle>=0)BuildHeroTower(root.transform,heroStyle);
             if(portrait && chapter==1 && heroStyle<0)BuildDesignHall(root.transform,camera);
             var dais=WorldArt.BuildStackDais(root.transform);var world=dais.transform.Find("TerraceWorld");for(int i=0;i<3;i++)world.Find("Theme"+i).gameObject.SetActive(i==chapter);
             foreach(var t in root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=Layer;
             var lightObject=new GameObject("TerracePreviewSun",typeof(Light));lightObject.transform.SetParent(root.transform,false);var light=lightObject.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;light.color=chapter==2?new Color(.68f,.79f,1):new Color(1,.88f,.70f);light.intensity=1.12f;light.shadows=LightShadows.Soft;light.shadowStrength=.7f;light.shadowBias=.04f;light.transform.rotation=Quaternion.Euler(32,-38,0);
+            if(heroStyle>=0)AddSpecimenFill(root.transform,6);
             var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf)?RenderTextureFormat.ARGBHalf:RenderTextureFormat.ARGB32;
             var render=RenderTexture.GetTemporary(width,height,24,format,RenderTextureReadWrite.Default,4);var previous=RenderTexture.active;Texture2D texture=null;
             var oldProbe=RenderSettings.ambientProbe;var oldAmbient=RenderSettings.ambientMode;var oldTop=RenderSettings.ambientSkyColor;var oldEquator=RenderSettings.ambientEquatorColor;var oldBottom=RenderSettings.ambientGroundColor;var oldReflectionIntensity=RenderSettings.reflectionIntensity;
@@ -66,7 +67,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             WorldArt.StyleStackBlock(pedestal,style);
             for(int layer=0;layer<6;layer++)
             {
-                float width=4-layer*.08f;
+                float width=4*Mathf.Pow(.90f,layer);
                 var block=WorldArt.CreateStackBlock(root,"ActualMenuTower"+layer,Vector3.up*layer*height,new Vector3(width,height,width),layer);
                 WorldArt.StyleStackBlock(block,style);
             }
@@ -134,6 +135,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var light=lightObject.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;
             light.color=new Color(1,.92f,.78f);light.intensity=1.12f;light.shadows=LightShadows.None;
             light.transform.rotation=Quaternion.Euler(40,-28,0);
+            AddSpecimenFill(root.transform,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight);
             for(var i=0;i<floors;i++)
             {
                 // The same six-renderer block, shared rounded mesh and shader used
@@ -167,6 +169,16 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 camera.targetTexture=null;RenderTexture.active=previous;RenderTexture.ReleaseTemporary(render);
                 root.SetActive(false);Dispose(root);
             }
+        }
+        // A real, temporary warm softbox illuminates the modeled specimen only.
+        // Main gameplay lights/cameras exclude this preview layer; the owner is
+        // destroyed after its one-shot render, with no per-frame light or probe.
+        private static void AddSpecimenFill(Transform root,float height)
+        {
+            var light=new GameObject("OriginalGoldSpecimenSoftbox",typeof(Light)).GetComponent<Light>();light.transform.SetParent(root,false);
+            light.type=LightType.Spot;light.cullingMask=1<<Layer;light.renderMode=LightRenderMode.ForcePixel;light.shadows=LightShadows.None;
+            light.color=new Color(1,.89f,.64f);light.intensity=3;light.range=height+18;light.spotAngle=45;
+            light.transform.localPosition=new Vector3(-3,height+6,-4);light.transform.LookAt(root.position+Vector3.up*height*.5f);
         }
         private static void Dispose(Object obj){if(Application.isPlaying)Object.Destroy(obj);else Object.DestroyImmediate(obj);}
     }

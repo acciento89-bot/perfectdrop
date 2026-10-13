@@ -9,8 +9,8 @@ namespace Kamilunavo.PerfectDrop.Visuals
     {
         private static Mesh _body, _rim;
         public static Mesh Body => _body != null ? _body : (_body = Build("AuthoredLacquerShoulder",
-            new[] {-.5f,-.43f,-.34f,.31f,.41f,.5f},
-            new[] {.462f,.496f,.5f,.5f,.485f,.458f}));
+            new[] {-.5f,-.44f,-.38f,.36f,.44f,.5f},
+            new[] {.482f,.498f,.5f,.5f,.498f,.482f}));
         public static Mesh Rim => _rim != null ? _rim : (_rim = Build("AuthoredTurnedGoldRim",
             new[] {-.5f,-.30f,.0f,.30f,.5f},
             new[] {.465f,.495f,.5f,.495f,.465f}));

@@ -105,6 +105,7 @@ namespace Kamilunavo.PerfectDrop.UI
             shadow.effectColor = new Color(0f, 0f, 0f, 0.34f);
             shadow.effectDistance = new Vector2(0f, -4f);
 
+            if(background==GalleryTheme.Gold)ConceptGoldSkin.Apply(rect.GetComponent<Image>());
             var button = rect.gameObject.AddComponent<Button>();
             var colors = button.colors;
             colors.normalColor = Color.white;
@@ -172,6 +173,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public static void ApplyPillImage(Image image)
         {
             if (image == null) return;
+            if(image.GetComponent<ConceptGoldSkin>()?.enabled==true){ConceptGoldSkin.Apply(image);return;}
             image.sprite = PillSprite;
             image.type = Image.Type.Sliced;
         }

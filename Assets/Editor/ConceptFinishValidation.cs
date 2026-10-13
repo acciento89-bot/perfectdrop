@@ -23,9 +23,10 @@ namespace Kamilunavo.PerfectDrop.Editor
                     Check(b.transform.Find("MetalDeck").GetComponent<Renderer>().sharedMaterial.GetFloat("_BrushFinish")==1,"Metal shoulder lost its fine brush finish.");
                     var shoulder=b.transform.Find("MetalDeck").GetComponent<Renderer>().sharedMaterial;
                     Check(shoulder.HasProperty("_MicroRelief")&&shoulder.GetFloat("_MicroRelief")>.5f,"Original brushed shoulder needs actual surface relief, not a flat tint.");
-                    var authored=Resources.Load<Texture2D>("Art/AuthoredBrushedMetalAlbedo");
-                    Check(authored!=null&&authored.width==256&&authored.height==256,"Original metal tile is imported within its mobile budget.");
-                    Check(shoulder.GetTexture("_MainTex")==authored,"Live shoulder consumes the original metal tile.");
+                    var authored=Resources.Load<Texture2D>("Art/ConceptV2/NavySatinAlbedo");
+                    Check(authored!=null&&authored.width>=512&&authored.width<=1024&&authored.height>=512&&authored.height<=1024,"Original metal tile is imported within its mobile budget.");
+                    Check(shoulder.GetTexture("_MainTex")==authored&&shoulder.GetFloat("_OwnedNavy")==1,"Live shoulder consumes the original navy satin tile.");
+                    var plate=b.transform.Find("TopPlate").GetComponent<Renderer>().sharedMaterial;Check(plate.GetFloat("_OwnedGold")==1&&plate.GetTexture("_GoldAlbedo")==Resources.Load<Texture2D>("Art/ConceptV2/ChampagneGoldAlbedo"),"Actual gold plate consumes the original independent gold material asset.");
                     Check(b.transform.Find("TopPlate").GetComponent<Renderer>().sharedMaterial.GetFloat("_MicroRelief")==0,"Gold plate must retain its separate finish.");
                     foreach(var part in b.GetComponentsInChildren<MeshRenderer>())if(part.sharedMaterial.GetFloat("_MicroRelief")>.5f)
                     {

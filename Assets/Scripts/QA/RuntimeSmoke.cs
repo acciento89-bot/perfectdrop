@@ -86,7 +86,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 }
                 CheckFraming();yield return Capture("concept-gameplay-chapter-"+chapter);
                 if(chapter==0){_game.GoHome();yield return Capture("concept-menu");FindButton("Styles").onClick.Invoke();yield return Capture("concept-designs");_game.Hud.HideMenus();}
-                if(chapter==1){Require(_game.SelectStyle(0),"Owned navy sunset comparison unavailable.");_game.GoHome();FindButton("Chapter1").onClick.Invoke();yield return Capture("concept-menu-sunset");FindButton("Styles").onClick.Invoke();yield return Capture("concept-designs-sunset");_game.Hud.HideMenus();}
+                if(chapter==1){Require(_game.SelectStyle(0),"Owned navy sunset comparison unavailable.");yield return Capture("concept-gameplay-sunset-navy");_game.GoHome();FindButton("Chapter1").onClick.Invoke();yield return Capture("concept-menu-sunset");FindButton("Styles").onClick.Invoke();yield return Capture("concept-designs-sunset");_game.Hud.HideMenus();}
             }
             File.WriteAllText(Path.Combine(_output,"concept-proof.txt"),"PASS: 21 actual ordered UI drops, 7 per chapter; physical current game meshes, selected surfaces, camera reservation and raycasts. Isolated QA profile unlocks; no image replacement and no visual acceptance implied.\n");
         }

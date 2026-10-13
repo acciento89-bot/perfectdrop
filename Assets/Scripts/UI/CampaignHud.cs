@@ -37,7 +37,7 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 var chapter=i;
                 _chapters[i]=UiFactory.Button(_home,"Chapter"+i,names[i],GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,()=>{if(MenuNavigationLocked)return;_chapter=chapter;_levelScroll.verticalNormalizedPosition=1;RefreshHome();});
-                _chapterArt[i]=GalleryTheme.Art(_chapters[i].transform,"ChapterArt",i,new Vector2(.03f,.35f),new Vector2(.97f,.98f));Set((RectTransform)_chapters[i].transform.Find("Label"),.03f,.03f,.97f,.34f);GalleryTheme.Style(_chapters[i],GalleryTheme.Card);
+                _chapterArt[i]=GalleryTheme.Art(_chapters[i].transform,"ChapterArt",i,new Vector2(.03f,.35f),new Vector2(.97f,.98f),false,true);Set((RectTransform)_chapters[i].transform.Find("Label"),.03f,.03f,.97f,.34f);GalleryTheme.Style(_chapters[i],GalleryTheme.Card);
                 var chapterName=_chapters[i].transform.Find("Label").GetComponent<Text>();chapterName.font=UiFactory.SerifFont;chapterName.fontStyle=FontStyle.Normal;
                 UiFactory.Label(_chapters[i].transform,"ChapterProgress","",20,new Vector2(.03f,.015f),new Vector2(.97f,.16f),TextAnchor.MiddleCenter,GalleryTheme.Text);
             }
@@ -138,8 +138,9 @@ namespace Kamilunavo.PerfectDrop.UI
             var plate=_styleButtons[style].transform.Find("SelectionPlate");
             if(plate==null)return;
             bool owned=(Game.Profile.OwnedStyles&(1<<style))!=0 || style==0;
-            plate.GetComponent<Image>().color=owned?Gold:GalleryTheme.Card;
-            plate.GetComponent<Image>().material=owned?UiFactory.GoldActionMaterial:null;
+            var surface=plate.GetComponent<Image>();surface.color=owned?Gold:GalleryTheme.Card;
+            if(owned){if(!ConceptGoldSkin.Apply(surface)){surface.material=UiFactory.GoldActionMaterial;UiFactory.ApplyPillImage(surface);}}else{var skin=surface.GetComponent<ConceptGoldSkin>();if(skin!=null)skin.enabled=false;surface.material=null;UiFactory.ApplyPillImage(surface);}
+            GalleryFrameGraphic.Apply(plate,owned?GalleryTheme.Ivory:GalleryTheme.Gold);
             var label=_styleButtons[style].transform.Find("Label").GetComponent<Text>();label.color=owned?GalleryTheme.Ink:GalleryTheme.Text;
             var shadow=label.GetComponent<Shadow>();if(shadow!=null)shadow.enabled=!owned;
             label.font=UiFactory.SerifFont;
@@ -167,6 +168,7 @@ namespace Kamilunavo.PerfectDrop.UI
             if(_home==null)return;_campaignPane=pane;
             Place(_home,pane,new Rect(0,0,1,1));Place(_styles,pane,new Rect(.02f,.015f,.96f,.97f));Canvas.ForceUpdateCanvases();
             bool landscape=_home.rect.width>_home.rect.height*1.2f;float unit=UiMetrics.PointScale/Mathf.Max(.001f,_home.GetComponentInParent<Canvas>().scaleFactor),w=_home.rect.width/unit,h=_home.rect.height/unit,row=UiMetrics.TargetSize(_home,49)/unit,play=UiMetrics.TargetSize(_home,54)/unit,margin=w<220?6:10,gap=w<220?4:8;
+            if(!landscape&&h>=550){play=Mathf.Max(play,84);row=Mathf.Max(row,64);}
             void Position(RectTransform rect,float x,float y,float width,float height)=>Top(rect,x*unit,y*unit,width*unit,height*unit);
             var gallery=(RectTransform)_levelScroll.transform;var title=(RectTransform)_home.Find("Title");var progress=(RectTransform)_home.Find("Progress");var header=(RectTransform)_home.Find("MapHeader");var footer=(RectTransform)_home.Find("MapFooter");
             _home.GetComponent<Image>().color=GalleryTheme.Night;_home.GetComponent<Image>().material=null;header.GetComponent<Image>().material=null;footer.GetComponent<Image>().material=null;footer.SetSiblingIndex(_heroGallery.GetSiblingIndex()+1);
@@ -179,13 +181,13 @@ namespace Kamilunavo.PerfectDrop.UI
                 progress.gameObject.SetActive(false);title.gameObject.SetActive(false);
                 float navX=landscape?w*.46f:margin,navW=w-navX-margin,navY=playY-row-gap;
                 if(landscape)Position((RectTransform)_continue.transform,navX,playY,navW,play);
-                float chapterH=landscape?row:Mathf.Clamp(h*.205f,94,182),chapterY=navY-chapterH-gap;
+                float chapterH=landscape?row:Mathf.Clamp(h*.245f,94,235),chapterY=navY-chapterH-gap;
                 float heroX=margin,heroY=landscape?75:Mathf.Max(82,h*.145f),heroW=landscape?navX-margin-gap:w-margin*2,heroH=landscape?h-heroY-12:chapterY-heroY-8;
                 Position(_heroGallery,0,0,w,h);Position((RectTransform)_home.Find("HeroTower"),heroX+heroW*.09f,heroY,heroW*.82f,Mathf.Max(95,heroH-row-2));
                 float logoW=Mathf.Min(landscape?heroW: w*.58f,235),logoH=logoW*.61f;
-                Position(_titleArt.rectTransform,landscape?heroX+(heroW-logoW)/2:(w-logoW)/2,landscape?5:5,logoW,logoH);
-                float goalY=landscape?heroY+heroH-row:chapterY-row-5;
-                Position((RectTransform)_campaignNavigation.transform,heroX+8,goalY,heroW-16,row);GalleryTheme.Style(_campaignNavigation,Navy);SetLabel(_campaignNavigation,_heroGoal.text+"  ›");_heroGoal.gameObject.SetActive(false);_home.Find("HeroGoalPlate").gameObject.SetActive(false);
+                Position(_titleArt.rectTransform,landscape?heroX+(heroW-logoW)/2:(w-logoW)/2,landscape?5:Mathf.Clamp(h*.045f,8,38),logoW,logoH);
+                float goalHeight=UiMetrics.TargetSize(_home,49)/unit,goalY=landscape?heroY+heroH-goalHeight:chapterY-goalHeight-5;
+                Position((RectTransform)_campaignNavigation.transform,heroX+8,goalY,heroW-16,goalHeight);GalleryTheme.Style(_campaignNavigation,Navy);SetLabel(_campaignNavigation,_heroGoal.text+"  ›");_heroGoal.gameObject.SetActive(false);_home.Find("HeroGoalPlate").gameObject.SetActive(false);
                 Position(footer,navX-6,chapterY-6,navW+12,h-chapterY+6);footer.GetComponent<Image>().color=GalleryTheme.Ivory;
                 float chapterW=(navW-gap*2)/3;for(int i=0;i<3;i++)Position((RectTransform)_chapters[i].transform,navX+i*(chapterW+gap),chapterY,chapterW,chapterH);
                 var designs=_home.Find("Styles").GetComponent<Button>();var city=_home.Find("City").GetComponent<Button>();float cell=(navW-gap)/2;
@@ -194,7 +196,8 @@ namespace Kamilunavo.PerfectDrop.UI
                 if(city.transform.Find("NavigationArt")==null)GalleryTheme.Art(city.transform,"NavigationArt",0,new Vector2(.02f,.05f),new Vector2(.27f,.95f));
                 foreach(var item in new[]{designs,city}){Set((RectTransform)item.transform.Find("Label"),.28f,.06f,.98f,.94f);item.transform.Find("Label").GetComponent<Text>().font=UiFactory.SerifFont;item.transform.Find("Label").GetComponent<Text>().fontStyle=FontStyle.Normal;}
                 var options=_home.Find("HomeSettings").GetComponent<Button>();var learn=_home.Find("Learn").GetComponent<Button>();var shop=_home.Find("DirectShop").GetComponent<Button>();
-                Position((RectTransform)options.transform,margin,8,row,row);Position((RectTransform)learn.transform,margin,8+row+gap,row,row);Position((RectTransform)shop.transform,w-margin-Mathf.Max(84,row),8,Mathf.Max(84,row),row);
+                float headerTarget=UiMetrics.TargetSize(_home,49)/unit,walletWidth=Mathf.Max(w>=250?116:84,headerTarget);
+                Position((RectTransform)options.transform,margin,8,headerTarget,headerTarget);Position((RectTransform)learn.transform,margin,8+headerTarget+gap,headerTarget,headerTarget);Position((RectTransform)shop.transform,w-margin-walletWidth,8,walletWidth,headerTarget);
                 GalleryTheme.Style(options,Navy);GalleryTheme.Style(learn,Navy);GalleryTheme.Style(shop,Navy);UiFactory.ApplyCircularImage(options.GetComponent<Image>());UiFactory.ApplyCircularImage(learn.GetComponent<Image>());UiFactory.ApplyPillImage(shop.GetComponent<Image>());
                 SetLabel(options,"");if(options.transform.Find("SettingsIcon")==null)UiFactory.Icon(options.transform,"SettingsIcon",HudIconType.Gear,Gold,new Vector2(.23f,.23f),new Vector2(.77f,.77f));SetLabel(learn,"?");SetLabel(shop,Game.Profile.Coins+"  +");Set((RectTransform)shop.transform.Find("Label"),.30f,.06f,.94f,.94f);shop.transform.Find("Label").GetComponent<Text>().font=UiFactory.DefaultFont;
                 if(shop.transform.Find("WalletCoin")==null)UiFactory.Icon(shop.transform,"WalletCoin",HudIconType.Coin,GalleryTheme.Gold,new Vector2(.04f,.18f),new Vector2(.31f,.82f));
@@ -230,7 +233,7 @@ namespace Kamilunavo.PerfectDrop.UI
             var order=new[]{0,3,5,1,2,4,6,7};for(int position=0;position<8;position++){int i=order[position];var rect=(RectTransform)_styleButtons[i].transform;rect.anchorMin=rect.anchorMax=new Vector2(0,1);rect.pivot=new Vector2(0,1);rect.sizeDelta=new Vector2(cardW,cardH);rect.anchoredPosition=new Vector2(position*(cardW+cardGap),0);GalleryTheme.Style(_styleButtons[i],DesignSurface(i));Set((RectTransform)rect.Find("StyleTower"),.02f,.15f,.98f,.86f);float labelHeight=Mathf.Min(.43f,49*unit/Mathf.Max(1,cardH));Set((RectTransform)rect.Find("SelectionPlate"),.06f,.02f,.94f,labelHeight+.005f);Set((RectTransform)rect.Find("Label"),.08f,.02f,.92f,labelHeight);UpdateDesignAction(i);float nameBand=Mathf.Min(.40f,(w<250&&!landscape?35:22)*unit/Mathf.Max(1,cardH));float nameBottom=.97f-nameBand;Set((RectTransform)rect.Find("DesignName"),.03f,nameBottom,.97f,.97f);Set((RectTransform)rect.Find("MaterialName"),.03f,nameBottom-.08f,.97f,nameBottom-.01f);Set((RectTransform)rect.Find("StyleTower"),.02f,labelHeight+.02f,.98f,nameBottom-(landscape?.025f:.10f));GalleryTheme.Readable(rect.Find("DesignName").GetComponent<Text>(),13);GalleryTheme.Readable(rect.Find("MaterialName").GetComponent<Text>(),10.5f);rect.Find("MaterialName").gameObject.SetActive(!landscape);}
             GalleryTheme.Style(_styles.Find("ExtraDesigns").GetComponent<Button>(),GalleryTheme.Card);GalleryTheme.Style(_styles.Find("Back").GetComponent<Button>(),GalleryTheme.Card);
             foreach(var button in _home.GetComponentsInChildren<Button>(true))GalleryTheme.Readable(button.GetComponentInChildren<Text>(),button==_continue?18:12);foreach(var button in _styleButtons)GalleryTheme.Readable(button.GetComponentInChildren<Text>(),13);GalleryTheme.Readable(title.GetComponent<Text>(),24);GalleryTheme.Readable(_homeInfo,13);GalleryTheme.Readable(_heroGoal,15);GalleryTheme.Readable(_styleInfo,13);GalleryTheme.Readable(_styles.Find("Title").GetComponent<Text>(),22);
-            if(!_campaignOpen){GalleryTheme.Readable(_continue.GetComponentInChildren<Text>(),22);GalleryTheme.Readable(_campaignNavigation.GetComponentInChildren<Text>(),16);_campaignNavigation.GetComponentInChildren<Text>().font=UiFactory.SerifFont;foreach(var name in new[]{"Styles","City"})GalleryTheme.Readable(_home.Find(name).Find("Label").GetComponent<Text>(),14);}
+            if(!_campaignOpen){GalleryTheme.Readable(_continue.GetComponentInChildren<Text>(),22);GalleryTheme.Readable(_campaignNavigation.GetComponentInChildren<Text>(),16);_campaignNavigation.GetComponentInChildren<Text>().font=UiFactory.SerifFont;foreach(var name in new[]{"Styles","City"})GalleryTheme.Readable(_home.Find(name).Find("Label").GetComponent<Text>(),14);if(w>=250&&(!landscape||h>=240))GalleryTheme.Readable(_home.Find("DirectShop").Find("Label").GetComponent<Text>(),14);}
             for(int chapter=0;chapter<3;chapter++){Set((RectTransform)_chapters[chapter].transform.Find("Label"),.02f,.17f,.98f,.37f);Set((RectTransform)_chapterArt[chapter].transform,.025f,.40f,.975f,.975f);GalleryTheme.Readable(_chapters[chapter].transform.Find("Label").GetComponent<Text>(),14);GalleryTheme.Readable(_chapters[chapter].transform.Find("ChapterProgress").GetComponent<Text>(),11);_chapters[chapter].transform.Find("ChapterProgress").gameObject.SetActive(!landscape);if(landscape)Set((RectTransform)_chapters[chapter].transform.Find("Label"),.02f,.03f,.98f,.37f);else if(w<250){Set((RectTransform)_chapters[chapter].transform.Find("Label"),.02f,.16f,.98f,.48f);Set((RectTransform)_chapterArt[chapter].transform,.025f,.51f,.975f,.975f);}}
             foreach(var image in _chapterArt)GalleryTheme.Crop(image);GalleryTheme.Crop(_heroArt);GalleryTheme.Crop(_styles.Find("DesignSkyline").GetComponent<RawImage>());
         }

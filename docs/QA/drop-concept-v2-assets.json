@@ -1,0 +1,65 @@
+[
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/GoldAction.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-dfeb42b7-756d-4c55-a61c-04e8ba792e0b.png",
+    "sha256": "412494568c9744aa939e3509a25d8582de959a1a958df44a3bb0e7a411659274",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "production asset, never actual gameplay evidence",
+    "promptIntent": "Transparent original wide capsule button, brushed champagne gold upper gradient / amber lower gradient, soft central sheen, narrow polished gold edge and bronze extrusion. No letters, icons, watermark or background. Production 9-slice UI sprite matching the approved board.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/ChampagneGoldAlbedo.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-be1a3916-3f89-48a3-8ca4-363eb7ea8d4b.png",
+    "sha256": "0eedae08a22ddb10a10cc63cbe1e56b9dceb309607c1fb2c3030f4c3a06e1c9d",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "production asset, never actual gameplay evidence",
+    "promptIntent": "Original seamless flat physically based champagne gold hairline albedo, fine horizontal brush grain, honey D6A343 / E7BF70. Uniform illumination, no baked shadows, reflection bands, perspective or object.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/NavySatinAlbedo.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-073c9684-1ee1-4631-a587-e596260f4e59.png",
+    "sha256": "4479a39ed22580f926f49fa392dafdbe1c22688450130f44302ff2e838ac8ff8",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "production asset, never actual gameplay evidence",
+    "promptIntent": "Original seamless flat dark navy satin metal hairline albedo, 172533 / 233442, extremely fine horizontal grain. Uniform illumination, no baked reflections or lighting.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/WolkenwerkCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-ad1ad670-2952-4b3c-b235-2ec703c49e30.png",
+    "sha256": "fbc89bad49fc7be78ed92ab8d213d2434cb79fb76eda1f0b2cee1d54de573a92",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "production asset, never actual gameplay evidence",
+    "promptIntent": "Original 4:3 rectangular chapter art, daytime European fantasy cloud city, ivory cathedrals and blue/gold domes, canal arches, cypress and pink flowers, close to approved board. No tower, character, interface, text or borders.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/AbendturmCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-86abccb8-1629-439b-a4cb-3f0214555bdf.png",
+    "sha256": "190ae68a281eaa6aa3d685a9c26d49dcf03432ee5f7c3e23fe0f7fdcf1f381d5",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "rectangular menu thumbnail; not actual gameplay evidence",
+    "promptIntent": "Original 4:3 rectangular chapter art, warm sunset European fantasy city, gold lit cathedral on left, arched canal bridges to sun at right, lavender distance. No tower, character, interface, text or borders.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/NeonstadtCard.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-d4525c44-4f06-435d-957f-11fbf6eedef2.png",
+    "sha256": "15d2175a55d8dfd3edf011ceff45479f89622b62a1fd047ffc83baa349e017bc",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "rectangular menu thumbnail; not actual gameplay evidence",
+    "promptIntent": "Original 4:3 rectangular chapter art, night neo-Gothic cloud city, cyan landmark and canal bridge, indigo stars, restrained purple windows. No tower, character, interface, text or borders.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  },
+  {
+    "asset": "Assets/Resources/Art/ConceptV2/GoldCoin.png",
+    "original": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-b14d4c32-7ad2-418d-82df-06b5034d7abf.png",
+    "sha256": "78b389acee688392e5674fe58406be46120cb2aaeec8de0a39e43b9122d802cb",
+    "origin": "original built-in imagegen; unmodified source",
+    "usage": "real HUD coin bitmap; never gameplay evidence",
+    "promptIntent": "Transparent original rounded polished gold medallion engraved P, near-front view, bevel and concentric rim, no UI, label, background or excessive glow.",
+    "promptRecordKind": "Normalized production intent from the built-in tool calls, not a verbatim transcript."
+  }
+]

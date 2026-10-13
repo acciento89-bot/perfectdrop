@@ -23,6 +23,8 @@ namespace Kamilunavo.PerfectDrop.UI
     public sealed class HudIconGraphic : MaskableGraphic
     {
         public HudIconType IconType;
+        private static Texture2D _coin;
+        public override Texture mainTexture=>IconType==HudIconType.Coin?(_coin!=null?_coin:(_coin=Resources.Load<Texture2D>("Art/ConceptV2/GoldCoin")))??base.mainTexture:base.mainTexture;
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -30,6 +32,7 @@ namespace Kamilunavo.PerfectDrop.UI
             switch (IconType)
             {
                 case HudIconType.Coin:
+                    if(mainTexture!=base.mainTexture){var bounds=GetPixelAdjustedRect();float side=Mathf.Min(bounds.width,bounds.height);var origin=bounds.center-Vector2.one*side*.5f;vh.AddVert(origin,Color.white,Vector2.zero);vh.AddVert(origin+Vector2.up*side,Color.white,Vector2.up);vh.AddVert(origin+Vector2.one*side,Color.white,Vector2.one);vh.AddVert(origin+Vector2.right*side,Color.white,Vector2.right);vh.AddTriangle(0,1,2);vh.AddTriangle(0,2,3);break;}
                     for(int i=0;i<32;i++)
                     {
                         float a=i*Mathf.PI*2/32,b=(i+1)*Mathf.PI*2/32;

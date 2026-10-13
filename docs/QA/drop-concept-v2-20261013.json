@@ -1,0 +1,201 @@
+{
+  "recordedAt": "2026-10-13T17:33:58.062515+00:00",
+  "canonicalSourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+  "nativeEditorVersion": "6000.6.4f1",
+  "nativeEditorLog": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/editor-native.log",
+    "sha256": "8d55d8e2df88e702bf5bae5e46a230c7e5f936e33a2d3a30be9bc48b8c88d5e9"
+  },
+  "app": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app",
+  "runtime": {
+    "concept": {
+      "mode": "concept",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "02212c13adc3291d392ab93c0b071e962b1ad2c3c6c49ac3749a2704acd39750",
+      "wholeBundleSha256": "f52204ce779ffdf35f5f61cdae117b96044d20fcd6a895a2ee6bd32a3a879442",
+      "canonicalSourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaConcept",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-concept.log"
+      ],
+      "pid": 59153,
+      "elapsedSeconds": 70.2,
+      "receipt": "PASS: 21 actual ordered UI drops (7 per chapter), genuine meshes/finishes, reserved camera area and visible-button raycasts; isolated QA profile. No visual acceptance implied.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-concept.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept"
+    },
+    "styles": {
+      "mode": "styles",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "02212c13adc3291d392ab93c0b071e962b1ad2c3c6c49ac3749a2704acd39750",
+      "wholeBundleSha256": "f52204ce779ffdf35f5f61cdae117b96044d20fcd6a895a2ee6bd32a3a879442",
+      "canonicalSourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaStyles",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitStyles",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-styles.log"
+      ],
+      "pid": 59215,
+      "elapsedSeconds": 26.1,
+      "receipt": "PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-styles.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitStyles"
+    },
+    "presentation": {
+      "mode": "presentation",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "02212c13adc3291d392ab93c0b071e962b1ad2c3c6c49ac3749a2704acd39750",
+      "wholeBundleSha256": "f52204ce779ffdf35f5f61cdae117b96044d20fcd6a895a2ee6bd32a3a879442",
+      "canonicalSourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaPresentation",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitPresentation",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-presentation.log"
+      ],
+      "pid": 59223,
+      "elapsedSeconds": 42.1,
+      "receipt": "PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-presentation.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitPresentation"
+    },
+    "arcade": {
+      "mode": "arcade",
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "02212c13adc3291d392ab93c0b071e962b1ad2c3c6c49ac3749a2704acd39750",
+      "wholeBundleSha256": "f52204ce779ffdf35f5f61cdae117b96044d20fcd6a895a2ee6bd32a3a879442",
+      "canonicalSourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/PerfectDrop-ConceptV2Lit.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaArcade",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitArcade",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-arcade.log"
+      ],
+      "pid": 59234,
+      "elapsedSeconds": 150.4,
+      "receipt": "PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-v2-arcade.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitArcade"
+    }
+  },
+  "reference": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/KamilunavoDelivery-20261009/concepts-20261010/perfect-drop-3-ansichten.png",
+    "sha256": "be7d92c4d77fa432693f19a07e791a62f6ab7aa05f1b3d9216b01b354ef98b45"
+  },
+  "evidence": {
+    "menu": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-menu-sunset.png",
+        "sha256": "0b8b4829928caa36ba4314afdc61e409b35687f0a0278572cd04d8baad1eb7c9",
+        "origin": "Unity-render"
+      }
+    ],
+    "gameplay": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-gameplay-sunset-navy.png",
+        "sha256": "1d7ec641cc0c93481df7bc8b4afea1486bf5ee151941e8eb387582fb2f06d6d1",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-gameplay-chapter-0.png",
+        "sha256": "790b24eff07cbe66adfdb78fb7739e5724157184ed2b2fbb72ccabfb38d1a10d",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-gameplay-chapter-1.png",
+        "sha256": "a1fe9d7cb227d10dba8b7c0235bae459d030af5423c386c01a7d91dba314897e",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-gameplay-chapter-2.png",
+        "sha256": "bc718d2f3854a7a1f0a3b3fc946c2b9fd64c9b01e622a23ed1e5c3e1cd494dbd",
+        "origin": "Unity-render"
+      }
+    ],
+    "designs": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitConcept/concept-designs-sunset.png",
+        "sha256": "79dcb71895a455b6cb9a05c103512e8f050a02bb4b7963a344b41b76717bee02",
+        "origin": "Unity-render"
+      }
+    ],
+    "submenus": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitPresentation/settings-430.png",
+        "sha256": "f3ff4f458cac65efa525f73aded5b269278600841696c4e6d57c8c09e082d218",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitPresentation/settings-932.png",
+        "sha256": "c28d41bfbc041a960509f5cf286c2fecfadd227ff2ea5c2e1443a466ef2da1e0",
+        "origin": "Unity-render"
+      }
+    ],
+    "landscape": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitArcade/landscape-stack-8.png",
+        "sha256": "2c46df76371ef675af63dd766b641e4bc9320231f88436a63c4d02bc69799fd6",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitArcade/landscape-stack-30.png",
+        "sha256": "3347e355cc61d57f4b45cb68313dc87ab088c04978a49d8b432cb8ea38b97055",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/ConceptV2LitArcade/landscape-stack-66.png",
+        "sha256": "2f8fb46acef5ca73b28e4399a59669ece849c91117820de9002d3dfef2f69670",
+        "origin": "Unity-render"
+      }
+    ]
+  },
+  "originalAssetReceipt": "docs/QA/drop-concept-v2-assets.json",
+  "originalAssetCount": 7,
+  "review": "Read-only code review: original capsule frame / saved mineral variation / owned selection frame defects reproduced, fixed and natively checked. No remaining findings in that recheck.",
+  "visualStatus": "failed release gate remains controlling; human rejection of prior comparison not superseded by these functional passes",
+  "visualLimits": [
+    "Gold surface brightness and reflected detailing still differ from illustration.",
+    "Foreground architecture and vegetation remain simpler than approved Concept.",
+    "No measured similarity percentage, no new iOS build, no phone touch/FPS/real-store/live-ad verification."
+  ],
+  "comparisonSheets": [
+    "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-unity-menue.png",
+    "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-unity-gameplay.png",
+    "/Volumes/SSK SSD/Kamilunavo/Builds/DropConceptV2Lit-20261013/concept-unity-designs.png"
+  ]
+}

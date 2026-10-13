@@ -54,6 +54,8 @@ namespace Kamilunavo.PerfectDrop.UI
                 frame.rectTransform.offsetMin = frame.rectTransform.offsetMax = Vector2.zero;
                 frame.raycastTarget = false;
             }
+            // The authored capsule already includes its own complete metal rim.
+            frame.enabled = owner.GetComponent<ConceptGoldSkin>()?.enabled != true;
             frame.color = tint;
             return frame;
         }

@@ -1,15 +1,15 @@
 {
   "game": "Perfect Drop",
-  "status": "passed",
+  "status": "failed",
   "sourceSha256": "0e4c630fba7f8feb1a6998addc81ea5e74b356662634612fcc2eb720bcab44d6",
-  "reviewer": "Codex direct actual render comparison plus independent read-only visual review; previously human-accepted architectural direction",
-  "reviewedAt": "2026-10-13T16:09:38.613606+00:00",
-  "reason": "Coherent own navy/gold architecture and warm gold finish, full-pane genuine menu scenery, clearer chapter cards and coin shortcut, opaque full-screen settings and correct original submenu parent. Independent final review clears architecture/UI and corrected material direction for handoff. No numeric90% or pixel-identity claim. Smaller filigree and brighter played plate than gallery remain acceptable refinement limits within previously accepted direction. This approves desktop visual evidence only; new native iOS/physical device, sandbox purchase/provider and distribution checks are separate and outstanding. No new TestFlight upload.",
+  "reviewer": "Human review of shown Concept/Unity comparison",
+  "reviewedAt": "2026-10-13T16:18:46.354639+00:00",
+  "reason": "Human rejects the October13 comparison as farther from the approved Concept and worse than before. Previous internal qualitative review is superseded. Reopen coordinated own-asset tower/material/menu reconstruction; no new PerfectDrop TestFlight upload.",
   "criteria": {
-    "concept_similarity": "passed",
-    "character_or_tower": "passed",
+    "concept_similarity": "failed",
+    "character_or_tower": "failed",
     "world_variants": "passed",
-    "menu_identity": "passed",
+    "menu_identity": "failed",
     "submenu_navigation": "passed",
     "readability": "passed"
   },
@@ -99,5 +99,10 @@
     "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/perfect-drop-concept-unity-vergleich.png",
     "sha256": "f9c37161769b709ae919f26f3fd29f87b45fd875599e67a3038a0b7789ca4534",
     "origin": "comparison of unchanged reference and actual renders"
+  },
+  "pendingCandidate": {
+    "sourceSha256": "c84bc3a34ddebdc0558d519cf8e2026b5c73a4f7400355fe062a22b0ab1b74b1",
+    "report": "docs/QA/drop-concept-v2-20261013.json",
+    "status": "Not graphically released; no new TestFlight upload."
   }
 }
