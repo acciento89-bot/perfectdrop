@@ -9,6 +9,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public Color Body=new Color(.12f,.16f,.23f);
         public Color Plate=new Color(1,.78f,.30f);
         public int Floors=4;
+        public bool AlignTop;
         private int _style,_cachedStyle=-1,_cachedFloors=-1;
         private void LateUpdate()
         {
@@ -33,6 +34,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 mesh.Clear();var bounds=rectTransform.rect;
                 var imageScale=Mathf.Min(bounds.width/texture.width,bounds.height/texture.height);
                 var half=new Vector2(texture.width,texture.height)*imageScale*.5f;var c=bounds.center;
+                if(AlignTop)c.y=bounds.yMax-half.y;
                 mesh.AddVert(c-half,Color.white,new Vector2(0,0));mesh.AddVert(c+new Vector2(-half.x,half.y),Color.white,new Vector2(0,1));
                 mesh.AddVert(c+half,Color.white,new Vector2(1,1));mesh.AddVert(c+new Vector2(half.x,-half.y),Color.white,new Vector2(1,0));
                 mesh.AddTriangle(0,1,2);mesh.AddTriangle(0,2,3);return;

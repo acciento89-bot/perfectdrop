@@ -1,0 +1,13 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "assets": [
+    {
+      "name": "JadePolishedSurface",
+      "prompt": "Use case: original game material texture for Unity. Create one square 1024 by 1024 seamless tileable PBR base-color map of rich polished emerald jade stone for the real 3D tower in Perfect Drop. Flat orthographic full-surface texture, edge-to-edge opaque. Deep bottle green and luminous medium emerald, large flowing translucent crystalline fields, a few elegant broad diagonal jade veins, delicate cream-gold mineral threads, restrained natural variation. Luxurious carved polished jade, coherent large-scale mineral pattern, like the green tower in the approved concept. Neutral evenly lit albedo only: absolutely no specular white dots, glitter, noise, scratches, grain, shadows, baked lighting, objects, tower shapes, borders, typography or logos. Detail should read as beautiful emerald sheets on small mobile tower faces, not noisy photographic rock. Seamless at all four edges.",
+      "transparent_background": false,
+      "source": "/Users/piotrkaminski/.codex/generated_images/01a11788-3eb6-7e32-963e-51b37d78e2ed/exec-1d211d7f-d926-4e15-9eaf-c9650ecc1d23.png",
+      "destination": "Assets/Resources/Art/ConceptV4/JadePolishedSurface.png",
+      "usage": "Original PBR albedo on real selected Jade moving/placed/menu/gallery tower geometry; not a gameplay illustration."
+    }
+  ]
+}

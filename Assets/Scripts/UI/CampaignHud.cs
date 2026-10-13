@@ -74,10 +74,10 @@ namespace Kamilunavo.PerfectDrop.UI
             for(var i=0;i<8;i++)
             {
                 var style=i;
-                _styleButtons[i]=UiFactory.Button(_styleContent,"Style"+i,"",new Color(.045f,.075f,.13f,.96f),Color.white,new Vector2(.08f,.66f-i*.155f),new Vector2(.92f,.79f-i*.155f),()=>{if(MenuNavigationLocked)return;if(style>=4&&(Game.Profile.OwnedStyles&(1<<style))==0){ShowShop();return;}if(Game.SelectStyle(style))Game.UiClick();RefreshStyles();});
+                _styleButtons[i]=UiFactory.Button(_styleContent,"Style"+i,"",new Color(.045f,.075f,.13f,.96f),Color.white,new Vector2(.08f,.66f-i*.155f),new Vector2(.92f,.79f-i*.155f),()=>{if(MenuNavigationLocked)return;if(style>=4&&(Game.Profile.OwnedStyles&(1<<style))==0){ShowShop();return;}if(Game.SelectStyle(style))Game.UiClick();RefreshStyles();LayoutCampaign(_campaignPane);});
                 var styleRect=(RectTransform)_styleButtons[i].transform;
                 Set((RectTransform)styleRect.Find("Label"),.25f,.05f,.96f,.95f);
-                TowerPreviewGraphic.AddStyle(styleRect,"StyleTower",i,new Vector2(.06f,.24f),new Vector2(.94f,.98f),9);
+                TowerPreviewGraphic.AddStyle(styleRect,"StyleTower",i,new Vector2(.06f,.24f),new Vector2(.94f,.98f),7).AlignTop=true;
                 Set((RectTransform)styleRect.Find("Label"),.05f,.025f,.95f,.25f);
                 styleRect.Find("Label").GetComponent<Text>().fontSize=27;
                 var actionPlate=UiFactory.Panel(styleRect,"SelectionPlate",Gold,new Vector2(.06f,.02f),new Vector2(.94f,.09f));
@@ -172,7 +172,7 @@ namespace Kamilunavo.PerfectDrop.UI
             if(_home==null)return;_campaignPane=pane;
             Place(_home,pane,new Rect(0,0,1,1));Place(_styles,pane,new Rect(.02f,.015f,.96f,.97f));Canvas.ForceUpdateCanvases();
             bool landscape=_home.rect.width>_home.rect.height*1.2f;float unit=UiMetrics.PointScale/Mathf.Max(.001f,_home.GetComponentInParent<Canvas>().scaleFactor),w=_home.rect.width/unit,h=_home.rect.height/unit,row=UiMetrics.TargetSize(_home,49)/unit,play=UiMetrics.TargetSize(_home,54)/unit,margin=w<220?6:10,gap=w<220?4:8;
-            if(!landscape&&h>=550){play=Mathf.Max(play,84);row=Mathf.Max(row,64);}
+            if(!landscape&&h>=550){play=Mathf.Max(play,84);row=Mathf.Max(row,80);}
             void Position(RectTransform rect,float x,float y,float width,float height)=>Top(rect,x*unit,y*unit,width*unit,height*unit);
             var gallery=(RectTransform)_levelScroll.transform;var title=(RectTransform)_home.Find("Title");var progress=(RectTransform)_home.Find("Progress");var header=(RectTransform)_home.Find("MapHeader");var footer=(RectTransform)_home.Find("MapFooter");
             _home.GetComponent<Image>().color=GalleryTheme.Night;_home.GetComponent<Image>().material=null;header.GetComponent<Image>().material=null;footer.GetComponent<Image>().material=null;footer.SetSiblingIndex(_heroGallery.GetSiblingIndex()+1);
@@ -185,13 +185,15 @@ namespace Kamilunavo.PerfectDrop.UI
                 progress.gameObject.SetActive(false);title.gameObject.SetActive(false);
                 float navX=landscape?w*.46f:margin,navW=w-navX-margin,navY=playY-row-gap;
                 if(landscape)Position((RectTransform)_continue.transform,navX,playY,navW,play);
-                float chapterH=landscape?row:Mathf.Clamp(h*.245f,94,235),chapterY=navY-chapterH-gap;
+                float chapterH=landscape?row:Mathf.Clamp(h*.26f,94,250),chapterY=navY-chapterH-(landscape?gap:Mathf.Max(gap,16));
                 float heroX=margin,heroY=landscape?75:Mathf.Max(82,h*.145f),heroW=landscape?navX-margin-gap:w-margin*2,heroH=landscape?h-heroY-12:chapterY-heroY-8;
                 Position(_heroGallery,0,0,w,h);Position((RectTransform)_home.Find("HeroTower"),heroX+heroW*.09f,heroY,heroW*.82f,Mathf.Max(95,heroH-row-2));
-                float logoW=Mathf.Min(landscape?heroW: w*.58f,235),logoH=logoW*.61f;
-                Position(_titleArt.rectTransform,landscape?heroX+(heroW-logoW)/2:(w-logoW)/2,landscape?5:Mathf.Clamp(h*.045f,8,38),logoW,logoH);
+                float logoW=Mathf.Min(landscape?heroW:w*.58f,landscape?235:190),logoH=logoW*.61f;
+                float logoTop=w<450?UiMetrics.TargetSize(_home,49)/unit+2:Mathf.Clamp(h*.02f,8,22);
+                Position(_titleArt.rectTransform,landscape?heroX+(heroW-logoW)/2:(w-logoW)/2,landscape?5:logoTop,logoW,logoH);
                 float goalHeight=UiMetrics.TargetSize(_home,49)/unit,goalY=landscape?heroY+heroH-goalHeight:chapterY-goalHeight-5;
-                Position((RectTransform)_campaignNavigation.transform,heroX+8,goalY,heroW-16,goalHeight);GalleryTheme.Style(_campaignNavigation,Navy);SetLabel(_campaignNavigation,_heroGoal.text+"  ›");_heroGoal.gameObject.SetActive(false);_home.Find("HeroGoalPlate").gameObject.SetActive(false);
+                float plaqueW=landscape?heroW-16:Mathf.Min(w*.65f,310);
+                Position((RectTransform)_campaignNavigation.transform,heroX+(heroW-plaqueW)*.5f,goalY,plaqueW,goalHeight);GalleryTheme.Style(_campaignNavigation,Navy);UiFactory.ApplyPillImage(_campaignNavigation.GetComponent<Image>());GalleryFrameGraphic.Apply(_campaignNavigation.transform,GalleryTheme.Ivory);SetLabel(_campaignNavigation,_heroGoal.text+"  ›");_heroGoal.gameObject.SetActive(false);_home.Find("HeroGoalPlate").gameObject.SetActive(false);
                 Position(footer,navX-6,chapterY-6,navW+12,h-chapterY+6);footer.GetComponent<Image>().color=GalleryTheme.Ivory;
                 float chapterW=(navW-gap*2)/3;for(int i=0;i<3;i++)Position((RectTransform)_chapters[i].transform,navX+i*(chapterW+gap),chapterY,chapterW,chapterH);
                 var designs=_home.Find("Styles").GetComponent<Button>();var city=_home.Find("City").GetComponent<Button>();float cell=(navW-gap)/2;
@@ -229,12 +231,25 @@ namespace Kamilunavo.PerfectDrop.UI
             for(int i=0;i<10;i++){var rect=(RectTransform)_levels[i].transform;rect.anchorMin=new Vector2(i%2*.51f,1);rect.anchorMax=new Vector2(i%2*.51f+.49f,1);rect.pivot=new Vector2(.5f,1);rect.sizeDelta=new Vector2(0,galleryRow);rect.anchoredPosition=new Vector2(0,-i/2*(galleryRow+galleryGap));}
             Set((RectTransform)_styles.Find("Title"),.06f,.905f,.94f,.985f);Set((RectTransform)_styles.Find("Wallet"),.06f,.85f,.94f,.90f);_styles.GetComponent<Image>().material=null;
             float styleButtonH=UiMetrics.TargetSize(_styles,49)/Mathf.Max(1,_styles.rect.height);
-            Set((RectTransform)_styleScroll.transform,.025f,.15f,.975f,.82f);
+            float styleHeader=(UiMetrics.TargetSize(_styles,49)+14*unit)/Mathf.Max(1,_styles.rect.height);
+            Set((RectTransform)_styleScroll.transform,.025f,.15f,.975f,Mathf.Min(.915f,1-styleHeader));
             Set((RectTransform)_styles.Find("ExtraDesigns"),.52f,.03f,.975f,.03f+styleButtonH);Set((RectTransform)_styles.Find("Back"),.025f,.03f,.48f,.03f+styleButtonH);
             if(landscape)Set((RectTransform)_styleScroll.transform,.025f,.05f+styleButtonH,.975f,.83f);
             Canvas.ForceUpdateCanvases();float cardGap=8*unit,cardW=(_styleViewport.rect.width-cardGap*2)/3,cardH=_styleViewport.rect.height;
             _styleContent.sizeDelta=new Vector2(cardW*8+cardGap*7,0);_styleContent.anchoredPosition=new Vector2(_styleContent.anchoredPosition.x,0);
-            var order=new[]{0,3,5,1,2,4,6,7};for(int position=0;position<8;position++){int i=order[position];var rect=(RectTransform)_styleButtons[i].transform;rect.anchorMin=rect.anchorMax=new Vector2(0,1);rect.pivot=new Vector2(0,1);rect.sizeDelta=new Vector2(cardW,cardH);rect.anchoredPosition=new Vector2(position*(cardW+cardGap),0);GalleryTheme.Style(_styleButtons[i],DesignSurface(i));Set((RectTransform)rect.Find("StyleTower"),.02f,.15f,.98f,.86f);float labelHeight=Mathf.Min(.43f,49*unit/Mathf.Max(1,cardH));Set((RectTransform)rect.Find("SelectionPlate"),.06f,.02f,.94f,labelHeight+.005f);Set((RectTransform)rect.Find("Label"),.08f,.02f,.92f,labelHeight);UpdateDesignAction(i);float nameBand=Mathf.Min(.40f,(w<250&&!landscape?35:22)*unit/Mathf.Max(1,cardH));float nameBottom=.97f-nameBand;Set((RectTransform)rect.Find("DesignName"),.03f,nameBottom,.97f,.97f);Set((RectTransform)rect.Find("MaterialName"),.03f,nameBottom-.08f,.97f,nameBottom-.01f);Set((RectTransform)rect.Find("StyleTower"),.02f,labelHeight+.02f,.98f,nameBottom-(landscape?.025f:.10f));GalleryTheme.Readable(rect.Find("DesignName").GetComponent<Text>(),13);GalleryTheme.Readable(rect.Find("MaterialName").GetComponent<Text>(),10.5f);rect.Find("MaterialName").gameObject.SetActive(!landscape);}
+            var order=new[]{0,3,5,1,2,4,6,7};
+            for(int position=0;position<8;position++)
+            {
+                int i=order[position];var rect=(RectTransform)_styleButtons[i].transform;
+                float inset=landscape||Game.Profile.Style==i?0:Mathf.Min(24*unit,cardH*.06f),height=cardH-inset;
+                rect.anchorMin=rect.anchorMax=new Vector2(0,1);rect.pivot=new Vector2(0,1);rect.sizeDelta=new Vector2(cardW,height);rect.anchoredPosition=new Vector2(position*(cardW+cardGap),-inset);
+                GalleryTheme.Style(_styleButtons[i],DesignSurface(i));float labelHeight=Mathf.Min(.43f,49*unit/Mathf.Max(1,height));
+                Set((RectTransform)rect.Find("SelectionPlate"),.06f,.02f,.94f,labelHeight+.005f);Set((RectTransform)rect.Find("Label"),.08f,.02f,.92f,labelHeight);UpdateDesignAction(i);
+                float nameTop=landscape?.97f:.94f,nameBand=Mathf.Min(.40f,(w<250&&!landscape?35:22)*unit/Mathf.Max(1,height)),nameBottom=nameTop-nameBand;
+                Set((RectTransform)rect.Find("DesignName"),.03f,nameBottom,.97f,nameTop);Set((RectTransform)rect.Find("MaterialName"),.03f,nameBottom-.08f,.97f,nameBottom-.01f);
+                Set((RectTransform)rect.Find("StyleTower"),.02f,labelHeight+.02f,.98f,nameBottom-(landscape?.025f:.10f));GalleryTheme.Readable(rect.Find("DesignName").GetComponent<Text>(),13);GalleryTheme.Readable(rect.Find("MaterialName").GetComponent<Text>(),10.5f);rect.Find("MaterialName").gameObject.SetActive(!landscape);
+            }
+            _styles.Find("Title").gameObject.SetActive(landscape);
             GalleryTheme.Style(_styles.Find("ExtraDesigns").GetComponent<Button>(),GalleryTheme.Card);GalleryTheme.Style(_styles.Find("Back").GetComponent<Button>(),GalleryTheme.Card);
             var designBack=_styles.Find("Back").GetComponent<Button>();var designWallet=_styles.Find("StyleWallet").GetComponent<Button>();float styleUnit=UiMetrics.PointScale/Mathf.Max(.001f,_styles.GetComponentInParent<Canvas>().scaleFactor),styleWidth=_styles.rect.width/styleUnit,headerSize=UiMetrics.TargetSize(_styles,49)/styleUnit;
             if(!landscape){Top((RectTransform)designBack.transform,8*styleUnit,8*styleUnit,headerSize*styleUnit,headerSize*styleUnit);GalleryTheme.Style(designBack,Navy);UiFactory.ApplyCircularImage(designBack.GetComponent<Image>());SetLabel(designBack,"‹");Set((RectTransform)_styles.Find("ExtraDesigns"),.16f,.03f,.84f,.03f+styleButtonH);}

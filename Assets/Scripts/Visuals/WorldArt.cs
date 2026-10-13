@@ -404,14 +404,16 @@ namespace Kamilunavo.PerfectDrop.Visuals
             AddBeveledBox(root.transform,"Undercore",new Vector3(0,-size.y*.46f,0),new Vector3(size.x*.94f,size.y*.08f,size.z*.94f),PlatformInset);
             // A metallic gold inset and a dark shoulder mirror the app icon.
             // All parts scale with the actual retained/cut footprint, including slivers.
-            AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.502f,0), new Vector3(size.x*.84f,size.y*.035f,size.z*.84f), GoldPlate);
+            var plate=AddBeveledBox(root.transform, "TopPlate", new Vector3(0,size.y*.498f,0), new Vector3(size.x*.88f,size.y*.07f,size.z*.88f), GoldPlate);
+            plate.GetComponent<MeshFilter>().sharedMesh=SlabMeshKit.Plate;
             // A continuous band replaces the corresponding body slice. It stays
             // inside the logical footprint even after a very narrow overhang cut.
-            var band=AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.445f,0),new Vector3(size.x,size.y*.075f,size.z),Gold);
+            var band=AddBeveledBox(root.transform,"GoldBand",new Vector3(0,-size.y*.405f,0),new Vector3(size.x,size.y*.18f,size.z),Gold);
             band.GetComponent<MeshFilter>().sharedMesh=SlabMeshKit.Rim;
-            AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.465f,0),new Vector3(size.x,size.y*.07f,size.z),Platform);
+            var crown=AddBeveledBox(root.transform,"DeckCrown",new Vector3(0,size.y*.465f,0),new Vector3(size.x,size.y*.07f,size.z),Platform);
+            crown.GetComponent<MeshFilter>().sharedMesh=SlabMeshKit.Crown;
             var inset=new GameObject("GoldInset",typeof(MeshFilter),typeof(MeshRenderer));
-            inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.524f,0);
+            inset.transform.SetParent(root.transform,false);inset.transform.localPosition=new Vector3(0,size.y*.539f,0);
             inset.transform.localScale=new Vector3(size.x,.012f,size.z);
             if(_insetFrameMesh==null)_insetFrameMesh=BuildInsetFrame();
             inset.GetComponent<MeshFilter>().sharedMesh=_insetFrameMesh;inset.GetComponent<MeshRenderer>().sharedMaterial=Gold;
@@ -735,7 +737,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 }
                 else if(renderer.name.StartsWith("Gold"))
                 {
-                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*StackStylePalette.RimGlow);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.84f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*StackStylePalette.RimGlow);paint.SetFloat("_Metallic",.68f);paint.SetFloat("_Glossiness",.74f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
                 }
                 else continue;
                 renderer.SetPropertyBlock(paint);
@@ -879,7 +881,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             material.name = name;
             material.hideFlags = HideFlags.HideAndDontSave;
             material.enableInstancing = true;
-            if(name=="Platform"){var mineral=Resources.Load<Texture2D>("Art/AuthoredMineralAtlas");material.SetTexture("_MineralAtlas",mineral);material.SetFloat("_UseMineralAtlas",mineral!=null?1:0);}
+            if(name=="Platform"){var mineral=Resources.Load<Texture2D>("Art/AuthoredMineralAtlas");material.SetTexture("_MineralAtlas",mineral);material.SetFloat("_UseMineralAtlas",mineral!=null?1:0);var jade=Resources.Load<Texture2D>("Art/ConceptV4/JadePolishedSurface");material.SetTexture("_JadeAlbedo",jade);material.SetFloat("_OwnedJade",jade!=null?1:0);}
             if(name=="Platform" || name=="PlatformTop" || name=="Skyline" || name=="GoldPlate")
             {
                 var texture=Resources.Load<Texture2D>(name=="Platform"||name=="GoldPlate"?"Art/AuthoredBrushedMetalAlbedo":"Art/GunmetalPanels");

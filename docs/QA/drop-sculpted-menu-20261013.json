@@ -1,0 +1,222 @@
+{
+  "recordedAt": "2026-10-13T19:20:13.072068+00:00",
+  "canonicalSourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+  "baseCommit": "211fc66",
+  "nativeEditorVersion": "6000.6.4f1",
+  "pipeline": "Built-in; no render-pipeline migration",
+  "editorLog": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/editor-native.log",
+    "sha256": "8483fad6a48518d12a365149c29e871122d6c7b31f35381281715d04d1f66e9a",
+    "origin": "native Unity Editor aggregate and player build"
+  },
+  "runtime": {
+    "styles": {
+      "mode": "styles",
+      "ownedPlayerFocusRestoresSeconds": [],
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "d6aba9781d874cf91d70b8a0a652630cf6b77c571c02bf6175892661b559d447",
+      "wholeBundleSha256": "f381de44709edacdee3eaa21c4041a5a8940e364d17f59ddec9513116adb95e1",
+      "canonicalSourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaStyles",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-styles.log"
+      ],
+      "pid": 63499,
+      "elapsedSeconds": 29.9,
+      "receipt": "PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-styles.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles"
+    },
+    "concept": {
+      "mode": "concept",
+      "ownedPlayerFocusRestoresSeconds": [],
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "d6aba9781d874cf91d70b8a0a652630cf6b77c571c02bf6175892661b559d447",
+      "wholeBundleSha256": "f381de44709edacdee3eaa21c4041a5a8940e364d17f59ddec9513116adb95e1",
+      "canonicalSourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaConcept",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-concept.log"
+      ],
+      "pid": 63531,
+      "elapsedSeconds": 66.6,
+      "receipt": "PASS: 21 actual ordered UI drops (7 per chapter), genuine meshes/finishes, reserved camera area and visible-button raycasts; isolated QA profile. No visual acceptance implied.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-concept.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept"
+    },
+    "presentation": {
+      "mode": "presentation",
+      "ownedPlayerFocusRestoresSeconds": [
+        0.5
+      ],
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "d6aba9781d874cf91d70b8a0a652630cf6b77c571c02bf6175892661b559d447",
+      "wholeBundleSha256": "f381de44709edacdee3eaa21c4041a5a8940e364d17f59ddec9513116adb95e1",
+      "canonicalSourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaPresentation",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-presentation.log"
+      ],
+      "pid": 63558,
+      "elapsedSeconds": 44.0,
+      "receipt": "PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-presentation.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation"
+    },
+    "arcade": {
+      "mode": "arcade",
+      "ownedPlayerFocusRestoresSeconds": [],
+      "executable": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+      "executableSha256": "d6aba9781d874cf91d70b8a0a652630cf6b77c571c02bf6175892661b559d447",
+      "wholeBundleSha256": "f381de44709edacdee3eaa21c4041a5a8940e364d17f59ddec9513116adb95e1",
+      "canonicalSourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+      "arguments": [
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/PerfectDrop-SculptedMenu.app/Contents/MacOS/Perfect Drop",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "540",
+        "-screen-height",
+        "960",
+        "-qaArcade",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedArcade",
+        "-logFile",
+        "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-arcade.log"
+      ],
+      "pid": 63589,
+      "elapsedSeconds": 149.5,
+      "receipt": "PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n",
+      "exitAfterOwnedTermination": -15,
+      "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-v2-arcade.log",
+      "output": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedArcade"
+    }
+  },
+  "originalRasterAssets": "docs/QA/drop-sculpted-towers-assets.json",
+  "exactPrompts": "docs/QA/drop-sculpted-towers-prompts.json",
+  "nativeEditableArt": [
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Art/DropConceptStudioLibrary.asset",
+      "sha256": "b9dcd94b8fa8c206b97ef0693e76f3ffa65414b2d816bc74c6ac24ad75dc6ff0",
+      "origin": "native Unity persistent original rounded body, turned molding, distinct raised plate/crown meshes and actual materials"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Scenes/DropConceptArtStudio.unity",
+      "sha256": "8e114309da10e25bce431698a2f08bfe4f7c3e389b2e6cb36605e8f4ab4c89f8",
+      "origin": "native editable studio retaining source asset identities and genuine per-layer finishes"
+    }
+  ],
+  "evidence": {
+    "menu": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-menu-sunset.png",
+        "sha256": "428bf4b11d0e6df0287b3b32dcddf0bf0a4ac2f2178d7aae00ceaf77df1e514a",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/gallery-home-932.png",
+        "sha256": "2561322735ee12a989fca297922c6b7d6348dc1504c9a29681304b12210e56af",
+        "origin": "Unity-render"
+      }
+    ],
+    "designs": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-3-gallery.png",
+        "sha256": "16be4a95c2e05de7a1010ee463b3859ef09ea2a64d80d0dee643ddc68531ebb0",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-5-gallery.png",
+        "sha256": "f20cd4d571eb45b940592244c5248df5ff9387cb5f5c0cc7767c6ab2620b7cc6",
+        "origin": "Unity-render"
+      }
+    ],
+    "gameplay": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-gameplay-sunset-navy.png",
+        "sha256": "ade072145af69e45ca514edf6fae2ce4a3b82a7aa057b39138b5fe873eb71943",
+        "origin": "Unity-render"
+      }
+    ],
+    "settings": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-430.png",
+        "sha256": "f3ff4f458cac65efa525f73aded5b269278600841696c4e6d57c8c09e082d218",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-932.png",
+        "sha256": "c28d41bfbc041a960509f5cf286c2fecfadd227ff2ea5c2e1443a466ef2da1e0",
+        "origin": "Unity-render"
+      }
+    ],
+    "landscape": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedArcade/landscape-stack-8.png",
+        "sha256": "018524451f5bf06d8764430cd5a421e57e4f8605232c40208d3e8f0bca65a7c9",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedArcade/landscape-stack-30.png",
+        "sha256": "9f44109fada823a1c7ede8e8cc79ab04a165eb3aa7216b48fb21f4d5840ccf9a",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedArcade/landscape-stack-66.png",
+        "sha256": "cb66cc7a77e29e687287ded4c01493fc6603f84e07f770342d54d3fbf8ae0559",
+        "origin": "Unity-render"
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-unity-menue.png",
+      "sha256": "1db572e3b7c7d0060d15a4c9b085afcfc5e45877bd1fd4ec59f6286bce8edb92",
+      "origin": "unchanged Concept panel versus proportionally resized native frame; no visual retouching"
+    },
+    {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-unity-designs.png",
+      "sha256": "6c07b25e9258c8ad608b08eabbe7a0de80fd6010e5d2465051313a5a116baad0",
+      "origin": "unchanged Concept panel versus proportionally resized native frame; no visual retouching"
+    }
+  ],
+  "scope": "Actual shared six-renderer tower geometry rebuilt: rounded shoulders, thick sculpted gold moldings, raised plate/crown, polished Jade own albedo, Pearl/Navy finish. Six stepped menu tiers, seven gallery tiers, physical preview lighting. Smaller pill plaque, correct logo/world-card/nav proportions, selected gallery column raised, top-aligned real specimens. Ownership/routes/physics footprint unchanged.",
+  "nativeRegressions": "<1000 vertices each body/rim; actual narrow overhang bounds and winding/tangents; six menu tiers; seven/nine gallery margins; 8934 navigation checks; color-grade GPU HDR ordering, preserved gold ratios and black shadows; opaque menus, exact parent navigation and actual eight design transitions.",
+  "review": "Three focused read-only code rechecks and final UI composition recheck have no important findings.",
+  "investigation": {
+    "gold": "Actual GPU test reproduced independent-channel highlight shoulder bleaching HDR gold (3.6,1.8,.5) to(.975,.942,.500). Shared peak compression retains(.975,.488,.135) and black with actual contrast/warmth. Expected intermediate red checks are retained in earlier Editor log.",
+    "runtime": "Intermediate Gold candidate first failed its placement-window deadline (foreground state was not recorded there). In a second attempt, OS foreground was directly observed false; the incorrectly escaped local focus guard did not restore it, and the real Drop was blocked. This implicates environment focus; no unrecorded first-run cause is asserted. Failure frames, logs and receipts are preserved under DropSculptedTowersGold-20261013. Corrected external guard observes/activates only its own Player PID; exact same source then passed all four modes. Final Menu candidate uses that guard; any focus restorations are recorded in receipts. Gameplay lifecycle handling is unchanged.",
+    "preservedFailures": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedTowersGold-20261013/{SculptedConcept-first-failure,SculptedConcept-second-failure}"
+  },
+  "visualStatus": "Concrete main-menu and gallery tower/layout changes implemented, rendered and compared. Fine metal reflections, architectural richness and carved base details remain simpler than the illustration. No numeric90% claim and no overall visual release approval.",
+  "releaseStatus": "Previous failed human graphical gate remains controlling; no new TestFlight upload. Native desktop is not physical iOS/performance/provider validation."
+}

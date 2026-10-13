@@ -101,8 +101,8 @@
     "origin": "comparison of unchanged reference and actual renders"
   },
   "pendingCandidate": {
-    "sourceSha256": "c6df021b3e3992be2db9ce800782ca2a11bdbd234bdaf51532a6ab66d3b8dc6a",
-    "report": "docs/QA/drop-concept-v3-20261013.json",
-    "status": "Original menu/design pass rendered and tested; not graphically released for TestFlight."
+    "sourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+    "report": "docs/QA/drop-sculpted-menu-20261013.json",
+    "status": "Own sculpted towers and main-menu/design composition implemented and native-tested; not graphically released for TestFlight."
   }
 }

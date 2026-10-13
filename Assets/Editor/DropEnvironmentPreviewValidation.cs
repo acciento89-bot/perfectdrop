@@ -30,11 +30,12 @@ namespace Kamilunavo.PerfectDrop.Editor {
    Debug.Log("DROP_ENVIRONMENT_PREVIEW_PASS checks="+checks);
   }
   static int VerifySpecimenMargins(){int checks=0;
-   foreach(int style in new[]{0,3,5}){var image=StackSpecimenStudio.Acquire(style,9);var target=RenderTexture.GetTemporary(image.width,image.height,0,RenderTextureFormat.ARGB32);var old=RenderTexture.active;var read=new Texture2D(image.width,image.height,TextureFormat.RGBA32,false);
+   foreach(int floors in new[]{7,9})foreach(int style in new[]{0,3,5}){var image=StackSpecimenStudio.Acquire(style,floors);var target=RenderTexture.GetTemporary(image.width,image.height,0,RenderTextureFormat.ARGB32);var old=RenderTexture.active;var read=new Texture2D(image.width,image.height,TextureFormat.RGBA32,false);
     try{Graphics.Blit(image,target);RenderTexture.active=target;read.ReadPixels(new Rect(0,0,image.width,image.height),0,0);read.Apply();var colors=read.GetPixels32();int occupied=0;
      for(int x=0;x<image.width;x++)if(colors[x].a>20||colors[(image.height-1)*image.width+x].a>20)occupied++;
-     if(occupied>0)throw new InvalidOperationException("Actual nine-floor specimen cuts off its marble foot or crown at the framebuffer edge");checks++;
-    }finally{RenderTexture.active=old;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.DestroyImmediate(read);StackSpecimenStudio.Release(style,9);}
+     for(int y=0;y<image.height;y++)if(colors[y*image.width].a>20||colors[y*image.width+image.width-1].a>20)occupied++;
+     if(occupied>0)throw new InvalidOperationException("Actual gallery specimen cuts off its marble foot or crown at the framebuffer edge: floors="+floors);checks++;
+    }finally{RenderTexture.active=old;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.DestroyImmediate(read);StackSpecimenStudio.Release(style,floors);}
    }return checks;
   }
   static int VerifyHeroGrounding(){
@@ -43,6 +44,8 @@ namespace Kamilunavo.PerfectDrop.Editor {
    foreach(int style in new[]{0,3,5}){
     var root=new GameObject("ActualHeroPhysicalBaseFixture");
     try{build.Invoke(null,new object[]{root.transform,style});var pedestal=root.transform.Find("ActualMenuPedestal");if(pedestal==null)throw new InvalidOperationException("Menu hero omits the physical gameplay base");checks++;
+     if(root.transform.childCount!=6)throw new InvalidOperationException("Concept menu tower needs six substantial progressively stepped tiers including its grounded base");checks++;
+     float previousWidth=float.PositiveInfinity;foreach(Transform tier in root.transform){float width=tier.Find("MetalDeck").localScale.x;if(width>=previousWidth)throw new InvalidOperationException("Concept menu tiers must progressively contract upward");previousWidth=width;checks++;}
      var dais=WorldArt.BuildStackDais(root.transform);float bottom=float.PositiveInfinity;foreach(var part in pedestal.GetComponentsInChildren<Renderer>())bottom=Mathf.Min(bottom,part.bounds.min.y);
      float stoneTop=dais.transform.Find("StoneDrum").GetComponent<Renderer>().bounds.max.y;
      if(Mathf.Abs(bottom-stoneTop)>.03f)throw new InvalidOperationException("Actual menu hero floats above or is buried inside its stone pedestal");checks++;

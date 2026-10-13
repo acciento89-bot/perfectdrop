@@ -46,10 +46,14 @@ Shader "Kamilunavo/PerfectDropGrade"
                 float vignette = saturate(1.0 - dot(centered, centered) * _Vignette * 0.62);
                 c *= lerp(0.78, 1.0, vignette);
 
-                // Preserve bright metal gradients instead of clipping every HDR highlight to1.
-                // The shoulder leaves dark and middle values unchanged.
-                float3 highlight=max(c-.72,0);
-                c=min(c,.72)+highlight/(1+highlight/.28);
+                // Compress HDR highlights with one shared RGB scale. Independent
+                // channel shoulders bleach bright gold toward white and erase
+                // its material color; the shared scale retains hue and detail.
+                // Dark and middle values keep their original exposure.
+                float peak=max(.72,max(c.r,max(c.g,c.b)));
+                float highlight=peak-.72;
+                float mappedPeak=.72+highlight/(1+highlight/.28);
+                c*=mappedPeak/peak;
                 return half4(saturate(c), src.a);
             }
             ENDCG

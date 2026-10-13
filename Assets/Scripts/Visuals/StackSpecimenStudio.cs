@@ -40,7 +40,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             cameraObject.AddComponent<CinematicGrade>();
             var sky=WorldArt.CreateTerracePreviewSky(chapter,root.transform.position);cameraObject.GetComponent<Skybox>().material=sky;
             int width=heroStyle>=0?(portrait?768:960):portrait?512:768,height=heroStyle>=0?(portrait?1152:480):portrait?768:512;camera.aspect=(float)width/height;
-            camera.transform.position=root.transform.position+(heroStyle>=0?new Vector3(-12,11,-23):new Vector3(-11,12,-19));camera.transform.LookAt(root.transform.position+(heroStyle>=0?new Vector3(0,portrait?-2:0,0):new Vector3(0,3,6)));
+            camera.transform.position=root.transform.position+(heroStyle>=0?new Vector3(-15,12,-24):new Vector3(-11,12,-19));camera.transform.LookAt(root.transform.position+(heroStyle>=0?new Vector3(0,portrait?-4.8f:0,0):new Vector3(0,3,6)));
             if(heroStyle>=0&&!portrait)camera.transform.position+=camera.transform.right*8;
             if(heroStyle>=0)BuildHeroTower(root.transform,heroStyle);
             if(portrait && chapter==1 && heroStyle<0)BuildDesignHall(root.transform,camera);
@@ -65,9 +65,9 @@ namespace Kamilunavo.PerfectDrop.Visuals
             float height=Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight;
             var pedestal=WorldArt.CreateStackBlock(root,"ActualMenuPedestal",Vector3.down*height,new Vector3(4,height,4),0);
             WorldArt.StyleStackBlock(pedestal,style);
-            for(int layer=0;layer<6;layer++)
+            for(int layer=0;layer<5;layer++)
             {
-                float width=4*Mathf.Pow(.90f,layer);
+                float width=4*Mathf.Pow(.88f,layer+1);
                 var block=WorldArt.CreateStackBlock(root,"ActualMenuTower"+layer,Vector3.up*layer*height,new Vector3(width,height,width),layer);
                 WorldArt.StyleStackBlock(block,style);
             }
@@ -127,7 +127,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.cullingMask=1<<Layer;camera.allowHDR=true;camera.nearClipPlane=.05f;camera.farClipPlane=50;
             cameraObject.AddComponent<CinematicGrade>();
-            bool column=floors>=8;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.66f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
+            bool column=floors>=7;camera.aspect=column?.35f:.8f;camera.orthographicSize=column?floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.51f+.66f:Mathf.Max(2.85f,floors*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.63f+.20f);
             var target=root.transform.position+Vector3.up*(floors-1)*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight*.5f;
             camera.transform.position=target+new Vector3(-6,column?3.5f:5,-8);
             camera.transform.LookAt(target);
@@ -140,7 +140,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             {
                 // The same six-renderer block, shared rounded mesh and shader used
                 // in play; a slight architectural setback helps the hero read.
-                var width=column?2.25f-i*.015f:3.5f-i*.085f;
+                var width=column?1.8f-i*.01f:3.5f-i*.085f;
                 var block=WorldArt.CreateStackBlock(root.transform,"SpecimenLayer"+i,new Vector3(0,i*Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,0),new Vector3(width,Kamilunavo.PerfectDrop.Gameplay.StackGame.LayerHeight,width),i);
                 WorldArt.StyleStackBlock(block,style);
                 foreach(var t in block.GetComponentsInChildren<Transform>())t.gameObject.layer=Layer;
@@ -150,6 +150,10 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var render=RenderTexture.GetTemporary(column?320:256,column?914:320,24,format,RenderTextureReadWrite.Default,4);
             var previous=RenderTexture.active;
             Texture2D texture=null;
+            var oldProbe=RenderSettings.ambientProbe;var oldAmbient=RenderSettings.ambientMode;var oldTop=RenderSettings.ambientSkyColor;var oldMiddle=RenderSettings.ambientEquatorColor;var oldBottom=RenderSettings.ambientGroundColor;var oldReflection=RenderSettings.customReflectionTexture;var oldMode=RenderSettings.defaultReflectionMode;float oldIntensity=RenderSettings.reflectionIntensity;
+            RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.58f,.66f,.78f);RenderSettings.ambientEquatorColor=new Color(.45f,.40f,.34f);RenderSettings.ambientGroundColor=new Color(.17f,.19f,.24f);
+            var showroomProbe=new UnityEngine.Rendering.SphericalHarmonicsL2();showroomProbe.AddAmbientLight(RenderSettings.ambientEquatorColor*.7f);showroomProbe.AddDirectionalLight(Vector3.up,RenderSettings.ambientSkyColor,.5f);showroomProbe.AddDirectionalLight(Vector3.down,RenderSettings.ambientGroundColor,.25f);RenderSettings.ambientProbe=showroomProbe;
+            RenderSettings.defaultReflectionMode=UnityEngine.Rendering.DefaultReflectionMode.Custom;RenderSettings.customReflectionTexture=Resources.Load<Cubemap>("Rendering/DropTerraceReflection");RenderSettings.reflectionIntensity=1;
             try
             {
                 camera.targetTexture=render;camera.Render();RenderTexture.active=render;
@@ -161,6 +165,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             finally
             {
                 camera.targetTexture=null;RenderTexture.active=previous;RenderTexture.ReleaseTemporary(render);
+                RenderSettings.ambientProbe=oldProbe;RenderSettings.ambientMode=oldAmbient;RenderSettings.ambientSkyColor=oldTop;RenderSettings.ambientEquatorColor=oldMiddle;RenderSettings.ambientGroundColor=oldBottom;RenderSettings.customReflectionTexture=oldReflection;RenderSettings.defaultReflectionMode=oldMode;RenderSettings.reflectionIntensity=oldIntensity;
                 root.SetActive(false);Dispose(root);
             }
         }
@@ -171,8 +176,11 @@ namespace Kamilunavo.PerfectDrop.Visuals
         {
             var light=new GameObject("OriginalGoldSpecimenSoftbox",typeof(Light)).GetComponent<Light>();light.transform.SetParent(root,false);
             light.type=LightType.Spot;light.cullingMask=1<<Layer;light.renderMode=LightRenderMode.ForcePixel;light.shadows=LightShadows.None;
-            light.color=new Color(1,.89f,.64f);light.intensity=3;light.range=height+18;light.spotAngle=45;
-            light.transform.localPosition=new Vector3(-3,height+6,-4);light.transform.LookAt(root.position+Vector3.up*height*.5f);
+            light.color=new Color(1,.83f,.55f);light.intensity=1.35f;light.range=height+22;light.spotAngle=65;
+            light.transform.localPosition=new Vector3(3,height+4,5);light.transform.LookAt(root.position+Vector3.up*height*.5f);
+            var bounce=new GameObject("OriginalCoolShoulderSoftbox",typeof(Light)).GetComponent<Light>();bounce.transform.SetParent(root,false);
+            bounce.type=LightType.Directional;bounce.cullingMask=1<<Layer;bounce.renderMode=LightRenderMode.ForcePixel;bounce.shadows=LightShadows.None;
+            bounce.color=new Color(.68f,.79f,1);bounce.intensity=.75f;bounce.transform.localRotation=Quaternion.Euler(20,50,0);
         }
         private static void Dispose(Object obj){if(Application.isPlaying)Object.Destroy(obj);else Object.DestroyImmediate(obj);}
     }

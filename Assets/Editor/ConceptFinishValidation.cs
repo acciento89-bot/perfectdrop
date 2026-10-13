@@ -26,6 +26,8 @@ namespace Kamilunavo.PerfectDrop.Editor
                     var authored=Resources.Load<Texture2D>("Art/ConceptV2/NavySatinAlbedo");
                     Check(authored!=null&&authored.width>=512&&authored.width<=1024&&authored.height>=512&&authored.height<=1024,"Original metal tile is imported within its mobile budget.");
                     Check(shoulder.GetTexture("_MainTex")==authored&&shoulder.GetFloat("_OwnedNavy")==1,"Live shoulder consumes the original navy satin tile.");
+                    var jade=Resources.Load<Texture2D>("Art/ConceptV4/JadePolishedSurface");
+                    Check(jade!=null&&jade.width<=1024&&jade.height<=1024&&shoulder.GetFloat("_OwnedJade")==1&&shoulder.GetTexture("_JadeAlbedo")==jade,"Actual lacquer consumes the separate original polished jade material within the mobile texture budget.");
                     var plate=b.transform.Find("TopPlate").GetComponent<Renderer>().sharedMaterial;Check(plate.GetFloat("_OwnedGold")==1&&plate.GetTexture("_GoldAlbedo")==Resources.Load<Texture2D>("Art/ConceptV2/ChampagneGoldAlbedo"),"Actual gold plate consumes the original independent gold material asset.");
                     Check(b.transform.Find("TopPlate").GetComponent<Renderer>().sharedMaterial.GetFloat("_MicroRelief")==0,"Gold plate must retain its separate finish.");
                     foreach(var part in b.GetComponentsInChildren<MeshRenderer>())if(part.sharedMaterial.GetFloat("_MicroRelief")>.5f)
@@ -36,6 +38,9 @@ namespace Kamilunavo.PerfectDrop.Editor
                     }
                     Check(mesh.vertexCount>=200,"Icon block needs rounded bevel corners rather than eight hard chamfers.");
                     Check(b.GetComponentsInChildren<Renderer>().Length==6,"Live block renderer budget changed.");
+                    Check(b.transform.Find("GoldBand").localScale.y/StackGame.LayerHeight>=.16f,"Concept needs a sculpted gold molding, not a hairline stripe.");
+                    Check(b.transform.Find("DeckCrown").GetComponent<MeshFilter>().sharedMesh.name=="AuthoredRoundedShoulderCrown","Rounded polished shoulder must use the original modeled crown.");
+                    Check(b.transform.Find("TopPlate").GetComponent<MeshFilter>().sharedMesh.name=="AuthoredRaisedGoldPlate","Top plate needs its own raised and beveled profile.");
                     foreach(var vertex in mesh.vertices)Check(float.IsFinite(vertex.x)&&float.IsFinite(vertex.y)&&float.IsFinite(vertex.z),"Nonfinite mesh coordinate.");
                     foreach(var normal in mesh.normals)Check(float.IsFinite(normal.x)&&float.IsFinite(normal.y)&&float.IsFinite(normal.z),"Nonfinite mesh normal.");
                     WorldArt.StyleStackBlock(b,0);StackStyleValidation.ValidateBlock(b,0);

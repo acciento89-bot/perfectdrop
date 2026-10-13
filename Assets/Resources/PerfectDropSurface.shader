@@ -6,6 +6,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         _MineralAtlas ("Original jade / pearl color atlas", 2D) = "white" {}
         _MineralSeed ("Owned layer stone variation", Float) = 0
         _UseMineralAtlas ("Use original mineral asset", Float) = 0
+        _JadeAlbedo ("Original polished jade surface",2D)="white"{}
+        _OwnedJade ("Use polished jade asset",Float)=0
         _MainTex ("Metal albedo", 2D) = "white" {}
         _OwnedNavy ("Original navy satin material",Float)=0
         _OwnedGold ("Original gold base color",Float)=0
@@ -34,8 +36,8 @@ Shader "Kamilunavo/PerfectDropSurface"
         #pragma target 3.0
         #pragma multi_compile_instancing
 
-        sampler2D _MainTex,_MineralAtlas,_StoneAlbedo,_GoldAlbedo;half _OwnedNavy,_OwnedGold;half _UseMineralAtlas,_MineralSeed;
-        float4 _MainTex_TexelSize;
+        sampler2D _MainTex,_MineralAtlas,_StoneAlbedo,_GoldAlbedo,_JadeAlbedo;half _OwnedNavy,_OwnedGold,_OwnedJade;half _UseMineralAtlas,_MineralSeed;
+        float4 _MainTex_TexelSize,_MineralAtlas_TexelSize;
         UNITY_INSTANCING_BUFFER_START(DeckProperties)
             UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
             UNITY_DEFINE_INSTANCED_PROP(float4, _EmissionColor)
@@ -128,6 +130,20 @@ Shader "Kamilunavo/PerfectDropSurface"
                 float2 atlasUV=float2(frac(uv.x*4)*.48+.01+ceramic*.5,frac(uv.y*.21+_MineralSeed)*.98+.01);
                 float3 mineral=tex2D(_MineralAtlas,atlasUV).rgb;
                 o.Albedo=lerp(tint.rgb*mineral,tint.rgb*mineral/float3(.12,.35,.22),jade);
+                // The original mineral asset also drives view-dependent surface
+                // relief; its grain is attached to each real moving/cut slab.
+                float center=dot(mineral,float3(.2126,.7152,.0722));
+                float dx=dot(tex2D(_MineralAtlas,atlasUV+float2(_MineralAtlas_TexelSize.x,0)).rgb,float3(.2126,.7152,.0722));
+                float dy=dot(tex2D(_MineralAtlas,atlasUV+float2(0,_MineralAtlas_TexelSize.y)).rgb,float3(.2126,.7152,.0722));
+                o.Normal=normalize(half3((center-dx)*.35,(center-dy)*.35,1));
+                if(jade>.5 && _OwnedJade>.5)
+                {
+                    float2 jadeUV=float2(frac(uv.x*4),frac(uv.y*.8+_MineralSeed));
+                    o.Albedo=tex2D(_JadeAlbedo,jadeUV).rgb*tint.rgb/float3(.035,.32,.22);
+                    // Polished jade reflects a continuous highlight; albedo veins
+                    // must not produce glittering normals at mobile resolution.
+                    o.Normal=half3(0,0,1);
+                }
             }
             o.Albedo=lerp(o.Albedo,lerp(float3(.035,.045,.065),metal*tint.rgb,step(.5,an.y)),_DecorFinish);
             o.Occlusion=1-joint*.12*_StoneFinish;

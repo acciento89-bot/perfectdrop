@@ -7,13 +7,19 @@ namespace Kamilunavo.PerfectDrop.Visuals
     /// The normalized envelope is shared by full slabs and actual overhang cuts.</summary>
     public static class SlabMeshKit
     {
-        private static Mesh _body, _rim;
+        private static Mesh _body, _rim, _crown, _plate;
         public static Mesh Body => _body != null ? _body : (_body = Build("AuthoredLacquerShoulder",
-            new[] {-.5f,-.44f,-.38f,.36f,.44f,.5f},
-            new[] {.482f,.498f,.5f,.5f,.498f,.482f}));
+            new[] {-.5f,-.34f,-.24f,-.12f,.28f,.40f,.5f},
+            new[] {.452f,.459f,.472f,.5f,.5f,.487f,.452f}));
         public static Mesh Rim => _rim != null ? _rim : (_rim = Build("AuthoredTurnedGoldRim",
-            new[] {-.5f,-.30f,.0f,.30f,.5f},
-            new[] {.465f,.495f,.5f,.495f,.465f}));
+            new[] {-.5f,-.36f,-.12f,0,.12f,.36f,.5f},
+            new[] {.459f,.482f,.5f,.491f,.5f,.482f,.459f}));
+        public static Mesh Crown => _crown != null ? _crown : (_crown = Build("AuthoredRoundedShoulderCrown",
+            new[] {-.5f,-.30f,0,.30f,.5f},
+            new[] {.46f,.483f,.492f,.483f,.46f}));
+        public static Mesh Plate => _plate != null ? _plate : (_plate = Build("AuthoredRaisedGoldPlate",
+            new[] {-.5f,-.32f,.12f,.34f,.5f},
+            new[] {.458f,.485f,.5f,.491f,.465f}));
 
         private static Mesh Build(string name,float[] heights,float[] extents)
         {
@@ -24,7 +30,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             {
                 int corner=index/(steps+1), step=index%(steps+1);
                 float a=(corner*90+step*90f/steps)*Mathf.Deg2Rad;
-                const float radius=.055f;
+                const float radius=.080f;
                 var center=new Vector2(corner==0||corner==3?extent-radius:-extent+radius,
                     corner<2?extent-radius:-extent+radius);
                 return center+new Vector2(Mathf.Cos(a),Mathf.Sin(a))*radius;
