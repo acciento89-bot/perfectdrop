@@ -64,5 +64,12 @@
     "downloadPrice": "Free",
     "removeAdsGermanPrice": "EUR 1.99",
     "privacyUrl": "https://acciento89-bot.github.io/oneclick-translator-legal/perfect-drop/privacy/"
+  },
+  "testFlight": {
+    "ownerGroup": "Kamilunavo Intern",
+    "groupId": "1f1e1ba3-ea2f-4827-86b3-5c74e06ddbc2",
+    "buildAssigned": true,
+    "responseStatus": 204,
+    "deTestNotesSaved": true
   }
 }
