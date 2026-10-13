@@ -73,6 +73,12 @@ namespace Kamilunavo.PerfectDrop.Visuals
             }
             // A small cached studio reflection gives live metal the warm/cool lighting
             // of the authored cloud city without a per-frame reflection probe.
+            var captured=Resources.Load<Cubemap>("Rendering/DropTerraceReflection");
+            if(captured!=null&&_studioReflection!=captured)
+            {
+                if(_studioReflection!=null&&_studioReflection.hideFlags==HideFlags.HideAndDontSave){if(Application.isPlaying)Object.Destroy(_studioReflection);else Object.DestroyImmediate(_studioReflection);}
+                _studioReflection=captured;
+            }
             if (_studioReflection == null) _studioReflection = BuildStudioReflection();
             RenderSettings.defaultReflectionMode = UnityEngine.Rendering.DefaultReflectionMode.Custom;
             RenderSettings.customReflection = _studioReflection;
@@ -724,12 +730,12 @@ namespace Kamilunavo.PerfectDrop.Visuals
                 }
                 else if(renderer.name=="TopPlate")
                 {
-                    paint.SetColor("_Color",finish.Plate);paint.SetColor("_EmissionColor",finish.Plate*.075f);
-                    paint.SetFloat("_GoldFinish",finish.GoldFinish);paint.SetFloat("_Metallic",.72f);paint.SetFloat("_Glossiness",.88f);
+                    paint.SetColor("_Color",finish.Plate);paint.SetColor("_EmissionColor",finish.Plate*StackStylePalette.PlateGlow);
+                    paint.SetFloat("_GoldFinish",finish.GoldFinish);paint.SetFloat("_Metallic",StackStylePalette.PlateMetallic);paint.SetFloat("_Glossiness",StackStylePalette.PlateSmoothness);
                 }
                 else if(renderer.name.StartsWith("Gold"))
                 {
-                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*.18f);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.84f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
+                    paint.SetColor("_Color",finish.Accent);paint.SetColor("_EmissionColor",finish.Accent*StackStylePalette.RimGlow);paint.SetFloat("_Metallic",.9f);paint.SetFloat("_Glossiness",.84f);paint.SetFloat("_GoldFinish",finish.GoldFinish);
                 }
                 else continue;
                 renderer.SetPropertyBlock(paint);

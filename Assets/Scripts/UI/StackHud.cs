@@ -12,7 +12,9 @@ namespace Kamilunavo.PerfectDrop.UI
         private Text _status, _hint, _popupTitle, _popupBody;
         private Image _progress;
         private Button _drop, _retry, _close, _daily, _sound, _music, _haptics, _motion, _settingsMap;
-        private bool _settingsReturnsHome;
+        private System.Action _settingsReturn;
+        private bool _settingsOpen;
+        private RectTransform _settingsBackdrop;
         private int _width, _height;
         private Rect _division, _area;
         private bool _hadDivision;
@@ -71,14 +73,17 @@ namespace Kamilunavo.PerfectDrop.UI
             BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu(); BuildTutorial();
             foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null || graphic.GetComponent<RectMask2D>() != null;
             _popup.gameObject.SetActive(false);
+            _settingsBackdrop=UiFactory.Panel(canvas.transform,"DropSettingsBackdrop",GalleryTheme.Night,Vector2.zero,Vector2.one);
+            var settingsFill=_settingsBackdrop.GetComponent<Image>();settingsFill.material=null;settingsFill.sprite=null;settingsFill.type=Image.Type.Simple;settingsFill.raycastTarget=true;
+            _settingsBackdrop.SetAsFirstSibling();_settingsBackdrop.gameObject.SetActive(false);
             Layout(true); Refresh();
         }
 
         public void Refresh()
         {
-            var gameplayVisible=!CampaignMenuOpen && !CityOpen;
+            var gameplayVisible=!CampaignMenuOpen && !CityOpen && !(_settingsOpen && _popup.gameObject.activeSelf);
             Game.SetStackVisible(gameplayVisible);
-            _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);
+            _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);_menuRect.gameObject.SetActive(gameplayVisible);
             _stats[0].text = T("STAPEL ","STACK ")+Game.Run.Count.ToString() + (Game.Run.Endless?"":" / "+Game.Run.Target);
             _stats[1].text = (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best).ToString();
             _stats[2].text = "x" + Game.Run.Streak;
@@ -101,6 +106,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void Terminal(bool won)
         {
+            _settingsOpen=false;_settingsReturn=null;_settingsBackdrop.gameObject.SetActive(false);
             Controls(false); Layout(true);
             _popupTitle.fontSize=_popupTitle.resizeTextMaxSize=45;
             _retry.gameObject.SetActive(true);
@@ -113,9 +119,10 @@ namespace Kamilunavo.PerfectDrop.UI
         public void OpenSettings()
         {
             if(MenuNavigationLocked)return;
-            if (!CampaignMenuOpen && (Game.Run.Failed || Game.Run.Completed)) return;
-            _settingsReturnsHome=CampaignMenuOpen;
-            HideMenus(); Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
+            if (!CampaignMenuOpen && !CityOpen && (Game.Run.Failed || Game.Run.Completed)) return;
+            bool shopReturnsStyles=_shopReturnsStyles;
+            System.Action parent=ShopOpen?()=>{ShowShop();_shopReturnsStyles=shopReturnsStyles;SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));}:_styles.gameObject.activeSelf?ShowStyles:CityOpen?ShowCity:HomeOpen?(_campaignOpen?()=>{ShowHome();ShowCampaign();}:ShowHome):null;
+            HideMenus();SetLabel(_close,parent!=null?T("‹ ZURÜCK","‹ BACK"):T("WEITERSPIELEN","RESUME"));_settingsReturn=parent;_settingsOpen=true;_settingsBackdrop.gameObject.SetActive(true);Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
             _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
             // Settings title and daily control occupy separate rows.
             Set((RectTransform)_popupTitle.transform,.07f,.885f,.93f,.99f);
@@ -124,9 +131,10 @@ namespace Kamilunavo.PerfectDrop.UI
         public void Close()
         {
             if(MenuNavigationLocked)return;
+            var parent=_settingsReturn;_settingsReturn=null;_settingsOpen=false;_settingsBackdrop.gameObject.SetActive(false);
             Game.UiClick(); _popup.gameObject.SetActive(false); HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f);
-            if(_settingsReturnsHome){_settingsReturnsHome=false;ShowHome();}
+            parent?.Invoke();
             Refresh();
         }
         private void Controls(bool settings)

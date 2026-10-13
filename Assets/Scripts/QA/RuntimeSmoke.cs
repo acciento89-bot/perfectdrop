@@ -86,6 +86,7 @@ namespace Kamilunavo.PerfectDrop.QA
                 }
                 CheckFraming();yield return Capture("concept-gameplay-chapter-"+chapter);
                 if(chapter==0){_game.GoHome();yield return Capture("concept-menu");FindButton("Styles").onClick.Invoke();yield return Capture("concept-designs");_game.Hud.HideMenus();}
+                if(chapter==1){Require(_game.SelectStyle(0),"Owned navy sunset comparison unavailable.");_game.GoHome();FindButton("Chapter1").onClick.Invoke();yield return Capture("concept-menu-sunset");FindButton("Styles").onClick.Invoke();yield return Capture("concept-designs-sunset");_game.Hud.HideMenus();}
             }
             File.WriteAllText(Path.Combine(_output,"concept-proof.txt"),"PASS: 21 actual ordered UI drops, 7 per chapter; physical current game meshes, selected surfaces, camera reservation and raycasts. Isolated QA profile unlocks; no image replacement and no visual acceptance implied.\n");
         }
@@ -177,7 +178,11 @@ namespace Kamilunavo.PerfectDrop.QA
                 for(var frame=0;frame<160;frame++){CheckFraming();yield return null;}
                 var yaw=typeof(StackGame).GetField("_yaw",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 foreach(var angle in new[]{-160f,145f,-35f}){yaw.SetValue(_game,angle);yield return null;CheckFraming();}
-                _game.Hud.OpenSettings();yield return Capture("settings-"+pose.x);_game.Hud.Close();
+                _game.Hud.OpenSettings();
+                Require(GameObject.Find("Drop")==null&&GameObject.Find("Stats")==null,"Settings expose live drop or HUD");
+                var backdrop=GameObject.Find("DropSettingsBackdrop");Require(backdrop!=null&&backdrop.GetComponent<Image>().color.a>=.999f,"Settings omit opaque full-screen cover");
+                var screen=UiMetrics.ScreenRect((RectTransform)backdrop.transform);Require(screen.xMin<=1&&screen.yMin<=1&&screen.xMax>=Screen.width-1&&screen.yMax>=Screen.height-1,"Actual runtime settings cover every screen edge");
+                yield return Capture("settings-"+pose.x);_game.Hud.Close();
             }
             _game.StartLevel(6);
             for(var block=0;block<_game.Run.Target;block++)

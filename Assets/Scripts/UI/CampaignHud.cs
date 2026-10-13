@@ -93,6 +93,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void HideMenus()
         {
+            _settingsOpen=false;_settingsReturn=null;if(_settingsBackdrop!=null)_settingsBackdrop.gameObject.SetActive(false);
             HideArcadeMenus();if(_shop!=null)_shop.gameObject.SetActive(false);
             _home.gameObject.SetActive(false);_styles.gameObject.SetActive(false);_popup.gameObject.SetActive(false);HideTerminalActions();
             Set((RectTransform)_popupTitle.transform,.07f,.79f,.93f,.96f); Refresh();
@@ -100,7 +101,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public bool HomeOpen=>_home!=null&&_home.gameObject.activeSelf;
         public void ShowHome()
         {
-            if(MenuNavigationLocked)return;_campaignOpen=false;_settingsReturnsHome=false;HideMenus();_home.gameObject.SetActive(true);RefreshHome();Refresh();LayoutCampaign(_campaignPane);Game.Videos?.Prepare();
+            if(MenuNavigationLocked)return;_campaignOpen=false;_settingsReturn=null;_settingsOpen=false;HideMenus();_home.gameObject.SetActive(true);Place(_home,_campaignPane,new Rect(0,0,1,1));Canvas.ForceUpdateCanvases();RefreshHome();Refresh();LayoutCampaign(_campaignPane);Game.Videos?.Prepare();
         }
         private bool MenuNavigationLocked=>(Game.Purchases?.IsPresenting??false)||(Game.Videos?.IsPresenting??false)||(Game.Interstitials?.IsPresenting??false);
         private void ShowCampaign(){if(MenuNavigationLocked)return;_campaignOpen=true;_levelScroll.verticalNormalizedPosition=1;RefreshHome();LayoutCampaign(_campaignPane);}
@@ -109,7 +110,7 @@ namespace Kamilunavo.PerfectDrop.UI
             Kamilunavo.PerfectDrop.Visuals.WorldArt.SetChapter(_chapter);
             var stars=0;foreach(var score in Game.Profile.LevelStars)stars+=score;
             _home.Find("HeroTower").GetComponent<TowerPreviewGraphic>().ApplyStyle(Game.Profile.Style);_heroGoal.text="Level "+Game.Profile.UnlockedLevel+" · "+StackCampaign.Level(Game.Profile.UnlockedLevel).Target+T(" Blöcke"," blocks");
-            _heroArt.GetComponent<TerracePreviewLease>().ApplyHero(_chapter,Game.Profile.Style);_home.Find("HeroTower").GetComponent<TowerPreviewGraphic>().enabled=false;GalleryTheme.Crop(_heroArt);
+            _heroArt.GetComponent<TerracePreviewLease>().ApplyHero(_chapter,Game.Profile.Style,_home.rect.width<=_home.rect.height*1.2f);_home.Find("HeroTower").GetComponent<TowerPreviewGraphic>().enabled=false;GalleryTheme.Crop(_heroArt);
             _homeInfo.text=stars+" / 90 "+T("STERNE","STARS")+" · "+Game.Profile.Coins+" COINS";
             for(var i=0;i<3;i++)
             { _chapters[i].interactable=Game.Profile.UnlockedLevel>i*10;GalleryTheme.Style(_chapters[i],i==_chapter?Navy:GalleryTheme.Ivory);int chapterStars=0;for(int slot=0;slot<10;slot++)chapterStars+=Game.Profile.LevelStars[i*10+slot];_chapters[i].transform.Find("ChapterProgress").GetComponent<Text>().text="★ "+chapterStars+" / 30"; }
@@ -164,7 +165,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void LayoutCampaign(Rect pane)
         {
             if(_home==null)return;_campaignPane=pane;
-            Place(_home,pane,new Rect(.02f,.015f,.96f,.97f));Place(_styles,pane,new Rect(.02f,.015f,.96f,.97f));Canvas.ForceUpdateCanvases();
+            Place(_home,pane,new Rect(0,0,1,1));Place(_styles,pane,new Rect(.02f,.015f,.96f,.97f));Canvas.ForceUpdateCanvases();
             bool landscape=_home.rect.width>_home.rect.height*1.2f;float unit=UiMetrics.PointScale/Mathf.Max(.001f,_home.GetComponentInParent<Canvas>().scaleFactor),w=_home.rect.width/unit,h=_home.rect.height/unit,row=UiMetrics.TargetSize(_home,49)/unit,play=UiMetrics.TargetSize(_home,54)/unit,margin=w<220?6:10,gap=w<220?4:8;
             void Position(RectTransform rect,float x,float y,float width,float height)=>Top(rect,x*unit,y*unit,width*unit,height*unit);
             var gallery=(RectTransform)_levelScroll.transform;var title=(RectTransform)_home.Find("Title");var progress=(RectTransform)_home.Find("Progress");var header=(RectTransform)_home.Find("MapHeader");var footer=(RectTransform)_home.Find("MapFooter");
@@ -178,7 +179,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 progress.gameObject.SetActive(false);title.gameObject.SetActive(false);
                 float navX=landscape?w*.46f:margin,navW=w-navX-margin,navY=playY-row-gap;
                 if(landscape)Position((RectTransform)_continue.transform,navX,playY,navW,play);
-                float chapterH=landscape?row:Mathf.Clamp(h*.17f,82,144),chapterY=navY-chapterH-gap;
+                float chapterH=landscape?row:Mathf.Clamp(h*.205f,94,182),chapterY=navY-chapterH-gap;
                 float heroX=margin,heroY=landscape?75:Mathf.Max(82,h*.145f),heroW=landscape?navX-margin-gap:w-margin*2,heroH=landscape?h-heroY-12:chapterY-heroY-8;
                 Position(_heroGallery,0,0,w,h);Position((RectTransform)_home.Find("HeroTower"),heroX+heroW*.09f,heroY,heroW*.82f,Mathf.Max(95,heroH-row-2));
                 float logoW=Mathf.Min(landscape?heroW: w*.58f,235),logoH=logoW*.61f;
@@ -195,7 +196,8 @@ namespace Kamilunavo.PerfectDrop.UI
                 var options=_home.Find("HomeSettings").GetComponent<Button>();var learn=_home.Find("Learn").GetComponent<Button>();var shop=_home.Find("DirectShop").GetComponent<Button>();
                 Position((RectTransform)options.transform,margin,8,row,row);Position((RectTransform)learn.transform,margin,8+row+gap,row,row);Position((RectTransform)shop.transform,w-margin-Mathf.Max(84,row),8,Mathf.Max(84,row),row);
                 GalleryTheme.Style(options,Navy);GalleryTheme.Style(learn,Navy);GalleryTheme.Style(shop,Navy);UiFactory.ApplyCircularImage(options.GetComponent<Image>());UiFactory.ApplyCircularImage(learn.GetComponent<Image>());UiFactory.ApplyPillImage(shop.GetComponent<Image>());
-                SetLabel(options,"");if(options.transform.Find("SettingsIcon")==null)UiFactory.Icon(options.transform,"SettingsIcon",HudIconType.Gear,Gold,new Vector2(.23f,.23f),new Vector2(.77f,.77f));SetLabel(learn,"?");SetLabel(shop,Game.Profile.Coins+"  +\nSHOP");
+                SetLabel(options,"");if(options.transform.Find("SettingsIcon")==null)UiFactory.Icon(options.transform,"SettingsIcon",HudIconType.Gear,Gold,new Vector2(.23f,.23f),new Vector2(.77f,.77f));SetLabel(learn,"?");SetLabel(shop,Game.Profile.Coins+"  +");Set((RectTransform)shop.transform.Find("Label"),.30f,.06f,.94f,.94f);shop.transform.Find("Label").GetComponent<Text>().font=UiFactory.DefaultFont;
+                if(shop.transform.Find("WalletCoin")==null)UiFactory.Icon(shop.transform,"WalletCoin",HudIconType.Coin,GalleryTheme.Gold,new Vector2(.04f,.18f),new Vector2(.31f,.82f));
                 // Three compact rows retain every action in a short divided landscape pane.
                 if(landscape && h<240)
                 {
@@ -215,6 +217,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 if(h<240){Position(title,margin,0,w-margin*2,20);progress.gameObject.SetActive(false);}else progress.gameObject.SetActive(true);float chapterW=(bodyW-gap*2)/3;for(int i=0;i<3;i++)Position((RectTransform)_chapters[i].transform,margin+i*(chapterW+gap),chapterY,chapterW,chapterH);
                 Position(gallery,margin,levelsY,bodyW,Mathf.Max(row,bottomY-levelsY-(h<240?4:8)));float cell=(bodyW-gap*2)/3;var actions=new[]{_campaignBack,_endless,_challenge};for(int i=0;i<3;i++){Position((RectTransform)actions[i].transform,margin+i*(cell+gap),bottomY,cell,row);GalleryTheme.Style(actions[i],GalleryTheme.Card);}SetLabel(_endless,StackCampaign.EndlessUnlocked(Game.Profile)?T("ENDLOS","ENDLESS"):T("ENDLOS · LV 5","ENDLESS · LV 5"));SetLabel(_challenge,T("TAGESROUTE","DAILY ROUTE"));
             }
+            if(!_campaignOpen){_heroArt.GetComponent<TerracePreviewLease>().ApplyHero(_chapter,Game.Profile.Style,!landscape);GalleryTheme.Crop(_heroArt);}
             Canvas.ForceUpdateCanvases();float galleryGap=8*unit,galleryRow=UiMetrics.TargetSize(_home,54);_levelContent.sizeDelta=new Vector2(0,5*galleryRow+4*galleryGap);_levelContent.offsetMin=new Vector2(0,_levelContent.offsetMin.y);_levelContent.offsetMax=new Vector2(0,_levelContent.offsetMax.y);
             for(int i=0;i<10;i++){var rect=(RectTransform)_levels[i].transform;rect.anchorMin=new Vector2(i%2*.51f,1);rect.anchorMax=new Vector2(i%2*.51f+.49f,1);rect.pivot=new Vector2(.5f,1);rect.sizeDelta=new Vector2(0,galleryRow);rect.anchoredPosition=new Vector2(0,-i/2*(galleryRow+galleryGap));}
             Set((RectTransform)_styles.Find("Title"),.06f,.905f,.94f,.985f);Set((RectTransform)_styles.Find("Wallet"),.06f,.85f,.94f,.90f);_styles.GetComponent<Image>().material=null;

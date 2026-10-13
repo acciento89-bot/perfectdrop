@@ -11,9 +11,9 @@ namespace Kamilunavo.PerfectDrop.Visuals
         private static readonly Dictionary<int,Entry> Entries=new();
         private static readonly Dictionary<int,Entry> Environments=new();
         private static readonly Dictionary<int,Entry> HeroEnvironments=new();
-        public static Texture2D AcquireHero(int chapter,int style){int key=Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7);if(!HeroEnvironments.TryGetValue(key,out var entry)){entry=new Entry{Texture=RenderEnvironmentCore(chapter,true,style)};HeroEnvironments.Add(key,entry);}entry.Users++;return entry.Texture;}
-        public static int HeroUsers(int chapter,int style)=>HeroEnvironments.TryGetValue(Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7),out var entry)?entry.Users:0;
-        public static void ReleaseHero(int chapter,int style){int key=Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7);if(!HeroEnvironments.TryGetValue(key,out var entry)||--entry.Users>0)return;HeroEnvironments.Remove(key);Dispose(entry.Texture);}
+        public static Texture2D AcquireHero(int chapter,int style,bool portrait=true){int key=(Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7))*2+(portrait?1:0);if(!HeroEnvironments.TryGetValue(key,out var entry)){entry=new Entry{Texture=RenderEnvironmentCore(chapter,portrait,style)};HeroEnvironments.Add(key,entry);}entry.Users++;return entry.Texture;}
+        public static int HeroUsers(int chapter,int style,bool portrait=true)=>HeroEnvironments.TryGetValue((Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7))*2+(portrait?1:0),out var entry)?entry.Users:0;
+        public static void ReleaseHero(int chapter,int style,bool portrait=true){int key=(Mathf.Clamp(chapter,0,2)*8+Mathf.Clamp(style,0,7))*2+(portrait?1:0);if(!HeroEnvironments.TryGetValue(key,out var entry)||--entry.Users>0)return;HeroEnvironments.Remove(key);Dispose(entry.Texture);}
         public static int CachedCount=>Entries.Count;
 
         public static int EnvironmentUsers(int chapter,bool portrait)=>Environments.TryGetValue(Mathf.Clamp(chapter,0,2)*2+(portrait?1:0),out var entry)?entry.Users:0;
@@ -39,13 +39,14 @@ namespace Kamilunavo.PerfectDrop.Visuals
             var camera=cameraObject.GetComponent<Camera>();camera.enabled=false;camera.cullingMask=1<<Layer;camera.clearFlags=CameraClearFlags.Skybox;camera.fieldOfView=48;camera.nearClipPlane=.1f;camera.farClipPlane=180;camera.allowHDR=true;
             cameraObject.AddComponent<CinematicGrade>();
             var sky=WorldArt.CreateTerracePreviewSky(chapter,root.transform.position);cameraObject.GetComponent<Skybox>().material=sky;
-            int width=portrait?512:768,height=portrait?768:512;camera.aspect=(float)width/height;
+            int width=heroStyle>=0?(portrait?768:960):portrait?512:768,height=heroStyle>=0?(portrait?1152:480):portrait?768:512;camera.aspect=(float)width/height;
             camera.transform.position=root.transform.position+(heroStyle>=0?new Vector3(-10,10,-17):new Vector3(-11,12,-19));camera.transform.LookAt(root.transform.position+(heroStyle>=0?new Vector3(0,0,0):new Vector3(0,3,6)));
+            if(heroStyle>=0&&!portrait)camera.transform.position+=camera.transform.right*8;
             if(heroStyle>=0)BuildHeroTower(root.transform,heroStyle);
             if(portrait && chapter==1 && heroStyle<0)BuildDesignHall(root.transform,camera);
             var dais=WorldArt.BuildStackDais(root.transform);var world=dais.transform.Find("TerraceWorld");for(int i=0;i<3;i++)world.Find("Theme"+i).gameObject.SetActive(i==chapter);
             foreach(var t in root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=Layer;
-            var lightObject=new GameObject("TerracePreviewSun",typeof(Light));lightObject.transform.SetParent(root.transform,false);var light=lightObject.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;light.color=chapter==2?new Color(.68f,.79f,1):new Color(1,.88f,.70f);light.intensity=.68f;light.shadows=LightShadows.Soft;light.shadowStrength=.7f;light.shadowBias=.04f;light.transform.rotation=Quaternion.Euler(32,-38,0);
+            var lightObject=new GameObject("TerracePreviewSun",typeof(Light));lightObject.transform.SetParent(root.transform,false);var light=lightObject.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;light.color=chapter==2?new Color(.68f,.79f,1):new Color(1,.88f,.70f);light.intensity=1.12f;light.shadows=LightShadows.Soft;light.shadowStrength=.7f;light.shadowBias=.04f;light.transform.rotation=Quaternion.Euler(32,-38,0);
             var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf)?RenderTextureFormat.ARGBHalf:RenderTextureFormat.ARGB32;
             var render=RenderTexture.GetTemporary(width,height,24,format,RenderTextureReadWrite.Default,4);var previous=RenderTexture.active;Texture2D texture=null;
             var oldProbe=RenderSettings.ambientProbe;var oldAmbient=RenderSettings.ambientMode;var oldTop=RenderSettings.ambientSkyColor;var oldEquator=RenderSettings.ambientEquatorColor;var oldBottom=RenderSettings.ambientGroundColor;var oldReflectionIntensity=RenderSettings.reflectionIntensity;
@@ -131,7 +132,7 @@ namespace Kamilunavo.PerfectDrop.Visuals
             camera.transform.LookAt(target);
             var lightObject=new GameObject("SpecimenSoftbox",typeof(Light));lightObject.transform.SetParent(root.transform,false);
             var light=lightObject.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;
-            light.color=new Color(1,.92f,.78f);light.intensity=.78f;light.shadows=LightShadows.None;
+            light.color=new Color(1,.92f,.78f);light.intensity=1.12f;light.shadows=LightShadows.None;
             light.transform.rotation=Quaternion.Euler(40,-28,0);
             for(var i=0;i<floors;i++)
             {
