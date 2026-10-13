@@ -1,0 +1,68 @@
+{
+  "sourceSha256": "94956d071e4d6903c2e495661e019e7eac82a69cc351cdc3ba49210a6657c50c",
+  "version": "1.0",
+  "build": "12",
+  "tests": {
+    "concept": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Native-concept/result.txt",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n"
+    },
+    "styles": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Native-styles/result.txt",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. Eight styles/actual shader overrides/reload.\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n"
+    },
+    "arcade-rotated": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Native-arcade-rotated/result.txt",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 2868x1320; safe area: (x:186.00, y:60.00, width:2496.00, height:1260.00).\n"
+    },
+    "iPad-concept": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Native-iPad-concept/result.txt",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\nFinal framebuffer: 2064x2752; safe area: (x:0.00, y:50.00, width:2064.00, height:2702.00).\n"
+    }
+  },
+  "limitations": [
+    "No physical iPhone or native measured performance result",
+    "Simulator QA isolates its profile and disables SDK providers; no genuine purchase or ad fulfilment claimed"
+  ],
+  "productionIosInterstitial": "ca-app-pub-8944085355624754/2586872480",
+  "productionTestAds": false,
+  "adRequestPolicy": "Non-personalised npa=1, maximum G rating, UMP before requests",
+  "archive": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/PerfectDrop-1.0-12.xcarchive",
+  "publicIpa": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Distribution/PerfectDrop.ipa",
+  "historicalFailedProbe": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/Native-arcade/result.txt",
+    "cause": "Landscape assertion ran without intended native rotation flag; portrait framebuffer was retained",
+    "change": "External runner enables existing PERFECTDROP_QA_ROTATE=1; game/test assertions unchanged"
+  },
+  "nativeStoreValidation": {
+    "test": "External Apple XCTest native wallet tap from an ordinary simulator profile, SDK providers enabled",
+    "passed": true,
+    "resultBundle": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/NativeStoreUITests/StoreCapture2.xcresult",
+    "screenshot": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/NativeStoreUITests/Attachments/EB8938D9-9BDB-47F4-B00E-D8428BBB4B9C.png",
+    "observed": "Shop ready; all three genuine StoreKit prices loaded (USD 1.99 / 1.99 / 2.99). No purchases made; paid fulfilment and restoration not claimed."
+  },
+  "upload": {
+    "success": true,
+    "publicEligibleBuildId": "ca83602d-fe99-49de-ac3b-e0065bd9c3fd",
+    "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPublic12-20261013/public-upload12-api.log",
+    "warning": "Vendor UnityRuntime dSYM not supplied by Unity; upload accepted with warning."
+  },
+  "appReview": {
+    "submitted": true,
+    "state": "WAITING_FOR_REVIEW",
+    "submittedDate": "2026-10-13T21:19:56.138Z",
+    "submissionId": "f3a143e9-5768-4b45-b9fc-df1713687add",
+    "releaseType": "MANUAL",
+    "includedProducts": [
+      "com.kamilunavo.perfectdrop.removeads",
+      "com.kamilunavo.perfectdrop.starter",
+      "com.kamilunavo.perfectdrop.neoncollection"
+    ],
+    "iPhoneScreenshots": 5,
+    "iPadScreenshots": 4,
+    "reviewScreenshots": 3,
+    "downloadPrice": "Free",
+    "removeAdsGermanPrice": "EUR 1.99",
+    "privacyUrl": "https://acciento89-bot.github.io/oneclick-translator-legal/perfect-drop/privacy/"
+  }
+}

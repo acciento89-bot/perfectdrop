@@ -59,7 +59,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
             Changed?.Invoke();
             if(!ConsentInformation.CanRequestAds()){SetStatus(T("Video nicht verfügbar – Datenschutzeinstellungen prüfen","Video unavailable – check privacy settings"));return;}
             if(_initialized){Load();return;}
-            try{MobileAds.Initialize(status=>Main(()=>
+            try{MobileAds.SetRequestConfiguration(new RequestConfiguration { MaxAdContentRating = MaxAdContentRating.G });MobileAds.Initialize(status=>Main(()=>
             {
                 if(status==null){SetStatus(T("Video gerade nicht verfügbar","Video currently unavailable"));return;}
                 _initialized=true;Changed?.Invoke();Load();
@@ -73,7 +73,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
             var id=_config.RewardedId;
             if(string.IsNullOrWhiteSpace(id)){SetStatus(T("Video gerade nicht verfügbar","Video currently unavailable"));return;}
             _loading=true;var generation=_loads.Begin();
-            try{RewardedAd.Load(id,new AdRequest(),(ad,error)=>
+            try{RewardedAd.Load(id,new AdRequest { Extras = { { "npa", "1" } } },(ad,error)=>
             {
                 if(this==null){ad?.Destroy();return;}
                 MobileAdsEventExecutor.ExecuteInUpdate(()=>

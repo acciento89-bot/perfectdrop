@@ -47,7 +47,7 @@ namespace Kamilunavo.PerfectDrop.Monetization
             Invalidate();
             if (string.IsNullOrWhiteSpace(_config.InterstitialId)) return;
             _loading = true; var generation = _loads.Begin();
-            try{InterstitialAd.Load(_config.InterstitialId, new AdRequest(), (ad, error) =>
+            try{InterstitialAd.Load(_config.InterstitialId, new AdRequest { Extras = { { "npa", "1" } } }, (ad, error) =>
             {
                 if (this == null) { ad?.Destroy(); return; }
                 MobileAdsEventExecutor.ExecuteInUpdate(() =>

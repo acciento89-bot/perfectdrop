@@ -1,15 +1,15 @@
 {
   "game": "Perfect Drop",
-  "status": "failed",
-  "sourceSha256": "0e4c630fba7f8feb1a6998addc81ea5e74b356662634612fcc2eb720bcab44d6",
-  "reviewer": "Human review of shown Concept/Unity comparison",
-  "reviewedAt": "2026-10-13T16:18:46.354639+00:00",
-  "reason": "Human rejects the October13 comparison as farther from the approved Concept and worse than before. Previous internal qualitative review is superseded. Reopen coordinated own-asset tower/material/menu reconstruction; no new PerfectDrop TestFlight upload.",
+  "status": "passed",
+  "sourceSha256": "94956d071e4d6903c2e495661e019e7eac82a69cc351cdc3ba49210a6657c50c",
+  "reviewer": "Human user explicitly accepted the shown Concept/native comparison and authorized Apple submission",
+  "reviewedAt": "2026-10-13T19:53:18.029582+00:00",
+  "reason": "User accepts present graphical quality: \"beser wird es nicht du kannst perfect drop sowie one more floor einreichen und zur pr\u00fcfung schicken\". This supersedes the previous human graphical rejection. No numeric similarity or physical-device/provider result is inferred.",
   "criteria": {
-    "concept_similarity": "failed",
-    "character_or_tower": "failed",
+    "concept_similarity": "passed",
+    "character_or_tower": "passed",
     "world_variants": "passed",
-    "menu_identity": "failed",
+    "menu_identity": "passed",
     "submenu_navigation": "passed",
     "readability": "passed"
   },
@@ -23,52 +23,42 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-menu-sunset.png",
-        "sha256": "8d2b496f067f2aeb76199138c522ef0d2ce8766a61a61173b3d5dd50452d7157",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-menu-sunset.png",
+        "sha256": "428bf4b11d0e6df0287b3b32dcddf0bf0a4ac2f2178d7aae00ceaf77df1e514a",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Presentation/gallery-home-932.png",
-        "sha256": "30948b7dcb9fc675f6a54653aca9052f0ed0ced462c0121b6cb0d7c6e01ea344",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/gallery-home-932.png",
+        "sha256": "2561322735ee12a989fca297922c6b7d6348dc1504c9a29681304b12210e56af",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-gameplay-chapter-0.png",
-        "sha256": "10f7a019c6c125beeaa60b659673ef2b434b7169bdd301ace3f68cc8610e6a25",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-gameplay-chapter-1.png",
-        "sha256": "1f1c682983b6fb94a68745d10eb5158d25646b08e0b793e30e56f2009e8aa7d2",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-gameplay-chapter-2.png",
-        "sha256": "8527db05e758e3bccf9a84af572533f53491eced62ca8533cfde9699e8011df1",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-gameplay-sunset-navy.png",
+        "sha256": "ade072145af69e45ca514edf6fae2ce4a3b82a7aa057b39138b5fe873eb71943",
         "origin": "Unity-render"
       }
     ],
     "submenus": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Presentation/settings-430.png",
-        "sha256": "a4852007c55681afd20765d97c0a41fbebc14e10a2af16c3325619a96be03d37",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-430.png",
+        "sha256": "f3ff4f458cac65efa525f73aded5b269278600841696c4e6d57c8c09e082d218",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Presentation/settings-932.png",
-        "sha256": "9a9357a95384953ae3f0a9c31972399add64b67b933401a1bb6a9a960e6b68b8",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-932.png",
+        "sha256": "c28d41bfbc041a960509f5cf286c2fecfadd227ff2ea5c2e1443a466ef2da1e0",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-designs-sunset.png",
-        "sha256": "8c51883de102bbb146bfafbbaf10328acb2fb2d5715d745ddbc7dbc638175d6c",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-3-gallery.png",
+        "sha256": "16be4a95c2e05de7a1010ee463b3859ef09ea2a64d80d0dee643ddc68531ebb0",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Presentation/gallery-shop-430.png",
-        "sha256": "39c7dc3f56c7cfee6f1c936df3fc3f44ece4a027b4a819589082f4966cf8b518",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-5-gallery.png",
+        "sha256": "f20cd4d571eb45b940592244c5248df5ff9387cb5f5c0cc7767c6ab2620b7cc6",
         "origin": "Unity-render"
       }
     ],
@@ -96,13 +86,20 @@
     ]
   },
   "comparison": {
-    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/perfect-drop-concept-unity-vergleich.png",
-    "sha256": "f9c37161769b709ae919f26f3fd29f87b45fd875599e67a3038a0b7789ca4534",
-    "origin": "comparison of unchanged reference and actual renders"
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-unity-menue.png",
+    "sha256": "1db572e3b7c7d0060d15a4c9b085afcfc5e45877bd1fd4ec59f6286bce8edb92",
+    "origin": "unchanged Concept panel versus proportionally resized native frame; no visual retouching"
   },
   "pendingCandidate": {
     "sourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
     "report": "docs/QA/drop-sculpted-menu-20261013.json",
-    "status": "Own sculpted towers and main-menu/design composition implemented and native-tested; not graphically released for TestFlight."
-  }
+    "status": "Human visual acceptance recorded; production monetization, metadata, native release and submission still required."
+  },
+  "humanAcceptedVisualSource": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+  "nativePublicReleaseEvidence": "docs/QA/drop-public12-20261013.json",
+  "nonVisualChangesSinceHumanAcceptance": [
+    "Production ad identifiers and npa/G request configuration",
+    "iOS build number 12"
+  ],
+  "validatedAt": "2026-10-13T20:30:04.213763+00:00"
 }
