@@ -1,17 +1,17 @@
 {
   "game": "Perfect Drop",
-  "status": "passed",
+  "status": "failed",
   "sourceSha256": "94956d071e4d6903c2e495661e019e7eac82a69cc351cdc3ba49210a6657c50c",
-  "reviewer": "Human user explicitly accepted the shown Concept/native comparison and authorized Apple submission",
-  "reviewedAt": "2026-10-13T19:53:18.029582+00:00",
-  "reason": "User accepts present graphical quality: \"beser wird es nicht du kannst perfect drop sowie one more floor einreichen und zur pr\u00fcfung schicken\". This supersedes the previous human graphical rejection. No numeric similarity or physical-device/provider result is inferred.",
+  "reviewer": "Human user reports device replay/menu regressions and withdraws previous release acceptance",
+  "reviewedAt": "2026-10-14",
+  "reason": "User reports removing PerfectDrop from Apple review: selected older world/level always starts latest Level30, preventing star completion. Menu background is visibly framed rather than seamless; wallet and Endless discovery are inadequate. Root cause pending reproduction after RisingSteps and RepairEmpire. Do not resubmit or upload unchanged build12. Previous submission/acceptance remains historical evidence only.",
   "criteria": {
-    "concept_similarity": "passed",
+    "concept_similarity": "failed",
     "character_or_tower": "passed",
     "world_variants": "passed",
-    "menu_identity": "passed",
-    "submenu_navigation": "passed",
-    "readability": "passed"
+    "menu_identity": "failed",
+    "submenu_navigation": "pending",
+    "readability": "failed"
   },
   "evidence": {
     "concept": [
@@ -101,5 +101,15 @@
     "Production ad identifiers and npa/G request configuration",
     "iOS build number 12"
   ],
-  "validatedAt": "2026-10-13T20:30:04.213763+00:00"
+  "validatedAt": "2026-10-13T20:30:04.213763+00:00",
+  "functionalReview": {
+    "status": "failed-user-report",
+    "reproduction": "pending",
+    "required": "Every one of30 actual selected level buttons from a completed save starts exactly that world/level; independent best stars can increase and persist; visible Endless and Shop/wallet; seamless portrait/landscape background."
+  },
+  "workOrder": [
+    "RisingSteps",
+    "RepairEmpire",
+    "PerfectDrop"
+  ]
 }

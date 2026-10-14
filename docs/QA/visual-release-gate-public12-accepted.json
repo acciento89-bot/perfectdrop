@@ -1,0 +1,105 @@
+{
+  "game": "Perfect Drop",
+  "status": "passed",
+  "sourceSha256": "94956d071e4d6903c2e495661e019e7eac82a69cc351cdc3ba49210a6657c50c",
+  "reviewer": "Human user explicitly accepted the shown Concept/native comparison and authorized Apple submission",
+  "reviewedAt": "2026-10-13T19:53:18.029582+00:00",
+  "reason": "User accepts present graphical quality: \"beser wird es nicht du kannst perfect drop sowie one more floor einreichen und zur pr\u00fcfung schicken\". This supersedes the previous human graphical rejection. No numeric similarity or physical-device/provider result is inferred.",
+  "criteria": {
+    "concept_similarity": "passed",
+    "character_or_tower": "passed",
+    "world_variants": "passed",
+    "menu_identity": "passed",
+    "submenu_navigation": "passed",
+    "readability": "passed"
+  },
+  "evidence": {
+    "concept": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/KamilunavoDelivery-20261009/concepts-20261010/perfect-drop-3-ansichten.png",
+        "sha256": "be7d92c4d77fa432693f19a07e791a62f6ab7aa05f1b3d9216b01b354ef98b45",
+        "origin": "approved-concept"
+      }
+    ],
+    "menu": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-menu-sunset.png",
+        "sha256": "428bf4b11d0e6df0287b3b32dcddf0bf0a4ac2f2178d7aae00ceaf77df1e514a",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/gallery-home-932.png",
+        "sha256": "2561322735ee12a989fca297922c6b7d6348dc1504c9a29681304b12210e56af",
+        "origin": "Unity-render"
+      }
+    ],
+    "gameplay": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedConcept/concept-gameplay-sunset-navy.png",
+        "sha256": "ade072145af69e45ca514edf6fae2ce4a3b82a7aa057b39138b5fe873eb71943",
+        "origin": "Unity-render"
+      }
+    ],
+    "submenus": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-430.png",
+        "sha256": "f3ff4f458cac65efa525f73aded5b269278600841696c4e6d57c8c09e082d218",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedPresentation/settings-932.png",
+        "sha256": "c28d41bfbc041a960509f5cf286c2fecfadd227ff2ea5c2e1443a466ef2da1e0",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-3-gallery.png",
+        "sha256": "16be4a95c2e05de7a1010ee463b3859ef09ea2a64d80d0dee643ddc68531ebb0",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/SculptedStyles/style-5-gallery.png",
+        "sha256": "f20cd4d571eb45b940592244c5248df5ff9387cb5f5c0cc7767c6ab2620b7cc6",
+        "origin": "Unity-render"
+      }
+    ],
+    "variants": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Styles/style-0-gameplay.png",
+        "sha256": "b1aa52cc3b2910b410de6bfc8b9af0fc163ca8a90b8fe7683e209a256d2fda6f",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Styles/style-3-gameplay.png",
+        "sha256": "782fdba33ad13decb15b1cdfabe354a80f0c6772fdf0d7863c7fcd43a5838d87",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Styles/style-5-gameplay.png",
+        "sha256": "f77ff3c8fa319e25e167cb4224246e03c9927e221bafa17ceab211afd1611509",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropPolish-20261013/Polish5Concept/concept-gameplay-chapter-2.png",
+        "sha256": "8527db05e758e3bccf9a84af572533f53491eced62ca8533cfde9699e8011df1",
+        "origin": "Unity-render"
+      }
+    ]
+  },
+  "comparison": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropSculptedMenu-20261013/concept-unity-menue.png",
+    "sha256": "1db572e3b7c7d0060d15a4c9b085afcfc5e45877bd1fd4ec59f6286bce8edb92",
+    "origin": "unchanged Concept panel versus proportionally resized native frame; no visual retouching"
+  },
+  "pendingCandidate": {
+    "sourceSha256": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+    "report": "docs/QA/drop-sculpted-menu-20261013.json",
+    "status": "Human visual acceptance recorded; production monetization, metadata, native release and submission still required."
+  },
+  "humanAcceptedVisualSource": "360464d61a92b254a6e724521739486c2c1e660859232cb174f5d9004faad9e1",
+  "nativePublicReleaseEvidence": "docs/QA/drop-public12-20261013.json",
+  "nonVisualChangesSinceHumanAcceptance": [
+    "Production ad identifiers and npa/G request configuration",
+    "iOS build number 12"
+  ],
+  "validatedAt": "2026-10-13T20:30:04.213763+00:00"
+}
