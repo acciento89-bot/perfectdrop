@@ -82,7 +82,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public void Refresh()
         {
             var gameplayVisible=!CampaignMenuOpen && !CityOpen && !(_settingsOpen && _popup.gameObject.activeSelf);
-            Game.SetStackVisible(gameplayVisible);
+            Game.SetStackVisible(gameplayVisible);RefreshMenuBackdrop();
             _statsRoot.gameObject.SetActive(gameplayVisible);_objective.gameObject.SetActive(gameplayVisible);_drop.gameObject.SetActive(gameplayVisible);_menuRect.gameObject.SetActive(gameplayVisible);
             _stats[0].text = T("STAPEL ","STACK ")+Game.Run.Count.ToString() + (Game.Run.Endless?"":" / "+Game.Run.Target);
             _stats[1].text = (Game.Run.Endless?Game.Profile.EndlessBest:Game.Profile.Best).ToString();
@@ -120,8 +120,8 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             if(MenuNavigationLocked)return;
             if (!CampaignMenuOpen && !CityOpen && (Game.Run.Failed || Game.Run.Completed)) return;
-            bool shopReturnsStyles=_shopReturnsStyles;
-            System.Action parent=ShopOpen?()=>{ShowShop();_shopReturnsStyles=shopReturnsStyles;SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));}:_styles.gameObject.activeSelf?ShowStyles:CityOpen?ShowCity:HomeOpen?(_campaignOpen?()=>{ShowHome();ShowCampaign();}:ShowHome):null;
+            bool shopReturnsStyles=_shopReturnsStyles;int returnChapter=_chapter;
+            System.Action parent=ShopOpen?()=>{ShowShop();_shopReturnsStyles=shopReturnsStyles;SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));}:_styles.gameObject.activeSelf?ShowStyles:CityOpen?ShowCity:HomeOpen?(_campaignOpen?()=>{ShowHome();_chapter=returnChapter;ShowCampaign();}:ShowHome):null;
             HideMenus();SetLabel(_close,parent!=null?T("‹ ZURÜCK","‹ BACK"):T("WEITERSPIELEN","RESUME"));_settingsReturn=parent;_settingsOpen=true;_settingsBackdrop.gameObject.SetActive(true);Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
             _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
             // Settings title and daily control occupy separate rows.

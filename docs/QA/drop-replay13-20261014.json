@@ -1,0 +1,676 @@
+{
+  "game": "Perfect Drop",
+  "version": "1.0",
+  "build": 13,
+  "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+  "createdAt": "2026-10-14T22:36:51.604269+00:00",
+  "status": "passed; corrected app1.0(13) and all3IAP versions WAITING_FOR_REVIEW",
+  "simulatorExportReceipt": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/SimulatorQA/perfectdrop-source-receipt.json",
+  "editorLog": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/SimulatorQA-unity-build.log",
+  "nativeBuildLog": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/native-simulator-build.log",
+  "nativeCases": [
+    {
+      "case": "Native-Final-ProMax-arcade",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 2868x1320; safe area: (x:186.00, y:60.00, width:2496.00, height:1260.00).\n",
+      "resultSha256": "ade0f1430032a1b08440131bf8f06a8311e6f43babd925ac54473e9aab43ad6f",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "D040F9A3-61DD-425D-BAD5-40AECBC4AC14",
+        "mode": "arcade",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-arcade"
+    },
+    {
+      "case": "Native-Final-ProMax-concept",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n",
+      "resultSha256": "08181106a64d92a7a3d986940b2fc8ae0498a8bc71f4b8776253bf6bfcfb1881",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "D040F9A3-61DD-425D-BAD5-40AECBC4AC14",
+        "mode": "concept",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept"
+    },
+    {
+      "case": "Native-Final-ProMax-concept-en",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n",
+      "resultSha256": "08181106a64d92a7a3d986940b2fc8ae0498a8bc71f4b8776253bf6bfcfb1881",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "D040F9A3-61DD-425D-BAD5-40AECBC4AC14",
+        "mode": "concept",
+        "requestedLanguage": "en",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en"
+    },
+    {
+      "case": "Native-Final-ProMax-replay",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. All 30 actual chapter/level cards; improved independent stars/save/reload; direct Endless/wallet, full-window menus and DE/EN orientations.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n",
+      "resultSha256": "8036ebab4be6061588f4fc593dcf58b5829f06542abd95d6dafd3aa51c3c8173",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "D040F9A3-61DD-425D-BAD5-40AECBC4AC14",
+        "mode": "replay",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-replay"
+    },
+    {
+      "case": "Native-Final-ProMax-styles",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. Eight styles/actual shader overrides/reload.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 1320x2868; safe area: (x:0.00, y:102.00, width:1320.00, height:2580.00).\n",
+      "resultSha256": "bd467ce7428b1725d5e776257326ac00308c231b1a2249cfb465eb24c3ae123d",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "D040F9A3-61DD-425D-BAD5-40AECBC4AC14",
+        "mode": "styles",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-styles"
+    },
+    {
+      "case": "Native-Final-SE3-replay",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. All 30 actual chapter/level cards; improved independent stars/save/reload; direct Endless/wallet, full-window menus and DE/EN orientations.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 750x1334; safe area: (x:0.00, y:0.00, width:750.00, height:1334.00).\n",
+      "resultSha256": "f6ad585a8bcb99258ca6db6a7c2b333a39ba4a48c71c8e5340573cde4c3bd775",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "A7F7C758-8037-458C-AC35-DA560F685D95",
+        "mode": "replay",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-SE3-replay"
+    },
+    {
+      "case": "Native-Final-iPad-concept",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 2064x2752; safe area: (x:0.00, y:50.00, width:2064.00, height:2702.00).\n",
+      "resultSha256": "769310135a83b54a71ec1dc7c90154ad49881250d551949b58d5c2b23280b8e8",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "442B2020-9F63-4A97-97CB-6A806C01F0B1",
+        "mode": "concept",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept"
+    },
+    {
+      "case": "Native-Final-iPad-concept-en",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. 21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 2064x2752; safe area: (x:0.00, y:50.00, width:2064.00, height:2702.00).\n",
+      "resultSha256": "769310135a83b54a71ec1dc7c90154ad49881250d551949b58d5c2b23280b8e8",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "442B2020-9F63-4A97-97CB-6A806C01F0B1",
+        "mode": "concept",
+        "requestedLanguage": "en",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en"
+    },
+    {
+      "case": "Native-Final-iPad-replay",
+      "result": "PASS: native current pose; game callbacks and visible-button raycasts. All 30 actual chapter/level cards; improved independent stars/save/reload; direct Endless/wallet, full-window menus and DE/EN orientations.\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\nFinal framebuffer: 2064x2752; safe area: (x:0.00, y:50.00, width:2064.00, height:2702.00).\n",
+      "resultSha256": "3e6b1b31955dea7601b61f5ce1538488de65bf95534d7c6081c72df8436077db",
+      "provenance": {
+        "version": "1.0",
+        "build": "13",
+        "device": "442B2020-9F63-4A97-97CB-6A806C01F0B1",
+        "mode": "replay",
+        "requestedLanguage": "de",
+        "native": "Actual Unity IL2CPP / Metal simulator, real controller/UI callbacks and graphic-raycast checks, not OS touch or measured physical-device performance",
+        "profile": "QA save namespace; original preferences preserved/restored after simulator shutdown",
+        "success": true
+      },
+      "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+      "sourceBinding": "Same unmodified SimulatorQA export / native app built once before all Final-* cases; successful exact-source Unity receipt retained",
+      "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-replay"
+    }
+  ],
+  "replayLaunches": {
+    "perDevice": 120,
+    "deviceCount": 3,
+    "total": 360,
+    "shape": "30 real chapter/level cards \u00d7 DE/EN \u00d7 portrait/landscape; verified active/visible real graphic raycast before controller callback"
+  },
+  "starImprovement": {
+    "level": 1,
+    "before": 1,
+    "after": 3,
+    "othersUnchanged": 29,
+    "frontier": 30,
+    "walletAfter": 2347,
+    "bestEndlessAfter": 65,
+    "sceneReloadPassed": true,
+    "coldProcess": "passed: ordinary fresh process, improved stars visible and exact persisted records independently checked"
+  },
+  "redGreenEvidence": [
+    "baseline-regression.log",
+    "footer-regression-red.log",
+    "design-background-red.log",
+    "resume-frontier-red.log"
+  ],
+  "historicalFailures": [
+    "cf1c862f native probe: test harness raycast ran before end-of-frame uGUI culling; strict assertions retained after one render frame wait",
+    "Superseded 29836884 Concept cases cancelled for the saved-run label correction; not claimed as passed"
+  ],
+  "codeReview": {
+    "reviewer": "/root/drop_release13_review",
+    "result": "APPROVE; no concrete defects in complete final diff vs 30c14cd0",
+    "readOnly": true,
+    "scope": "level authority/save safety/background ownership/menu masks/Back/active campaign-Endless-daily labels/strict regressions",
+    "limits": "Additional mode-specific resume branches traced statically, not separately clicked in native probe"
+  },
+  "visualReview": "docs/QA/visual-release-gate.json",
+  "comparison": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/concept-unity-build13.png",
+  "limits": [
+    "iOS Simulator IL2CPP/Metal, not physical device performance",
+    "Real controller/UI raycast probes, not OS finger touches, except separate wallet XCTest",
+    "No authenticated paid purchase or restore fulfillment",
+    "No live ad impression or earning claimed"
+  ],
+  "apple": {
+    "verifiedAt": "2026-10-14T22:53:20.301537+00:00",
+    "app": "6819872064",
+    "version": "1.0",
+    "buildNumber": 13,
+    "buildId": "b81b0560-3855-41cb-9795-a44ba937559c",
+    "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+    "submissionId": "14167654-8d95-43a6-a034-4868e52378eb",
+    "submittedDate": "2026-10-14T22:52:28.453Z",
+    "submissionState": "WAITING_FOR_REVIEW",
+    "appVersionState": "WAITING_FOR_REVIEW",
+    "iapVersionStates": [
+      {
+        "id": "d85f878b-573e-436b-8add-677f2e2a0b68",
+        "state": "WAITING_FOR_REVIEW"
+      },
+      {
+        "id": "c5ed8346-5e59-4739-baeb-e3f966609f17",
+        "state": "WAITING_FOR_REVIEW"
+      },
+      {
+        "id": "68690f31-6d36-4eb1-81fd-400a0b49db1e",
+        "state": "WAITING_FOR_REVIEW"
+      }
+    ],
+    "reviewItemContainerStates": [
+      "READY_FOR_REVIEW",
+      "READY_FOR_REVIEW",
+      "READY_FOR_REVIEW",
+      "READY_FOR_REVIEW"
+    ],
+    "stateSemantics": "Item container readiness and underlying version review states are separate. Initial post-submit assertion expected item containers to say WAITING; actual app, all3IAP version resources and submission independently confirmed WAITING_FOR_REVIEW. No withdrawal/duplicate submission.",
+    "ownerTestFlightGroup": "1f1e1ba3-ea2f-4827-86b3-5c74e06ddbc2",
+    "ownerGroupHasBuild13": true,
+    "releaseType": "MANUAL",
+    "privacyPublished": true,
+    "screenshots": {
+      "total": 20,
+      "locales": [
+        "de-DE",
+        "en-US"
+      ],
+      "deviceFamilies": [
+        "iPhone",
+        "iPad"
+      ],
+      "state": "COMPLETE"
+    },
+    "iapReviewImages": "3 COMPLETE",
+    "receipt": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/public-submission13-verified.json"
+  },
+  "ordinaryColdStart": {
+    "checkedAt": "2026-10-14T22:40:54.059431+00:00",
+    "actualFreshProcess": true,
+    "ordinaryStartup": true,
+    "QAEnvironmentUnset": true,
+    "seed": "Isolated Simulator fixture copied from the genuinely replayed save; only transient run mode reset to idle",
+    "wallet": 2347,
+    "stars": [
+      3,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unlockedLevel": 30,
+    "endlessBest": 65,
+    "realStoreProvidersEnabled": true,
+    "purchasePerformed": false,
+    "physicalDevice": false,
+    "xcodebuildResult": "TEST SUCCEEDED",
+    "xcodebuildLog": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/NativeStoreUITests/native-ui-test.log",
+    "wrapperExitCode": 1,
+    "wrapperRecovery": "Xcode reinstalled the simulator app, migrating data into a new container UUID. Original wrapper used obsolete path during post-processing. Independently located migrated preferences, verified exact improved records plus native screenshots and passed XCTest, and restored latest preserved original preference bytes and exact Xcode project. No game or save logic changed.",
+    "originalPreferencesRestored": true,
+    "projectRestored": true
+  },
+  "shopVisualReview": {
+    "checkedAt": "2026-10-14T22:40:54.059431+00:00",
+    "reviewer": "Codex direct visual inspection of actual Apple XCTest framebuffer attachments",
+    "shopOpened": true,
+    "pricesLoaded": true,
+    "prices": [
+      "Remove Ads $1.99",
+      "Starter $1.99",
+      "Neon Collection $2.99"
+    ],
+    "restoreVisible": true,
+    "coldHomeObserved": {
+      "wallet": 2347,
+      "worldStars": [
+        12,
+        10,
+        10
+      ],
+      "endlessBest": 65,
+      "levelPlaque": 30
+    },
+    "purchasePerformed": false,
+    "screenshots": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/NativeStoreUITests/Attachments/F5B92098-DE1B-4B2E-88EB-98C9FFBF1948.png",
+        "sha256": "6e5d33be1e679971ef93410165f5cf263cd8d77b206bd1a062eaa447def0e129"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/NativeStoreUITests/Attachments/5D4E956C-DFDC-49E4-8D6F-60ACE4193970.png",
+        "sha256": "aa899b7ac7b624460f98c48044b9c7e7ec0281bcf5e5f942c6b22a083b114347"
+      }
+    ]
+  },
+  "publicNativeExport": {
+    "receipt": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/iOS/perfectdrop-source-receipt.json",
+    "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+    "configuration": "Release",
+    "unityExitCode": 0,
+    "nativeArchive": "ARCHIVE SUCCEEDED",
+    "localDistributionExport": "EXPORT SUCCEEDED",
+    "deviceArchiveLog": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/device-archive13.log",
+    "localExportLog": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/device-export13.log",
+    "releaseProbeExclusion": "Five actual release Assembly-CSharp C++ translation units inspected: no RuntimeSmoke, RunReplay or QA environment entry identifiers"
+  },
+  "signedPublicPackage": {
+    "checkedAt": "2026-10-14T22:46:11.914557+00:00",
+    "ipa": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Distribution/PerfectDrop.ipa",
+    "sha256": "9b80709094de94e9000bb41fb4f4436322e3784fa813a5e39a455d5feff08ea4",
+    "size": 110128043,
+    "bundle": "com.kamilunavo.perfectdrop",
+    "version": "1.0",
+    "build": "13",
+    "GADApplicationIdentifier": "ca-app-pub-8944085355624754~8084045088",
+    "signatureVerified": true,
+    "applicationIdentifier": "TKG684N5GL.com.kamilunavo.perfectdrop",
+    "getTaskAllow": false,
+    "betaReportsActive": true,
+    "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+    "exportOptions": {
+      "destination": "export",
+      "manageAppVersionAndBuildNumber": false,
+      "method": "app-store-connect",
+      "signingStyle": "automatic",
+      "teamID": "TKG684N5GL",
+      "testFlightInternalTestingOnly": false,
+      "uploadSymbols": true
+    }
+  },
+  "storeScreenshots": [
+    {
+      "locale": "de-DE",
+      "device": "ProMax",
+      "setId": "8f308034-7ea2-4b1e-9805-04d270e9a128",
+      "assetId": "8b000019-67ef-8d40-8015-741f8766a64a",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-0-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/ProMax-concept-gameplay-chapter-0.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "eb7be2d4101ac7bd46aafcb4c9880614b2a6cbfd97eb3180ec20dc8e59c1ad05"
+    },
+    {
+      "locale": "de-DE",
+      "device": "ProMax",
+      "setId": "8f308034-7ea2-4b1e-9805-04d270e9a128",
+      "assetId": "21000019-67ef-8d40-801e-9a92193ddbf0",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-1-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/ProMax-concept-gameplay-chapter-1.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "e91587d4a8d68ba426255ffaea95dee83a41c0000511293f15d0c11f15da4147"
+    },
+    {
+      "locale": "de-DE",
+      "device": "ProMax",
+      "setId": "8f308034-7ea2-4b1e-9805-04d270e9a128",
+      "assetId": "d6c00019-67ef-8d40-8023-dc0165260aae",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-2-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/ProMax-concept-gameplay-chapter-2.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "9973f81a3f7604ea413ebc6c7fe8459cd8e0556cd0b3a1264dbc0e1321f9278e"
+    },
+    {
+      "locale": "de-DE",
+      "device": "ProMax",
+      "setId": "8f308034-7ea2-4b1e-9805-04d270e9a128",
+      "assetId": "3c800019-67ef-8d40-803c-d75060baab8a",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-menu-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/ProMax-concept-menu.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "a7d6bb21214f459c614c2587c4158d757a78368dfb1106c6a982477ad0193d73"
+    },
+    {
+      "locale": "de-DE",
+      "device": "ProMax",
+      "setId": "8f308034-7ea2-4b1e-9805-04d270e9a128",
+      "assetId": "4c400019-67ef-8d40-8029-a388a11fe773",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-designs-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/ProMax-concept-designs.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "520b67ea334afce84d2bf98ba732cb84a9ccb8ab8082e6388e18788ad1aea24e"
+    },
+    {
+      "locale": "de-DE",
+      "device": "iPad",
+      "setId": "0bba4b06-d399-4ccf-ad82-5f3f4c6c6d38",
+      "assetId": "c3400019-67ef-8d40-802e-a59c796c449a",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept/concept-gameplay-chapter-0-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/iPad-concept-gameplay-chapter-0.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "a72d8f20ab945611203c30eb47741f6383c58a5055c083a658619297b0aa49b3"
+    },
+    {
+      "locale": "de-DE",
+      "device": "iPad",
+      "setId": "0bba4b06-d399-4ccf-ad82-5f3f4c6c6d38",
+      "assetId": "a8400019-67ef-8d40-8010-cb4370dfb86a",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept/concept-gameplay-chapter-1-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/iPad-concept-gameplay-chapter-1.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "5318867802b5a36ef69afa195660a6e9913c17d8a1b666a5cc25435897aaa909"
+    },
+    {
+      "locale": "de-DE",
+      "device": "iPad",
+      "setId": "0bba4b06-d399-4ccf-ad82-5f3f4c6c6d38",
+      "assetId": "6f000019-67ef-8d40-8034-5a830544f2ca",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept/concept-gameplay-chapter-2-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/iPad-concept-gameplay-chapter-2.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "4713e8317070a829ddbd5da373a9b94800f76365ab04731ac4bfa7fc8c134c4f"
+    },
+    {
+      "locale": "de-DE",
+      "device": "iPad",
+      "setId": "0bba4b06-d399-4ccf-ad82-5f3f4c6c6d38",
+      "assetId": "36000019-67ef-8d40-8004-0175728f8072",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept/concept-menu-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/iPad-concept-menu.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "09abedb8577231d8484887b44aa43a418c9d6111d1953a6fe80675b8b57bba20"
+    },
+    {
+      "locale": "de-DE",
+      "device": "iPad",
+      "setId": "0bba4b06-d399-4ccf-ad82-5f3f4c6c6d38",
+      "assetId": "07400019-67ef-8d40-802d-974399ef9972",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept/concept-designs-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/de-DE/iPad-concept-designs.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "41c8ba45145ad75b80004320a61ae13b794babbb71eabc2453fee72fcdbbb654"
+    },
+    {
+      "locale": "en-US",
+      "device": "ProMax",
+      "setId": "c47140a0-3acc-40cf-b5e5-145d00480768",
+      "assetId": "06800019-67ef-8d40-802e-6796ee35b26b",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en/concept-gameplay-chapter-0-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/ProMax-concept-gameplay-chapter-0.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "8924136858c77a560ef9353a8dcab26b11ad14e5588f39e00d1efeac4bb1fbb4"
+    },
+    {
+      "locale": "en-US",
+      "device": "ProMax",
+      "setId": "c47140a0-3acc-40cf-b5e5-145d00480768",
+      "assetId": "eb400019-67ef-8d40-801d-0539851fc5ed",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en/concept-gameplay-chapter-1-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/ProMax-concept-gameplay-chapter-1.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "9b7dfbe32f170a7d4b661b5cf835aec06d4e59501410b2866d41cf62a9c763da"
+    },
+    {
+      "locale": "en-US",
+      "device": "ProMax",
+      "setId": "c47140a0-3acc-40cf-b5e5-145d00480768",
+      "assetId": "f7c00019-67ef-8d40-8035-a31516a2b82e",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en/concept-gameplay-chapter-2-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/ProMax-concept-gameplay-chapter-2.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "222462c6aa8f67f927b19ef19bc5d7e5dc08830b218eef042ca474ad38dbf587"
+    },
+    {
+      "locale": "en-US",
+      "device": "ProMax",
+      "setId": "c47140a0-3acc-40cf-b5e5-145d00480768",
+      "assetId": "b2c00019-67ef-8d40-8012-c563380fc4b1",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en/concept-menu-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/ProMax-concept-menu.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "72e0d73d7e6d6edc2f208da75810fd7d4145737416a943fbd13438f97c93b0f1"
+    },
+    {
+      "locale": "en-US",
+      "device": "ProMax",
+      "setId": "c47140a0-3acc-40cf-b5e5-145d00480768",
+      "assetId": "2fc00019-67ef-8d40-802b-6a464c8b2df2",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept-en/concept-designs-native-1320x2868.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/ProMax-concept-designs.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "974ddb760015873f1d407d41a352ccace6a5cb6424894e9df6dce992deeddcc8"
+    },
+    {
+      "locale": "en-US",
+      "device": "iPad",
+      "setId": "9202c752-2fa1-4efd-875c-fa714e31d9f4",
+      "assetId": "edc00019-67ef-8d40-8038-f9942ae8394f",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en/concept-gameplay-chapter-0-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/iPad-concept-gameplay-chapter-0.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "e8ee09fe73a2888decf66e3614e8b8cf291e94fb1c431ab9a38cb9752abb7d01"
+    },
+    {
+      "locale": "en-US",
+      "device": "iPad",
+      "setId": "9202c752-2fa1-4efd-875c-fa714e31d9f4",
+      "assetId": "99400019-67ef-8d40-8024-2e67a2e1d8c2",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en/concept-gameplay-chapter-1-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/iPad-concept-gameplay-chapter-1.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "3a64a480705ef995a9b5bb8bba10ad795eafc80ed89b57709ebb58e4752db929"
+    },
+    {
+      "locale": "en-US",
+      "device": "iPad",
+      "setId": "9202c752-2fa1-4efd-875c-fa714e31d9f4",
+      "assetId": "6b800019-67ef-8d40-8009-3f75b9b4d79d",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en/concept-gameplay-chapter-2-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/iPad-concept-gameplay-chapter-2.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "c05133750283dd339dd8305134ec09166ac8cd66c9ecfb3dec59c739f8388b2a"
+    },
+    {
+      "locale": "en-US",
+      "device": "iPad",
+      "setId": "9202c752-2fa1-4efd-875c-fa714e31d9f4",
+      "assetId": "18400019-67ef-8d40-803a-a7592c1b792b",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en/concept-menu-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/iPad-concept-menu.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "d65a789cb026f4dd1a493781caf2ceeb6526340ec765bbffbca3ea3935247660"
+    },
+    {
+      "locale": "en-US",
+      "device": "iPad",
+      "setId": "9202c752-2fa1-4efd-875c-fa714e31d9f4",
+      "assetId": "7d000019-67ef-8d40-800d-e08390dd2590",
+      "source": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-concept-en/concept-designs-native-2064x2752.png",
+      "rgb": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/StoreScreens/en-US/iPad-concept-designs.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "pixels": "Every RGB value and dimension preserved; alpha channel omitted for Apple asset compatibility",
+      "sha256": "145661342b512c09c70f4c43ece486f6516ed9e7147a5e8254707549a792f3bd"
+    }
+  ],
+  "publicUpload": {
+    "log": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/public-upload13-api.log",
+    "xcodeExitCode": 0,
+    "result": "Upload succeeded; Apple processing VALID / APP_STORE_ELIGIBLE, now submitted",
+    "warning": "Vendor UnityRuntime.framework dSYM UUID392D7A7F-6A4F-3A7A-8788-4089FA96FF38 unavailable. Apple accepted the package; warning retained, not hidden.",
+    "publicEligibilityOption": true
+  }
+}

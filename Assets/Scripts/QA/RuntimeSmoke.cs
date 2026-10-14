@@ -13,7 +13,7 @@ namespace Kamilunavo.PerfectDrop.QA
     public sealed class RuntimeSmoke : MonoBehaviour
     {
         private string _output;
-        private bool _arcade,_uiOnly,_cityOnly,_presentation,_styles,_concept;
+        private bool _arcade,_uiOnly,_cityOnly,_presentation,_styles,_concept,_replay;
         private readonly List<string> _errors=new();
         private void Awake()=>Application.logMessageReceived+=RecordError;
         private void OnDestroy()=>Application.logMessageReceived-=RecordError;
@@ -25,12 +25,12 @@ namespace Kamilunavo.PerfectDrop.QA
         private static void Bootstrap()
         {
             var args = QaLaunch.Arguments();
-            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity" || args[i]=="-qaPresentation" || args[i]=="-qaStyles" || args[i]=="-qaConcept")
+            for (var i=0;i<args.Length-1;i++) if (args[i]=="-qaSmoke" || args[i]=="-qaArcade" || args[i]=="-qaArcadeUI" || args[i]=="-qaCity" || args[i]=="-qaPresentation" || args[i]=="-qaStyles" || args[i]=="-qaConcept" || args[i]=="-qaReplay")
             {
                 StackSave.QaKey = args[i]!="-qaSmoke"?"perfectdrop.arcade.qa.v1":"perfectdrop.stack.qa.v1";
                 PlayerPrefs.DeleteKey(StackSave.QaKey);
                 var root = new GameObject("StackRuntimeSmoke"); DontDestroyOnLoad(root);
-                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity";smoke._presentation=args[i]=="-qaPresentation";smoke._styles=args[i]=="-qaStyles";smoke._concept=args[i]=="-qaConcept"; break;
+                var smoke=root.AddComponent<RuntimeSmoke>();smoke._output=args[i+1];smoke._arcade=args[i]!="-qaSmoke";smoke._uiOnly=args[i]=="-qaArcadeUI";smoke._cityOnly=args[i]=="-qaCity";smoke._presentation=args[i]=="-qaPresentation";smoke._styles=args[i]=="-qaStyles";smoke._concept=args[i]=="-qaConcept";smoke._replay=args[i]=="-qaReplay"; break;
             }
         }
         private IEnumerator Start()
@@ -38,7 +38,7 @@ namespace Kamilunavo.PerfectDrop.QA
             Directory.CreateDirectory(_output);
             File.WriteAllText(Path.Combine(_output,"result.txt"),"RUNNING\n");
             Time.captureDeltaTime = 1f / 60f; // Functional input timing; this does not measure real frame rate.
-            var run = _concept?RunConcept():_styles?RunStyles():_presentation?RunPresentation():_cityOnly?RunCity():_arcade?RunArcade():Run();
+            var run = _replay?RunReplay():_concept?RunConcept():_styles?RunStyles():_presentation?RunPresentation():_cityOnly?RunCity():_arcade?RunArcade():Run();
             var pending = new Stack<IEnumerator>();
             pending.Push(run);
             while (pending.Count > 0)
@@ -59,13 +59,82 @@ namespace Kamilunavo.PerfectDrop.QA
                 else yield return next;
             }
             if(_errors.Count>0){File.WriteAllText(Path.Combine(_output,"result.txt"),"FAIL: runtime logged errors\n"+string.Join("\n",_errors));yield break;}
-            File.WriteAllText(Path.Combine(_output,"result.txt"),_concept?"PASS: 21 actual ordered UI drops (7 per chapter), genuine meshes/finishes, reserved camera area and visible-button raycasts; isolated QA profile. No visual acceptance implied.\n":_styles?"PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n":_presentation?"PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n":_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
+            File.WriteAllText(Path.Combine(_output,"result.txt"),_replay?"PASS: all 30 actual chapter/level cards from a completed save, independent star improvement and scene reload, visible Endless/wallet, full-window home and opaque settings; DE/EN portrait/landscape.\n":_concept?"PASS: 21 actual ordered UI drops (7 per chapter), genuine meshes/finishes, reserved camera area and visible-button raycasts; isolated QA profile. No visual acceptance implied.\n":_styles?"PASS: all eight actual UI design selections, consumed shader properties on moving/placed pieces, special cues, wallet replay and scene/save reload.\n":_presentation?"PASS: presentation orientations, actual tutorial placements, replay/save integrity, city and galleries.\n":_cityOnly?"PASS: city framing at portrait/landscape and opaque map UI.\n":_uiOnly?"PASS: campaign/home-settings/modal-visibility/city-view/portrait-landscape/style UI regression.\n":_arcade?"PASS: campaign map/clear/next, powers, special blocks, risk failure/reward, city, daily challenge, styles, beyond-30 endless and bounded geometry.\n":"PASS: actual moving-block/drop-button sequence through 30; cut, miss, retry, settings pause, resize/progress, daily idempotence and scene reload resume.\n");
             if (Application.isMobilePlatform) File.WriteAllText(Path.Combine(_output,"result.txt"),
                 "PASS: native current pose; game callbacks and visible-button raycasts. " +
-                (_concept ? "21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied." : _styles ? "Eight styles/actual shader overrides/reload." : _presentation ? "Presentation/tutorial/frustum." : _cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
+                (_replay ? "All 30 actual chapter/level cards; improved independent stars/save/reload; direct Endless/wallet, full-window menus and DE/EN orientations." : _concept ? "21 actual ordered UI drops, isolated unlocked capture profile; no visual acceptance implied." : _styles ? "Eight styles/actual shader overrides/reload." : _presentation ? "Presentation/tutorial/frustum." : _cityOnly ? "City framing." : _uiOnly ? "Campaign/settings/city/styles." : _arcade ? "Campaign, powers, special blocks, risk, city, daily, styles, 66-layer endless/reload/retry." : "Stack/cut/miss/retry/save.") +
                 (RotateNative ? "\nNative orientation requests exercised; OS touch, fold poses and native performance not verified.\n" : "\nDesktop resize requests skipped; OS touch, other device poses and native performance not verified.\n") +
                 $"Final framebuffer: {Screen.width}x{Screen.height}; safe area: {Screen.safeArea}.\n");
             Debug.Log("[PerfectDrop][QA] Stack runtime matrix passed.");
+        }
+        private IEnumerator RunReplay()
+        {
+            yield return new WaitForSecondsRealtime(1);_game=FindFirstObjectByType<StackGame>();
+            _game.Profile.UnlockedLevel=30;_game.Profile.TutorialComplete=true;_game.Profile.OwnedStyles=255;
+            _game.Profile.Style=2;_game.Profile.Coins=2278;_game.Profile.EndlessBest=65;
+            for(int i=0;i<30;i++)_game.Profile.LevelStars[i]=1;
+            _game.StartLevel(30);_game.GoHome();yield return new WaitForEndOfFrame();
+            foreach(string language in new[]{"de","en"})
+            {
+                PlayerPrefs.SetString("perfectdrop.language",language);
+                yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);
+                _game=FindFirstObjectByType<StackGame>();
+                foreach(bool wide in new[]{false,true})
+                {
+                    SetReviewResolution(wide?932:430,wide?430:932,false);yield return new WaitForSecondsRealtime(.7f);
+                    _game.GoHome();yield return new WaitForEndOfFrame();yield return Capture("replay-home-"+language+"-"+(wide?"wide":"tall"));
+                    var endless=FindButton("Endless");Require(endless.isActiveAndEnabled&&endless.interactable,"Endless is hidden on the main menu");
+                    var wallet=FindButton("DirectShop");Require(wallet.isActiveAndEnabled&&wallet.interactable,"Wallet/Shop is hidden");
+                    var canvas=FindFirstObjectByType<Canvas>();var backdrop=canvas.transform.Find("DropMenuBackdrop").GetComponent<RawImage>();
+                    Require(backdrop.isActiveAndEnabled&&backdrop.texture!=null,"Full-window menu art missing");
+                    Rect full=UiMetrics.ScreenRect((RectTransform)canvas.transform),art=UiMetrics.ScreenRect(backdrop.rectTransform);
+                    Require(Mathf.Abs(full.xMin-art.xMin)<.5f&&Mathf.Abs(full.yMin-art.yMin)<.5f&&Mathf.Abs(full.xMax-art.xMax)<.5f&&Mathf.Abs(full.yMax-art.yMax)<.5f,"Menu art ends at the safe-area edge");
+                    for(int chapter=0;chapter<3;chapter++)
+                    {
+                        _game.GoHome();yield return new WaitForEndOfFrame();var world=FindButton("Chapter"+chapter);Require(world.isActiveAndEnabled&&world.interactable,"World is not reachable");TapReplay(world);yield return null;
+                        var scroll=GameObject.Find("LevelGalleryScroll").GetComponent<ScrollRect>();Require(scroll.isActiveAndEnabled,"World card did not open its ten level choices");
+                        if(!wide)yield return Capture("replay-levels-"+language+"-"+chapter);
+                        for(int slot=0;slot<10;slot++)
+                        {
+                            if(slot>0){_game.GoHome();yield return new WaitForEndOfFrame();TapReplay(FindButton("Chapter"+chapter));yield return null;scroll=GameObject.Find("LevelGalleryScroll").GetComponent<ScrollRect>();}
+                            scroll.verticalNormalizedPosition=1-(slot/2)/4f;Canvas.ForceUpdateCanvases();yield return null;
+                            var card=FindButton("LevelSlot"+slot);Require(card.isActiveAndEnabled&&card.interactable,"Requested level card is not active");CheckButtonRaycasts();TapReplay(card);yield return null;
+                            int id=chapter*10+slot+1;
+                            Require(_game.Level.Id==id&&_game.Profile.RunLevel==id&&_game.Level.Target==StackCampaign.Level(id).Target&&_game.Run.Target==StackCampaign.Level(id).Target&&_game.Run.Count==0&&Kamilunavo.PerfectDrop.Visuals.WorldArt.ActiveChapter==chapter,"Requested replay launched the wrong level/world/target: "+id);
+                        }
+                    }
+                    _game.GoHome();yield return new WaitForEndOfFrame();TapReplay(FindButton("HomeSettings"));yield return Capture("replay-settings-"+language+"-"+(wide?"wide":"tall"));
+                    Require(!FindButton("Drop").gameObject.activeInHierarchy&&!canvas.transform.Find("DropMenuBackdrop").gameObject.activeInHierarchy,"Settings reveal menu/gameplay controls");TapReplay(FindButton("Close"));
+                    Require(_game.Hud.HomeOpen,"Settings lost the parent menu");
+                }
+            }
+            SetReviewResolution(430,932,false);yield return new WaitForSecondsRealtime(.5f);
+            _game.GoHome();yield return new WaitForEndOfFrame();TapReplay(FindButton("Chapter0"));yield return new WaitForEndOfFrame();TapReplay(FindButton("LevelSlot0"));
+            for(int n=0;n<_game.Level.Target;n++)
+            {
+                float deadline=Time.realtimeSinceStartup+15;while(Mathf.Abs(_game.MovingOffset)>.04f&&Time.realtimeSinceStartup<deadline)yield return null;
+                Require(Mathf.Abs(_game.MovingOffset)<=.04f,"Replay perfect-placement deadline");TapReplay(FindButton("Drop"));yield return new WaitForSecondsRealtime(.1f);
+            }
+            Require(_game.Run.Completed&&_game.Profile.LevelStars[0]==3&&_game.LastBonus==30,"Earlier one-star level did not independently improve to three stars");
+            for(int i=1;i<30;i++)Require(_game.Profile.LevelStars[i]==1,"Replay overwrote another level's record");
+            Require(_game.Profile.UnlockedLevel==30&&_game.Profile.EndlessBest==65,"Replay reduced completed campaign or Endless record");
+            int earnedWallet=_game.Profile.Coins;_game.Save();yield return Capture("replay-stars-improved");
+            yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);yield return new WaitForSecondsRealtime(.5f);_game=FindFirstObjectByType<StackGame>();
+            Require(_game.Profile.LevelStars[0]==3&&_game.Profile.LevelStars[29]==1&&_game.Profile.Coins==earnedWallet&&_game.Profile.UnlockedLevel==30,"Improved stars/progress/wallet did not survive reload");
+            _game.GoHome();yield return new WaitForEndOfFrame();TapReplay(FindButton("Endless"));Require(_game.Run.Endless&&!_game.Hud.ModalOpen,"Visible home Endless did not start Endless");
+            _game.GoHome();yield return new WaitForEndOfFrame();TapReplay(FindButton("DirectShop"));Require(GameObject.Find("PremiumShop")!=null,"Visible home wallet did not open Shop");yield return Capture("replay-direct-shop");
+            File.WriteAllText(Path.Combine(_output,"replay-proof.txt"),"PASS: 120 actual card launches (30 x DE/EN x portrait/landscape), 6 real perfect placements, one-star to three-star replay, independent records and wallet preserved through reload. Profile isolated. Actual raycasts/frames; no physical input/performance claim.\n");
+        }
+        private static void TapReplay(Button button)
+        {
+            Canvas.ForceUpdateCanvases();
+            Require(button.isActiveAndEnabled&&button.interactable,"Replay action is not available: "+button.name);
+            var rect=(RectTransform)button.transform;var point=RectTransformUtility.WorldToScreenPoint(null,rect.TransformPoint(rect.rect.center));
+            var clipping=button.GetComponentInParent<RectMask2D>();
+            Require(clipping==null||UiMetrics.ScreenRect((RectTransform)clipping.transform).Contains(point),"Replay card centre is clipped: "+button.name);
+            var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
+            Require(hits.Count>0&&hits[0].gameObject.GetComponentInParent<Button>()==button,"Replay action centre is blocked: "+button.name+" cull="+button.GetComponent<Graphic>().canvasRenderer.cull+" hit="+(hits.Count>0?hits[0].gameObject.name:"none"));
+            button.onClick.Invoke();
         }
         private IEnumerator RunConcept()
         {
