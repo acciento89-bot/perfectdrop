@@ -1,0 +1,27 @@
+{
+  "game": "PerfectDrop",
+  "status": "pending",
+  "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+  "reviewer": "Codex direct source-icon and actual native-frame comparison",
+  "reviewedAt": "2026-10-15",
+  "reason": "The icon depicts a gold-edged dark block stack with a block above it. Current native gameplay contains this block-placement activity; native exported small/large/store variants still need the explicit new binding check.",
+  "decision": "No new upload approval. Complete accurate native icon and variant review before setting passed.",
+  "variantConsistencyChecked": false,
+  "evidence": {
+    "sourceIcon": {
+      "path": "Assets/Art/PerfectDropIcon.png",
+      "sha256": "8c85841fa0d903caf28697c684280e995c4a74bf7c63924a184f02ae17d367e5",
+      "origin": "project-icon"
+    },
+    "nativeIcon": null,
+    "gameplay": [
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-sunset-navy-native-1320x2868.png",
+        "sha256": "301e2272040ef5a25172a222c94bfa83ef4ba1964593331eb7aeef5c36d5146a",
+        "origin": "Unity-render"
+      }
+    ]
+  },
+  "policy": "https://developer.apple.com/app-store/review/guidelines/#accurate-metadata",
+  "limits": "Source-art motif review is not Apple approval, and does not establish the appearance of every exported native icon. Existing submitted builds are not withdrawn or altered."
+}
