@@ -44,5 +44,19 @@ end
             File.WriteAllText(path,text);
         }
     }
+#if UNITY_ANDROID
+    public sealed class AndroidStoreIconFallback : UnityEditor.Android.IPostGenerateGradleAndroidProject
+    {
+        public int callbackOrder => 1000;
+        public void OnPostGenerateGradleAndroidProject(string path)
+        {
+            var target = Path.GetFullPath(Path.Combine(path, "..", "launcher", "src", "main", "res", "mipmap-mdpi", "app_icon.png"));
+            if (!File.Exists(target))
+                throw new UnityEditor.Build.BuildFailedException("Expected Android launcher fallback icon was not generated");
+            // Unity 6.6 still emits this fallback beside its adaptive icon resources.
+            File.Copy("Assets/Art/PerfectDropIcon.png", target, true);
+        }
+    }
+#endif
 }
 #endif

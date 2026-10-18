@@ -1,0 +1,168 @@
+{
+  "checkedUTC": "2026-10-18T12:56:47.306894+00:00",
+  "scope": "Current accepted iOS game source exported for Google Play; Android result-ad placement and accurate native fallback icon",
+  "baseCommit": "d5715ba3c29e50850ee344dbddf54db3dc967371",
+  "sourceSha256": "05d4ead20963af418301ddd81ba0382e8855e8691b3a1cc1ddc77019ad1b4540",
+  "package": "com.kamilunavo.perfectdrop",
+  "build": "1.0(13)",
+  "unsignedSha256": "fc824cf1dc72b0302b6db8c382f0576a495a8df9eae4069c9747cc13ca00d9ad",
+  "iconChecks": {
+    "bundle": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/PerfectDrop-1.0-13-iconfinal-unity.aab",
+    "source": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Art/PerfectDropIcon.png",
+    "sourceSha256": "8c85841fa0d903caf28697c684280e995c4a74bf7c63924a184f02ae17d367e5",
+    "foregroundSource": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Art/AndroidIconForeground.png",
+    "checks": [
+      {
+        "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          162,
+          162
+        ],
+        "sourceColorError": 0.0019962483799596145,
+        "alphaError": 0.0007115725424448091,
+        "passed": true,
+        "sha256": "0490c5dbb0d60b1d6706d990152c1d8d486348af797e8499bc85cdee3633a686"
+      },
+      {
+        "entry": "base/res/mipmap-ldpi-v4/ic_launcher_foreground.png",
+        "size": [
+          81,
+          81
+        ],
+        "sourceColorError": 0.003026997518511545,
+        "alphaError": 0.0013316956107240945,
+        "passed": true,
+        "sha256": "b1c817723b33feb4a3082acdbac16e1cb95ea03e4ccc68c98eee08f5e19265c0"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/app_icon.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "sourceColorError": 0.0,
+        "alphaError": 0.0,
+        "passed": true,
+        "sha256": "77116ac13db9c822e9e64e1763dfd7728f848cfd74c117521f9ade56e5f5c09d"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          108,
+          108
+        ],
+        "sourceColorError": 0.002690586980105256,
+        "alphaError": 0.0010089701175394713,
+        "passed": true,
+        "sha256": "67593ca826422d8a07cbf58ce92589c08fbc2f7565f3ffb573dc5622d600cb7a"
+      },
+      {
+        "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          216,
+          216
+        ],
+        "sourceColorError": 0.0016358921254830236,
+        "alphaError": 0.0005454187847978697,
+        "passed": true,
+        "sha256": "191d09caafeebe9a7df52860bfed89d4171d970753ee712422ce5d6b834ff986"
+      },
+      {
+        "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          324,
+          324
+        ],
+        "sourceColorError": 0.0014696418627401172,
+        "alphaError": 0.0003805164803308917,
+        "passed": true,
+        "sha256": "22ca5c00aa01d8b7719c4b6aee2eb1987b79d1b4febfc26611b396c36fecea78"
+      },
+      {
+        "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          432,
+          432
+        ],
+        "sourceColorError": 0.0013511701834368864,
+        "alphaError": 0.00030643558863874764,
+        "passed": true,
+        "sha256": "893e3bd00e0f4c6b86f290aee9fad9decb524eb20f29f421eca44df02d5eb05d"
+      }
+    ],
+    "passed": true,
+    "meaning": "Actual compiled launcher images resemble the exact assigned artwork; not a gameplay or overall graphic-quality claim."
+  },
+  "targetSdk": 36,
+  "billingVersion": "9.0.0",
+  "nativeLibraries16KB": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgame.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libil2cpp.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libmain.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libunity.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    }
+  ],
+  "bundlePageAlignment": "PAGE_ALIGNMENT_16K",
+  "editorBuild": "Exit0; full ArcadeValidation aggregate ran",
+  "androidInterstitial": "ca-app-pub-8944085355624754/5862313641",
+  "admobAccountAppVerified": "ca-app-pub-8944085355624754~1614005506",
+  "admobUnitServerCap": "1 impression per3minutes",
+  "existingClientPacing": "At least3completed rounds AND180seconds, result-only; permanent RemoveAds, no tutorial interruption",
+  "gameplayAndArtworkChanged": false,
+  "iOSAdConfigurationChanged": false,
+  "notValidated": [
+    "Android runtime rendering/input",
+    "Google license-tester purchase/restore/refund",
+    "Live ads and physical-device performance"
+  ],
+  "distribution": "Not yet uploaded to Google Play",
+  "evidenceDirectory": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop",
+  "userDeletedPrimaryConcept": "Preserved unstaged"
+}
