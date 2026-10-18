@@ -1,0 +1,304 @@
+{
+  "date": "2026-10-18",
+  "change": "Use official UnityPurchasingEditor.TargetAndroidStore(GooglePlay) before collecting player resources; require serialized selector.",
+  "reason": "Real Android inspection of shared initial setup exposed fake-store prices; earlier iconfinal candidates must not be uploaded",
+  "artifact": {
+    "package": "com.kamilunavo.perfectdrop",
+    "versionName": "1.0",
+    "versionCode": 13,
+    "baseCommitBeforeLocalBuildChanges": "d5715ba3c29e50850ee344dbddf54db3dc967371",
+    "sourceSha256": "ca3d191d3dfdab4ef90e45b4a25110b7863582e0d52b9536db64053b80590832",
+    "payloadEntries": 613,
+    "payloadUnchangedBySignatureRemoval": true,
+    "unsigned": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/PerfectDrop-1.0-13-upload-unsigned.aab",
+    "sha256": "12b4000ba2ca51e605f3c65fd3c2fb7aae5be52f8ebebd05f5c5b3d3a8370979",
+    "billingVersion": "9.0.0",
+    "elf16KB": [
+      {
+        "entry": "base/lib/arm64-v8a/libc++_shared.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ]
+      },
+      {
+        "entry": "base/lib/arm64-v8a/libgame.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384
+        ]
+      },
+      {
+        "entry": "base/lib/arm64-v8a/libil2cpp.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ]
+      },
+      {
+        "entry": "base/lib/arm64-v8a/libmain.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ]
+      },
+      {
+        "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384
+        ]
+      },
+      {
+        "entry": "base/lib/arm64-v8a/libunity.so",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ]
+      }
+    ],
+    "icons": [
+      {
+        "entry": "base/res/drawable-hdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-hdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "sha256": "9865619196624a3cba32a36b0111357afea3148f123221ba8c7265bc681ab8a9"
+      },
+      {
+        "entry": "base/res/drawable-hdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-hdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "sha256": "94a0b6363a09d466a3dc3722379ab367d9ff73a21ba0ff2c5bab6c30aa5f8b38"
+      },
+      {
+        "entry": "base/res/drawable-hdpi-v4/notification_oversize_large_icon_bg.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-hdpi-v4/notification_oversize_large_icon_bg.png",
+        "sha256": "aa00088d0d9fd97bd92ed9ffd29b54bb69a48a984aa73448ce553fb9d812be41"
+      },
+      {
+        "entry": "base/res/drawable-hdpi-v4/notify_panel_notification_icon_bg.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-hdpi-v4/notify_panel_notification_icon_bg.png",
+        "sha256": "8430ec003e003f3f2ba2f78d48fd150e25407667e530e82e87a7d4841c0fd676"
+      },
+      {
+        "entry": "base/res/drawable-mdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-mdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "sha256": "71bfd776b21b1102f26e31a0f6dc65d40de2cbae650c7528241d5cdc17eac991"
+      },
+      {
+        "entry": "base/res/drawable-mdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-mdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "sha256": "77d8cc5447360efba3b3f1659bea9680eccbe47e2aaa07424d562f0e5c8af829"
+      },
+      {
+        "entry": "base/res/drawable-mdpi-v4/notify_panel_notification_icon_bg.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-mdpi-v4/notify_panel_notification_icon_bg.png",
+        "sha256": "0d773e62c756422313262846c787e58f67e0ee87e45e1ae9942002e816c4cb9e"
+      },
+      {
+        "entry": "base/res/drawable-xhdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-xhdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "sha256": "9d62d3eabefaf89e6018d3902cc8c4bb888a8891d9639deda8fb58ba60fe1822"
+      },
+      {
+        "entry": "base/res/drawable-xhdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-xhdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "sha256": "f62bf21d152a276ae8d9a0d62997f12c60d64ec812fd973ff60e3295deee34b4"
+      },
+      {
+        "entry": "base/res/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png",
+        "sha256": "b44eeda34d7a529c2fe55719eb098fa29707caa91d18de06a7a775d6e6bcf973"
+      },
+      {
+        "entry": "base/res/drawable-xxhdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-xxhdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
+        "sha256": "be03693c47d3c4d4466f14a695eaccd210b61e91d808c0c4a46d6f021b598278"
+      },
+      {
+        "entry": "base/res/drawable-xxhdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/drawable-xxhdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
+        "sha256": "71f14a18275f8678fd9f0c1c0affc400a975a0b815b82eca7345b6aaecf978ee"
+      },
+      {
+        "entry": "base/res/mipmap-hdpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-hdpi-v4/ic_launcher_background.png",
+        "sha256": "593a9c4fb296345ce8f42c88534b50e0a90a142a2ac7fb9a6142049479cdefb2"
+      },
+      {
+        "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-hdpi-v4/ic_launcher_foreground.png",
+        "sha256": "0490c5dbb0d60b1d6706d990152c1d8d486348af797e8499bc85cdee3633a686"
+      },
+      {
+        "entry": "base/res/mipmap-ldpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-ldpi-v4/ic_launcher_background.png",
+        "sha256": "4d926dcd349a63cba2f4cfb977ca07310c00806a24f8e0b43d55d3f693d54b89"
+      },
+      {
+        "entry": "base/res/mipmap-ldpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-ldpi-v4/ic_launcher_foreground.png",
+        "sha256": "b1c817723b33feb4a3082acdbac16e1cb95ea03e4ccc68c98eee08f5e19265c0"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/app_icon.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-mdpi-v4/app_icon.png",
+        "sha256": "77116ac13db9c822e9e64e1763dfd7728f848cfd74c117521f9ade56e5f5c09d"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-mdpi-v4/ic_launcher_background.png",
+        "sha256": "af38e10b7d75c21f95546653c0d7b19e8a450bc922ae4da49325f2d9f98b81e9"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-mdpi-v4/ic_launcher_foreground.png",
+        "sha256": "aa9fe866a953da8109d4a96c4d0322b21748251cdd30ea1b0c28c371a7e23514"
+      },
+      {
+        "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xhdpi-v4/ic_launcher_background.png",
+        "sha256": "63dcc48f1d02c674f236f3c3b0673c76dcfd77dcf9036a4e5f4fa39d98534465"
+      },
+      {
+        "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xhdpi-v4/ic_launcher_foreground.png",
+        "sha256": "46d884cce92e5abea773c7d5c0790ecaf8cad96d30f1ecf9f05851952a6f1d0c"
+      },
+      {
+        "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xxhdpi-v4/ic_launcher_background.png",
+        "sha256": "b9ac27a7b5c6cc2f11112ed31bfc5b6ab463aa3bc208b918f37eaa5e51a265e2"
+      },
+      {
+        "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.png",
+        "sha256": "8079d81a421a378d3f79b00ca913ac62c1454111e24529afc0516a5a231b346c"
+      },
+      {
+        "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_background.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xxxhdpi-v4/ic_launcher_background.png",
+        "sha256": "c08cd1473e564ab0930b6d79fc0d394aa0bf6fc30870fbf568024aab7ae04053"
+      },
+      {
+        "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.png",
+        "file": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/native-icons/base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.png",
+        "sha256": "935ab5a62ea0c0c87f0030c23ce77990117c32770cbf7b84a1a1482ea9bc79ae"
+      }
+    ],
+    "runtimeAndroid": "Not yet exercised; no device connected",
+    "realPurchases": "Not yet transacted",
+    "status": "Unsigned artifact validation passed; signing, Play upload and target-runtime checks remain"
+  },
+  "storeSelectorInCompiledBundle": {
+    "bundle": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/billing/PerfectDrop-1.0-13-upload-unsigned.aab",
+    "selectionAssets": [
+      {
+        "asset": "base/assets/bin/Data/72a138f2eb26f40b38485bee31c40986",
+        "androidStore": "GooglePlay",
+        "assetSHA256": "6a9e7e1f1a0557285ae82cdb3e86456d9362340879a5bce9c717f9e7ddc417eb"
+      }
+    ],
+    "passed": true
+  },
+  "nativeIconChecks": {
+    "bundle": "/Volumes/SSK SSD/Kamilunavo/Artifacts/GooglePlayAudit-20261018/PerfectDrop/PerfectDrop-1.0-13-billing-unity.aab",
+    "source": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Art/PerfectDropIcon.png",
+    "sourceSha256": "8c85841fa0d903caf28697c684280e995c4a74bf7c63924a184f02ae17d367e5",
+    "foregroundSource": "/Volumes/SSK SSD/Kamilunavo/Projects/PerfectDrop/Assets/Art/AndroidIconForeground.png",
+    "checks": [
+      {
+        "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          162,
+          162
+        ],
+        "sourceColorError": 0.0019962483799596145,
+        "alphaError": 0.0007115725424448091,
+        "passed": true,
+        "sha256": "0490c5dbb0d60b1d6706d990152c1d8d486348af797e8499bc85cdee3633a686"
+      },
+      {
+        "entry": "base/res/mipmap-ldpi-v4/ic_launcher_foreground.png",
+        "size": [
+          81,
+          81
+        ],
+        "sourceColorError": 0.003026997518511545,
+        "alphaError": 0.0013316956107240945,
+        "passed": true,
+        "sha256": "b1c817723b33feb4a3082acdbac16e1cb95ea03e4ccc68c98eee08f5e19265c0"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/app_icon.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "sourceColorError": 0.0,
+        "alphaError": 0.0,
+        "passed": true,
+        "sha256": "77116ac13db9c822e9e64e1763dfd7728f848cfd74c117521f9ade56e5f5c09d"
+      },
+      {
+        "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          108,
+          108
+        ],
+        "sourceColorError": 0.0026906990505392832,
+        "alphaError": 0.001008633906237392,
+        "passed": true,
+        "sha256": "aa9fe866a953da8109d4a96c4d0322b21748251cdd30ea1b0c28c371a7e23514"
+      },
+      {
+        "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          216,
+          216
+        ],
+        "sourceColorError": 0.001635864107874517,
+        "alphaError": 0.0005455028376233896,
+        "passed": true,
+        "sha256": "46d884cce92e5abea773c7d5c0790ecaf8cad96d30f1ecf9f05851952a6f1d0c"
+      },
+      {
+        "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          324,
+          324
+        ],
+        "sourceColorError": 0.0014696418627401172,
+        "alphaError": 0.00038047912351954954,
+        "passed": true,
+        "sha256": "8079d81a421a378d3f79b00ca913ac62c1454111e24529afc0516a5a231b346c"
+      },
+      {
+        "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.png",
+        "size": [
+          432,
+          432
+        ],
+        "sourceColorError": 0.0013511631790347597,
+        "alphaError": 0.00030643558863874764,
+        "passed": true,
+        "sha256": "935ab5a62ea0c0c87f0030c23ce77990117c32770cbf7b84a1a1482ea9bc79ae"
+      }
+    ],
+    "passed": true,
+    "meaning": "Actual compiled launcher images resemble the exact assigned artwork; not a gameplay or overall graphic-quality claim."
+  },
+  "gameplayAndArtworkChanged": false,
+  "iosStoreBehaviorChanged": false,
+  "runtimeRetest": "Pending",
+  "actualGooglePurchases": "Not transacted",
+  "supersedes": "Earlier iconfinal Android signing candidate retained as defect evidence"
+}
