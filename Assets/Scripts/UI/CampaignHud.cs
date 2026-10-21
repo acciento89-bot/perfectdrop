@@ -14,7 +14,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private HudIconGraphic[,] _levelStars;
         private Button _endless,_continue,_next,_map;
         private int _chapter;private bool _campaignOpen;private Rect _campaignPane=new(0,0,1,1);private Button _campaignNavigation,_campaignBack;private RectTransform _heroGallery;private RawImage _heroArt,_menuBackdrop;private Text _heroGoal;private RawImage[] _chapterArt;
-        private bool CampaignMenuOpen => ShopOpen || (_home!=null && _home.gameObject.activeSelf) || (_styles!=null && _styles.gameObject.activeSelf);
+        private bool CampaignMenuOpen => TrialMenuOpen || ShopOpen || (_home!=null && _home.gameObject.activeSelf) || (_styles!=null && _styles.gameObject.activeSelf);
         private void BuildCampaignMenus()
         {
             _home=UiFactory.Panel(_safe,"LevelMap",GalleryTheme.Night,Vector2.zero,Vector2.one);
@@ -102,6 +102,7 @@ namespace Kamilunavo.PerfectDrop.UI
         }
         public void HideMenus()
         {
+            HideTrialPanels();
             _settingsOpen=false;_settingsReturn=null;if(_settingsBackdrop!=null)_settingsBackdrop.gameObject.SetActive(false);
             HideArcadeMenus();if(_shop!=null)_shop.gameObject.SetActive(false);
             _home.gameObject.SetActive(false);_styles.gameObject.SetActive(false);_popup.gameObject.SetActive(false);HideTerminalActions();
@@ -121,6 +122,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public bool HomeOpen=>_home!=null&&_home.gameObject.activeSelf;
         public void ShowHome()
         {
+            if(Game.TrialMode) {Game.GoHome();return;}
             if(MenuNavigationLocked)return;_campaignOpen=false;_settingsReturn=null;_settingsOpen=false;HideMenus();_home.gameObject.SetActive(true);Place(_home,_campaignPane,new Rect(0,0,1,1));Canvas.ForceUpdateCanvases();RefreshHome();Refresh();LayoutCampaign(_campaignPane);Game.Videos?.Prepare();
         }
         private bool MenuNavigationLocked=>(Game.Purchases?.IsPresenting??false)||(Game.Videos?.IsPresenting??false)||(Game.Interstitials?.IsPresenting??false);
@@ -251,8 +253,14 @@ namespace Kamilunavo.PerfectDrop.UI
             {
                 title.gameObject.SetActive(true);footer.GetComponent<Image>().color=GalleryTheme.Night;float chapterY=h<240?22:74,chapterH=Mathf.Max(row,landscape?49:72),levelsY=chapterY+chapterH+(h<240?4:gap),bottomY=playY-row,bodyW=w-margin*2;Position(footer,margin,bottomY-4,bodyW,h-bottomY);
                 if(h<240){Position(title,margin,0,w-margin*2,20);progress.gameObject.SetActive(false);}else progress.gameObject.SetActive(true);float chapterW=(bodyW-gap*2)/3;for(int i=0;i<3;i++)Position((RectTransform)_chapters[i].transform,margin+i*(chapterW+gap),chapterY,chapterW,chapterH);
-                Position(gallery,margin,levelsY,bodyW,Mathf.Max(row,bottomY-levelsY-(h<240?4:8)));float cell=(bodyW-gap*2)/3;var actions=new[]{_campaignBack,_endless,_challenge};for(int i=0;i<3;i++){Position((RectTransform)actions[i].transform,margin+i*(cell+gap),bottomY,cell,row);GalleryTheme.Style(actions[i],GalleryTheme.Card);}SetLabel(_endless,StackCampaign.EndlessUnlocked(Game.Profile)?T("ENDLOS","ENDLESS"):T("ENDLOS · LV 5","ENDLESS · LV 5"));SetLabel(_challenge,T("TAGESROUTE","DAILY ROUTE"));
+                int actionColumns=bodyW>=4*49+gap*3?4:2;
+                if(actionColumns==2)bottomY-=row+gap;
+                Position(gallery,margin,levelsY,bodyW,Mathf.Max(row,bottomY-levelsY-(h<240?4:8)));
+                float cell=(bodyW-gap*(actionColumns-1))/actionColumns;var actions=new[]{_campaignBack,_endless,_challenge,_trialEntry};
+                for(int i=0;i<4;i++){Position((RectTransform)actions[i].transform,margin+(i%actionColumns)*(cell+gap),bottomY+(i/actionColumns)*(row+gap),cell,row);GalleryTheme.Style(actions[i],GalleryTheme.Card);}
+                SetLabel(_endless,StackCampaign.EndlessUnlocked(Game.Profile)?T("ENDLOS","ENDLESS"):T("ENDLOS · LV 5","ENDLESS · LV 5"));SetLabel(_challenge,T("TAGESROUTE","DAILY ROUTE"));
             }
+            _trialEntry.gameObject.SetActive(_campaignOpen);
             _fullMenuFooter.gameObject.SetActive(HomeOpen&&!_campaignOpen);
             if(!_campaignOpen)
             {
