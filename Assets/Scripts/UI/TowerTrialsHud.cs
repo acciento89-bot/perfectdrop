@@ -16,7 +16,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public bool TrialMenuOpen => _trialPanel!=null && _trialPanel.gameObject.activeSelf;
         private void BuildTrialMenus()
         {
-            _trialEntry=UiFactory.Button(_home,"TowerTrialsEntry",T("TURM-PRÜFUNGEN","TOWER TRIALS"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowTrials);
+            _trialEntry=UiFactory.Button(_home,"TowerTrialsEntry",T("TURM-\nPRÜFUNGEN","TOWER\nTRIALS"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowTrials);
             _trialPanel=UiFactory.Panel(_safe,"TowerTrials",GalleryTheme.Night,Vector2.zero,Vector2.one);
             var scrollObject=new GameObject("TowerTrialsScroll",typeof(RectTransform),typeof(ScrollRect));scrollObject.transform.SetParent(_trialPanel,false);
             Set((RectTransform)scrollObject.transform,.025f,.02f,.975f,.98f);
