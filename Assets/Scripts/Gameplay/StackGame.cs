@@ -8,7 +8,7 @@ using Kamilunavo.PerfectDrop.Feedback;
 
 namespace Kamilunavo.PerfectDrop.Gameplay
 {
-    public sealed class StackGame : MonoBehaviour
+    public sealed partial class StackGame : MonoBehaviour
     {
         public const float LayerHeight = 1.0f;
         public StackRun Run { get; private set; }
@@ -25,7 +25,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private Transform _world;
         private GameObject _city, _pedestal;
         public int CityDistrict { get; private set; }
-        public StackBlockKind CurrentKind => StackCampaign.Kind(Profile.RunEndless || Profile.RunChallenge?Profile.UnlockedLevel:Level.Id,Run.Count);
+        public StackBlockKind CurrentKind => TrialMode ? TrialKind : StackCampaign.Kind(Profile.RunEndless || Profile.RunChallenge?Profile.UnlockedLevel:Level.Id,Run.Count);
         private Camera _camera;
         private FeedbackSystem _feedback;
         private readonly List<GameObject> _placed = new();
@@ -69,6 +69,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             // foreground stack and earned city as live geometry.
             _tower = new GameObject("StackTower").transform;
             Profile = StackSave.Load();
+            LoadTrials();
             Level = Profile.RunEndless?StackCampaign.Level(1):Profile.RunChallenge?StackCampaign.Daily(DateTime.ParseExact(Profile.RunChallengeDate,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture)):StackCampaign.Level(Profile.RunLevel);
             WorldArt.SetChapter(Level.Chapter);
             RebuildCity();
@@ -94,6 +95,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         private void Update()
         {
             if (Run == null || _paused) return;
+            if (TrialMode && TrialSaveError != null) return;
             if (!Hud.ModalOpen && !Run.Failed && !Run.Completed)
             {
                 var delta=Mathf.Min(Time.deltaTime,.05f);
@@ -145,6 +147,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public void Drop()
         {
             if (Run == null || Run.Failed || Run.Completed || Hud.ModalOpen || _paused || Time.unscaledTime < _nextDrop) return;
+            if (TrialMode) { DropTrial(); return; }
             // Suppress only duplicate events from a single tap; no blocking placement animation.
             _nextDrop = Time.unscaledTime+.06f;
             var oldCoins = Run.EarnedCoins;
@@ -189,6 +192,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public void NewRun()
         {
             if(NativePresentationActive)return;
+            if(TrialMode) { RetryTrial(); return; }
             _runToken=Guid.NewGuid().ToString("N");
             foreach (var block in _placed) if (block != null) Destroy(block);
             _placed.Clear();
@@ -201,22 +205,25 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public void StartLevel(int id)
         {
             if(NativePresentationActive || id<1 || id>Profile.UnlockedLevel) return;
+            if(!LeaveTrial())return;
             Profile.RunChallenge=false; Profile.RunEndless=false; Profile.RunLevel=id; Level=StackCampaign.Level(id); NewRun();
         }
         public void StartEndless()
         {
             if(NativePresentationActive || !StackCampaign.EndlessUnlocked(Profile)) return;
+            if(!LeaveTrial())return;
             Profile.RunChallenge=false; Profile.RunEndless=true; Level=StackCampaign.Level(1); NewRun();
         }
         public void StartChallenge()
         {
             if(NativePresentationActive)return;
+            if(!LeaveTrial())return;
             Profile.RunChallenge=true;Profile.RunEndless=false;
             Profile.RunChallengeDate=DateTime.UtcNow.ToString("yyyy-MM-dd");Level=StackCampaign.Daily(DateTime.UtcNow);NewRun();
         }
         public void UsePower(StackPower power)
         {
-            if(Hud.ModalOpen || _paused || Run.Completed || Run.Failed || !StackCampaign.PowerUnlocked(Profile,power) || !Run.Powers.Activate(power))return;
+            if(TrialMode || Hud.ModalOpen || _paused || Run.Completed || Run.Failed || !StackCampaign.PowerUnlocked(Profile,power) || !Run.Powers.Activate(power))return;
             UiClick();
             if(power==StackPower.Center)
             {
@@ -228,7 +235,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         }
         public void ToggleRisk()
         {
-            if(Hud.ModalOpen || _paused || Run.Completed || Run.Failed || Profile.UnlockedLevel<6)return;
+            if(TrialMode || Hud.ModalOpen || _paused || Run.Completed || Run.Failed || Profile.UnlockedLevel<6)return;
             Run.Powers.Risk=!Run.Powers.Risk;Save();Hud.Refresh();
         }
         private void RebuildCity()
@@ -250,7 +257,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             CityDistrict=district;WorldArt.SetChapter(district);
             for(var i=0;i<3;i++)_city.transform.Find("CityDistrict"+i).gameObject.SetActive(i==district);
         }
-        public void GoHome() { Save(); Hud.ShowHome(); }
+        public void GoHome() { if(!LeaveTrial())return;Save(); Hud.ShowHome(); }
         public bool SelectStyle(int style)
         {
             if(!StackCampaign.SelectStyle(Profile,style)) return false;
@@ -332,6 +339,7 @@ namespace Kamilunavo.PerfectDrop.Gameplay
         public void Save()
         {
             if (Profile == null || Run == null) return;
+            if (TrialMode) { SaveTrial(); return; }
             Profile.ResumeActive = _hasStarted && !Run.Failed && !Run.Completed;
             Profile.Powers=Run.Powers;
             Profile.TotalPlaced=Run.Count; Profile.PerfectDrops=Run.PerfectDrops; Profile.MaxStreak=Run.MaxStreak;

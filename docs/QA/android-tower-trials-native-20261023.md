@@ -1,0 +1,9 @@
+# Android Tower Trials native acceptance — 23 October 2026
+
+Android 1.1.0 (14), development-only explicit intent mode with providers disabled before initialization and SHA256-isolated trial archive. Shipping retains the original archive filename and excludes the entire native probe. The retained iOS Duo remained shut down; only one disposable Android emulator ran.
+
+Actual native acceptance: 59 first-run checks, three real misses/three attempts, new free run and first gold medal, real trial2 checkpoint at three placed layers, exact cold restoration. A subsequent perfect-only probe timed out at trial4 after eight actual layers. Its logs and earned bytes were preserved. The same APK at 360x640 with unchanged411dp logical width completed every remaining trial through12:345 checks, genuine moving StackRules-perfect placements, real Drop callbacks, one committed layer/perfect each, actual medal records. No phase, geometry, wallet, entitlement or medal injection. The replay seed was the byte-exact previously earned native archive. Portrait/landscape settled and the legacy wallet, campaign stars and towers remained unchanged.
+
+The 94 domain/archive/file checks pass. Native screenshots and logs are private validation evidence, never Store gallery assets. The optional AssetPackManager class lookup logs a missing optional class; bundled gameplay runs. No physical device FPS, financial transaction, rewarded ad or restore claim. Final signed shipping startup, Google delivery and renewed iOS/Duo acceptance remain separate gates.
+
+Private root receipts: StoreOptimization-20261020/PerfectDropUpdate/android-native-feature-acceptance.json and PrivateDiagnostics/PerfectTrialsNative-20261023-Retry. Initial timing and screenshot-path failures remain preserved rather than counted as passing.

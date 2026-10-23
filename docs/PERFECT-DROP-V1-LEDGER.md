@@ -620,3 +620,7 @@ Build1.0(13), b81b0560-3855-41cb-9795-a44ba937559c, uploaded successfully and pr
 ## 2026-10-15 — user-required accurate icon gate
 
 Following the subsequent One More Floor Apple2.3 Icon notice, future uploads for every app now require source/native icon and actual gameplay comparison, effective iOS assignment and small/large variant review in `docs/QA/store-icon-review.json`. This project’s observed icon motif matches its central activity, but the new explicit native variant evidence is still pending; no artwork/Apple approval is inferred from format or tests. The guard checks full PNG integrity, source hashes and iOS overrides; 21 synthetic protocol cases pass per project (84 across the four identical guards). Evidence: `docs/QA/store-icon-guard-validation.json`. No Unity source, native binary, submitted public metadata, existing submission or distribution group was changed. Historical Concept deletion remains unstaged.
+
+
+## 2026-10-23 — Android Tower Trials acceptance
+Actual12trialchain, 59initial+345continuednativechecks and94corechecks pass with explicit development-only provider-disabled isolated archive. See docs/QA/android-tower-trials-native-20261023.md. Android1.1.0(14); iOSbuild13unchanged, newiOSacceptancepending. Shipping release/signing/Store delivery stillpending.
