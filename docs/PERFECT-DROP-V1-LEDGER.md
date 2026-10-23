@@ -624,3 +624,8 @@ Following the subsequent One More Floor Apple2.3 Icon notice, future uploads for
 
 ## 2026-10-23 — Android Tower Trials acceptance
 Actual12trialchain, 59initial+345continuednativechecks and94corechecks pass with explicit development-only provider-disabled isolated archive. See docs/QA/android-tower-trials-native-20261023.md. Android1.1.0(14); iOSbuild13unchanged, newiOSacceptancepending. Shipping release/signing/Store delivery stillpending.
+
+
+## 2026-10-24 — iOS14 native functional validation, delivery still pending
+
+The iPhone candidate advances13→14 while Android14 remains unchanged. Actual native423-check cold-reload/trial-chain validation passed; the explicit OS touch/fold/visual/icon/gallery and write-fault gates remain open. No Apple14 upload/submission is claimed. See docs/QA/ios-tower-trials-native-20261024.md for the evidence and simulator limitation. Android14 was already submitted separately; do not rebuild or resubmit it.
