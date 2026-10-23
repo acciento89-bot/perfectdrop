@@ -26,7 +26,14 @@ namespace Kamilunavo.PerfectDrop.Gameplay
             TrialDefinition.Modifier==TrialModifier.Drift?StackBlockKind.Drift:TrialDefinition.Modifier==TrialModifier.Wind?StackBlockKind.Wind:StackBlockKind.Standard;
         private void LoadTrials()
         {
-            _trialFile=new TowerTrialsFile(Path.Combine(Application.persistentDataPath,"perfectdrop.trials.v1.bin"));
+            var filename="perfectdrop.trials.v1.bin";
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Keep native/editor acceptance records separate from the player's real trial archive.
+            if(!string.IsNullOrEmpty(StackSave.QaKey))
+                using(var sha=System.Security.Cryptography.SHA256.Create())
+                    filename="perfectdrop.trials.qa-"+BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(StackSave.QaKey))).Replace("-","").ToLowerInvariant()+".bin";
+#endif
+            _trialFile=new TowerTrialsFile(Path.Combine(Application.persistentDataPath,filename));
             try { _trials=_trialFile.Load(); }
             catch(Exception exception) { TrialSaveError=exception.Message; }
         }
