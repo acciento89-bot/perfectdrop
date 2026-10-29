@@ -70,7 +70,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _motion = UiFactory.Button(_popup,"Motion","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.35f),new Vector2(.90f,.46f),()=> { if(MenuNavigationLocked)return;GamePreferences.ReducedMotion = !GamePreferences.ReducedMotion; UpdateSettings(); });
             _daily = UiFactory.Button(_popup,"Daily","",new Color(.13f,.20f,.30f),Color.white,new Vector2(.10f,.77f),new Vector2(.90f,.88f),()=> { if (StackSave.ClaimDaily(Game.Profile)) { Game.UiClick(); Refresh(); UpdateSettings(); } });
             _settingsMap=UiFactory.Button(_popup,"SettingsMap",T("LEVELÜBERSICHT","LEVEL MAP"),new Color(.13f,.2f,.3f),Color.white,new Vector2(.10f,.21f),new Vector2(.90f,.32f),game.GoHome);
-            BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu(); BuildTutorial();
+            BuildCampaignMenus(); BuildArcadeMenus(); BuildCommerceMenu(); BuildTutorial(); BuildTrialMenus();
             foreach (var graphic in canvas.GetComponentsInChildren<Graphic>(true)) graphic.raycastTarget = graphic.GetComponent<Button>() != null || graphic.GetComponent<RectMask2D>() != null;
             _popup.gameObject.SetActive(false);
             _settingsBackdrop=UiFactory.Panel(canvas.transform,"DropSettingsBackdrop",GalleryTheme.Night,Vector2.zero,Vector2.one);
@@ -91,10 +91,11 @@ namespace Kamilunavo.PerfectDrop.UI
             _progress.fillAmount = Game.Run.Endless?0:Game.Run.Count/(float)Game.Run.Target;
             _drop.interactable = !Game.Run.Failed && !Game.Run.Completed && !ModalOpen;
             UpdateArcadeHud();
+            RefreshTrialHud();
         }
         public void Grade(StackGrade grade)
         {
-            TutorialPlacement(grade);
+            if(!Game.TrialMode)TutorialPlacement(grade);
             _status.text = grade == StackGrade.Perfect ? T("PERFEKT!","PERFECT!") : grade == StackGrade.Good ? T("GUT GESTAPELT","GOOD DROP") : T("DANEBEN","MISSED");
             _hint.text = grade == StackGrade.Perfect ? T("Fläche bleibt erhalten · Serienbonus","Area preserved · streak bonus") : grade == StackGrade.Good ? T("Überstand fällt herunter.","Overhang falls away.") : T("Kein Überlapp. Versuch es nochmal.","No overlap. Try again.");
         }
@@ -102,6 +103,7 @@ namespace Kamilunavo.PerfectDrop.UI
         {
             _status.text = Game.Run.Endless?T("ENDLOS","ENDLESS"):Game.Profile.RunChallenge?T("TAGES-CHALLENGE","DAILY CHALLENGE"):"LEVEL "+Game.Level.Id;
             _hint.text = GoalText(Game.Level,Game.Run.Endless);
+            if(Game.TrialMode)_status.text=T("TURM-PRÜFUNG ","TOWER TRIAL ")+Game.TrialDefinition.Id;
             Refresh();
         }
         public void Terminal(bool won)
@@ -121,7 +123,7 @@ namespace Kamilunavo.PerfectDrop.UI
             if(MenuNavigationLocked)return;
             if (!CampaignMenuOpen && !CityOpen && (Game.Run.Failed || Game.Run.Completed)) return;
             bool shopReturnsStyles=_shopReturnsStyles;int returnChapter=_chapter;
-            System.Action parent=ShopOpen?()=>{ShowShop();_shopReturnsStyles=shopReturnsStyles;SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));}:_styles.gameObject.activeSelf?ShowStyles:CityOpen?ShowCity:HomeOpen?(_campaignOpen?()=>{ShowHome();_chapter=returnChapter;ShowCampaign();}:ShowHome):null;
+            System.Action parent=TrialMenuOpen?ShowTrials:ShopOpen?()=>{ShowShop();_shopReturnsStyles=shopReturnsStyles;SetLabel(_shop.Find("ShopBack").GetComponent<Button>(),_shopReturnsStyles?T("‹ DESIGNS","‹ DESIGNS"):T("‹ MENÜ","‹ HOME"));}:_styles.gameObject.activeSelf?ShowStyles:CityOpen?ShowCity:HomeOpen?(_campaignOpen?()=>{ShowHome();_chapter=returnChapter;ShowCampaign();}:ShowHome):null;
             HideMenus();SetLabel(_close,parent!=null?T("‹ ZURÜCK","‹ BACK"):T("WEITERSPIELEN","RESUME"));_settingsReturn=parent;_settingsOpen=true;_settingsBackdrop.gameObject.SetActive(true);Game.UiClick(); Controls(true); _retry.gameObject.SetActive(false); _popupBody.gameObject.SetActive(false);
             _popupTitle.text = T("EINSTELLUNGEN","SETTINGS");
             // Settings title and daily control occupy separate rows.
@@ -140,6 +142,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void Controls(bool settings)
         {
             foreach (var button in new[] { _close, _sound, _music, _haptics, _motion, _daily, _settingsMap }) button.gameObject.SetActive(settings);
+            if(Game.TrialMode)_daily.gameObject.SetActive(false);
         }
         private void UpdateSettings()
         {
@@ -167,7 +170,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 else
                     pane = d.y >= 1-d.yMax ? new Rect(0,0,1,Mathf.Max(.05f,d.y-.015f)) : new Rect(0,d.yMax+.015f,1,Mathf.Max(.05f,1-d.yMax-.015f));
             }
-            LayoutCampaign(pane); LayoutArcade(pane); LayoutCommerce(pane);
+            LayoutCampaign(pane); LayoutArcade(pane); LayoutCommerce(pane); LayoutTrials(pane);
             var screenSafe = Screen.safeArea;
             var landscape = Screen.width*pane.width > Screen.height*pane.height*1.2f;
             LandscapeLayout=landscape;

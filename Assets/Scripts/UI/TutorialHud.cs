@@ -40,6 +40,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void UpdateTutorial()
         {
             if(_tutorialSkip==null)return;
+            if(Game.TrialMode) {_tutorialSkip.gameObject.SetActive(false);_menuRect.gameObject.SetActive(!ModalOpen);return;}
             _tutorialSkip.gameObject.SetActive(_tutorialActive && !ModalOpen);
             var skip=(RectTransform)_tutorialSkip.transform;skip.anchorMin=_menuRect.anchorMin;skip.anchorMax=_menuRect.anchorMax;skip.pivot=_menuRect.pivot;skip.sizeDelta=_menuRect.sizeDelta;skip.anchoredPosition=_menuRect.anchoredPosition;GalleryTheme.Readable(_tutorialSkip.GetComponentInChildren<Text>(),11);
             _menuRect.gameObject.SetActive(!_tutorialActive);

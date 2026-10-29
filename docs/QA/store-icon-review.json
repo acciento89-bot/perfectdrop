@@ -1,27 +1,38 @@
 {
   "game": "PerfectDrop",
-  "status": "pending",
-  "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
+  "status": "passed",
+  "sourceSha256": "a27ac9109fbe589bb66b3f69fdf75e1caa3420540f65609bec63ff6206fcb27e",
   "reviewer": "Codex direct source-icon and actual native-frame comparison",
-  "reviewedAt": "2026-10-15",
-  "reason": "The icon depicts a gold-edged dark block stack with a block above it. Current native gameplay contains this block-placement activity; native exported small/large/store variants still need the explicit new binding check.",
-  "decision": "No new upload approval. Complete accurate native icon and variant review before setting passed.",
-  "variantConsistencyChecked": false,
+  "reviewedAt": "2026-10-24T13:09:01.690082+00:00",
+  "reason": "Direct content inspection and all 19 native variants verified; current three-world and native trial gameplay show the advertised block stacking activity.",
+  "decision": "All nineteen native renditions show the same dark beveled square platform stack with gold edges and a separated dropping upper platform. The current native gameplay shows this stacking/dropping activity with the same dark/gold geometry. Decorative sky lighting is illustrative and is not labeled as gameplay.",
+  "variantConsistencyChecked": true,
   "evidence": {
     "sourceIcon": {
       "path": "Assets/Art/PerfectDropIcon.png",
       "sha256": "8c85841fa0d903caf28697c684280e995c4a74bf7c63924a184f02ae17d367e5",
       "origin": "project-icon"
     },
-    "nativeIcon": null,
+    "nativeIcon": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PerfectDropUpdate/iOSRelease14/Unity-iPhone/Images.xcassets/AppIcon.appiconset/Icon-Store-1024.png",
+      "sha256": "333bd209dd26fa329d3e249515665ea7cb6d81af701257a0f9364de1bbcfc398",
+      "origin": "native-build-icon",
+      "sourceSha256": "a27ac9109fbe589bb66b3f69fdf75e1caa3420540f65609bec63ff6206fcb27e"
+    },
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-sunset-navy-native-1320x2868.png",
-        "sha256": "301e2272040ef5a25172a222c94bfa83ef4ba1964593331eb7aeef5c36d5146a",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-gameplay-chapter-0.png",
+        "sha256": "592160ff632a591f5ab99118b6678af9c884af9b08928597732003a9496216f4",
+        "origin": "Unity-render"
+      },
+      {
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-full-trial-cold-reload/cold-resumed-3-layers.png",
+        "sha256": "d33b2f4d72934ededc6e5abb4e5f94527ebd2d3e318ae462c02bf54c7688bf0a",
         "origin": "Unity-render"
       }
     ]
   },
   "policy": "https://developer.apple.com/app-store/review/guidelines/#accurate-metadata",
-  "limits": "Source-art motif review is not Apple approval, and does not establish the appearance of every exported native icon. Existing submitted builds are not withdrawn or altered."
+  "limits": "Source-art motif review is not Apple approval, and does not establish the appearance of every exported native icon. Existing submitted builds are not withdrawn or altered.",
+  "nativeVariantInventory": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-release-icon-inventory-20261024.json"
 }

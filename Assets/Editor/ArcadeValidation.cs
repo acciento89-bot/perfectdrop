@@ -35,7 +35,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             Check(StackCampaign.RecordDaily(profile,day,daily,date)==75,"Daily challenge reward failed.");
             Check(StackCampaign.RecordDaily(profile,day,daily,date)==0,"Daily challenge rewarded twice.");
             SlabMeshValidation.Validate();ConceptFinishValidation.Validate();CityArchitectureValidation.Validate();StackStyleValidation.Validate();PresentationValidation.Validate();PresentationHudValidation.Validate();GalleryMenuValidation.Validate();DropNavigationRegression.Validate();PerfectDropTerraceValidation.Validate();DropDistantCityValidation.Validate();DropCutoutRenderValidation.Validate();DropCloudValidation.Validate();DropContactShadowValidation.Validate();DropHighlightValidation.Validate();DropEnvironmentPreviewValidation.Validate();DropInterstitialValidation.Validate();OriginalMusicValidation.Validate();CampaignValidation.Validate();StackValidation.ValidatePlatform();
-            ReleaseConfigurationValidation.Validate();DropReplayValidation.Validate();DropMenuBoundaryValidation.Validate();DropNativeArtAuthoring.Validate();
+            ReleaseConfigurationValidation.Validate();DropReplayValidation.Validate();DropMenuBoundaryValidation.Validate();DropNativeArtAuthoring.Validate();TowerTrialsValidation.Validate();
             Debug.Log("[PerfectDrop] Arcade powers/special-blocks/risk/city/daily matrix passed.");
         }
         private static void Check(bool value,string message) { if(!value)throw new InvalidOperationException(message); }

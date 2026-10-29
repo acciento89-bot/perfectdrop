@@ -1,10 +1,10 @@
 {
   "game": "Perfect Drop",
   "status": "passed",
-  "sourceSha256": "7af9cf5709efc2703e104a0b9e689a8108a0d40fee303ea5ae2b201011eca8d6",
-  "reviewer": "Codex: direct inspection of unchanged approved Concept and current native Unity iOS Simulator framebuffers; no new human acceptance claimed",
-  "reviewedAt": "2026-10-14T22:33:32.665578+00:00",
-  "reason": "Authorised correction to the accepted sculpted gold/navy tower direction. Direct current-frame review confirms continuous full-window menu/design backgrounds, visible wallet and Endless entry, readable non-overlapping phone wordmark and opaque Settings. The accepted custom terrace/towers/materials/world identity remain. Individual replay and independent star improvement verified separately in actual native UI tests. This is a qualitative comparison, not a numerical similarity measurement.",
+  "sourceSha256": "a27ac9109fbe589bb66b3f69fdf75e1caa3420540f65609bec63ff6206fcb27e",
+  "reviewer": "Codex direct inspection of current native Unity framebuffers against the unchanged approved concept",
+  "reviewedAt": "2026-10-24T13:09:01.690082+00:00",
+  "reason": "Direct native comparison confirms the sculpted gold/navy stacking activity, custom terrace and architectural world identity, readable portrait menu and gold actions. All three actual world runs, separated moving block, jade/navy materials and three design panels match the approved direction qualitatively. Three OS-camera Duo poses independently inspected. No numerical similarity or new human approval claimed.",
   "criteria": {
     "concept_similarity": "passed",
     "character_or_tower": "passed",
@@ -23,98 +23,58 @@
     ],
     "menu": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-menu-native-1320x2868.png",
-        "sha256": "2187005f5eefedf5a3dcdd2bf3bd46ab6ee1453d4e9cba7dbc1e9c77f5cc0ac9",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-menu.png",
+        "sha256": "7a9a558f63f4cb22e04c9377719bc485ec231110d2a05d07831a61dc53ab3eeb",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-SE3-replay/replay-home-de-tall-native-750x1334.png",
-        "sha256": "fba1d5a12b8976a59ef9d10b7c39a4fdcfd3d98fadbb99a1e09316f26fcfd098",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-iPad-replay/replay-home-de-tall-native-2064x2752.png",
-        "sha256": "3d75fada12b99ac209092f831eadb6070434e82d6cc8df11a35b8f3c1a3f3b19",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-replay/replay-home-de-wide-native-2868x1320.png",
-        "sha256": "96b0cd192288260f6c0e5b5b750f7baf861f8e3366c759da78d64e4a89751cc1",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-menu-sunset.png",
+        "sha256": "1c0a8c089fa46b1582ba461cf4af2fa7e5868ce78ec7b097fa971f94b5e9ff43",
         "origin": "Unity-render"
       }
     ],
     "gameplay": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-sunset-navy-native-1320x2868.png",
-        "sha256": "301e2272040ef5a25172a222c94bfa83ef4ba1964593331eb7aeef5c36d5146a",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-gameplay-sunset-navy.png",
+        "sha256": "5df5963bd235ede09770d986990194f8f9a5d3716d94acb00e625c7719993015",
         "origin": "Unity-render"
       }
     ],
     "submenus": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-replay/replay-settings-de-tall-native-1320x2868.png",
-        "sha256": "2375278bd718210547f1880bc3e13fb72ed924283c6c1d81b7eb739d723bb764",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-designs.png",
+        "sha256": "a3ef77a42832c4092cdf98d6b4f955d022cd3a48176823d159e0b1aff2196df2",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-replay/replay-settings-de-wide-native-2868x1320.png",
-        "sha256": "136ff24431074f2ea7e9995290c03bf8a0db5f1d502a9961f962a09c3824ec47",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-replay/replay-levels-de-0-native-1320x2868.png",
-        "sha256": "b9cb00e2f50b40d59c088861762e89fb2ba18493a4301b088e50843cdbed8db8",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-designs-native-1320x2868.png",
-        "sha256": "938484fef920c0b35a2c624f6ab8b66aa1acadb1193c5f53e7b85b6ebf25d3b0",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-designs-sunset.png",
+        "sha256": "98ff51082bf74bbd7cb712e0fce6a5c5cf22e5aa2f57d1a3de88bcaed329d9db",
         "origin": "Unity-render"
       }
     ],
     "variants": [
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-0-native-1320x2868.png",
-        "sha256": "0e340960e2d66cdc87d851ec521721d5dbd036397cecc975697e6e6b4a39cf62",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-gameplay-chapter-0.png",
+        "sha256": "592160ff632a591f5ab99118b6678af9c884af9b08928597732003a9496216f4",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-1-native-1320x2868.png",
-        "sha256": "5cb8af2e6f649a58c2e7d470203f174d58deb4917aea901c243a5484dd6dbef7",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-gameplay-chapter-1.png",
+        "sha256": "2b5068ed9c0b9c787dad1b30de4009a6a851b795db3f280ee74f3191dc45ce48",
         "origin": "Unity-render"
       },
       {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-concept/concept-gameplay-chapter-2-native-1320x2868.png",
-        "sha256": "a9cbeafb05318243a8a2c736570670bdd80ae914d58e25858267f4b438907cfe",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-styles/style-0-gameplay-native-1320x2868.png",
-        "sha256": "0f4ffd7247f4fe4361bf152a63225f2bf572dc422e77c979d7a0782e41abb42c",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-styles/style-3-gameplay-native-1320x2868.png",
-        "sha256": "3e72cd98733f71e425575861459c60b48701eff2359160fbff2390de39a216b9",
-        "origin": "Unity-render"
-      },
-      {
-        "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/Native-Final-ProMax-styles/style-5-gameplay-native-1320x2868.png",
-        "sha256": "ae59716cbc61e08ed722be0e4241328ced41136b00726d256543398d7ed48b18",
+        "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-current-concept-20261024/concept-gameplay-chapter-2.png",
+        "sha256": "6f1f2edbe9a1077f7bff0e77120eaa39faf1d1a2f9226088c396fcf7a4cfa9d6",
         "origin": "Unity-render"
       }
     ]
   },
-  "comparison": {
-    "path": "/Volumes/SSK SSD/Kamilunavo/Builds/DropReplay13-20261014/concept-unity-build13.png",
-    "sha256": "6234ca05867ce8831aadd93706654f8e0a667a1cf0ed5fab7ca4fa914a90328b",
-    "origin": "Unchanged Concept panel and proportionally resized full native framebuffer; no visual retouching"
-  },
   "limits": [
-    "Simulator, not physical-device frame rate or real finger input",
-    "No authenticated paid purchase, restoration or live ad impression claimed",
-    "No pixel-perfect or numerical 90-percent similarity claim"
+    "Actual native simulator frames; no physical device FPS or real finger claim.",
+    "Short automated OS drags remain unverified; not accepted by this visual review.",
+    "Visual unlock fixture is isolated and is not earned progression.",
+    "No purchases, restoration or live ad impressions."
   ],
-  "functionalEvidence": "docs/QA/drop-replay13-20261014.json",
-  "previousWithdrawnReview": "docs/QA/visual-release-gate-withdrawn12-20261014.json"
+  "functionalEvidence": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/PrivateDiagnostics/PerfectDropDuo-20261023/native-manual-functional-progress-20261024.json"
 }

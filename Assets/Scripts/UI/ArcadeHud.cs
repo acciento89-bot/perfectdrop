@@ -106,6 +106,7 @@ namespace Kamilunavo.PerfectDrop.UI
         private void UpdateArcadeHud()
         {
             if(_powerRow==null || Game.Run==null)return;
+            if(Game.TrialMode) {_powerRow.gameObject.SetActive(false);_risk.gameObject.SetActive(false);return;}
             _powerRow.gameObject.SetActive(!ModalOpen && !Game.Run.Completed && !Game.Run.Failed);
             _risk.gameObject.SetActive(_powerRow.gameObject.activeSelf);
             var powers=Game.Run.Powers;

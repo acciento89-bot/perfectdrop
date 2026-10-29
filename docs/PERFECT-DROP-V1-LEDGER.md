@@ -621,8 +621,26 @@ Build1.0(13), b81b0560-3855-41cb-9795-a44ba937559c, uploaded successfully and pr
 
 Following the subsequent One More Floor Apple2.3 Icon notice, future uploads for every app now require source/native icon and actual gameplay comparison, effective iOS assignment and small/large variant review in `docs/QA/store-icon-review.json`. This project’s observed icon motif matches its central activity, but the new explicit native variant evidence is still pending; no artwork/Apple approval is inferred from format or tests. The guard checks full PNG integrity, source hashes and iOS overrides; 21 synthetic protocol cases pass per project (84 across the four identical guards). Evidence: `docs/QA/store-icon-guard-validation.json`. No Unity source, native binary, submitted public metadata, existing submission or distribution group was changed. Historical Concept deletion remains unstaged.
 
+
+## 2026-10-23 — Android Tower Trials acceptance
+Actual12trialchain, 59initial+345continuednativechecks and94corechecks pass with explicit development-only provider-disabled isolated archive. See docs/QA/android-tower-trials-native-20261023.md. Android1.1.0(14); iOSbuild13unchanged, newiOSacceptancepending. Shipping release/signing/Store delivery stillpending.
+
+
+## 2026-10-24 — iOS14 native functional validation, delivery still pending
+
+The iPhone candidate advances13→14 while Android14 remains unchanged. Actual native423-check cold-reload/trial-chain validation passed; the explicit OS touch/fold/visual/icon/gallery and write-fault gates remain open. No Apple14 upload/submission is claimed. See docs/QA/ios-tower-trials-native-20261024.md for the evidence and simulator limitation. Android14 was already submitted separately; do not rebuild or resubmit it.
+
 ## 2026-10-29 — narrow Android gameplay feedback
 
 Release validation reproduced the real Chakra hint clipping in a190-point divided portrait pane: the58%-width objective left98.08points for36characters and generated only24. Portrait panes below300logical points now give the existing objective an89%-width row. Ordinary phone and landscape placement, original fonts/best-fit limits, actual messages, controls, gameplay and saves are unchanged.
 
 The real Unity HUD fixture passes13geometries at two density/Canvas scalings, DE/EN feedback and an explicit old-width negative control (old24/36, corrected36/36). The complete ArcadeValidation aggregate also passes with a real graphics device; `-nographics` cannot validate the unchanged camera/pixel tests and must not be used for this release export. Native AAB and future delivery evidence are kept separately in the portfolio release receipts; no store action follows from these Editor results alone.
+
+
+## 2026-10-29 — current-main Tower Trials integration, source gate only
+
+Ruling: ordinary integration retains current main d78e0ef Tower Trials/runtime/archive/UI and its existing shared1.1.0/iPhone14 settings, alongside Chakra identity and narrow-portrait hint correction. Androidcode15 and temporary Android-only1.2.0 remain the reviewed candidates; preservation metadata pins now describe actual upstream iOS fields. No iOS implementation/build/upload is performed. All imported trial labels use the existing shared UiFactory/GalleryTheme generators and therefore the current Chakra fonts.
+
+The earlier db8b9e9 raw AAB validates only its old branch: it lacks these current-main features and is not a current deliverable. No source-equivalence/cert/payload/signing guard is weakened. Merged-source full aggregate plus Tower Trials validation, new normal AAB/package/font/OFL16K proof and actual final Android QA remain pending the root-owned native lane and fresh provider max-code confirmation. Human-deleted Concept stays untouched.
+
+The normal release aggregate now also invokes the existing upstream TowerTrialsValidation validator. This adds the imported feature checks to the established release path; all previous validators remain enabled. Actual merged-source execution is pending the native lane.
