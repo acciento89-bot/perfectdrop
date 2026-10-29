@@ -6,7 +6,7 @@ namespace Kamilunavo.PerfectDrop.UI
     public sealed partial class StackHud
     {
         private RectTransform _home,_styles,_levelViewport,_levelContent,_fullMenuFooter;
-        private ScrollRect _levelScroll,_styleScroll;private RectTransform _styleViewport,_styleContent;private RawImage _titleArt;
+        private ScrollRect _levelScroll,_styleScroll;private RectTransform _styleViewport,_styleContent;private Text _titleArt;
         private Text _homeInfo,_styleInfo;
         private Button[] _levels,_chapters,_styleButtons;
         private HudIconGraphic[] _levelIcons;
@@ -28,7 +28,7 @@ namespace Kamilunavo.PerfectDrop.UI
             _fullMenuFooter=(RectTransform)footerObject.transform;footerObject.GetComponent<Image>().color=GalleryTheme.Ivory;footerObject.GetComponent<Image>().raycastTarget=false;
             backdropObject.SetActive(false);_heroArt.enabled=false;_heroGallery.GetComponent<Image>().enabled=false;
             UiFactory.Panel(_home,"MapHeader",Color.clear,Vector2.zero,Vector2.one);
-            var logo=new GameObject("AuthoredTitle",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage));logo.transform.SetParent(_home,false);_titleArt=logo.GetComponent<RawImage>();_titleArt.texture=Resources.Load<Texture2D>("Art/AuthoredPerfectDropTitle");_titleArt.raycastTarget=false;
+            _titleArt=UiFactory.Label(_home,"AuthoredTitle","PERFECT\nDROP",38,Vector2.zero,Vector2.one,TextAnchor.MiddleCenter,GalleryTheme.Text,FontStyle.Bold);_titleArt.font=UiFactory.SerifFont;
             TowerPreviewGraphic.AddStyle(_home,"HeroTower",0,Vector2.zero,Vector2.one,6);
             _campaignNavigation=UiFactory.Button(_home,"CampaignNavigation",T("KAPITEL & LEVELS","CHAPTERS & LEVELS"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowCampaign);
             _campaignBack=UiFactory.Button(_home,"CampaignBack",T("‹ MENÜ","‹ HOME"),GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,ShowHome);
@@ -59,7 +59,7 @@ namespace Kamilunavo.PerfectDrop.UI
                 var slot=i;
                 _levels[i]=UiFactory.Button(_levelContent,"LevelSlot"+i,"",GalleryTheme.Card,GalleryTheme.Text,Vector2.zero,Vector2.one,()=>{if(!MenuNavigationLocked)Game.StartLevel(_chapter*10+slot+1);});
                 var card=(RectTransform)_levels[i].transform;
-                var label=(RectTransform)card.Find("Label"); Set(label,.24f,.12f,.95f,.90f);
+                var label=(RectTransform)card.Find("Label"); Set(label,.26f,.12f,.95f,.90f);UiFactory.Label(card,"IndexRule","│",24,new Vector2(.23f,.08f),new Vector2(.26f,.92f),TextAnchor.MiddleCenter,GalleryTheme.Subtle);
                 _levelIcons[i]=UiFactory.Icon(card,"LevelIcon",HudIconType.Floors,Gold,new Vector2(.035f,.22f),new Vector2(.23f,.83f));
                 _levelTowers[i]=TowerPreviewGraphic.Add(card,"LevelTower",Gold,new Vector2(.01f,.19f),new Vector2(.255f,.94f),3+i%3);
                 for(var star=0;star<3;star++)
@@ -163,8 +163,9 @@ namespace Kamilunavo.PerfectDrop.UI
             if(plate==null)return;
             bool owned=(Game.Profile.OwnedStyles&(1<<style))!=0 || style==0;
             var surface=plate.GetComponent<Image>();surface.color=owned?Gold:GalleryTheme.Card;
-            if(owned){if(!ConceptGoldSkin.Apply(surface)){surface.material=UiFactory.GoldActionMaterial;UiFactory.ApplyPillImage(surface);}}else{var skin=surface.GetComponent<ConceptGoldSkin>();if(skin!=null)skin.enabled=false;surface.material=null;UiFactory.ApplyPillImage(surface);}
-            GalleryFrameGraphic.Apply(plate,owned?GalleryTheme.Ivory:GalleryTheme.Gold);
+            var oldSkin=surface.GetComponent<ConceptGoldSkin>();if(oldSkin!=null)oldSkin.enabled=false;
+            surface.material=null;UiFactory.ApplyRoundedImage(surface);
+            GalleryFrameGraphic.Apply(plate,owned?GalleryTheme.Ink:GalleryTheme.Gold);
             var label=_styleButtons[style].transform.Find("Label").GetComponent<Text>();label.color=owned?GalleryTheme.Ink:GalleryTheme.Text;
             var shadow=label.GetComponent<Shadow>();if(shadow!=null)shadow.enabled=!owned;
             label.font=UiFactory.SerifFont;
@@ -262,8 +263,8 @@ namespace Kamilunavo.PerfectDrop.UI
                 _fullMenuFooter.sizeDelta=new Vector2(full.rect.width-left,Mathf.Clamp(bounds.max.y-full.rect.yMin,0,full.rect.height));
             }
             if(!_campaignOpen){_heroArt.GetComponent<TerracePreviewLease>().ApplyHero(_chapter,Game.Profile.Style,!landscape);GalleryTheme.Crop(_heroArt);}
-            Canvas.ForceUpdateCanvases();float galleryGap=8*unit,galleryRow=UiMetrics.TargetSize(_home,54);_levelContent.sizeDelta=new Vector2(0,5*galleryRow+4*galleryGap);_levelContent.offsetMin=new Vector2(0,_levelContent.offsetMin.y);_levelContent.offsetMax=new Vector2(0,_levelContent.offsetMax.y);
-            for(int i=0;i<10;i++){var rect=(RectTransform)_levels[i].transform;rect.anchorMin=new Vector2(i%2*.51f,1);rect.anchorMax=new Vector2(i%2*.51f+.49f,1);rect.pivot=new Vector2(.5f,1);rect.sizeDelta=new Vector2(0,galleryRow);rect.anchoredPosition=new Vector2(0,-i/2*(galleryRow+galleryGap));}
+            Canvas.ForceUpdateCanvases();float galleryGap=8*unit,galleryRow=UiMetrics.TargetSize(_home,54);_levelContent.sizeDelta=new Vector2(0,10*galleryRow+9*galleryGap);_levelContent.offsetMin=new Vector2(0,_levelContent.offsetMin.y);_levelContent.offsetMax=new Vector2(0,_levelContent.offsetMax.y);
+            for(int i=0;i<10;i++){var rect=(RectTransform)_levels[i].transform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=new Vector2(1,1);rect.pivot=new Vector2(.5f,1);rect.sizeDelta=new Vector2(0,galleryRow);rect.anchoredPosition=new Vector2(0,-i*(galleryRow+galleryGap));}
             Set((RectTransform)_styles.Find("Title"),.06f,.905f,.94f,.985f);Set((RectTransform)_styles.Find("Wallet"),.06f,.85f,.94f,.90f);_styles.GetComponent<Image>().material=null;
             float styleButtonH=UiMetrics.TargetSize(_styles,49)/Mathf.Max(1,_styles.rect.height);
             float styleHeader=(UiMetrics.TargetSize(_styles,49)+14*unit)/Mathf.Max(1,_styles.rect.height);

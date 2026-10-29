@@ -14,8 +14,8 @@ namespace Kamilunavo.PerfectDrop.UI
             var canvas = GetComponentInParent<Canvas>();
             float unit = UiMetrics.PointScale / Mathf.Max(.001f, canvas != null ? canvas.scaleFactor : 1);
             float inset = Mathf.Min(1.6f * unit, Mathf.Min(rect.width, rect.height) * .1f);
-            var surface=transform.parent.GetComponent<Image>();bool rounded=surface!=null&&surface.sprite!=null&&(surface.sprite.name.Contains("Circle")||surface.sprite.name.Contains("Pill"));
-            float radius=rounded?Mathf.Min(rect.width,rect.height)*.5f:Mathf.Min(9*unit,Mathf.Min(rect.width,rect.height)*.25f);
+            var surface=transform.parent.GetComponent<Image>();bool rounded=surface!=null&&surface.sprite!=null&&surface.sprite.name.Contains("Circle");
+            float radius=rounded?Mathf.Min(rect.width,rect.height)*.5f:Mathf.Min(2*unit,Mathf.Min(rect.width,rect.height)*.25f);
             const int steps = 8, count = steps * 4;
             for (int i = 0; i < count; i++)
             {

@@ -1,0 +1,7 @@
+#if UNITY_EDITOR
+using System;using System.IO;using System.Security.Cryptography;using UnityEngine;using Kamilunavo.PerfectDrop.UI;
+namespace Kamilunavo.PerfectDrop.Editor { public static class DropVisualIdentityValidation {
+ public static void Validate(){var regular=Resources.Load<Font>("Fonts/ChakraPetch-Regular");var bold=Resources.Load<Font>("Fonts/ChakraPetch-Bold");Require(regular&&bold&&UiFactory.DefaultFont==regular&&UiFactory.SerifFont==bold,"active Chakra Petch bindings");foreach(char c in "ÄÖÜäöüß0123456789€")Require(regular.HasCharacter(c)&&bold.HasCharacter(c),"glyph "+c);CheckFile("Assets/Resources/Fonts/ChakraPetch-Regular.ttf","98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986");CheckFile("Assets/Resources/Fonts/ChakraPetch-Bold.ttf","65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0");foreach(string n in new[]{"Barlow-Regular","Barlow-Bold","Barlow-Medium","Cinzel-Regular"})Require(Resources.Load<Font>("Fonts/"+n)==null,"old Resource absent "+n);DropNavigationRegression.Validate();DropMenuBoundaryValidation.Validate();Debug.Log("PERFECTDROP_VISUAL_IDENTITY_PASS active Chakra Petch plus actual DE/EN navigation");}
+ static void Require(bool ok,string message){if(!ok)throw new InvalidOperationException("Drop identity: "+message);}static void CheckFile(string p,string hash){using var s=SHA256.Create();Require(BitConverter.ToString(s.ComputeHash(File.ReadAllBytes(p))).Replace("-","").ToLowerInvariant()==hash,"original font "+p);}
+}}
+#endif

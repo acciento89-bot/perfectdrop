@@ -8,7 +8,7 @@ namespace Kamilunavo.PerfectDrop.UI
     {
         private static Font _font;
         private static Font _boldFont,_serifFont;
-        public static Font SerifFont=>_serifFont!=null?_serifFont:(_serifFont=Resources.Load<Font>("Fonts/Cinzel-Regular")??DefaultFont);
+        public static Font SerifFont=>_serifFont!=null?_serifFont:(_serifFont=Resources.Load<Font>("Fonts/ChakraPetch-Bold")??DefaultFont);
         private static Sprite _roundedSprite;
         private static Sprite _circleSprite;
         private static Sprite _pillSprite;
@@ -27,11 +27,11 @@ namespace Kamilunavo.PerfectDrop.UI
             }
         }
 
-        public static Font DefaultFont => _font != null ? _font : (_font = Resources.Load<Font>("Fonts/Barlow-Regular") ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
-        private static Font BoldFont => _boldFont != null ? _boldFont : (_boldFont = Resources.Load<Font>("Fonts/Barlow-Bold") ?? DefaultFont);
-        public static Sprite RoundedSprite => _roundedSprite != null ? _roundedSprite : (_roundedSprite = BuildMaskSprite(128, 28f, sliced: true));
+        public static Font DefaultFont => _font != null ? _font : (_font = Resources.Load<Font>("Fonts/ChakraPetch-Regular") ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
+        private static Font BoldFont => _boldFont != null ? _boldFont : (_boldFont = Resources.Load<Font>("Fonts/ChakraPetch-Bold") ?? DefaultFont);
+        public static Sprite RoundedSprite => _roundedSprite != null ? _roundedSprite : (_roundedSprite = BuildMaskSprite(128, 3f, sliced: true));
         public static Sprite CircleSprite => _circleSprite != null ? _circleSprite : (_circleSprite = BuildMaskSprite(64, 31f, sliced: false));
-        public static Sprite PillSprite => _pillSprite != null ? _pillSprite : (_pillSprite = BuildMaskSprite(64, 28f, sliced: true));
+        public static Sprite PillSprite => _pillSprite != null ? _pillSprite : (_pillSprite = BuildMaskSprite(64, 3f, sliced: true));
 
         public static Canvas CreateCanvas()
         {

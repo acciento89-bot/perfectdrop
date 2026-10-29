@@ -1,0 +1,23 @@
+{
+  "family": "Chakra Petch",
+  "sourceCommit": "9862abc066c9b83bf84c3e8ed1fc2d8d48f9bbf0",
+  "faces": {
+    "regular": {
+      "path": "Assets/Resources/Fonts/ChakraPetch-Regular.ttf",
+      "name": "ChakraPetch-Regular.ttf",
+      "stem": "ChakraPetch-Regular",
+      "guid": "f751e5c612b24047821637d1483750bb",
+      "sha256": "98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986"
+    },
+    "bold": {
+      "path": "Assets/Resources/Fonts/ChakraPetch-Bold.ttf",
+      "name": "ChakraPetch-Bold.ttf",
+      "stem": "ChakraPetch-Bold",
+      "guid": "c3947578f0c14c10b965983f36cb368b",
+      "sha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0"
+    }
+  },
+  "license": "Assets/StreamingAssets/ChakraPetch-OFL.txt",
+  "licenseSha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56",
+  "originalBytesUnmodified": true
+}

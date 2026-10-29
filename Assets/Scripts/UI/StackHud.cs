@@ -25,7 +25,7 @@ namespace Kamilunavo.PerfectDrop.UI
         public bool ResultOpen=>_popup!=null&&_popup.gameObject.activeSelf&&Game.Run.Completed;
         public bool ModalOpen => (_popup != null && _popup.gameObject.activeSelf) || CampaignMenuOpen || CityOpen || (Game.Purchases?.IsPresenting??false) || (Game.Videos?.IsPresenting??false) || (Game.Interstitials?.IsPresenting??false);
         private static Color Navy => new(0.035f, 0.065f, 0.12f, 1f);
-        private static Color Gold => new(1f, 0.79f, 0.16f);
+        private static Color Gold => GalleryTheme.Gold;
         public static string T(string de, string en) => GameText.German ? de : en;
 
         public void Build(StackGame game)
