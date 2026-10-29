@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "app": "PerfectDrop",
+  "package": "com.kamilunavo.perfectdrop",
+  "androidVersionName": "1.2.0",
+  "androidVersionCode": 15,
+  "liveMaxCode": 14,
+  "providerEvidence": "production-preflight-40863704549.json",
+  "sharedIOSVersionToPreserve": "1.0",
+  "iosBuildToPreserve": "13",
+  "buildMethod": "PortfolioVisualIdentityQA.AndroidReleaseBuild.Build",
+  "buildOutputArgument": "-buildOutput",
+  "releaseOutputMustBeFreshAbsoluteExternalAAB": true,
+  "signingRoute": "existing draft release asset -> immutable hash/source verification -> pinned central KMS signing workflow",
+  "acceptedHistoricalUploadCertificateSHA256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "requireFreshProviderCertificateEqualityBeforeRelease": true
+}
