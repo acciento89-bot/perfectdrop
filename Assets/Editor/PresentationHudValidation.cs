@@ -16,7 +16,7 @@ namespace Kamilunavo.PerfectDrop.Editor
             Application.logMessageReceived+=handler;
             try
             {
-                foreach(var points in new[]{new Vector2(375,627),new Vector2(430,850),new Vector2(627,355),new Vector2(850,394),new Vector2(190,627),new Vector2(627,190),new Vector2(850,190),new Vector2(627,333),new Vector2(627,349),new Vector2(627,226)})
+                foreach(var points in new[]{new Vector2(375,627),new Vector2(430,850),new Vector2(627,355),new Vector2(850,394),new Vector2(190,627),new Vector2(250,627),new Vector2(299,627),new Vector2(300,627),new Vector2(627,190),new Vector2(850,190),new Vector2(627,333),new Vector2(627,349),new Vector2(627,226)})
                 foreach(float pixelDensity in new[]{3f,1f})
                 {
                     var root=new GameObject("PresentationHudProbe");Canvas canvas=null;
@@ -71,12 +71,31 @@ namespace Kamilunavo.PerfectDrop.Editor
                             var safeBounds=UiMetrics.ScreenRect(safe);Check(rect.xMin>=safeBounds.xMin-.5f&&rect.xMax<=safeBounds.xMax+.5f&&rect.yMin>=safeBounds.yMin-.5f&&rect.yMax<=safeBounds.yMax+.5f,"Gameplay target outside safe pane "+points+" "+button.name);checks++;
                             foreach(var other in canvas.GetComponentsInChildren<Button>()){if(other==button||!other.isActiveAndEnabled||!(other.name=="Menu"||other.name=="Drop"||other.name=="Risk"||other.name.StartsWith("Power")))continue;var b=UiMetrics.ScreenRect((RectTransform)other.transform);Check(Mathf.Min(rect.xMax,b.xMax)-Mathf.Max(rect.xMin,b.xMin)<=.5f||Mathf.Min(rect.yMax,b.yMax)-Mathf.Max(rect.yMin,b.yMin)<=.5f,"Gameplay targets overlap "+points+" "+button.name+" / "+other.name);checks++;}
                         }
-                        foreach(string sentence in new[]{"PERFEKT!","LEVEL30","Fläche bleibt erhalten · Serienbonus","WIND: ACHTE AUF DIE BEWEGUNG"})
+                        foreach(string sentence in new[]{"PERFEKT!","LEVEL30","Fläche bleibt erhalten · Serienbonus","WIND: ACHTE AUF DIE BEWEGUNG","Area preserved · streak bonus","WIND: WATCH THE MOVEMENT"})
                         {
                             bool feedback=sentence=="PERFEKT!"||sentence=="LEVEL30";
                             var label=safe.Find(feedback?"Objective/Status":"Objective/Hint").GetComponent<Text>();if(!label.gameObject.activeInHierarchy)continue;
                             label.text=sentence;var generator=new TextGenerator();generator.Populate(label.text,label.GetGenerationSettings(label.rectTransform.rect.size));
                             Check(generator.characterCountVisible>=label.text.Length,"Actual gameplay feedback clipped "+points+" "+sentence+" visible="+generator.characterCountVisible+" rect="+label.rectTransform.rect.size);checks++;
+                            if(points.x==190 && sentence=="Fläche bleibt erhalten · Serienbonus")
+                                Debug.Log("[PerfectDrop] Narrow gameplay hint complete: density="+pixelDensity+" font="+label.font.name+" visible="+generator.characterCountVisible+" required="+label.text.Length+" rect="+label.rectTransform.rect.size+" logicalFont="+generator.fontSizeUsedForBestFit/pixelDensity);
+                        }
+                        if(points.x==190)
+                        {
+                            // Recreate the actual pre-fix 58%-width objective. The same
+                            // font, text generator and strict assertion must detect it.
+                            var objective=(RectTransform)safe.Find("Objective");
+                            var hint=objective.Find("Hint").GetComponent<Text>();
+                            var min=objective.anchorMin;var max=objective.anchorMax;var text=hint.text;
+                            try
+                            {
+                                objective.anchorMin=new Vector2(.37f,min.y);objective.anchorMax=new Vector2(.95f,max.y);
+                                hint.text="Fläche bleibt erhalten · Serienbonus";Canvas.ForceUpdateCanvases();
+                                var clipped=new TextGenerator();clipped.Populate(hint.text,hint.GetGenerationSettings(hint.rectTransform.rect.size));
+                                Check(clipped.characterCountVisible<hint.text.Length,"Negative control failed to detect the original narrow hint clipping");checks++;
+                                Debug.Log("[PerfectDrop] Narrow hint negative control detected: density="+pixelDensity+" visible="+clipped.characterCountVisible+" required="+hint.text.Length+" rect="+hint.rectTransform.rect.size);
+                            }
+                            finally{objective.anchorMin=min;objective.anchorMax=max;hint.text=text;Canvas.ForceUpdateCanvases();}
                         }
                         hud.ShowHome();
                         // A locked card must stay legible over the sunlit cloud background.

@@ -199,8 +199,11 @@ namespace Kamilunavo.PerfectDrop.UI
             float availableHeight=_safe.rect.height*pane.height,controlTarget=UiMetrics.TargetSize(_safe,49);
             float pointUnit=UiMetrics.PointScale/Mathf.Max(.001f,_safe.GetComponentInParent<Canvas>().scaleFactor);
             bool shortLandscape=landscape && availableHeight<controlTarget*7.4f;
+            // A divided portrait pane needs the full hint row: the normal
+            // right-hand column clips real feedback even at the readable font floor.
+            bool narrowPortrait=!landscape && _safe.rect.width*pane.width<300*pointUnit;
             Place(_statsRoot,pane,shortLandscape?new Rect(.025f,1-(controlTarget+7)/availableHeight,.68f,controlTarget/availableHeight):landscape?new Rect(.025f,.885f,.95f,.08f):new Rect(.035f,.91f,.93f,.065f));
-            Place(_objective,pane,shortLandscape?new Rect(.025f,.015f,.68f,.12f):landscape?new Rect(.75f,.72f,.225f,60*pointUnit/availableHeight):new Rect(.37f,.75f,.58f,.12f));
+            Place(_objective,pane,shortLandscape?new Rect(.025f,.015f,.68f,.12f):landscape?new Rect(.75f,.72f,.225f,60*pointUnit/availableHeight):narrowPortrait?new Rect(.075f,.75f,.89f,.12f):new Rect(.37f,.75f,.58f,.12f));
             _objective.GetComponent<Image>().color=Color.clear;
             _hint.gameObject.SetActive(!shortLandscape);
             _hintPlate.gameObject.SetActive(!shortLandscape);

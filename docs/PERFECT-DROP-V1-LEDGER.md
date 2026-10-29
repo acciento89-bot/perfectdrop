@@ -620,3 +620,9 @@ Build1.0(13), b81b0560-3855-41cb-9795-a44ba937559c, uploaded successfully and pr
 ## 2026-10-15 — user-required accurate icon gate
 
 Following the subsequent One More Floor Apple2.3 Icon notice, future uploads for every app now require source/native icon and actual gameplay comparison, effective iOS assignment and small/large variant review in `docs/QA/store-icon-review.json`. This project’s observed icon motif matches its central activity, but the new explicit native variant evidence is still pending; no artwork/Apple approval is inferred from format or tests. The guard checks full PNG integrity, source hashes and iOS overrides; 21 synthetic protocol cases pass per project (84 across the four identical guards). Evidence: `docs/QA/store-icon-guard-validation.json`. No Unity source, native binary, submitted public metadata, existing submission or distribution group was changed. Historical Concept deletion remains unstaged.
+
+## 2026-10-29 — narrow Android gameplay feedback
+
+Release validation reproduced the real Chakra hint clipping in a190-point divided portrait pane: the58%-width objective left98.08points for36characters and generated only24. Portrait panes below300logical points now give the existing objective an89%-width row. Ordinary phone and landscape placement, original fonts/best-fit limits, actual messages, controls, gameplay and saves are unchanged.
+
+The real Unity HUD fixture passes13geometries at two density/Canvas scalings, DE/EN feedback and an explicit old-width negative control (old24/36, corrected36/36). The complete ArcadeValidation aggregate also passes with a real graphics device; `-nographics` cannot validate the unchanged camera/pixel tests and must not be used for this release export. Native AAB and future delivery evidence are kept separately in the portfolio release receipts; no store action follows from these Editor results alone.
